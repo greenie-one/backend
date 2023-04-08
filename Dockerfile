@@ -8,7 +8,7 @@ COPY . ./app
 WORKDIR /app
 
 # Install Node Package
-RUN yarn install --immutable --immutable-cache
+RUN yarn install --immutable
 
 EXPOSE 8080
 
