@@ -1,5 +1,5 @@
-# NodeJS Version 16
-FROM node:16.18-buster-slim
+# NodeJS Version 19
+FROM node:alpine3.17
 
 # Copy Dir
 COPY . ./app
@@ -8,12 +8,9 @@ COPY . ./app
 WORKDIR /app
 
 # Install Node Package
-RUN npm install --legacy-peer-deps
+RUN yarn install --immutable --immutable-cache
 
-# Set Env
-ENV NODE_ENV production
-
-EXPOSE 3000
+EXPOSE 8080
 
 # Cmd script
-CMD ["npm", "run", "start"]
+CMD ["yarn", "start"]

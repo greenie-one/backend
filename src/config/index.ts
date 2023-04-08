@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-config({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
+config({ path: `.env.${process.env.APP_ENV || 'local'}` });
 
 export function env<T>(key: string, defaultValue?: T): T {
   const keys = Object.keys(process.env);

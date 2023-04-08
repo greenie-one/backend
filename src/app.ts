@@ -21,8 +21,8 @@ export class App {
   public port: number;
 
   constructor() {
-    this.env = env('NODE_ENV', 'development');
-    this.port = env('PORT', 3000);
+    this.env = env('APP_ENV', 'development');
+    this.port = env('PORT', 8080);
   }
 
   public async listen() {
