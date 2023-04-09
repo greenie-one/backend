@@ -6,7 +6,7 @@
   "license": "ISC",
   "scripts": {
     "start": "yarn run build && node dist/server.js",
-    "dev": "cross-env nodemon",
+    "dev": "nodemon",
     "build": "swc src -d dist --source-maps --copy-files",
     "build:tsc": "tsc",
     "test": "jest --forceExit --detectOpenHandles",
