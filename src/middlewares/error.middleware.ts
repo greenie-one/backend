@@ -1,11 +1,10 @@
 import { HttpException } from '@/exceptions/httpException';
-import { logger } from '@utils/logger';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export const ErrorMiddleware = (error: HttpException, req: FastifyRequest, res: FastifyReply) => {
   const status: number = error.status || 500;
   const message: string = error instanceof HttpException ? error.message : 'Something went wrong';
 
-  logger.error(`[${req.method}] ${req.routerPath} >> StatusCode:: ${status}, Message:: ${error}`);
+  console.error(`[${req.method}] ${req.routerPath} >> StatusCode:: ${status}, Message:: ${error}`);
   res.status(status).send({ message });
 };

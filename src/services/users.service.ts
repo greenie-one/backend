@@ -1,11 +1,8 @@
 import { HttpException } from '@/exceptions/httpException';
 import { CreateUserDto } from '@dtos/users.dto';
-import { Service } from '@fastify-resty/core';
-import { User } from '@interfaces/users.interface';
 import { UserModel } from '@models/users.model';
 import { hash } from 'bcrypt';
 
-@Service()
 export class UserService {
   public async findAllUser(): Promise<User[]> {
     const users: User[] = await UserModel.find();

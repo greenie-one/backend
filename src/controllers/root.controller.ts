@@ -1,8 +1,9 @@
-import { Controller, GET } from '@fastify-resty/core';
+import { Controller } from '@/utils/decorators/controller';
+import { Get } from '@/utils/decorators/methods';
 
 @Controller('/')
 export default class RootController {
-  @GET('/health-check')
+  @Get('/health-check')
   public getUsers() {
     return 'success';
   }

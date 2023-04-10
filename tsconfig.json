@@ -4,6 +4,7 @@
     "target": "es2022",
     "lib": ["es2022", "esnext.asynciterable"],
     "types": ["jest", "node"],
+    "typeRoots": ["./types/*.d.ts"],
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -28,7 +29,6 @@
       "@database": ["database"],
       "@dtos/*": ["dtos/*"],
       "@exceptions/*": ["exceptions/*"],
-      "@interfaces/*": ["interfaces/*"],
       "@middlewares/*": ["middlewares/*"],
       "@models/*": ["models/*"],
       "@routes/*": ["routes/*"],
@@ -36,6 +36,5 @@
       "@utils/*": ["utils/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.json", ".env", "src/test/**/*.ts"],
-  "exclude": ["src/http", "src/logs"]
+  "include": ["src/**/*.ts", ".env", "types/*.d.ts"],
 }

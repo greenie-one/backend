@@ -1,8 +1,9 @@
+import 'reflect-metadata';
+import 'utils/logger';
+
 import { dbConnection } from '@database';
-import { bootstrap } from '@fastify-resty/core';
 import middie from '@fastify/middie';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
-import { logger, stream } from '@utils/logger';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -10,10 +11,8 @@ import fastify from 'fastify';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import { connect, set } from 'mongoose';
-import morgan from 'morgan';
-import path from 'path';
-import 'reflect-metadata';
 import { env } from './config';
+import { registerControllers } from './controllers';
 
 export class App {
   public app: ReturnType<typeof fastify>;
@@ -26,21 +25,26 @@ export class App {
   }
 
   public async listen() {
-    this.app = fastify();
+    this.app = fastify({
+      logger: false,
+    });
 
     await this.connectToDatabase();
     await this.initializeMiddlewares();
     this.initializeErrorHandling();
+    registerControllers(this.app);
 
     await this.app.listen({
       host: '0.0.0.0',
       port: this.port,
     });
 
-    logger.info(`=================================`);
-    logger.info(`======= ENV: ${this.env} =======`);
-    logger.info(`🚀 App listening on the port ${this.port}`);
-    logger.info(`=================================`);
+    console.info('');
+    console.info(`==============================`);
+    console.info(`====== ENV: ${this.env} ======`);
+    console.info(`App listening on the port ${this.port}`);
+    console.info(`==============================`);
+    console.info('');
   }
 
   public getServer() {
@@ -48,34 +52,29 @@ export class App {
   }
 
   private async connectToDatabase() {
-    if (this.env !== 'production') {
-      set('debug', true);
-    }
-
     set('strictQuery', true);
-
     return connect(dbConnection);
   }
 
   private async initializeMiddlewares() {
     this.app = await this.app.register(middie);
 
-    this.app.register(bootstrap, {
-      entry: path.resolve(__dirname, 'controllers'),
-    });
-
-    this.app.use(morgan(env('LOG_FORMAT'), { stream }));
     this.app.use(cors({ origin: env('ORIGIN'), credentials: env('CREDENTIALS') }));
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
     this.app.use(cookieParser());
+
+    this.app.addHook('onRequest', async (req) => {
+      console.debug(`Got request: [${req.method}] ${req.url}`);
+    });
+
+    this.app.addHook('onResponse', async (req, reply) => {
+      console.debug(`Request: [${req.method}] ${req.url} - ${reply.getResponseTime().toFixed(5)}ms`);
+    });
   }
 
   private initializeErrorHandling() {
     this.app.setErrorHandler(ErrorMiddleware);
   }
 }
-
-process.on('uncaughtException', console.log);
-process.on('unhandledRejection', console.log);

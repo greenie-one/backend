@@ -20,8 +20,6 @@ export function ValidateDto(
   return function (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
-    console.log(target);
-
     descriptor.value = async function (...args: unknown[]) {
       try {
         const dto = plainToInstance<unknown, object>(type, args[0][field] ?? {});
