@@ -3,7 +3,9 @@ import RootController from './root.controller';
 import UserController from './users.controller';
 
 function validateRoute(route: string) {
-  return route.replaceAll(/\/+/g, '/');
+  const replaced = route.replaceAll(/\/+/g, '/');
+  if (replaced.endsWith('/')) return replaced.substring(0, replaced.length - 1);
+  return replaced;
 }
 
 export function registerControllers(fastify: FastifyInstance) {
