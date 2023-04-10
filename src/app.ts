@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import 'utils/logger';
+import './utils/logger';
 
 import { dbConnection } from '@database';
 import middie from '@fastify/middie';
