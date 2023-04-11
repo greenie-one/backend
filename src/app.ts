@@ -4,6 +4,7 @@ import './utils/logger';
 import { dbConnection } from '@database';
 import middie from '@fastify/middie';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
+import { ClassConstructor } from 'class-transformer';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -13,15 +14,20 @@ import hpp from 'hpp';
 import { connect, set } from 'mongoose';
 import { env } from './config';
 import { registerControllers } from './controllers';
+import { registerJWTMiddleware } from './middlewares/jwt.middleware';
 
 export class App {
   public app: ReturnType<typeof fastify>;
   public env: string;
   public port: number;
 
-  constructor() {
+  private controllers: Controllers = [];
+
+  constructor(controllers: ClassConstructor<object>[]) {
     this.env = env('APP_ENV', 'development');
     this.port = env('PORT', 8080);
+
+    this.populateControllers(controllers);
   }
 
   public async listen() {
@@ -32,7 +38,9 @@ export class App {
     await this.connectToDatabase();
     await this.initializeMiddlewares();
     this.initializeErrorHandling();
-    registerControllers(this.app);
+
+    registerControllers(this.app, this.controllers);
+    registerJWTMiddleware(this.app, this.controllers);
 
     await this.app.listen({
       host: '0.0.0.0',
@@ -76,5 +84,14 @@ export class App {
 
   private initializeErrorHandling() {
     this.app.setErrorHandler(ErrorMiddleware);
+  }
+
+  private populateControllers(controllerClasses: ClassConstructor<object>[]) {
+    for (const c of controllerClasses) {
+      this.controllers.push({
+        constructor: c,
+        instance: new c(),
+      });
+    }
   }
 }
