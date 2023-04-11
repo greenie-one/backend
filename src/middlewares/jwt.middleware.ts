@@ -41,7 +41,7 @@ export function registerJWTMiddleware(fastify: FastifyInstance, controllers: Con
       try {
         await req.jwtVerify();
       } catch (e) {
-        throw new HttpException('Unauthorized', 401);
+        throw new HttpException(e?.message ?? 'Unauthorized', 401);
       }
     }
   });

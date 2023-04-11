@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import './utils/logger';
 
 import { dbConnection } from '@database';
+import fastifyCookie from '@fastify/cookie';
 import middie from '@fastify/middie';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { ClassConstructor } from 'class-transformer';
@@ -40,8 +41,6 @@ export class App {
     this.initializeErrorHandling();
 
     registerControllers(this.app, this.controllers);
-    registerJWTMiddleware(this.app, this.controllers);
-
     await this.app.listen({
       host: '0.0.0.0',
       port: this.port,
@@ -67,11 +66,17 @@ export class App {
   private async initializeMiddlewares() {
     this.app = await this.app.register(middie);
 
+    this.app.register(fastifyCookie, {
+      secret: 'my-secret',
+      hook: 'onRequest',
+    });
+
     this.app.use(cors({ origin: env('ORIGIN'), credentials: env('CREDENTIALS') }));
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
     this.app.use(cookieParser());
+    registerJWTMiddleware(this.app, this.controllers);
 
     this.app.addHook('onRequest', async (req) => {
       console.debug(`Got request: [${req.method}] ${req.url}`);
