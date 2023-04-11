@@ -1,5 +1,33 @@
+import { HttpException } from '@/exceptions/httpException';
 import { validateRoute } from '@/utils/validation';
-import { FastifyInstance } from 'fastify';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
+import { ValidationError, isString, validateOrReject } from 'class-validator';
+import { FastifyInstance, RouteOptions } from 'fastify';
+
+function predefinedValidation(name: string) {
+  if (name === 'String' || name === 'Number') {
+    return (val: unknown) => {
+      if (!isString(val))
+        throw [
+          {
+            constraints: [`${name} is not a string`],
+          },
+        ];
+    };
+  }
+
+  return validateOrReject;
+}
+
+async function validate(type: ClassConstructor<unknown>, value: unknown) {
+  try {
+    const dto = plainToInstance(type, value);
+    await predefinedValidation(type.name)(dto as object);
+  } catch (errors) {
+    const message = errors.map((error: ValidationError) => Object.values(error.constraints));
+    throw new HttpException(message, 400);
+  }
+}
 
 export function registerControllers(fastify: FastifyInstance, controllers: Controllers) {
   for (const c of controllers) {
@@ -8,9 +36,36 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
     const methods: Set<TargetMetadata> = Reflect.getMetadata('fastify:methods', c.instance);
 
     for (const method of methods) {
-      const routeProps = {
+      const hasBody: BodyValidation = Reflect.getMetadata('fastify:method:body', c.instance, method.property);
+      const hasQuery: QueryValidation[] = Reflect.getMetadata('fastify:method:query', c.instance, method.property) ?? [];
+
+      const routeProps: RouteOptions = {
         method: method.method,
-        handler: c.instance[method.property].bind(c.instance),
+        handler: async (req, res) => {
+          const handler = c.instance[method.property].bind(c.instance);
+
+          const args = [];
+          if (hasBody) {
+            await validate(hasBody.type, req.body);
+            args[hasBody.index] = req.body;
+          }
+
+          for (const q of hasQuery) {
+            const query = q.queryName ? req.query[q.queryName] : req.query;
+            if (!query) {
+              throw new HttpException(`Query ${q.queryName} is undefined`, 400);
+            }
+
+            await validate(q.type, query);
+            args[q.index] = query;
+          }
+
+          if (args.length === 0) {
+            args.push(req, res);
+          }
+
+          return handler(...args);
+        },
         url: validateRoute(`${baseRoute}/${method.url}`),
       };
 
