@@ -16,3 +16,12 @@ type QueryValidation = {
   index: number;
   queryName: string;
 };
+
+type HeaderValidation = {
+  index: number;
+  queryName: string;
+};
+
+type RequestValidation = {
+  index: number;
+};

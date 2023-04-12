@@ -38,6 +38,9 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
     for (const method of methods) {
       const hasBody: BodyValidation = Reflect.getMetadata('fastify:method:body', c.instance, method.property);
       const hasQuery: QueryValidation[] = Reflect.getMetadata('fastify:method:query', c.instance, method.property) ?? [];
+      const hasHeaders: HeaderValidation[] = Reflect.getMetadata('fastify:method:headers', c.instance, method.property) ?? [];
+      const hasRequest: RequestValidation = Reflect.getMetadata('fastify:method:request', c.instance, method.property);
+      const hasReply: RequestValidation = Reflect.getMetadata('fastify:method:reply', c.instance, method.property);
 
       const routeProps: RouteOptions = {
         method: method.method,
@@ -53,12 +56,24 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
           for (const q of hasQuery) {
             const query = q.queryName ? req.query[q.queryName] : req.query;
             if (!query) {
-              throw new HttpException(`Query ${q.queryName} is undefined`, 400);
+              throw new HttpException(`Query ${q.queryName} is missing`, 400);
             }
 
             await validate(q.type, query);
             args[q.index] = query;
           }
+
+          for (const h of hasHeaders) {
+            const header = h.queryName ? req.headers[h.queryName.toLowerCase()] : req.headers;
+            if (!header) {
+              throw new HttpException(`Header ${h.queryName} is missing`, 400);
+            }
+
+            args[h.index] = header;
+          }
+
+          if (hasRequest) args[hasRequest.index] = req;
+          if (hasReply) args[hasReply.index] = res;
 
           if (args.length === 0) {
             args.push(req, res);
