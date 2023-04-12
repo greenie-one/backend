@@ -1,6 +1,6 @@
 import { HttpException } from '@/exceptions/httpException';
 import { TokenClaims } from '@/interfaces/auth.interface';
-import { AuthService } from '@/services/auth.service';
+import { authService } from '@/services/auth.service';
 import { AuthGuard } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
@@ -9,8 +9,6 @@ import { FastifyRequest } from 'fastify';
 
 @Controller()
 export class AuthController {
-  private authService = new AuthService();
-
   @Post('/signup')
   async signup() {
     // TODO: Add to user DB
@@ -18,17 +16,17 @@ export class AuthController {
 
   @Post('/login')
   async login(req: FastifyRequest) {
-    const userDetails = await this.authService.createUserDetails();
+    const userDetails = await authService.createUserDetails();
 
     try {
       const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m' });
       const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true });
 
-      await this.authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
+      await authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
 
       return { accessToken, refreshToken };
     } catch (e) {
-      this.authService.removeSession(userDetails.sessionId).catch(console.error);
+      authService.removeSession(userDetails.sessionId).catch(console.error);
       throw e;
     }
   }
@@ -37,7 +35,7 @@ export class AuthController {
   @Post('/logout')
   async logout(@Req() req: FastifyRequest) {
     const sessionId = (req.user as TokenClaims).sessionId;
-    this.authService.removeSession(sessionId);
+    authService.removeSession(sessionId);
   }
 
   @Get('/refresh')
@@ -45,9 +43,9 @@ export class AuthController {
     const decoded: TokenClaims = req.server.jwt.verify(token);
     if (decoded.isRefresh) {
       delete decoded.isRefresh;
-      if (await this.authService.validateSessionId(decoded.sessionId)) {
+      if (await authService.validateSessionId(decoded.sessionId)) {
         const accessToken = req.server.jwt.sign(decoded, { expiresIn: '30m' });
-        await this.authService.updateAccessTokenInStore(decoded.sessionId, accessToken);
+        await authService.updateAccessTokenInStore(decoded.sessionId, accessToken);
         return { accessToken };
       }
     }

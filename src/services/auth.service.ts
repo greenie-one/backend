@@ -3,7 +3,7 @@ import { TokenClaims } from '@/interfaces/auth.interface';
 import { AuthSessionModel } from '@/models/session.model';
 import { v4 } from 'uuid';
 
-export class AuthService {
+class AuthService {
   async createUserDetails() {
     const userDetails: TokenClaims = {
       email: 'abcd@gmail.com',
@@ -41,3 +41,5 @@ export class AuthService {
     });
   }
 }
+
+export const authService = new AuthService();
