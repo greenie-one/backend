@@ -1,7 +1,9 @@
+import { env } from '@/config';
 import { HttpException } from '@/exceptions/httpException';
 import { validateRoute } from '@/utils/validation';
 import jwt from '@fastify/jwt';
 import { FastifyInstance, HTTPMethods } from 'fastify';
+import { readFile } from 'fs/promises';
 
 function getMethodRoutes(baseURL: string, methods: TargetMetadata[], match?: string) {
   return (
@@ -12,7 +14,7 @@ function getMethodRoutes(baseURL: string, methods: TargetMetadata[], match?: str
   );
 }
 
-export function registerJWTMiddleware(fastify: FastifyInstance, controllers: Controllers) {
+export async function registerJWTMiddleware(fastify: FastifyInstance, controllers: Controllers) {
   const routesToApplyAuthOn: { url: string; method: HTTPMethods }[] = [];
 
   for (const c of controllers) {
@@ -31,8 +33,15 @@ export function registerJWTMiddleware(fastify: FastifyInstance, controllers: Con
     }
   }
 
-  fastify.register(jwt, {
-    secret: 'supersecret',
+  const privateKey = await readFile(`./keys/${env('APP_ENV')}/private.pem`, { encoding: 'utf-8' });
+  const publicKey = await readFile(`./keys/${env('APP_ENV')}/public.pem`, { encoding: 'utf-8' });
+
+  await fastify.register(jwt, {
+    secret: {
+      public: publicKey,
+      private: { key: privateKey, passphrase: env('JWT_KEY_PASSPHRASE') },
+    },
+    sign: { algorithm: 'RS256' },
   });
 
   fastify.addHook('onRequest', async (req) => {

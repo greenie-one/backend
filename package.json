@@ -6,7 +6,7 @@
   "license": "ISC",
   "scripts": {
     "start": "yarn run build && node dist/server.js",
-    "dev": "nodemon",
+    "dev": "cross-env APP_ENV=local nodemon",
     "build": "swc src -d dist --source-maps --copy-files",
     "build:tsc": "tsc",
     "test": "jest --forceExit --detectOpenHandles",
@@ -28,6 +28,7 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "envalid": "^7.3.1",
     "fastify": "^4.15.0",

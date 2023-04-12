@@ -76,7 +76,7 @@ export class App {
     this.app.use(helmet());
     this.app.use(compression());
     this.app.use(cookieParser());
-    registerJWTMiddleware(this.app, this.controllers);
+    await registerJWTMiddleware(this.app, this.controllers);
 
     this.app.addHook('onRequest', async (req) => {
       console.debug(`Got request: [${req.method}] ${req.url}`);
