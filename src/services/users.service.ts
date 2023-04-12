@@ -1,6 +1,6 @@
 import { HttpException } from '@/exceptions/httpException';
 import { CreateUserDto } from '@dtos/users.dto';
-import { UserModel } from '@models/users.model';
+import { User, UserModel } from '@models/users.model';
 import { hash } from 'bcrypt';
 
 export class UserService {
