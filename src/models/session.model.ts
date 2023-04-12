@@ -8,6 +8,9 @@ class AuthSession {
 
   @prop({ type: String, required: true, unique: false })
   public token: string;
+
+  @prop({ type: String, required: true, unique: false })
+  public refreshToken: string;
 }
 
 export const AuthSessionModel = getModelForClass(AuthSession);
