@@ -1,7 +1,7 @@
-import { HttpException } from '@/exceptions/httpException';
-import { UserModel } from '@models/users.model';
-import { Profile, ProfileModel } from '@/models/profile.model';
 import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
+import { HttpException } from '@/exceptions/httpException';
+import { Profile, ProfileModel } from '@/models/profile.model';
+import { UserModel } from '@models/users.model';
 
 export class ProfileService {
   public async findAllProfiles(): Promise<Profile[]> {
@@ -9,10 +9,18 @@ export class ProfileService {
     return profiles;
   }
 
-  public async createProfile(profileData: CreateProfileDto): Promise<Profile> {
+  public async findProfileById(user: string): Promise<Profile> {
+    const profile = await ProfileModel.findOne({ user: user });
+    if (!profile) {
+      throw new HttpException('Profile not found', 404);
+    }
+    return profile;
+  }
+
+  public async createProfile(user: string, profileData: CreateProfileDto): Promise<Profile> {
     // Check if user exists
     try {
-      const findUser = await UserModel.findById(profileData.user);
+      const findUser = await UserModel.findById(user);
       if (!findUser) {
         throw new HttpException('User not found', 404);
       }
@@ -20,7 +28,7 @@ export class ProfileService {
       throw new HttpException('Error with user id', 403);
     }
 
-    const profile = await ProfileModel.create(profileData);
+    const profile = await ProfileModel.create({ ...profileData, user: user });
     return profile;
   }
 
@@ -32,8 +40,8 @@ export class ProfileService {
     return profile;
   }
 
-  public async deleteProfile(profileId: string): Promise<void> {
-    const profile = await ProfileModel.findByIdAndDelete(profileId);
+  public async deleteProfile(user: string): Promise<void> {
+    const profile = await ProfileModel.findOneAndDelete({ user: user });
     if (!profile) {
       throw new HttpException('Profile not found', 404);
     }

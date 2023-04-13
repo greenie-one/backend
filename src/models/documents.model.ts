@@ -1,35 +1,44 @@
-import { User } from './users.model';
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { User } from './users.model';
 import { Verification } from './verified.model';
 
 export class Aadhaar {
+  @prop()
+  _id!: string;
+
   @prop({ required: true })
   aadhaarNumber!: string;
 }
 
 export class PAN {
+  @prop()
+  _id!: string;
+
   @prop({ required: true })
   panNumber!: string;
 }
 
 export class DrivingLicense {
+  @prop()
+  _id!: string;
+
   @prop({ required: true })
   licenseNumber!: string;
 }
 
 // Wrapper for all the documents
-enum DocumentType {
+export enum DocumentTypeEnum {
   Aadhaar = 'Aadhaar',
   PAN = 'PAN',
   DrivingLicense = 'DrivingLicense',
 }
 
 export class Document {
-  @prop({ required: true, enum: DocumentType })
-  type!: DocumentType;
+  @prop({ required: true, enum: DocumentTypeEnum })
+  type!: DocumentTypeEnum;
 
   @prop({ refPath: 'type', required: true })
-  document!: Ref<keyof typeof DocumentType>; // Will this Work? if not add fixed types or use any
+  document!: Ref<Aadhaar | PAN | DrivingLicense>; // Will this Work? if not add fixed types or use any
 
   @prop({ ref: () => User })
   user!: Ref<User>;
