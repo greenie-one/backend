@@ -25,7 +25,7 @@ export class App {
   private controllers: Controllers = [];
 
   constructor(controllers: ClassConstructor<object>[]) {
-    this.env = env('APP_ENV', 'development');
+    this.env = env('APP_ENV', 'dev');
     this.port = env('PORT', 8080);
 
     this.populateControllers(controllers);
