@@ -32,3 +32,9 @@ export function ValidateDto(
     };
   };
 }
+
+export function validateRoute(route: string) {
+  const replaced = route.replaceAll(/\/+/g, '/');
+  if (replaced.endsWith('/')) return replaced.substring(0, replaced.length - 1);
+  return replaced;
+}

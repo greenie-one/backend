@@ -1,4 +1,5 @@
 import { CreateUserDto } from '@/dtos/users.dto';
+import { AuthGuard } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
 import { ValidateDto } from '@/utils/validation';
@@ -10,6 +11,7 @@ export default class UserController {
   public user: UserService = new UserService();
 
   @Get('/')
+  @AuthGuard()
   public async getUsers(req: FastifyRequest, res: FastifyReply) {
     const findAllUsersData: User[] = await this.user.findAllUser();
 

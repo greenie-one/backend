@@ -1,32 +1,92 @@
-import { FastifyInstance } from 'fastify';
-import RootController from './root.controller';
-import UserController from './users.controller';
+import { HttpException } from '@/exceptions/httpException';
+import { validateRoute } from '@/utils/validation';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
+import { ValidationError, isString, validateOrReject } from 'class-validator';
+import { FastifyInstance, RouteOptions } from 'fastify';
 
-function validateRoute(route: string) {
-  const replaced = route.replaceAll(/\/+/g, '/');
-  if (replaced.endsWith('/')) return replaced.substring(0, replaced.length - 1);
-  return replaced;
+function predefinedValidation(name: string) {
+  if (name === 'String' || name === 'Number') {
+    return (val: unknown) => {
+      if (!isString(val))
+        throw [
+          {
+            constraints: [`${name} is not a string`],
+          },
+        ];
+    };
+  }
+
+  return validateOrReject;
 }
 
-export function registerControllers(fastify: FastifyInstance) {
-  const controllers = [RootController, UserController];
+async function validate(type: ClassConstructor<unknown>, value: unknown) {
+  try {
+    const dto = plainToInstance(type, value);
+    await predefinedValidation(type.name)(dto as object);
+  } catch (errors) {
+    const message = errors.map((error: ValidationError) => Object.values(error.constraints));
+    throw new HttpException(message, 400);
+  }
+}
 
+export function registerControllers(fastify: FastifyInstance, controllers: Controllers) {
   for (const c of controllers) {
-    const baseRoute = Reflect.getMetadata('fastify:controller', c)?.route ?? '/';
-    const controllerInstance = new c();
+    const baseRoute = Reflect.getMetadata('fastify:controller', c.constructor)?.route ?? '/';
 
-    const methods: Set<TargetMetadata> = Reflect.getMetadata('fastify:methods', controllerInstance);
+    const methods: Set<TargetMetadata> = Reflect.getMetadata('fastify:methods', c.instance);
 
     for (const method of methods) {
-      const routeProps = {
+      const hasBody: BodyValidation = Reflect.getMetadata('fastify:method:body', c.instance, method.property);
+      const hasQuery: QueryValidation[] = Reflect.getMetadata('fastify:method:query', c.instance, method.property) ?? [];
+      const hasHeaders: HeaderValidation[] = Reflect.getMetadata('fastify:method:headers', c.instance, method.property) ?? [];
+      const hasRequest: RequestValidation = Reflect.getMetadata('fastify:method:request', c.instance, method.property);
+      const hasReply: RequestValidation = Reflect.getMetadata('fastify:method:reply', c.instance, method.property);
+
+      const routeProps: RouteOptions = {
         method: method.method,
-        handler: controllerInstance[method.property].bind(controllerInstance),
+        handler: async (req, res) => {
+          const handler = c.instance[method.property].bind(c.instance);
+
+          const args = [];
+          if (hasBody) {
+            await validate(hasBody.type, req.body);
+            args[hasBody.index] = req.body;
+          }
+
+          for (const q of hasQuery) {
+            const query = q.queryName ? req.query[q.queryName] : req.query;
+            if (!query) {
+              throw new HttpException(`Query ${q.queryName} is missing`, 400);
+            }
+
+            await validate(q.type, query);
+            args[q.index] = query;
+          }
+
+          for (const h of hasHeaders) {
+            const header = h.queryName ? req.headers[h.queryName.toLowerCase()] : req.headers;
+            if (!header) {
+              throw new HttpException(`Header ${h.queryName} is missing`, 400);
+            }
+
+            args[h.index] = header;
+          }
+
+          if (hasRequest) args[hasRequest.index] = req;
+          if (hasReply) args[hasReply.index] = res;
+
+          if (args.length === 0) {
+            args.push(req, res);
+          }
+
+          return handler(...args);
+        },
         url: validateRoute(`${baseRoute}/${method.url}`),
       };
 
       fastify.route(routeProps);
 
-      console.info(`Mapped ${routeProps.url} to [${c.name}.${method.property}]`);
+      console.info(`Mapped ${routeProps.url} to [${c.constructor.name}.${method.property}]`);
     }
   }
   return controllers;
