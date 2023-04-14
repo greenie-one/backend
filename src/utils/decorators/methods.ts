@@ -15,3 +15,15 @@ export function Get(route: string) {
 export function Post(route: string) {
   return requestMethodFactory('POST', route);
 }
+
+export function Put(route: string) {
+  return requestMethodFactory('PUT', route);
+}
+
+export function Delete(route: string) {
+  return requestMethodFactory('DELETE', route);
+}
+
+export function Patch(route: string) {
+  return requestMethodFactory('PATCH', route);
+}

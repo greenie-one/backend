@@ -60,6 +60,7 @@ export class App {
 
   private async connectToDatabase() {
     set('strictQuery', true);
+    console.info(dbConnection);
     return connect(dbConnection);
   }
 

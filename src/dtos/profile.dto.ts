@@ -12,10 +12,6 @@ export class CreateProfileDto {
   @IsString()
   @IsNotEmpty()
   public phone: string;
-
-  @IsString()
-  @IsNotEmpty()
-  public user: string; // Assuming user is identified by ID or username
 }
 
 export class UpdateProfileDto {
