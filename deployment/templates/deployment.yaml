@@ -33,18 +33,39 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.name }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env: 
+            - name: APP_ENV
+              value: {{ .Values.APP_ENV }}
+
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-{{ .Values.APP_ENV }}-key
+                  key: private
+
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-{{ .Values.APP_ENV }}-key
+                  key: public
+
+            - name: JWT_PASSPHRASE
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-{{ .Values.APP_ENV }}-key
+                  key: passphrase
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          livenessProbe:
+            httpGet:
+              path: /health-check
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health-check
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

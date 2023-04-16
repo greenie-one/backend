@@ -12,6 +12,8 @@ imagePullSecrets: [{ name: regcred }]
 nameOverride: "greenie-mvp-backend-dev"
 fullnameOverride: "greenie-mvp-backend-dev"
 
+APP_ENV: dev
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -60,11 +62,11 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 1000m
+    memory: 1000Mi
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 128m
+    memory: 512Mi
 
 autoscaling:
   enabled: true
