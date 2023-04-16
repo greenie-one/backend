@@ -33,8 +33,8 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
     }
   }
 
-  const privateKey = await readFile(`./keys/${env('APP_ENV')}/private.pem`, { encoding: 'utf-8' });
-  const publicKey = await readFile(`./keys/${env('APP_ENV')}/public.pem`, { encoding: 'utf-8' });
+  const privateKey = env('JWT_PRIVATE_KEY') ?? (await readFile(`./keys/${env('APP_ENV')}/private.pem`, { encoding: 'utf-8' }));
+  const publicKey = env('JWT_PUBLIC_KEY') ?? (await readFile(`./keys/${env('APP_ENV')}/public.pem`, { encoding: 'utf-8' }));
 
   await fastify.register(jwt, {
     secret: {

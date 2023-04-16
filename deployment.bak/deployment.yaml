@@ -21,7 +21,25 @@ spec:
             - containerPort: 8080
           env:
             - name: APP_ENV
-              value: "dev"
+              value: {{ .Values.APP_ENV }}
+    
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-{{ .Values.APP_ENV }}-key
+                  key: private
+
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-{{ .Values.APP_ENV }}-key
+                  key: public
+
+            - name: JWT_PASSPHRASE
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-{{ .Values.APP_ENV }}-key
+                  key: passphrase
           livenessProbe:
             httpGet:
               path: /health-check
