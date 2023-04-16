@@ -49,7 +49,7 @@ spec:
                   name: jwt-{{ .Values.APP_ENV }}-key
                   key: public
 
-            - name: JWT_PASSPHRASE
+            - name: JWT_KEY_PASSPHRASE
               valueFrom:
                 secretKeyRef:
                   name: jwt-{{ .Values.APP_ENV }}-key
