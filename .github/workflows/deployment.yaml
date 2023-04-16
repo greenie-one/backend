@@ -29,6 +29,10 @@ jobs:
           echo $KUBECONFIG_B64 | base64 --decode > greenie-kubeconfig.yaml
           echo "KUBECONFIG=$(realpath greenie-kubeconfig.yaml)" >> $GITHUB_ENV
 
+      - uses: azure/setup-helm@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Log in to the Container registry
         uses: docker/login-action@v2.1.0
         with:
@@ -66,13 +70,6 @@ jobs:
           secret-name: regcred
           namespace: backend
 
-      - uses: Azure/k8s-deploy@v4
-        with:
-          namespace: backend
-          manifests: |
-            deployment/values.yaml
-            deployment/deployment.yaml
-            deployment/service.yaml
-          images: ${{ steps.meta.outputs.tags }}
-          imagepullsecrets: |
-            regcred
+      - name: Deploy chart
+        run: |
+          helm upgrade --install --namespace backend -f deployment/values.yaml greenie-mvp-backend-dev ./deployment
