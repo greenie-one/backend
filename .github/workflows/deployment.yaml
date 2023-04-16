@@ -70,6 +70,7 @@ jobs:
         with:
           namespace: backend
           manifests: |
+            deployment/values.yaml
             deployment/deployment.yaml
             deployment/service.yaml
           images: ${{ steps.meta.outputs.tags }}
