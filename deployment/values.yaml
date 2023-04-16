@@ -4,11 +4,7 @@
 
 replicaCount: 1
 
-image:
-  repository: ghcr.io/greenie-one/backend
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "sha-e9e1755"
+image: ghcr.io/greenie-one/backend:latest
 
 imagePullSecrets: [{ name: regcred }]
 nameOverride: "greenie-mvp-backend-dev"
