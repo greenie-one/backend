@@ -1,9 +1,11 @@
 import { HttpException } from '@/exceptions/httpException';
-import { CreateUserDto } from '@dtos/users.dto';
-import { User, UserModel } from '@models/users.model';
-import { hash } from 'bcrypt';
+import { ProfileModel } from '@/models/profile.model';
+import { VerificationModel } from '@/models/verified.model';
+import { CreateUserDto, LoginDto } from '@dtos/users.dto';
+import { User, UserModel, UserRoles } from '@models/users.model';
+import { compare, hash } from 'bcrypt';
 
-export class UserService {
+class UserService {
   public async findAllUser(): Promise<User[]> {
     const users: User[] = await UserModel.find();
     return users;
@@ -14,8 +16,33 @@ export class UserService {
     if (findUser) throw new HttpException(`This email ${userData.email} already exists`, 409);
 
     const hashedPassword = await hash(userData.password, 10);
-    const createUserData = await UserModel.create({ ...userData, password: hashedPassword });
+    const createUserData = await UserModel.create({ email: userData.email, roles: [UserRoles.DEFAULT], password: hashedPassword });
 
+    await ProfileModel.create({
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      phone: userData.mobileNumber,
+      verification: await VerificationModel.create({
+        is_verified: false,
+      }),
+      user: createUserData._id,
+    });
+
+    delete createUserData.password;
     return createUserData;
   }
+
+  public async validateUser(loginRequest: LoginDto) {
+    const user = await UserModel.findOne({
+      email: loginRequest.email,
+    });
+
+    if (!user) throw new HttpException('No user by email', 401);
+
+    if (!(await compare(loginRequest.password, user.password))) throw new HttpException('Invalid user details', 401);
+
+    return user;
+  }
 }
+
+export const userService = new UserService();

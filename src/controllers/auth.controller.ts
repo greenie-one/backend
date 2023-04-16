@@ -1,26 +1,27 @@
+import { TokenClaims } from '@/dtos/auth.dto';
+import { CreateUserDto, LoginDto } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
-import { TokenClaims } from '@/interfaces/auth.interface';
 import { authService } from '@/services/auth.service';
 import { AuthGuard } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
-import { Query, Req } from '@/utils/decorators/request';
+import { Body, Query, Req } from '@/utils/decorators/request';
 import { FastifyRequest } from 'fastify';
 
 @Controller()
 export class AuthController {
   @Post('/signup')
-  async signup() {
-    // TODO: Add to user DB
+  async signup(@Body() createUserRequest: CreateUserDto) {
+    return authService.createUser(createUserRequest);
   }
 
   @Post('/login')
-  async login(req: FastifyRequest) {
-    const userDetails = await authService.createUserDetails();
+  async login(@Body() loginRequest: LoginDto, @Req() req: FastifyRequest) {
+    const userDetails = await authService.createUserDetails(loginRequest);
 
     try {
-      const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m' });
-      const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true });
+      const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
+      const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true, algorithm: 'RS256' });
 
       await authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
 
@@ -43,8 +44,8 @@ export class AuthController {
     const decoded: TokenClaims = req.server.jwt.verify(token);
     if (decoded.isRefresh) {
       delete decoded.isRefresh;
-      if (await authService.validateSessionId(decoded.sessionId)) {
-        const accessToken = req.server.jwt.sign(decoded, { expiresIn: '30m' });
+      if (await authService.validateSessionId(decoded.sessionId, token, 'refreshToken')) {
+        const accessToken = req.server.jwt.sign(decoded, { expiresIn: '30m', algorithm: 'RS256' });
         await authService.updateAccessTokenInStore(decoded.sessionId, accessToken);
         return { accessToken };
       }
