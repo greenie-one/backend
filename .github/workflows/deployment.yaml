@@ -69,4 +69,4 @@ jobs:
 
       - name: Deploy chart
         run: |
-          helm upgrade --install --namespace backend -f deployment/values.yaml greenie-mvp-backend-dev ./deployment --set image.name=${{ steps.meta.outputs.tags }}
+          helm upgrade --install --namespace backend -f deployment/values.yaml greenie-mvp-backend-dev ./deployment --set image.name=${{ steps.meta.outputs.tags }} --wait
