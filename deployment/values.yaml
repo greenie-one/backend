@@ -4,7 +4,9 @@
 
 replicaCount: 1
 
-image: ghcr.io/greenie-one/backend:latest
+image: 
+  name: ghcr.io/greenie-one/backend:latest
+  pullPolicy: IfNotPresent
 
 imagePullSecrets: [{ name: regcred }]
 nameOverride: "greenie-mvp-backend-dev"
