@@ -46,9 +46,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
             type=sha
 
       - name: Build and push Docker image
@@ -70,6 +67,20 @@ jobs:
           secret-name: regcred
           namespace: backend
 
-      - name: Deploy chart
-        run: |
-          helm upgrade --install --namespace backend -f deployment/values.yaml greenie-mvp-backend-dev ./deployment
+      - name: 'Deploy'
+        uses: 'deliverybot/helm@v1'
+        with:
+          release: 'greenie-mvp-backend-dev'
+          namespace: 'backend'
+          chart: 'app'
+          token: '${{ github.token }}'
+          values: |
+            image.tag: ${{ steps.meta.outputs.tags }}
+          value-files: >-
+            [
+              "deployment/values.yaml", 
+            ]
+
+      # - name: Deploy chart
+      #   run: |
+      #     helm upgrade --install --namespace backend -f deployment/values.yaml greenie-mvp-backend-dev ./deployment
