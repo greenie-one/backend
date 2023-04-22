@@ -1,12 +1,12 @@
 import { HttpException } from '@/exceptions/httpException';
 import { validateRoute } from '@/utils/validation';
-import { ClassConstructor, plainToInstance } from 'class-transformer';
+import { ClassConstructor, plainToClass } from 'class-transformer';
 import { ValidationError, isString, validateOrReject } from 'class-validator';
 import { FastifyInstance, RouteOptions } from 'fastify';
 
-function predefinedValidation(name: string) {
+function predefinedValidation(name: string): typeof validateOrReject {
   if (name === 'String' || name === 'Number') {
-    return (val: unknown) => {
+    return async (val: unknown) => {
       if (!isString(val))
         throw [
           {
@@ -19,12 +19,16 @@ function predefinedValidation(name: string) {
   return validateOrReject;
 }
 
-async function validate(type: ClassConstructor<unknown>, value: unknown) {
+async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query') {
+  if (!value) throw new HttpException(`${bodyOrQuery} must be defined`, 400);
+
   try {
-    const dto = plainToInstance(type, value);
-    await predefinedValidation(type.name)(dto as object);
+    const dto = plainToClass(type, value);
+
+    const validator = predefinedValidation(type.name);
+    await validator(dto as object);
   } catch (errors) {
-    const message = errors.map((error: ValidationError) => Object.values(error.constraints));
+    const message = errors?.map((error: ValidationError) => Object.values(error.constraints));
     throw new HttpException(message, 400);
   }
 }
@@ -49,7 +53,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           const args = [];
           if (hasBody) {
-            await validate(hasBody.type, req.body);
+            await validate(hasBody.type, req.body, 'body');
             args[hasBody.index] = req.body;
           }
 
@@ -59,7 +63,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
               throw new HttpException(`Query ${q.queryName} is missing`, 400);
             }
 
-            await validate(q.type, query);
+            await validate(q.type, query, 'query');
             args[q.index] = query;
           }
 

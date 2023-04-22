@@ -1,12 +1,25 @@
+import { TokenClaims } from '@/dtos/auth.dto';
+import { CreateUserDto, LoginDto } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
-import { TokenClaims } from '@/interfaces/auth.interface';
+import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
 import { v4 } from 'uuid';
+import { userService } from './users.service';
 
 class AuthService {
-  async createUserDetails() {
+  async createUserDetails(loginRequest: LoginDto) {
+    // Throw if invalid user
+    const user = await userService.validateUser(loginRequest);
+
+    const profile = await ProfileModel.findOne({
+      user: user.id,
+    });
+
     const userDetails: TokenClaims = {
-      email: 'abcd@gmail.com',
+      email: loginRequest.email,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      roles: user.roles,
       sessionId: v4(),
     };
 
@@ -29,9 +42,9 @@ class AuthService {
     }
   }
 
-  async validateSessionId(sessionId: string) {
+  async validateSessionId(sessionId: string, token: string, type: 'token' | 'refreshToken') {
     const resp = await AuthSessionModel.findById(sessionId);
-    return !!resp;
+    return resp[type] === token;
   }
 
   async updateAccessTokenInStore(sessionId: string, accessToken: string) {
@@ -39,6 +52,10 @@ class AuthService {
       _id: sessionId,
       token: accessToken,
     });
+  }
+
+  async createUser(request: CreateUserDto) {
+    return userService.createUser(request);
   }
 }
 

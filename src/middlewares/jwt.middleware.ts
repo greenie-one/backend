@@ -1,7 +1,11 @@
 import { env } from '@/config';
+import { TokenClaims } from '@/dtos/auth.dto';
 import { HttpException } from '@/exceptions/httpException';
+import { authService } from '@/services/auth.service';
 import { validateRoute } from '@/utils/validation';
 import jwt from '@fastify/jwt';
+import { plainToInstance } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
 import { FastifyInstance, HTTPMethods } from 'fastify';
 import { readFile } from 'fs/promises';
 
@@ -33,8 +37,8 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
     }
   }
 
-  const privateKey = env('JWT_PRIVATE_KEY') ?? (await readFile(`./keys/${env('APP_ENV')}/private.pem`, { encoding: 'utf-8' }));
-  const publicKey = env('JWT_PUBLIC_KEY') ?? (await readFile(`./keys/${env('APP_ENV')}/public.pem`, { encoding: 'utf-8' }));
+  const privateKey = env('JWT_PRIVATE_KEY', null) ?? (await readFile(`./keys/${env('APP_ENV')}/private.pem`, { encoding: 'utf-8' }));
+  const publicKey = env('JWT_PUBLIC_KEY', null) ?? (await readFile(`./keys/${env('APP_ENV')}/public.pem`, { encoding: 'utf-8' }));
 
   await fastify.register(jwt, {
     secret: {
@@ -44,13 +48,21 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
     sign: { algorithm: 'RS256' },
   });
 
+  fastify.decorateRequest('checkAuthentication', false);
+
   fastify.addHook('onRequest', async (req) => {
     const shouldValidate = !!routesToApplyAuthOn.find((val) => val.url === req.routerPath && val.method === req.method);
     if (shouldValidate) {
       try {
-        await req.jwtVerify();
+        const decoded: TokenClaims = await req.jwtVerify();
+
+        const transformed = plainToInstance(TokenClaims, decoded);
+        await validateOrReject(transformed);
+
+        const validated = await authService.validateSessionId(decoded.sessionId, req.headers['authorization'].substring(7), 'token');
+        if (!validated) throw new Error();
       } catch (e) {
-        throw new HttpException(e?.message ?? 'Unauthorized', 401);
+        throw new HttpException(e?.message || 'Unauthorized', 401);
       }
     }
   });
