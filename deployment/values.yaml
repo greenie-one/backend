@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image: 
-  name: ghcr.io/greenie-one/backend:latest
+  name: ghcr.io/greenie-one/backend:sha-65879a1
   pullPolicy: IfNotPresent
 
 imagePullSecrets: [{ name: regcred }]
@@ -56,20 +56,20 @@ service:
 #   #    hosts:
 #   #      - chart-example.local
 
-resources:
+resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  limits:
-    cpu: 1000m
-    memory: 1000Mi
-  requests:
-    cpu: 128m
-    memory: 512Mi
+  # limits:
+  #   cpu: 1000m
+  #   memory: 1000Mi
+  # requests:
+  #   cpu: 128m
+  #   memory: 512Mi
 
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 1
   maxReplicas: 1
   # targetCPUUtilizationPercentage: 80
