@@ -3,7 +3,7 @@ import { ProfileModel } from '@/models/profile.model';
 import { VerificationModel } from '@/models/verified.model';
 import { CreateUserDto, LoginDto } from '@dtos/users.dto';
 import { User, UserModel, UserRoles } from '@models/users.model';
-import { compare, hash } from 'bcrypt';
+import { compare, hash } from 'bcryptjs';
 
 class UserService {
   public async findAllUser(): Promise<User[]> {
