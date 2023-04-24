@@ -48,10 +48,10 @@ class UserService {
 
   public async validateUser(loginRequest: LoginDto) {
     const user = await UserModel.findOne({
-      email: loginRequest.email,
+      $or: [{ email: loginRequest.email }, { mobileNumber: loginRequest.mobileNumber }],
     });
 
-    if (!user) throw new HttpException('No user by email', 401);
+    if (!user) throw new HttpException('No user by email or mobile', 401);
 
     if (!(await compare(loginRequest.password, user.password))) throw new HttpException('Invalid user details', 401);
 

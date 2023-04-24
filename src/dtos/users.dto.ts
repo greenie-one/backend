@@ -31,7 +31,15 @@ export class CreateUserDto {
 
 export class LoginDto {
   @IsEmail()
+  @ValidateIf((obj, val) => val || !obj.mobileNumber)
   email: string;
+
+  @IsString()
+  @Matches(/((\+*)((0[ -]*)*|((91 )*))((\d{12})+|(\d{10})+))|\d{5}([- ]*)\d{6}/)
+  @ValidateIf((obj, val) => val || !obj.email)
+  @Type(() => String)
+  @Transform((params) => sanitizeMobileNumber(params.value))
+  mobileNumber: string;
 
   @IsString()
   @IsNotEmpty()
