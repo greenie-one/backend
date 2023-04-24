@@ -48,8 +48,6 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
     sign: { algorithm: 'RS256' },
   });
 
-  fastify.decorateRequest('checkAuthentication', false);
-
   fastify.addHook('onRequest', async (req) => {
     const shouldValidate = !!routesToApplyAuthOn.find((val) => val.url === req.routerPath && val.method === req.method);
     if (shouldValidate) {

@@ -10,9 +10,6 @@ export class Profile {
   @prop({ type: String, required: true })
   public last_name!: string;
 
-  @prop({ type: String, required: true })
-  public phone!: string;
-
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 

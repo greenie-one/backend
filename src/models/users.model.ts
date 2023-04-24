@@ -7,8 +7,11 @@ export enum UserRoles {
 
 @modelOptions({ schemaOptions: { collection: 'users', timestamps: true } })
 export class User {
-  @prop({ type: String, required: true, unique: true })
+  @prop({ type: String, required: false, unique: true, sparse: true })
   public email: string;
+
+  @prop({ type: String, required: false, unique: true, sparse: true })
+  public mobileNumber: string;
 
   @prop({ type: String, required: false })
   public password?: string;
@@ -16,4 +19,5 @@ export class User {
   @prop({ type: String, enum: UserRoles, required: true, default: [UserRoles.DEFAULT] })
   public roles!: UserRoles[];
 }
+
 export const UserModel = getModelForClass(User);

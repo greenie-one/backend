@@ -27,6 +27,8 @@ async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQ
 
     const validator = predefinedValidation(type.name);
     await validator(dto as object);
+
+    return dto;
   } catch (errors) {
     const message = errors?.map((error: ValidationError) => Object.values(error.constraints));
     throw new HttpException(message, 400);
@@ -53,8 +55,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           const args = [];
           if (hasBody) {
-            await validate(hasBody.type, req.body, 'body');
-            args[hasBody.index] = req.body;
+            args[hasBody.index] = await validate(hasBody.type, req.body, 'body');
           }
 
           for (const q of hasQuery) {
@@ -63,8 +64,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
               throw new HttpException(`Query ${q.queryName} is missing`, 400);
             }
 
-            await validate(q.type, query, 'query');
-            args[q.index] = query;
+            args[q.index] = await validate(q.type, query, 'query');
           }
 
           for (const h of hasHeaders) {

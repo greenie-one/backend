@@ -12,16 +12,30 @@ class UserService {
   }
 
   public async createUser(userData: CreateUserDto) {
-    const findUser: User = await UserModel.findOne({ email: userData.email });
-    if (findUser) throw new HttpException(`This email ${userData.email} already exists`, 409);
+    const orFilter = [];
+    if (userData.email) orFilter.push({ email: userData.email });
+    if (userData.mobileNumber) orFilter.push({ mobileNumber: userData.mobileNumber });
+
+    const findUser: User = await UserModel.findOne({
+      $or: orFilter,
+    });
+
+    if (findUser) {
+      if (userData.email && userData.email === findUser.email) throw new HttpException(`This email ${userData.email} already exists`, 409);
+      else throw new HttpException(`This mobileNumber ${userData.mobileNumber} already exists`, 409);
+    }
 
     const hashedPassword = await hash(userData.password, 10);
-    const createUserData = await UserModel.create({ email: userData.email, roles: [UserRoles.DEFAULT], password: hashedPassword });
+    const createUserData = await UserModel.create({
+      email: userData.email,
+      mobileNumber: userData.mobileNumber,
+      roles: [UserRoles.DEFAULT],
+      password: hashedPassword,
+    });
 
     await ProfileModel.create({
       first_name: userData.firstName,
       last_name: userData.lastName,
-      phone: userData.mobileNumber,
       verification: await VerificationModel.create({
         is_verified: false,
       }),

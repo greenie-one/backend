@@ -38,3 +38,16 @@ export function validateRoute(route: string) {
   if (replaced.endsWith('/')) return replaced.substring(0, replaced.length - 1);
   return replaced;
 }
+
+export function sanitizeMobileNumber(mobileNumber: string) {
+  if (mobileNumber.startsWith('91') && mobileNumber.length === 12) {
+    mobileNumber = `+${mobileNumber}`;
+  }
+
+  if (!mobileNumber.startsWith('+91')) {
+    mobileNumber = `+91${mobileNumber}`;
+  }
+
+  console.log('returning', mobileNumber.slice(-13));
+  return mobileNumber.slice(-13);
+}
