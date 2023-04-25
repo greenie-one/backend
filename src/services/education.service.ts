@@ -4,11 +4,6 @@ import { EducationHistory, EducationHistoryModel } from '@/models/education.mode
 import { UserModel } from '@models/users.model';
 
 export class EducationHistoryService {
-  public async findAllEducationHistories(): Promise<EducationHistory[]> {
-    const educationHistories = await EducationHistoryModel.find();
-    return educationHistories;
-  }
-
   public async findEducationHistoryById(userId: string): Promise<EducationHistory[]> {
     const educationHistory = await EducationHistoryModel.find({ user: userId });
     if (!educationHistory) {

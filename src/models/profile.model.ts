@@ -13,6 +13,9 @@ export class Profile {
   @prop({ type: String, required: true })
   public phone!: string;
 
+  @prop({ type: String })
+  public greenie_id?: string;
+
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 

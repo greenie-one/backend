@@ -10,12 +10,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 export default class ProfileController {
   public profileService: ProfileService = new ProfileService();
 
-  @Get('/')
-  public async getProfiles(req: FastifyRequest, res: FastifyReply) {
-    const profiles: Profile[] = await this.profileService.findAllProfiles();
-    res.status(200).send({ data: profiles, message: 'findAll' });
-  }
-
   @Get('/:user')
   public async getProfile(req: FastifyRequest<{ Params: { user: string } }>, res: FastifyReply) {
     const user: string = req.params.user;
