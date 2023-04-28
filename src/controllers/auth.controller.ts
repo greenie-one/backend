@@ -1,7 +1,9 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateUserDto, LoginDto } from '@/dtos/users.dto';
+import { CreateUserDto, LoginDto, ValidateOtpDTO } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
+import { User } from '@/models/users.model';
 import { authService } from '@/services/auth.service';
+import { userService } from '@/services/users.service';
 import { AuthGuard } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
@@ -15,9 +17,8 @@ export class AuthController {
     return authService.createUser(createUserRequest);
   }
 
-  @Post('/login')
-  async login(@Body() loginRequest: LoginDto, @Req() req: FastifyRequest) {
-    const userDetails = await authService.createUserDetails(loginRequest);
+  private async generateTokens(req: FastifyRequest, user: User) {
+    const userDetails = await authService.createUserDetails(user);
 
     try {
       const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
@@ -29,6 +30,32 @@ export class AuthController {
     } catch (e) {
       authService.removeSession(userDetails.sessionId).catch(console.error);
       throw e;
+    }
+  }
+
+  @Post('/login')
+  async login(@Body() loginRequest: LoginDto, @Req() request: FastifyRequest) {
+    if (loginRequest.mobileNumber) {
+      await userService.validateByPhoneNumber(loginRequest.mobileNumber);
+      return 'Sent OTP';
+    }
+
+    if (loginRequest.email) {
+      const user = await userService.validateUserByEmail(loginRequest.email, loginRequest.password);
+      return this.generateTokens(request, user);
+    }
+  }
+
+  @Post('/validateOTP')
+  async validateOtp(@Body() validateOtpRequest: ValidateOtpDTO, @Req() request: FastifyRequest) {
+    console.debug('Got OTP request', validateOtpRequest);
+
+    const user = await userService.validateByPhoneNumber(validateOtpRequest.mobileNumber);
+
+    if (await authService.validateOTP()) {
+      return this.generateTokens(request, user);
+    } else {
+      throw new HttpException('Invalid OTP', 401);
     }
   }
 

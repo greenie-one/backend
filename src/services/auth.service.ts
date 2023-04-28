@@ -1,22 +1,21 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateUserDto, LoginDto } from '@/dtos/users.dto';
+import { CreateUserDto } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
+import { User } from '@/models/users.model';
+import { AuthRemote } from '@/remote/auth';
 import { v4 } from 'uuid';
 import { userService } from './users.service';
 
 class AuthService {
-  async createUserDetails(loginRequest: LoginDto) {
-    // Throw if invalid user
-    const user = await userService.validateUser(loginRequest);
-
+  async createUserDetails(user: User) {
     const profile = await ProfileModel.findOne({
-      user: user.id,
+      user: user._id,
     });
 
     const userDetails: TokenClaims = {
-      email: loginRequest.email,
+      email: user.email,
       firstName: profile.first_name,
       lastName: profile.last_name,
       roles: user.roles,
@@ -56,6 +55,10 @@ class AuthService {
 
   async createUser(request: CreateUserDto) {
     return userService.createUser(request);
+  }
+
+  async validateOTP() {
+    return AuthRemote.validateOtp();
   }
 }
 

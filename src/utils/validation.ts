@@ -48,6 +48,5 @@ export function sanitizeMobileNumber(mobileNumber: string) {
     mobileNumber = `+91${mobileNumber}`;
   }
 
-  console.log('returning', mobileNumber.slice(-13));
   return mobileNumber.slice(-13);
 }

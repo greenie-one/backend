@@ -1,7 +1,8 @@
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { VerificationModel } from '@/models/verified.model';
-import { CreateUserDto, LoginDto } from '@dtos/users.dto';
+import { AuthRemote } from '@/remote/auth';
+import { CreateUserDto } from '@dtos/users.dto';
 import { User, UserModel, UserRoles } from '@models/users.model';
 import { compare, hash } from 'bcryptjs';
 
@@ -46,14 +47,26 @@ class UserService {
     return createUserData;
   }
 
-  public async validateUser(loginRequest: LoginDto) {
+  public async validateUserByEmail(email: string, password: string) {
     const user = await UserModel.findOne({
-      $or: [{ email: loginRequest.email }, { mobileNumber: loginRequest.mobileNumber }],
+      email,
     });
 
-    if (!user) throw new HttpException('No user by email or mobile', 401);
+    if (!user) throw new HttpException(`No user by email ${email}`, 401);
 
-    if (!(await compare(loginRequest.password, user.password))) throw new HttpException('Invalid user details', 401);
+    if (!(await compare(password, user.password))) throw new HttpException('Invalid user details', 401);
+
+    return user;
+  }
+
+  public async validateByPhoneNumber(mobileNumber: string) {
+    const user = await UserModel.findOne({
+      mobileNumber,
+    });
+
+    if (!user) throw new HttpException(`No user by email ${mobileNumber}`, 401);
+
+    await AuthRemote.requestOtp();
 
     return user;
   }
