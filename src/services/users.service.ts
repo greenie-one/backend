@@ -64,7 +64,7 @@ class UserService {
       mobileNumber,
     });
 
-    if (!user) throw new HttpException(`No user by email ${mobileNumber}`, 401);
+    if (!user) throw new HttpException(`No user by mobile ${mobileNumber}`, 401);
 
     await AuthRemote.requestOtp();
 
