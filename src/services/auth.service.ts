@@ -19,6 +19,7 @@ class AuthService {
       firstName: profile.first_name,
       lastName: profile.last_name,
       roles: user.roles,
+      userId: user._id,
       sessionId: v4(),
     };
 

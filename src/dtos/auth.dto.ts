@@ -1,5 +1,5 @@
 import { UserRoles } from '@/models/users.model';
-import { IsBoolean, IsEmail, IsEnum, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class TokenClaims {
   @IsEmail()
@@ -17,8 +17,12 @@ export class TokenClaims {
   @IsEnum(UserRoles)
   roles: UserRoles[];
 
+  @IsOptional()
   iat?: number;
 
   @IsBoolean()
   isRefresh?: boolean;
+
+  @IsString()
+  userId: string;
 }
