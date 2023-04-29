@@ -3,7 +3,9 @@ import { HttpException } from '@/exceptions/httpException';
 import { User, UserModel } from '@/models/users.model';
 import { LinkedInRemote } from '@/remote/auth/linkedIn.remote';
 import { createVerifier } from 'fast-jwt';
+import { FastifyRequest } from 'fastify';
 import buildGetJwks from 'get-jwks';
+import { authService } from './auth.service';
 import { userService } from './users.service';
 
 class OAuthService {
@@ -20,7 +22,7 @@ class OAuthService {
       }),
   });
 
-  async handleLinkedInLogin({ code }: LinkedInOAuthDto) {
+  async handleLinkedInLogin(request: FastifyRequest, { code }: LinkedInOAuthDto) {
     const accessTokenResp = await LinkedInRemote.getAccessToken(code);
 
     if (accessTokenResp.error) {
@@ -35,20 +37,20 @@ class OAuthService {
       throw new HttpException('Failed to verify authenticity of token', 401);
     }
 
-    let userByEmail: User = await UserModel.findOne({
+    let user: User = await UserModel.findOne({
       email: decoded.email,
     });
 
-    if (!userByEmail) {
+    if (!user) {
       console.info(`No user found by email ${decoded.email}, creating...`);
-      userByEmail = await userService.createUser({
+      user = await userService.createUser({
         email: decoded.email,
         firstName: decoded.given_name,
         lastName: decoded.family_name,
       });
     }
 
-    return userByEmail;
+    return authService.generateTokens(request, user);
   }
 }
 

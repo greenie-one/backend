@@ -1,7 +1,6 @@
 import { TokenClaims } from '@/dtos/auth.dto';
 import { CreateUserDto, LoginDto, ValidateOtpDTO } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
-import { User } from '@/models/users.model';
 import { authService } from '@/services/auth.service';
 import { userService } from '@/services/users.service';
 import { AuthGuard } from '@/utils/decorators/auth';
@@ -17,22 +16,6 @@ export class AuthController {
     return authService.createUser(createUserRequest);
   }
 
-  private async generateTokens(req: FastifyRequest, user: User) {
-    const userDetails = await authService.createUserDetails(user);
-
-    try {
-      const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
-      const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true, algorithm: 'RS256' });
-
-      await authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
-
-      return { accessToken, refreshToken };
-    } catch (e) {
-      authService.removeSession(userDetails.sessionId).catch(console.error);
-      throw e;
-    }
-  }
-
   @Post('/login')
   async login(@Body() loginRequest: LoginDto, @Req() request: FastifyRequest) {
     if (loginRequest.mobileNumber) {
@@ -42,7 +25,7 @@ export class AuthController {
 
     if (loginRequest.email) {
       const user = await userService.validateUserByEmail(loginRequest.email, loginRequest.password);
-      return this.generateTokens(request, user);
+      return authService.generateTokens(request, user);
     }
   }
 
@@ -53,7 +36,7 @@ export class AuthController {
     const user = await userService.validateByPhoneNumber(validateOtpRequest.mobileNumber);
 
     if (await authService.validateOTP()) {
-      return this.generateTokens(request, user);
+      return authService.generateTokens(request, user);
     } else {
       throw new HttpException('Invalid OTP', 401);
     }
