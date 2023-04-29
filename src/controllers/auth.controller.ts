@@ -20,6 +20,7 @@ export class AuthController {
   async login(@Body() loginRequest: LoginDto, @Req() request: FastifyRequest) {
     if (loginRequest.mobileNumber) {
       await userService.validateByPhoneNumber(loginRequest.mobileNumber);
+      await authService.requestOTP(loginRequest.mobileNumber);
       return 'Sent OTP';
     }
 
@@ -31,11 +32,9 @@ export class AuthController {
 
   @Post('/validateOTP')
   async validateOtp(@Body() validateOtpRequest: ValidateOtpDTO, @Req() request: FastifyRequest) {
-    console.debug('Got OTP request', validateOtpRequest);
-
     const user = await userService.validateByPhoneNumber(validateOtpRequest.mobileNumber);
 
-    if (await authService.validateOTP()) {
+    if (await authService.validateOTP(validateOtpRequest.mobileNumber, validateOtpRequest.otp)) {
       return authService.generateTokens(request, user);
     } else {
       throw new HttpException('Invalid OTP', 401);

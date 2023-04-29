@@ -4,7 +4,9 @@ import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
 import { User } from '@/models/users.model';
+import { redisClient } from '@/redisClient';
 import { AuthRemote } from '@/remote/auth/otp.remote';
+import { generateOTP } from '@/utils/string';
 import { FastifyRequest } from 'fastify';
 import { v4 } from 'uuid';
 import { userService } from './users.service';
@@ -59,8 +61,17 @@ class AuthService {
     return userService.createUser(request);
   }
 
-  async validateOTP() {
-    return AuthRemote.validateOtp();
+  async requestOTP(mobileNumber: string) {
+    const otp = generateOTP();
+    const expiresIn = 5 * 60; // 5 mins;
+
+    await redisClient.setEx(`${mobileNumber}_otp`, expiresIn, otp);
+    await AuthRemote.requestOtp(mobileNumber, otp);
+  }
+
+  async validateOTP(mobileNumber: string, otp: string) {
+    const data = await redisClient.getDel(`${mobileNumber}_otp`);
+    return otp === data;
   }
 
   async generateTokens(req: FastifyRequest, user: User) {

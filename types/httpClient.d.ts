@@ -1,6 +1,9 @@
 type HttpRequest = {
   url: string;
-  headers?: Record<string, string>;
+  headers?:
+    | {
+        'Content-Type'?: 'application/json' | 'application/x-www-form-urlencoded';
+      } & Record<string, string>;
   toJSON?: boolean;
 } & (
   | {

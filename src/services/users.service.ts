@@ -1,7 +1,6 @@
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { VerificationModel } from '@/models/verified.model';
-import { AuthRemote } from '@/remote/auth/otp.remote';
 import { CreateUserDto } from '@dtos/users.dto';
 import { User, UserModel, UserRoles } from '@models/users.model';
 import { compare, hash } from 'bcryptjs';
@@ -70,8 +69,6 @@ class UserService {
     });
 
     if (!user) throw new HttpException(`No user by mobile ${mobileNumber}`, 401);
-
-    await AuthRemote.requestOtp();
 
     return user;
   }
