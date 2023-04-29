@@ -16,6 +16,7 @@ import { connect, set } from 'mongoose';
 import { env } from './config';
 import { registerControllers } from './controllers';
 import { registerJWTMiddleware } from './middlewares/jwt.middleware';
+import { redisClient } from './redisClient';
 
 export class App {
   public app: ReturnType<typeof fastify>;
@@ -37,6 +38,7 @@ export class App {
     });
 
     await this.connectToDatabase();
+    await this.connectToRedis();
     await this.initializeMiddlewares();
     this.initializeErrorHandling();
 
@@ -61,6 +63,10 @@ export class App {
   private async connectToDatabase() {
     set('strictQuery', true);
     return connect(dbConnection);
+  }
+
+  private async connectToRedis() {
+    await redisClient.connect();
   }
 
   private async initializeMiddlewares() {
