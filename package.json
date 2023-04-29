@@ -83,10 +83,5 @@
   "packageManager": "yarn@3.5.0",
   "resolutions": {
     "get-jwks@^8.0.5": "patch:get-jwks@npm%3A8.0.5#./.yarn/patches/get-jwks-npm-8.0.5-ffe2437545.patch"
-  },
-  "dependenciesMeta": {
-    "get-jwks@8.0.5": {
-      "unplugged": true
-    }
   }
 }
