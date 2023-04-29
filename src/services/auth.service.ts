@@ -4,7 +4,7 @@ import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
 import { User } from '@/models/users.model';
-import { AuthRemote } from '@/remote/auth';
+import { AuthRemote } from '@/remote/auth/otp.remote';
 import { v4 } from 'uuid';
 import { userService } from './users.service';
 

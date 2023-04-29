@@ -2206,7 +2206,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"asn1.js@npm:^5.4.1":
+"asn1.js@npm:^5.3.0, asn1.js@npm:^5.4.1":
   version: 5.4.1
   resolution: "asn1.js@npm:5.4.1"
   dependencies:
@@ -2385,7 +2385,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bn.js@npm:^4.0.0":
+"bn.js@npm:^4.0.0, bn.js@npm:^4.11.9":
   version: 4.12.0
   resolution: "bn.js@npm:4.12.0"
   checksum: 39afb4f15f4ea537b55eaf1446c896af28ac948fdcf47171961475724d1bb65118cca49fa6e3d67706e4790955ec0e74de584e45c8f1ef89f46c812bee5b5a12
@@ -2417,6 +2417,13 @@ __metadata:
   dependencies:
     fill-range: ^7.0.1
   checksum: e2a8e769a863f3d4ee887b5fe21f63193a891c68b612ddb4b68d82d1b5f3ff9073af066c343e9867a393fe4c2555dcb33e89b937195feb9c1613d259edfcd459
+  languageName: node
+  linkType: hard
+
+"brorand@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "brorand@npm:1.1.0"
+  checksum: 8a05c9f3c4b46572dec6ef71012b1946db6cae8c7bb60ccd4b7dd5a84655db49fe043ecc6272e7ef1f69dc53d6730b9e2a3a03a8310509a3d797a618cbee52be
   languageName: node
   linkType: hard
 
@@ -3184,6 +3191,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"elliptic@npm:^6.5.4":
+  version: 6.5.4
+  resolution: "elliptic@npm:6.5.4"
+  dependencies:
+    bn.js: ^4.11.9
+    brorand: ^1.1.0
+    hash.js: ^1.0.0
+    hmac-drbg: ^1.0.1
+    inherits: ^2.0.4
+    minimalistic-assert: ^1.0.1
+    minimalistic-crypto-utils: ^1.0.1
+  checksum: d56d21fd04e97869f7ffcc92e18903b9f67f2d4637a23c860492fbbff5a3155fd9ca0184ce0c865dd6eb2487d234ce9551335c021c376cd2d3b7cb749c7d10f4
+  languageName: node
+  linkType: hard
+
 "emittery@npm:^0.13.1":
   version: 0.13.1
   resolution: "emittery@npm:0.13.1"
@@ -3663,6 +3685,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-jwt@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "fast-jwt@npm:2.2.2"
+  dependencies:
+    asn1.js: ^5.4.1
+    ecdsa-sig-formatter: ^1.0.11
+    mnemonist: ^0.39.5
+  checksum: 57dbedcd313ccbcff06c9b66174ecdc55a81ca49f747bc9c7b4f194cfca3926f6521ee326aaa3f244c4c33625e97f9846317442210d69b1df56bd44b0df7c9f3
+  languageName: node
+  linkType: hard
+
 "fast-levenshtein@npm:^2.0.6":
   version: 2.0.6
   resolution: "fast-levenshtein@npm:2.0.6"
@@ -4001,6 +4034,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"get-jwks@npm:8.0.5":
+  version: 8.0.5
+  resolution: "get-jwks@npm:8.0.5"
+  dependencies:
+    jwk-to-pem: ^2.0.4
+    lru-cache: ^9.0.0
+    node-fetch: ^2.6.1
+  checksum: 02f19442e8d1ea2ec44ae9015bf6ce4ae4da3c6a34e90fdbfe2279ff3c678232c63892dba221970ab76adfe5b962a32caaad846c336e738a3281f5c9fb5640b2
+  languageName: node
+  linkType: hard
+
+"get-jwks@patch:get-jwks@npm%3A8.0.5#./.yarn/patches/get-jwks-npm-8.0.5-ffe2437545.patch::locator=greenie%40workspace%3A.":
+  version: 8.0.5
+  resolution: "get-jwks@patch:get-jwks@npm%3A8.0.5#./.yarn/patches/get-jwks-npm-8.0.5-ffe2437545.patch::version=8.0.5&hash=840cce&locator=greenie%40workspace%3A."
+  dependencies:
+    jwk-to-pem: ^2.0.4
+    lru-cache: ^9.0.0
+    node-fetch: ^2.6.1
+  checksum: 0fb3af464cd16992e3defd49c03af6cb390677ba4b5a8da5a18abcbdd4c6233b5c037f47c23c841d53683288dd74075c7a2bee1d608f6b131933f04648f7d519
+  languageName: node
+  linkType: hard
+
 "get-package-type@npm:^0.1.0":
   version: 0.1.0
   resolution: "get-package-type@npm:0.1.0"
@@ -4196,7 +4251,9 @@ __metadata:
     eslint: ^8.39.0
     eslint-config-prettier: ^8.8.0
     eslint-plugin-prettier: ^4.2.1
+    fast-jwt: ^2.2.2
     fastify: ^4.15.0
+    get-jwks: ^8.0.5
     helmet: ^6.1.5
     hpp: ^0.2.3
     husky: ^8.0.3
@@ -4222,6 +4279,9 @@ __metadata:
     uuid: ^9.0.0
     webpack: ^5.80.0
     webpack-cli: ^5.0.2
+  dependenciesMeta:
+    get-jwks@8.0.5:
+      unplugged: true
   languageName: unknown
   linkType: soft
 
@@ -4262,6 +4322,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hash.js@npm:^1.0.0, hash.js@npm:^1.0.3":
+  version: 1.1.7
+  resolution: "hash.js@npm:1.1.7"
+  dependencies:
+    inherits: ^2.0.3
+    minimalistic-assert: ^1.0.1
+  checksum: e350096e659c62422b85fa508e4b3669017311aa4c49b74f19f8e1bc7f3a54a584fdfd45326d4964d6011f2b2d882e38bea775a96046f2a61b7779a979629d8f
+  languageName: node
+  linkType: hard
+
 "helmet@npm:^6.1.5":
   version: 6.1.5
   resolution: "helmet@npm:6.1.5"
@@ -4273,6 +4343,17 @@ __metadata:
   version: 1.0.0
   resolution: "hexoid@npm:1.0.0"
   checksum: 27a148ca76a2358287f40445870116baaff4a0ed0acc99900bf167f0f708ffd82e044ff55e9949c71963852b580fc024146d3ac6d5d76b508b78d927fa48ae2d
+  languageName: node
+  linkType: hard
+
+"hmac-drbg@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "hmac-drbg@npm:1.0.1"
+  dependencies:
+    hash.js: ^1.0.3
+    minimalistic-assert: ^1.0.0
+    minimalistic-crypto-utils: ^1.0.1
+  checksum: bd30b6a68d7f22d63f10e1888aee497d7c2c5c0bb469e66bbdac99f143904d1dfe95f8131f95b3e86c86dd239963c9d972fcbe147e7cffa00e55d18585c43fe0
   languageName: node
   linkType: hard
 
@@ -4446,7 +4527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inherits@npm:2, inherits@npm:^2.0.1, inherits@npm:^2.0.3":
+"inherits@npm:2, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:^2.0.4":
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: 4a48a733847879d6cf6691860a6b1e3f0f4754176e4d71494c41f3475553768b10f84b5ce1d40fbd0e34e6bfbb864ee35858ad4dd2cf31e02fc4a154b724d7f1
@@ -5203,6 +5284,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jwk-to-pem@npm:^2.0.4":
+  version: 2.0.5
+  resolution: "jwk-to-pem@npm:2.0.5"
+  dependencies:
+    asn1.js: ^5.3.0
+    elliptic: ^6.5.4
+    safe-buffer: ^5.0.1
+  checksum: 14a8f518e9f81876a0f45233288fd1b611777d4d0fc317b8cd4b4e19602c305e537dc45d44476263667d950664a7ddf3c7a218a39b6b1f5e53e4ad53a44822ef
+  languageName: node
+  linkType: hard
+
 "kareem@npm:2.5.1":
   version: 2.5.1
   resolution: "kareem@npm:2.5.1"
@@ -5433,6 +5525,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:^9.0.0":
+  version: 9.1.1
+  resolution: "lru-cache@npm:9.1.1"
+  checksum: 4d703bb9b66216bbee55ead82a9682820a2b6acbdfca491b235390b1ef1056000a032d56dfb373fdf9ad4492f1fa9d04cc9a05a77f25bd7ce6901d21ad9b68b7
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^3.0.0":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
@@ -5580,10 +5679,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimalistic-assert@npm:^1.0.0":
+"minimalistic-assert@npm:^1.0.0, minimalistic-assert@npm:^1.0.1":
   version: 1.0.1
   resolution: "minimalistic-assert@npm:1.0.1"
   checksum: cc7974a9268fbf130fb055aff76700d7e2d8be5f761fb5c60318d0ed010d839ab3661a533ad29a5d37653133385204c503bfac995aaa4236f4e847461ea32ba7
+  languageName: node
+  linkType: hard
+
+"minimalistic-crypto-utils@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "minimalistic-crypto-utils@npm:1.0.1"
+  checksum: 6e8a0422b30039406efd4c440829ea8f988845db02a3299f372fceba56ffa94994a9c0f2fd70c17f9969eedfbd72f34b5070ead9656a34d3f71c0bd72583a0ed
   languageName: node
   linkType: hard
 
@@ -5827,6 +5933,20 @@ __metadata:
   version: 2.6.2
   resolution: "neo-async@npm:2.6.2"
   checksum: deac9f8d00eda7b2e5cd1b2549e26e10a0faa70adaa6fdadca701cc55f49ee9018e427f424bac0c790b7c7e2d3068db97f3093f1093975f2acb8f8818b936ed9
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:^2.6.1":
+  version: 2.6.9
+  resolution: "node-fetch@npm:2.6.9"
+  dependencies:
+    whatwg-url: ^5.0.0
+  peerDependencies:
+    encoding: ^0.1.0
+  peerDependenciesMeta:
+    encoding:
+      optional: true
+  checksum: acb04f9ce7224965b2b59e71b33c639794d8991efd73855b0b250921382b38331ffc9d61bce502571f6cc6e11a8905ca9b1b6d4aeb586ab093e2756a1fd190d0
   languageName: node
   linkType: hard
 
@@ -7461,6 +7581,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tr46@npm:~0.0.3":
+  version: 0.0.3
+  resolution: "tr46@npm:0.0.3"
+  checksum: 726321c5eaf41b5002e17ffbd1fb7245999a073e8979085dacd47c4b4e8068ff5777142fc6726d6ca1fd2ff16921b48788b87225cbc57c72636f6efa8efbffe3
+  languageName: node
+  linkType: hard
+
 "trim-repeated@npm:^2.0.0":
   version: 2.0.0
   resolution: "trim-repeated@npm:2.0.0"
@@ -7795,6 +7922,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webidl-conversions@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "webidl-conversions@npm:3.0.1"
+  checksum: c92a0a6ab95314bde9c32e1d0a6dfac83b578f8fa5f21e675bc2706ed6981bc26b7eb7e6a1fab158e5ce4adf9caa4a0aee49a52505d4d13c7be545f15021b17c
+  languageName: node
+  linkType: hard
+
 "webidl-conversions@npm:^7.0.0":
   version: 7.0.0
   resolution: "webidl-conversions@npm:7.0.0"
@@ -7895,6 +8029,16 @@ __metadata:
     tr46: ^3.0.0
     webidl-conversions: ^7.0.0
   checksum: ed4826aaa57e66bb3488a4b25c9cd476c46ba96052747388b5801f137dd740b73fde91ad207d96baf9f17fbcc80fc1a477ad65181b5eb5fa718d27c69501d7af
+  languageName: node
+  linkType: hard
+
+"whatwg-url@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "whatwg-url@npm:5.0.0"
+  dependencies:
+    tr46: ~0.0.3
+    webidl-conversions: ^3.0.0
+  checksum: b8daed4ad3356cc4899048a15b2c143a9aed0dfae1f611ebd55073310c7b910f522ad75d727346ad64203d7e6c79ef25eafd465f4d12775ca44b90fa82ed9e2c
   languageName: node
   linkType: hard
 
