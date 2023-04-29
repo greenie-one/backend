@@ -1,3 +1,4 @@
+import { env } from '@/config';
 import { LinkedInOAuthDto } from '@/dtos/oauth.dto';
 import { HttpException } from '@/exceptions/httpException';
 import { User, UserModel } from '@/models/users.model';
@@ -51,6 +52,16 @@ class OAuthService {
     }
 
     return authService.generateTokens(request, user);
+  }
+
+  getLinkedInRedirectURL() {
+    const baseURL = new URL('https://www.linkedin.com/oauth/v2/authorization');
+    baseURL.searchParams.set('response_type', 'code');
+    baseURL.searchParams.set('client_id', env('LINKEDIN_CLIENT_ID'));
+    baseURL.searchParams.set('redirect_uri', env('LINKEDIN_REDIRECT_URI'));
+    baseURL.searchParams.set('scope', 'openid email profile r_liteprofile');
+
+    return baseURL.toString();
   }
 }
 

@@ -7,7 +7,12 @@ import { FastifyRequest } from 'fastify';
 
 @Controller('/oauth')
 export class OAuthController {
-  @Get('/linkedIn')
+  @Get('/linkedInRedirect')
+  async getLinkedInRedirectionURL() {
+    return { url: oAuthService.getLinkedInRedirectURL() };
+  }
+
+  @Get('/linkedInCallback')
   async handleLinkedInCallback(@Query() query: LinkedInOAuthDto, @Req() request: FastifyRequest) {
     return oAuthService.handleLinkedInLogin(request, query);
   }
