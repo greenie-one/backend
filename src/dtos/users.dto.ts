@@ -12,13 +12,13 @@ export class CreateUserDto {
   @ValidateIf((obj, val) => val || !obj.email)
   @Type(() => String)
   @Transform((params) => sanitizeMobileNumber(params.value))
-  mobileNumber: string;
+  mobileNumber?: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(9)
   @MaxLength(72)
-  password: string;
+  password?: string;
 
   @IsString()
   @IsNotEmpty()

@@ -45,7 +45,8 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
       public: publicKey,
       private: { key: privateKey, passphrase: env('JWT_KEY_PASSPHRASE') },
     },
-    sign: { algorithm: 'RS256' },
+    sign: { algorithm: 'RS256', iss: 'greenie.one' },
+    verify: { allowedIss: 'greenie.one' },
   });
 
   fastify.addHook('onRequest', async (req) => {

@@ -1,11 +1,15 @@
-type HttpRequest = { url: string } & (
+type HttpRequest = {
+  url: string;
+  headers?: Record<string, string>;
+  toJSON?: boolean;
+} & (
   | {
-      body?: never;
+      body?: Record<string, string | string[] | number | boolean>;
       method: 'POST';
     }
   | {
       method: 'GET';
-      query: Record<string, string>;
+      query?: Record<string, string>;
     }
 );
 

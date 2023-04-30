@@ -4,7 +4,8 @@ import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
 import { User } from '@/models/users.model';
-import { AuthRemote } from '@/remote/auth';
+import { AuthRemote } from '@/remote/auth/otp.remote';
+import { FastifyRequest } from 'fastify';
 import { v4 } from 'uuid';
 import { userService } from './users.service';
 
@@ -60,6 +61,22 @@ class AuthService {
 
   async validateOTP() {
     return AuthRemote.validateOtp();
+  }
+
+  async generateTokens(req: FastifyRequest, user: User) {
+    const userDetails = await authService.createUserDetails(user);
+
+    try {
+      const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
+      const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true }, { algorithm: 'RS256', expiresIn: '60d' });
+
+      await authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
+
+      return { accessToken, refreshToken };
+    } catch (e) {
+      authService.removeSession(userDetails.sessionId).catch(console.error);
+      throw e;
+    }
   }
 }
 

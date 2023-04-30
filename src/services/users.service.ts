@@ -1,7 +1,7 @@
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { VerificationModel } from '@/models/verified.model';
-import { AuthRemote } from '@/remote/auth';
+import { AuthRemote } from '@/remote/auth/otp.remote';
 import { CreateUserDto } from '@dtos/users.dto';
 import { User, UserModel, UserRoles } from '@models/users.model';
 import { compare, hash } from 'bcryptjs';
@@ -26,7 +26,11 @@ class UserService {
       else throw new HttpException(`This mobileNumber ${userData.mobileNumber} already exists`, 409);
     }
 
-    const hashedPassword = await hash(userData.password, 10);
+    let hashedPassword: string | undefined;
+    if (userData.password) {
+      hashedPassword = await hash(userData.password, 10);
+    }
+
     const createUserData = await UserModel.create({
       email: userData.email,
       mobileNumber: userData.mobileNumber,
@@ -53,6 +57,7 @@ class UserService {
     });
 
     if (!user) throw new HttpException(`No user by email ${email}`, 401);
+    if (!user.password) throw new HttpException(`User does not have a password`, 401);
 
     if (!(await compare(password, user.password))) throw new HttpException('Invalid user details', 401);
 
