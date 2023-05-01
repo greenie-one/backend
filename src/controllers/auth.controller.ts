@@ -1,7 +1,8 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateUserDto, LoginDto } from '@/dtos/users.dto';
+import { CreateUserDto, LoginDto, ValidateOtpDTO } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
 import { authService } from '@/services/auth.service';
+import { userService } from '@/services/users.service';
 import { AuthGuard } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
@@ -16,19 +17,28 @@ export class AuthController {
   }
 
   @Post('/login')
-  async login(@Body() loginRequest: LoginDto, @Req() req: FastifyRequest) {
-    const userDetails = await authService.createUserDetails(loginRequest);
+  async login(@Body() loginRequest: LoginDto, @Req() request: FastifyRequest) {
+    if (loginRequest.mobileNumber) {
+      await userService.validateByPhoneNumber(loginRequest.mobileNumber);
+      return 'Sent OTP';
+    }
 
-    try {
-      const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
-      const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true, algorithm: 'RS256' });
+    if (loginRequest.email) {
+      const user = await userService.validateUserByEmail(loginRequest.email, loginRequest.password);
+      return authService.generateTokens(request, user);
+    }
+  }
 
-      await authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
+  @Post('/validateOTP')
+  async validateOtp(@Body() validateOtpRequest: ValidateOtpDTO, @Req() request: FastifyRequest) {
+    console.debug('Got OTP request', validateOtpRequest);
 
-      return { accessToken, refreshToken };
-    } catch (e) {
-      authService.removeSession(userDetails.sessionId).catch(console.error);
-      throw e;
+    const user = await userService.validateByPhoneNumber(validateOtpRequest.mobileNumber);
+
+    if (await authService.validateOTP()) {
+      return authService.generateTokens(request, user);
+    } else {
+      throw new HttpException('Invalid OTP', 401);
     }
   }
 

@@ -32,7 +32,9 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "envalid": "^7.3.1",
+    "fast-jwt": "^2.2.2",
     "fastify": "^4.15.0",
+    "get-jwks": "^8.0.5",
     "helmet": "^6.1.5",
     "hpp": "^0.2.3",
     "loglevel": "^1.8.1",
@@ -43,6 +45,7 @@
     "swc-loader": "^0.2.3",
     "tsconfig-paths-webpack-plugin": "^4.0.1",
     "tslib": "^2.5.0",
+    "undici": "^5.22.0",
     "uuid": "^9.0.0",
     "webpack": "^5.80.0",
     "webpack-cli": "^5.0.2"
@@ -77,5 +80,8 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4"
   },
-  "packageManager": "yarn@3.5.0"
+  "packageManager": "yarn@3.5.0",
+  "resolutions": {
+    "get-jwks@^8.0.5": "patch:get-jwks@npm%3A8.0.5#./.yarn/patches/get-jwks-npm-8.0.5-ffe2437545.patch"
+  }
 }

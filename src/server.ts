@@ -2,6 +2,7 @@ import { App } from '@/app';
 import { ValidateEnv } from '@utils/validateEnv';
 import { AuthController } from './controllers/auth.controller';
 import EducationHistoryController from './controllers/education.controller';
+import { OAuthController } from './controllers/oauth.controller';
 import ProfileController from './controllers/profile.controller';
 import RootController from './controllers/root.controller';
 
@@ -17,7 +18,7 @@ process.on('unhandledRejection', (e) => {
 
 ValidateEnv();
 
-const controllers = [RootController, AuthController, ProfileController, EducationHistoryController];
+const controllers = [RootController, AuthController, OAuthController, ProfileController, EducationHistoryController];
 
 const app = new App(controllers);
 

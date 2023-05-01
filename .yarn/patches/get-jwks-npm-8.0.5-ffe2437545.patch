@@ -1,0 +1,30 @@
+diff --git a/package.json b/package.json
+index e1bfda04c89f1f1d0d9fc962b13acaaf154d204b..58eca47ef46e30b46aca577837351abd4b934c3c 100644
+--- a/package.json
++++ b/package.json
+@@ -30,13 +30,11 @@
+   "homepage": "https://github.com/nearform/get-jwks#readme",
+   "dependencies": {
+     "jwk-to-pem": "^2.0.4",
+-    "lru-cache": "^9.0.0",
+-    "node-fetch": "^2.6.1"
++    "lru-cache": "^9.0.0"
+   },
+   "devDependencies": {
+     "@fastify/jwt": "^6.1.0",
+     "@types/node": "^18.6.5",
+-    "@types/node-fetch": "^2.6.2",
+     "eslint": "^8.6.0",
+     "fast-jwt": "^2.0.0",
+     "fastify": "^4.0.3",
+diff --git a/src/get-jwks.js b/src/get-jwks.js
+index d3cc99e9015c8066a9f14463cde77ccf451bdd82..678bf83d4463c82d6c788953bfc64c680868cfc4 100644
+--- a/src/get-jwks.js
++++ b/src/get-jwks.js
+@@ -1,6 +1,5 @@
+ 'use strict'
+ 
+-const fetch = require('node-fetch')
+ const { LRUCache } = require('lru-cache')
+ const jwkToPem = require('jwk-to-pem')
+ 

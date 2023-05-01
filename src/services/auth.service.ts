@@ -1,25 +1,26 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateUserDto, LoginDto } from '@/dtos/users.dto';
+import { CreateUserDto } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
+import { User } from '@/models/users.model';
+import { AuthRemote } from '@/remote/auth/otp.remote';
+import { FastifyRequest } from 'fastify';
 import { v4 } from 'uuid';
 import { userService } from './users.service';
 
 class AuthService {
-  async createUserDetails(loginRequest: LoginDto) {
-    // Throw if invalid user
-    const user = await userService.validateUser(loginRequest);
-
+  async createUserDetails(user: User) {
     const profile = await ProfileModel.findOne({
-      user: user.id,
+      user: user._id,
     });
 
     const userDetails: TokenClaims = {
-      email: loginRequest.email,
+      email: user.email,
       firstName: profile.first_name,
       lastName: profile.last_name,
       roles: user.roles,
+      userId: user._id,
       sessionId: v4(),
     };
 
@@ -56,6 +57,26 @@ class AuthService {
 
   async createUser(request: CreateUserDto) {
     return userService.createUser(request);
+  }
+
+  async validateOTP() {
+    return AuthRemote.validateOtp();
+  }
+
+  async generateTokens(req: FastifyRequest, user: User) {
+    const userDetails = await authService.createUserDetails(user);
+
+    try {
+      const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
+      const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true }, { algorithm: 'RS256', expiresIn: '60d' });
+
+      await authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
+
+      return { accessToken, refreshToken };
+    } catch (e) {
+      authService.removeSession(userDetails.sessionId).catch(console.error);
+      throw e;
+    }
   }
 }
 
