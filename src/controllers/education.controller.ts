@@ -9,12 +9,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 export default class EducationHistoryController {
   public educationHistoryService: EducationHistoryService = new EducationHistoryService();
 
-  @Get('/')
-  public async getAllEducationHistories(req: FastifyRequest, res: FastifyReply) {
-    const educationHistories = await this.educationHistoryService.findAllEducationHistories();
-    res.status(200).send({ data: educationHistories, message: 'findAll' });
-  }
-
   @Get('/:userId')
   public async getEducationHistory(req: FastifyRequest<{ Params: { userId: string } }>, res: FastifyReply) {
     const userId = req.params.userId;

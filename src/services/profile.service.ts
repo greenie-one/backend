@@ -4,11 +4,6 @@ import { Profile, ProfileModel } from '@/models/profile.model';
 import { UserModel } from '@models/users.model';
 
 export class ProfileService {
-  public async findAllProfiles(): Promise<Profile[]> {
-    const profiles = await ProfileModel.find();
-    return profiles;
-  }
-
   public async findProfileById(user: string): Promise<Profile> {
     const profile = await ProfileModel.findOne({ user: user });
     if (!profile) {

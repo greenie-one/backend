@@ -5,6 +5,7 @@ import EducationHistoryController from './controllers/education.controller';
 import { OAuthController } from './controllers/oauth.controller';
 import ProfileController from './controllers/profile.controller';
 import RootController from './controllers/root.controller';
+import WaitlistController from './controllers/waitlist.controller';
 
 process.on('uncaughtException', (e) => {
   console.error(e);
@@ -18,7 +19,7 @@ process.on('unhandledRejection', (e) => {
 
 ValidateEnv();
 
-const controllers = [RootController, AuthController, OAuthController, ProfileController, EducationHistoryController];
+const controllers = [RootController, AuthController, OAuthController, ProfileController, EducationHistoryController, WaitlistController];
 
 const app = new App(controllers);
 
