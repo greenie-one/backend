@@ -33,10 +33,6 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.name }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          volumeMounts:
-            - name: my-secret-volume
-              mountPath: /keys/googleapi/service-account-key.json
-              subPath: key.json
           env: 
             - name: APP_ENV
               value: {{ .Values.APP_ENV }}
@@ -58,6 +54,13 @@ spec:
                 secretKeyRef:
                   name: jwt-{{ .Values.APP_ENV }}-key
                   key: passphrase
+
+            - name: google-service-account-key
+              valueFrom:
+                secretKeyRef:
+                  name: service-account-key 
+                  key: key.json
+            
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -74,12 +77,6 @@ spec:
               port: http
             initialDelaySeconds: 20
             periodSeconds: 300
-
-      volumes:
-        - name: my-secret-volume
-          secret:
-            secretName: {{ .Values.Google_Service_Account_Secret_Name }}
-            secretNamespace: backend
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

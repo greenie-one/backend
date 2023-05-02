@@ -1,8 +1,14 @@
+import { env } from '@/config';
 import fs from 'fs';
 import nodemailer from 'nodemailer';
 
+let keyFileContents;
 const keyFilePath = './keys/googleapi/service-account-key.json';
-const keyFileContents = fs.readFileSync(keyFilePath, 'utf8');
+if (env('APP_ENV') == 'dev') {
+  keyFileContents = fs.readFileSync(keyFilePath, 'utf8');
+} else {
+  keyFileContents = env('google-service-account-key');
+}
 const keyFileJson = JSON.parse(keyFileContents);
 
 export const transporter = nodemailer.createTransport({
