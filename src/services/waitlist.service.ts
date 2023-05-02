@@ -1,4 +1,5 @@
 import { AddToWaitlistDto } from '@/dtos/waitlist.dto';
+import { sendWaitlistEmail } from '@/remote/email/emailer';
 import { HttpException } from '@exceptions/httpException';
 import { Waitlist, WaitlistModel } from '@models/waitlist.model';
 
@@ -15,6 +16,7 @@ export class WaitlistService {
       throw new HttpException('Email already in waitlist', 400);
     }
     const waitlist = await WaitlistModel.create(waitlistData);
+    await sendWaitlistEmail(waitlist);
     return waitlist;
   }
 }
