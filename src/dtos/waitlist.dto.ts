@@ -8,4 +8,7 @@ export class AddToWaitlistDto {
   @IsString()
   @IsNotEmpty()
   public name: string;
+
+  @IsString()
+  public phone_number: string;
 }
