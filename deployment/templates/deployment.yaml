@@ -36,7 +36,7 @@ spec:
           volumeMounts:
             - name: my-secret-volume
               mountPath: /keys/googleapi/service-account-key.json
-              subPath: service-account-key.json
+              subPath: key.json
           env: 
             - name: APP_ENV
               value: {{ .Values.APP_ENV }}
