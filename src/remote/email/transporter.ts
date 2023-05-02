@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 
 let keyFileContents;
 const keyFilePath = './keys/googleapi/service-account-key.json';
-if (env('APP_ENV') == 'dev') {
+if (env('APP_ENV') == 'local') {
   keyFileContents = fs.readFileSync(keyFilePath, 'utf8');
 } else {
   keyFileContents = env('google-service-account-key');
