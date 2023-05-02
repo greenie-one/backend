@@ -33,6 +33,10 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.name }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: my-secret-volume
+              mountPath: keys/googleapi/service-account-key.json
+              subPath: service-account-key.json
           env: 
             - name: APP_ENV
               value: {{ .Values.APP_ENV }}
@@ -70,6 +74,11 @@ spec:
               port: http
             initialDelaySeconds: 20
             periodSeconds: 300
+
+      volumes:
+        - name: my-secret-volume
+          secret:
+            secretName: {{ .Values.Google_Service_Account_Secret_Name }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
