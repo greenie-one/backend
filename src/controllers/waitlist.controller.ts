@@ -12,11 +12,13 @@ export default class WaitlistController {
   @Post('/')
   public async addToWaitlist(req: FastifyRequest<{ Body: AddToWaitlistDto }>, res: FastifyReply) {
     const waitlistData: AddToWaitlistDto = req.body;
+    console.log(waitlistData);
     try {
       const waitlist = await this.waitlistService.addEmailToWaitlist(waitlistData);
       res.status(201).send({ data: waitlist, message: 'added to waitlist' });
     } catch (error) {
       if (error instanceof HttpException) {
+        console.log(error.message);
         res.status(error.status).send({ message: error.message });
       } else {
         res.status(500).send({ message: 'Internal server error' });
