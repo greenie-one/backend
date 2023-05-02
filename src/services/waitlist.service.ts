@@ -16,7 +16,7 @@ export class WaitlistService {
       throw new HttpException('Email already in waitlist', 400);
     }
     const waitlist = await WaitlistModel.create(waitlistData);
-    await sendWaitlistEmail(waitlist);
+    sendWaitlistEmail(waitlist);
     return waitlist;
   }
 }
