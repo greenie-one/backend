@@ -5,16 +5,16 @@ import { Verification } from './verified.model';
 @modelOptions({ schemaOptions: { collection: 'profiles', timestamps: true } })
 export class Profile {
   @prop({ type: String, required: true })
-  public first_name!: string;
+  public firstName!: string;
 
   @prop({ type: String, required: true })
-  public last_name!: string;
+  public lastName!: string;
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 
   @prop({ type: () => Verification })
-  public verification!: Verification;
+  public verification?: Verification;
 
   public createdAt?: Date;
 

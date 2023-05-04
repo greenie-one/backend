@@ -1,7 +1,6 @@
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { VerificationModel } from '@/models/verified.model';
-import { CreateUserDto } from '@dtos/users.dto';
 import { User, UserModel, UserRoles } from '@models/users.model';
 import { compare, hash } from 'bcryptjs';
 
@@ -11,7 +10,7 @@ class UserService {
     return users;
   }
 
-  public async createUser(userData: CreateUserDto) {
+  public async createUser(userData: UserAndProfile) {
     const orFilter = [];
     if (userData.email) orFilter.push({ email: userData.email });
     if (userData.mobileNumber) orFilter.push({ mobileNumber: userData.mobileNumber });
@@ -38,8 +37,8 @@ class UserService {
     });
 
     await ProfileModel.create({
-      first_name: userData.firstName,
-      last_name: userData.lastName,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
       verification: await VerificationModel.create({
         is_verified: false,
       }),
@@ -60,6 +59,7 @@ class UserService {
 
     if (!(await compare(password, user.password))) throw new HttpException('Invalid user details', 401);
 
+    delete user.password;
     return user;
   }
 
@@ -70,6 +70,7 @@ class UserService {
 
     if (!user) throw new HttpException(`No user by mobile ${mobileNumber}`, 401);
 
+    delete user.password;
     return user;
   }
 }
