@@ -54,6 +54,13 @@ spec:
                 secretKeyRef:
                   name: jwt-{{ .Values.APP_ENV }}-key
                   key: passphrase
+
+            - name: google-service-account-key
+              valueFrom:
+                secretKeyRef:
+                  name: service-account-key 
+                  key: key.json
+            
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
