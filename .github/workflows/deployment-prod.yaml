@@ -1,4 +1,4 @@
-name: Deployment
+name: Deployment production
 
 on:
   workflow_dispatch:
@@ -69,4 +69,4 @@ jobs:
 
       - name: Deploy chart
         run: |
-          helm upgrade --install --namespace backend -f deployment/values.yaml greenie-mvp-backend-dev ./deployment --set image.name=${{ steps.meta.outputs.tags }} --wait
+          helm upgrade --install --namespace backend -f deployment/values-prod.yaml greenie-mvp-backend-prod ./deployment --set image.name=${{ steps.meta.outputs.tags }}
