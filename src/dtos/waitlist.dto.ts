@@ -10,5 +10,6 @@ export class AddToWaitlistDto {
   public name: string;
 
   @IsString()
+  @IsOptional()
   public phone_number: string;
 }
