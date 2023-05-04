@@ -1,17 +1,59 @@
-import { Waitlist } from '@models/waitlist.model';
-import { transporter } from './transporter';
+import { env } from '@/config';
+import { IsNotEmpty, IsString, validateSync } from 'class-validator';
+import fs from 'fs';
+import nodemailer from 'nodemailer';
 
-const YOUR_EMAIL_ADDRESS = 'info@greenie.one';
+export class Message {
+  @IsString()
+  @IsNotEmpty()
+  to: string;
 
-export const sendWaitlistEmail = async (waitlist: Waitlist) => {
-  const message = {
-    from: YOUR_EMAIL_ADDRESS,
-    to: waitlist.email,
-    subject: 'You have been added to the waitlist',
-    text: `Hello ${waitlist.name},\n\nThank you for joining our waitlist. We will notify you when a spot becomes available.\n\nBest,\nThe Waitlist Team`,
-  };
+  @IsString()
+  @IsNotEmpty()
+  from: string;
 
-  const info = await transporter.sendMail(message);
+  @IsString()
+  subject: string;
 
-  console.log('Email sent: %s', info.messageId);
-};
+  text: string;
+
+  constructor(mailOptions: unknown) {
+    const mailOptionsObj = mailOptions as object;
+    Object.assign(this, mailOptionsObj);
+    const errors = validateSync(this);
+    if (errors.length > 0) {
+      throw new Error(`Validation failed: ${errors.join(', ')}`);
+    }
+  }
+}
+
+export class Mailer {
+  private transporter: nodemailer.Transporter;
+
+  constructor() {
+    const keyFileContents =
+      env('APP_ENV') == 'local' ? fs.readFileSync('./keys/googleapi/service-account-key.json', 'utf8') : env('google-service-account-key');
+
+    const keyFileJson = JSON.parse(keyFileContents);
+
+    this.transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+
+      auth: {
+        type: 'OAuth2',
+        user: 'office@greenie.one',
+        serviceClient: keyFileJson.client_id,
+        privateKey: keyFileJson.private_key,
+      },
+    });
+  }
+
+  public sendMail(mailOptions: unknown) {
+    const message = new Message(mailOptions);
+    return this.transporter.sendMail(message);
+  }
+}
+
+export default new Mailer();
