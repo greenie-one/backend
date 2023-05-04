@@ -18,7 +18,7 @@ export class AuthController {
       await authService.requestOTP(createUserRequest.mobileNumber);
     }
 
-    return validationId;
+    return { validationId };
   }
 
   @Post('/login')
@@ -28,7 +28,7 @@ export class AuthController {
       await authService.requestOTP(loginRequest.mobileNumber);
     }
 
-    return validationId;
+    return { validationId };
   }
 
   @Post('/validateOTP')
