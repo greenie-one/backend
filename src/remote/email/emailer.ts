@@ -31,8 +31,7 @@ export class Mailer {
   private transporter: nodemailer.Transporter;
 
   constructor() {
-    const keyFileContents =
-      env('APP_ENV') == 'local' ? fs.readFileSync('./keys/googleapi/service-account-key.json', 'utf8') : env('google-service-account-key');
+    const keyFileContents = env('google-service-account-key', null) ?? fs.readFileSync('./keys/local/googleapi/service-account-key.json', 'utf8');
 
     const keyFileJson = JSON.parse(keyFileContents);
 
