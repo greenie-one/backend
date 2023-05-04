@@ -1,14 +1,19 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateUserDto } from '@/dtos/users.dto';
+import { CreateUserDto, LoginDto, ValidateOtpDTO, ValidationType } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
-import { User } from '@/models/users.model';
+import { User, UserRoles } from '@/models/users.model';
+import { redisClient } from '@/redisClient';
 import { AuthRemote } from '@/remote/auth/otp.remote';
+import { generateOTP } from '@/utils/string';
+import { hash } from 'bcryptjs';
 import { FastifyRequest } from 'fastify';
 import { v4 } from 'uuid';
 import { userService } from './users.service';
 
+const OTP_EXPIRY = 5 * 60; // 5mins;
+const VALIDATION_EXPIRY = 15 * 60; // 15mins;
 class AuthService {
   async createUserDetails(user: User) {
     const profile = await ProfileModel.findOne({
@@ -17,8 +22,8 @@ class AuthService {
 
     const userDetails: TokenClaims = {
       email: user.email,
-      firstName: profile.first_name,
-      lastName: profile.last_name,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
       roles: user.roles,
       userId: user._id,
       sessionId: v4(),
@@ -55,12 +60,75 @@ class AuthService {
     });
   }
 
-  async createUser(request: CreateUserDto) {
-    return userService.createUser(request);
+  async createTempUser(request: CreateUserDto): Promise<string> {
+    const validationId = v4();
+    const user: UserAndProfile = {
+      email: request.email,
+      mobileNumber: request.mobileNumber,
+      password: request.password && (await hash(request.password, 10)),
+      roles: [UserRoles.DEFAULT],
+      firstName: request.firstName,
+      lastName: request.lastName,
+    };
+    const type = ValidationType.SINGUP;
+    const data = { type, user };
+
+    await redisClient.setEx(`validation_${validationId}`, VALIDATION_EXPIRY, JSON.stringify(data));
+    return validationId;
   }
 
-  async validateOTP() {
-    return AuthRemote.validateOtp();
+  async loadTempUser(request: LoginDto): Promise<string> {
+    const validationId = v4();
+
+    let user: User;
+    if (request.mobileNumber) {
+      user = await userService.validateByPhoneNumber(request.mobileNumber);
+    } else {
+      user = await userService.validateUserByEmail(request.email, request.password);
+    }
+
+    const type = ValidationType.LOGIN;
+    const data = { type, user };
+
+    await redisClient.setEx(`validation_${validationId}`, VALIDATION_EXPIRY, JSON.stringify(data));
+    return validationId;
+  }
+
+  async validate(request: ValidateOtpDTO) {
+    const data = await redisClient.getDel(`validation_${request.validationId}`);
+    if (data) {
+      const { type, user } = JSON.parse(data) as { user: UserAndProfile; type: ValidationType.SINGUP } | { user: User; type: ValidationType.LOGIN };
+
+      if (await this.validateOTP(user, request.otp)) {
+        if (type === ValidationType.SINGUP) {
+          return userService.createUser(user);
+        }
+
+        if (type === ValidationType.LOGIN) {
+          return user;
+        }
+      }
+    }
+  }
+
+  async requestOTP(mobileNumber: string) {
+    const otp = generateOTP();
+
+    await redisClient.setEx(`${mobileNumber}_otp`, OTP_EXPIRY, otp);
+    await AuthRemote.requestOtp(mobileNumber, otp);
+  }
+
+  private async validateOTP(user: User | UserAndProfile, otp: string) {
+    if (user.mobileNumber) {
+      const data = await redisClient.getDel(`${user.mobileNumber}_otp`);
+      return otp === data;
+    }
+
+    if (user.email) {
+      return true;
+    }
+
+    return false;
   }
 
   async generateTokens(req: FastifyRequest, user: User) {

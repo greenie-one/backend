@@ -14,6 +14,7 @@ module.exports = {
       patterns: [
         { from: '.env*', to: '.' },
         { from: 'keys/**', to: '.' },
+        { from: 'templates/**', to: '.' },
       ],
     }),
   ],

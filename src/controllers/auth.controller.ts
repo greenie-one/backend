@@ -2,7 +2,6 @@ import { TokenClaims } from '@/dtos/auth.dto';
 import { CreateUserDto, LoginDto, ValidateOtpDTO } from '@/dtos/users.dto';
 import { HttpException } from '@/exceptions/httpException';
 import { authService } from '@/services/auth.service';
-import { userService } from '@/services/users.service';
 import { AuthGuard } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
@@ -13,32 +12,30 @@ import { FastifyRequest } from 'fastify';
 export class AuthController {
   @Post('/signup')
   async signup(@Body() createUserRequest: CreateUserDto) {
-    return authService.createUser(createUserRequest);
+    const validationId = await authService.createTempUser(createUserRequest);
+
+    if (createUserRequest.mobileNumber) {
+      await authService.requestOTP(createUserRequest.mobileNumber);
+    }
+
+    return { validationId };
   }
 
   @Post('/login')
-  async login(@Body() loginRequest: LoginDto, @Req() request: FastifyRequest) {
+  async login(@Body() loginRequest: LoginDto) {
+    const validationId = await authService.loadTempUser(loginRequest);
     if (loginRequest.mobileNumber) {
-      await userService.validateByPhoneNumber(loginRequest.mobileNumber);
-      return 'Sent OTP';
+      await authService.requestOTP(loginRequest.mobileNumber);
     }
 
-    if (loginRequest.email) {
-      const user = await userService.validateUserByEmail(loginRequest.email, loginRequest.password);
-      return authService.generateTokens(request, user);
-    }
+    return { validationId };
   }
 
   @Post('/validateOTP')
   async validateOtp(@Body() validateOtpRequest: ValidateOtpDTO, @Req() request: FastifyRequest) {
-    console.debug('Got OTP request', validateOtpRequest);
-
-    const user = await userService.validateByPhoneNumber(validateOtpRequest.mobileNumber);
-
-    if (await authService.validateOTP()) {
+    const user = await authService.validate(validateOtpRequest);
+    if (user) {
       return authService.generateTokens(request, user);
-    } else {
-      throw new HttpException('Invalid OTP', 401);
     }
   }
 

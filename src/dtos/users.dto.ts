@@ -18,6 +18,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(9)
   @MaxLength(72)
+  @ValidateIf((obj, val) => val || obj.email)
   password?: string;
 
   @IsString()
@@ -42,16 +43,19 @@ export class LoginDto {
   mobileNumber: string;
 
   @IsString()
-  @IsNotEmpty()
+  @ValidateIf((obj, val) => val || obj.email)
   password: string;
+}
+
+export enum ValidationType {
+  LOGIN = 'LOGIN',
+  SINGUP = 'SIGNUP',
 }
 
 export class ValidateOtpDTO {
   @IsString()
   otp: string;
 
-  @IsMobilePhone('en-IN')
-  @Type(() => String)
-  @Transform((params) => sanitizeMobileNumber(params.value))
-  mobileNumber: string;
+  @IsString()
+  validationId: string;
 }
