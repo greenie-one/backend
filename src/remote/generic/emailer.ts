@@ -1,5 +1,6 @@
 import { env } from '@/config';
-import { IsNotEmpty, IsString, validateSync } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
+import { IsNotEmpty, IsString, validate } from 'class-validator';
 import fs from 'fs';
 import nodemailer from 'nodemailer';
 
@@ -16,15 +17,6 @@ export class Message {
   subject: string;
 
   text: string;
-
-  constructor(mailOptions: unknown) {
-    const mailOptionsObj = mailOptions as object;
-    Object.assign(this, mailOptionsObj);
-    const errors = validateSync(this);
-    if (errors.length > 0) {
-      throw new Error(`Validation failed: ${errors.join(', ')}`);
-    }
-  }
 }
 
 export class Mailer {
@@ -39,7 +31,6 @@ export class Mailer {
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,
-
       auth: {
         type: 'OAuth2',
         user: 'office@greenie.one',
@@ -49,10 +40,14 @@ export class Mailer {
     });
   }
 
-  public sendMail(mailOptions: unknown) {
-    const message = new Message(mailOptions);
-    return this.transporter.sendMail(message);
+  public async sendMail(mailOptions: Message) {
+    if (!(mailOptions instanceof Message)) {
+      mailOptions = plainToInstance(Message, mailOptions as Message);
+    }
+
+    await validate(mailOptions);
+    return this.transporter.sendMail(mailOptions);
   }
 }
 
-export default new Mailer();
+export const mailer = new Mailer();
