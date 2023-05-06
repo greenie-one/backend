@@ -8,7 +8,11 @@ class UserService {
     return users;
   }
 
-  public async findUser(email?: string, mobileNumber?: string) {
+  public async findUser({ id, email, mobileNumber }: { id?: string; email?: string; mobileNumber?: string }) {
+    if (id) {
+      return UserModel.findById(id);
+    }
+
     const orMap = [];
     if (email) orMap.push({ email });
     if (mobileNumber) orMap.push({ mobileNumber });

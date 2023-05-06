@@ -54,14 +54,16 @@ class AuthService {
   }
 
   async updateAccessTokenInStore(sessionId: string, accessToken: string) {
-    await AuthSessionModel.updateOne({
-      _id: sessionId,
-      token: accessToken,
-    });
+    await AuthSessionModel.updateOne(
+      { _id: sessionId },
+      {
+        token: accessToken,
+      },
+    );
   }
 
   async createTempUser(request: CreateUserDto): Promise<string> {
-    const existingUser = await userService.findUser(request.email, request.mobileNumber);
+    const existingUser = await userService.findUser({ email: request.email, mobileNumber: request.mobileNumber });
     if (existingUser) throw new HttpException('User already exists', 409);
 
     const validationId = v4();
@@ -134,19 +136,39 @@ class AuthService {
   }
 
   async generateTokens(req: FastifyRequest, user: User) {
-    const userDetails = await authService.createUserDetails(user);
+    const userDetails = await this.createUserDetails(user);
 
     try {
       const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
       const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true }, { algorithm: 'RS256', expiresIn: '60d' });
 
-      await authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
+      await this.storeToken(userDetails.sessionId, accessToken, refreshToken);
 
       return { accessToken, refreshToken };
     } catch (e) {
-      authService.removeSession(userDetails.sessionId).catch(console.error);
+      this.removeSession(userDetails.sessionId).catch(console.error);
       throw e;
     }
+  }
+
+  async refreshToken(req: FastifyRequest, token: string) {
+    try {
+      const decoded: TokenClaims = req.server.jwt.verify(token);
+      if (decoded.isRefresh) {
+        const user = await userService.findUser({ id: decoded.userId });
+        const userDetails = await this.createUserDetails(user);
+
+        const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
+
+        await this.updateAccessTokenInStore(userDetails.sessionId, accessToken);
+
+        return { accessToken };
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    throw new HttpException('Invalid refresh token', 400);
   }
 }
 

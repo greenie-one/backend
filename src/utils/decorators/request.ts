@@ -33,3 +33,11 @@ export function Headers(queryName?: string) {
     Reflect.defineMetadata('fastify:method:headers', existingQuery, target, property);
   };
 }
+
+export function Params(queryName?: string) {
+  return function (target: object, property: string, index: number) {
+    const existingQuery: ParamValidation[] = Reflect.getMetadata('fastify:method:params', target, property) ?? [];
+    existingQuery.push({ index, queryName });
+    Reflect.defineMetadata('fastify:method:params', existingQuery, target, property);
+  };
+}

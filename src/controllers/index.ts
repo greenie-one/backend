@@ -47,6 +47,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
       const hasHeaders: HeaderValidation[] = Reflect.getMetadata('fastify:method:headers', c.instance, method.property) ?? [];
       const hasRequest: RequestValidation = Reflect.getMetadata('fastify:method:request', c.instance, method.property);
       const hasReply: RequestValidation = Reflect.getMetadata('fastify:method:reply', c.instance, method.property);
+      const hasParams: ParamValidation[] = Reflect.getMetadata('fastify:method:params', c.instance, method.property) ?? [];
 
       const routeProps: RouteOptions = {
         method: method.method,
@@ -74,6 +75,15 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
             }
 
             args[h.index] = header;
+          }
+
+          for (const p of hasParams) {
+            const params = req.params[p.queryName];
+            if (!params) {
+              throw new HttpException(`URL param ${p.queryName} is missing`, 400);
+            }
+
+            args[p.index] = params;
           }
 
           if (hasRequest) args[hasRequest.index] = req;
