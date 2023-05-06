@@ -1,5 +1,6 @@
 import { env } from '@/config';
 import { LinkedInOAuthDto } from '@/dtos/oauth.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { User, UserModel } from '@/models/users.model';
 import { LinkedInRemote } from '@/remote/auth/linkedIn.remote';
@@ -27,7 +28,7 @@ class OAuthService {
     const accessTokenResp = await LinkedInRemote.getAccessToken(code);
 
     if (accessTokenResp.error) {
-      throw new HttpException(`LinkedIn auth failed, ${accessTokenResp.error}: ${accessTokenResp.error_description}`, 401);
+      throw new HttpException(ErrorEnum.LINKEDIN_AUTH_FAILED, accessTokenResp.error, accessTokenResp.error_description);
     }
 
     let decoded: LinkedInOauthTokenClaims;
@@ -35,7 +36,7 @@ class OAuthService {
       decoded = await this.verifyLinkedInJWT(accessTokenResp.id_token);
     } catch (e) {
       console.error('Failed to verify authenticity of token', e);
-      throw new HttpException('Failed to verify authenticity of token', 401);
+      throw new HttpException(ErrorEnum.LINKEDIN_TOKEN_UNAUTHENTICATED);
     }
 
     let user: User = await UserModel.findOne({

@@ -1,5 +1,6 @@
 import { TokenClaims } from '@/dtos/auth.dto';
 import { CreateUserDto, LoginDto, ValidateOtpDTO, ValidationType } from '@/dtos/users.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
@@ -44,7 +45,7 @@ class AuthService {
     const resp = await AuthSessionModel.findById(sessionId);
 
     if (!resp) {
-      throw new HttpException('Session does not exist', 400);
+      throw new HttpException(ErrorEnum.SESSION_NON_EXISTENT);
     }
   }
 
@@ -64,7 +65,7 @@ class AuthService {
 
   async createTempUser(request: CreateUserDto): Promise<string> {
     const existingUser = await userService.findUser({ email: request.email, mobileNumber: request.mobileNumber });
-    if (existingUser) throw new HttpException('User already exists', 409);
+    if (existingUser) throw new HttpException(ErrorEnum.USER_ALREADY_EXISTS);
 
     const validationId = v4();
     const user: User = {
@@ -112,7 +113,7 @@ class AuthService {
         }
       }
     }
-    throw new HttpException('Invalid validation ID', 400);
+    throw new HttpException(ErrorEnum.INVALID_VALIDATION_ID);
   }
 
   async requestOTP(mobileNumber: string) {
@@ -168,7 +169,7 @@ class AuthService {
       console.error(e);
     }
 
-    throw new HttpException('Invalid refresh token', 400);
+    throw new HttpException(ErrorEnum.INVALID_REFRESH_TOKEN);
   }
 }
 
