@@ -52,7 +52,7 @@ class OAuthService {
       });
 
       if (!user) {
-        throw new HttpException('Failed to create user', 500);
+        throw new HttpException(ErrorEnum.FAILED_TO_CREATE_USER);
       }
 
       const profile = await profileService.createProfile(user._id, {
@@ -61,7 +61,7 @@ class OAuthService {
       });
 
       if (!profile) {
-        throw new HttpException('Failed to create profile', 500);
+        throw new HttpException(ErrorEnum.FAILED_TO_CREATE_PROFILE);
       }
     }
 
