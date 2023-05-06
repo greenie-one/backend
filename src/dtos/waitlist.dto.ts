@@ -11,5 +11,5 @@ export class AddToWaitlistDto {
 
   @IsString()
   @IsOptional()
-  public phone_number: string;
+  public phone_number?: string;
 }
