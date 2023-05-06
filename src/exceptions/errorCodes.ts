@@ -17,6 +17,10 @@ export enum ErrorEnum {
 
   // Waitlist
   ALREADY_IN_WAITLIST,
+
+  // Models
+  FAILED_TO_CREATE_USER,
+  FAILED_TO_CREATE_PROFILE,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -84,5 +88,15 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0012',
     message: 'Email already in waitlist',
     status: 400,
+  },
+  [ErrorEnum.FAILED_TO_CREATE_USER]: {
+    code: 'GR0013',
+    message: 'Failed to create user',
+    status: 500,
+  },
+  [ErrorEnum.FAILED_TO_CREATE_PROFILE]: {
+    code: 'GR0014',
+    message: 'Failed to create profile',
+    status: 500,
   },
 };
