@@ -32,3 +32,13 @@ interface LinkedInJWTDiscovery {
   scopes_supported: string[];
   claims_supported: string[];
 }
+
+declare enum OAuthProviders {
+  LINKEDIN = 'linkedin',
+  GOOGLE = 'google',
+}
+
+interface IOAuthService {
+  handleLogin(request: FastifyRequest, params: unknown): Promise<User>;
+  getRedirectURL(): string;
+}

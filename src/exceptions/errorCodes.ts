@@ -24,6 +24,7 @@ export enum ErrorEnum {
   AADHAR_NOT_FOUND,
   INVALID_USER_ID,
   EDUCATION_NOT_FOUND,
+  OAUTH_PROVIDER_NOT_FOUND,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -115,6 +116,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.EDUCATION_NOT_FOUND]: {
     code: 'GR0017',
     message: 'Education not found',
+    status: 404,
+  },
+  [ErrorEnum.OAUTH_PROVIDER_NOT_FOUND]: {
+    code: 'GR0018',
+    message: 'OAuth provider not found',
     status: 404,
   },
 };
