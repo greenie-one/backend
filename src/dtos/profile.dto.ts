@@ -8,10 +8,6 @@ export class CreateProfileDto {
   @IsString()
   @IsNotEmpty()
   public last_name: string;
-
-  @IsString()
-  @IsOptional()
-  public phone: string;
 }
 
 export class UpdateProfileDto {
@@ -25,8 +21,4 @@ export class UpdateProfileDto {
 
   @IsString()
   public greenie_id?: string;
-
-  @IsString()
-  @IsOptional()
-  public phone?: string;
 }

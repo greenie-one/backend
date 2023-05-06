@@ -2,12 +2,13 @@ import { env } from '@/config';
 import { LinkedInOAuthDto } from '@/dtos/oauth.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { User, UserModel } from '@/models/users.model';
+import { User, UserModel, UserRoles } from '@/models/users.model';
 import { LinkedInRemote } from '@/remote/auth/linkedIn.remote';
 import { createVerifier } from 'fast-jwt';
 import { FastifyRequest } from 'fastify';
 import buildGetJwks from 'get-jwks';
 import { authService } from './auth.service';
+import { profileService } from './profile.service';
 import { userService } from './users.service';
 
 class OAuthService {
@@ -47,9 +48,21 @@ class OAuthService {
       console.info(`No user found by email ${decoded.email}, creating...`);
       user = await userService.createUser({
         email: decoded.email,
-        firstName: decoded.given_name,
-        lastName: decoded.family_name,
+        roles: [UserRoles.DEFAULT],
       });
+
+      if (!user) {
+        throw new HttpException('Failed to create user', 500);
+      }
+
+      const profile = await profileService.createProfile(user._id, {
+        first_name: decoded.given_name,
+        last_name: decoded.family_name,
+      });
+
+      if (!profile) {
+        throw new HttpException('Failed to create profile', 500);
+      }
     }
 
     return authService.generateTokens(request, user);
