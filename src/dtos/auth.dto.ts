@@ -14,13 +14,14 @@ export class TokenClaims {
   @IsString()
   lastName: string;
 
-  @IsEnum(UserRoles)
+  @IsEnum(UserRoles, { each: true })
   roles: UserRoles[];
 
   @IsOptional()
   iat?: number;
 
   @IsBoolean()
+  @IsOptional()
   isRefresh?: boolean;
 
   @IsString()

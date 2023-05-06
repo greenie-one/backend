@@ -10,7 +10,7 @@ export class Profile {
   @prop({ type: String, required: true })
   public lastName!: string;
 
-  @prop({ type: String, required: true })
+  @prop({ type: String })
   public phone!: string;
 
   @prop({ type: String })
