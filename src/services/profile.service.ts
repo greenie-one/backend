@@ -21,7 +21,6 @@ class ProfileService {
     const profile = await ProfileModel.create({
       firstName: profileData.first_name,
       lastName: profileData.last_name,
-      phone: profileData.phone,
       user: userId,
     });
     return profile;
@@ -34,7 +33,6 @@ class ProfileService {
       {
         firstName: profileData.first_name,
         lastName: profileData.last_name,
-        phone: profileData.phone,
       },
       { new: true },
     );

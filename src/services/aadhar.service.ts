@@ -1,4 +1,5 @@
 import { AadharCardDto } from '@/dtos/aadhar.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { AadharCard, AadharCardModel } from '@/models/aadhar.model';
 import { UserModel } from '@models/users.model';
@@ -7,7 +8,7 @@ export class AadharService {
   public async findAadharByUser(user: string): Promise<AadharCard> {
     const profile = await AadharCardModel.findOne({ user: user });
     if (!profile) {
-      throw new HttpException('AadharCard not found', 404);
+      throw new HttpException(ErrorEnum.AADHAR_NOT_FOUND);
     }
     return profile;
   }
@@ -17,10 +18,10 @@ export class AadharService {
     try {
       const findUser = await UserModel.findById(user);
       if (!findUser) {
-        throw new HttpException('User not found', 404);
+        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
       }
     } catch (error) {
-      throw new HttpException('Error with user id', 403);
+      throw new HttpException(ErrorEnum.INVALID_USER_ID);
     }
 
     const profile = await AadharCardModel.create({ ...aadharData, user: user });

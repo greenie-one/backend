@@ -21,6 +21,9 @@ export enum ErrorEnum {
   // Models
   FAILED_TO_CREATE_USER,
   FAILED_TO_CREATE_PROFILE,
+  AADHAR_NOT_FOUND,
+  INVALID_USER_ID,
+  EDUCATION_NOT_FOUND,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -98,5 +101,20 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0014',
     message: 'Failed to create profile',
     status: 500,
+  },
+  [ErrorEnum.AADHAR_NOT_FOUND]: {
+    code: 'GR0015',
+    message: 'Aadhar not found',
+    status: 404,
+  },
+  [ErrorEnum.INVALID_USER_ID]: {
+    code: 'GR0016',
+    message: 'Invalid user id',
+    status: 403,
+  },
+  [ErrorEnum.EDUCATION_NOT_FOUND]: {
+    code: 'GR0017',
+    message: 'Education not found',
+    status: 404,
   },
 };

@@ -1,4 +1,5 @@
 import { CreateEducationHistoryDto, UpdateEducationHistoryDto } from '@/dtos/education.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { EducationHistory, EducationHistoryModel } from '@/models/education.model';
 import { UserModel } from '@models/users.model';
@@ -7,7 +8,7 @@ export class EducationHistoryService {
   public async findEducationHistoryById(userId: string): Promise<EducationHistory[]> {
     const educationHistory = await EducationHistoryModel.find({ user: userId });
     if (!educationHistory) {
-      throw new HttpException('Education history not found', 404);
+      throw new HttpException(ErrorEnum.EDUCATION_NOT_FOUND);
     }
     return educationHistory;
   }
@@ -16,7 +17,7 @@ export class EducationHistoryService {
     // Check if user exists
     const findUser = await UserModel.findById(userId);
     if (!findUser) {
-      throw new HttpException('User not found', 404);
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
     const educationHistory = new EducationHistoryModel({
@@ -31,7 +32,7 @@ export class EducationHistoryService {
   public async updateEducationHistory(educationHistoryId: string, educationHistoryData: UpdateEducationHistoryDto): Promise<EducationHistory> {
     const educationHistory = await EducationHistoryModel.findByIdAndUpdate(educationHistoryId, educationHistoryData, { new: true });
     if (!educationHistory) {
-      throw new HttpException('Education history not found', 404);
+      throw new HttpException(ErrorEnum.EDUCATION_NOT_FOUND);
     }
     return educationHistory;
   }
@@ -39,7 +40,7 @@ export class EducationHistoryService {
   public async deleteEducationHistory(educationHistoryId: string): Promise<void> {
     const educationHistory = await EducationHistoryModel.findByIdAndDelete(educationHistoryId);
     if (!educationHistory) {
-      throw new HttpException('Education history not found', 404);
+      throw new HttpException(ErrorEnum.EDUCATION_NOT_FOUND);
     }
   }
 }
