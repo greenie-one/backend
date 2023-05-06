@@ -13,7 +13,7 @@ export class User {
   public email: string;
 
   @prop({ type: String, required: false, unique: true, sparse: true })
-  public mobileNumber: string;
+  public mobileNumber?: string;
 
   @prop({ type: String, required: false })
   public password?: string;
