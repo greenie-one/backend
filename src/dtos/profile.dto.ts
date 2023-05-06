@@ -10,7 +10,7 @@ export class CreateProfileDto {
   public last_name: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   public phone: string;
 }
 

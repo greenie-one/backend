@@ -1,8 +1,6 @@
 import { HttpException } from '@/exceptions/httpException';
-import { ProfileModel } from '@/models/profile.model';
-import { VerificationModel } from '@/models/verified.model';
 import { User, UserModel, UserRoles } from '@models/users.model';
-import { compare, hash } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 
 class UserService {
   public async findAllUser(): Promise<User[]> {
@@ -10,7 +8,18 @@ class UserService {
     return users;
   }
 
-  public async createUser(userData: UserAndProfile) {
+  public async findUser(email?: string, mobileNumber?: string) {
+    const orMap = [];
+    if (email) orMap.push({ email });
+    if (mobileNumber) orMap.push({ mobileNumber });
+    const user = UserModel.findOne({
+      $or: orMap,
+    });
+
+    return user;
+  }
+
+  public async createUser(userData: User) {
     const orFilter = [];
     if (userData.email) orFilter.push({ email: userData.email });
     if (userData.mobileNumber) orFilter.push({ mobileNumber: userData.mobileNumber });
@@ -24,25 +33,11 @@ class UserService {
       else throw new HttpException(`This mobileNumber ${userData.mobileNumber} already exists`, 409);
     }
 
-    let hashedPassword: string | undefined;
-    if (userData.password) {
-      hashedPassword = await hash(userData.password, 10);
-    }
-
     const createUserData = await UserModel.create({
       email: userData.email,
       mobileNumber: userData.mobileNumber,
       roles: [UserRoles.DEFAULT],
-      password: hashedPassword,
-    });
-
-    await ProfileModel.create({
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      verification: await VerificationModel.create({
-        is_verified: false,
-      }),
-      user: createUserData._id,
+      password: userData.password, // Should already be hashed
     });
 
     delete createUserData.password;

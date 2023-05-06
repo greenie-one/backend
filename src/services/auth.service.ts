@@ -22,8 +22,8 @@ class AuthService {
 
     const userDetails: TokenClaims = {
       email: user.email,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
+      firstName: profile?.firstName,
+      lastName: profile?.lastName,
       roles: user.roles,
       userId: user._id,
       sessionId: v4(),
@@ -61,14 +61,15 @@ class AuthService {
   }
 
   async createTempUser(request: CreateUserDto): Promise<string> {
+    const existingUser = await userService.findUser(request.email, request.mobileNumber);
+    if (existingUser) throw new HttpException('User already exists', 409);
+
     const validationId = v4();
-    const user: UserAndProfile = {
+    const user: User = {
       email: request.email,
       mobileNumber: request.mobileNumber,
       password: request.password && (await hash(request.password, 10)),
       roles: [UserRoles.DEFAULT],
-      firstName: request.firstName,
-      lastName: request.lastName,
     };
     const type = ValidationType.SINGUP;
     const data = { type, user };
@@ -97,7 +98,7 @@ class AuthService {
   async validate(request: ValidateOtpDTO) {
     const data = await redisClient.getDel(`validation_${request.validationId}`);
     if (data) {
-      const { type, user } = JSON.parse(data) as { user: UserAndProfile; type: ValidationType.SINGUP } | { user: User; type: ValidationType.LOGIN };
+      const { type, user } = JSON.parse(data) as { user: User; type: ValidationType };
 
       if (await this.validateOTP(user, request.otp)) {
         if (type === ValidationType.SINGUP) {
@@ -109,6 +110,7 @@ class AuthService {
         }
       }
     }
+    throw new HttpException('Invalid validation ID', 400);
   }
 
   async requestOTP(mobileNumber: string) {
@@ -118,7 +120,7 @@ class AuthService {
     await AuthRemote.requestOtp(mobileNumber, otp);
   }
 
-  private async validateOTP(user: User | UserAndProfile, otp: string) {
+  private async validateOTP(user: User, otp: string) {
     if (user.mobileNumber) {
       const data = await redisClient.getDel(`${user.mobileNumber}_otp`);
       return otp === data;
