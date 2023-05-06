@@ -1,3 +1,4 @@
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { validateRoute } from '@/utils/validation';
 import { ClassConstructor, plainToClass } from 'class-transformer';
@@ -20,7 +21,7 @@ function predefinedValidation(name: string): typeof validateOrReject {
 }
 
 async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query') {
-  if (!value) throw new HttpException(`${bodyOrQuery} must be defined`, 400);
+  if (!value) throw new HttpException(ErrorEnum.VALIDATION_ERROR, `${bodyOrQuery} must be defined`);
 
   try {
     const dto = plainToClass(type, value);
@@ -31,7 +32,7 @@ async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQ
     return dto;
   } catch (errors) {
     const message = errors?.map((error: ValidationError) => Object.values(error.constraints));
-    throw new HttpException(message, 400);
+    throw new HttpException(ErrorEnum.VALIDATION_ERROR, message);
   }
 }
 
@@ -62,7 +63,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
           for (const q of hasQuery) {
             const query = q.queryName ? req.query[q.queryName] : req.query;
             if (!query) {
-              throw new HttpException(`Query ${q.queryName} is missing`, 400);
+              throw new HttpException(ErrorEnum.VALIDATION_ERROR, `Query ${q.queryName} is missing`);
             }
 
             args[q.index] = await validate(q.type, query, 'query');
@@ -71,7 +72,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
           for (const h of hasHeaders) {
             const header = h.queryName ? req.headers[h.queryName.toLowerCase()] : req.headers;
             if (!header) {
-              throw new HttpException(`Header ${h.queryName} is missing`, 400);
+              throw new HttpException(ErrorEnum.VALIDATION_ERROR, `Header ${h.queryName} is missing`);
             }
 
             args[h.index] = header;
@@ -80,7 +81,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
           for (const p of hasParams) {
             const params = req.params[p.queryName];
             if (!params) {
-              throw new HttpException(`URL param ${p.queryName} is missing`, 400);
+              throw new HttpException(ErrorEnum.VALIDATION_ERROR, `URL param ${p.queryName} is missing`);
             }
 
             args[p.index] = params;

@@ -1,3 +1,4 @@
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { User, UserModel, UserRoles } from '@models/users.model';
 import { compare } from 'bcryptjs';
@@ -33,8 +34,8 @@ class UserService {
     });
 
     if (findUser) {
-      if (userData.email && userData.email === findUser.email) throw new HttpException(`This email ${userData.email} already exists`, 409);
-      else throw new HttpException(`This mobileNumber ${userData.mobileNumber} already exists`, 409);
+      if (userData.email && userData.email === findUser.email) throw new HttpException(ErrorEnum.USER_ALREADY_EXISTS);
+      else throw new HttpException(ErrorEnum.USER_ALREADY_EXISTS);
     }
 
     const createUserData = await UserModel.create({
@@ -53,10 +54,10 @@ class UserService {
       email,
     });
 
-    if (!user) throw new HttpException(`No user by email ${email}`, 401);
-    if (!user.password) throw new HttpException(`User does not have a password`, 401);
+    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    if (!user.password) throw new HttpException(ErrorEnum.USER_NO_PASSWORD);
 
-    if (!(await compare(password, user.password))) throw new HttpException('Invalid user details', 401);
+    if (!(await compare(password, user.password))) throw new HttpException(ErrorEnum.PASSWORD_MISMATCH);
 
     delete user.password;
     return user;
@@ -67,7 +68,7 @@ class UserService {
       mobileNumber,
     });
 
-    if (!user) throw new HttpException(`No user by mobile ${mobileNumber}`, 401);
+    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
 
     delete user.password;
     return user;

@@ -1,4 +1,5 @@
 import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Profile, ProfileModel } from '@/models/profile.model';
 import { AuthGuard } from '@/utils/decorators/auth';
@@ -11,10 +12,10 @@ class ProfileService {
       // Check if user exists
       const findUser = await UserModel.findById(userId);
       if (!findUser) {
-        throw new HttpException('User not found', 404);
+        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
       }
     } catch (e) {
-      throw new HttpException('User not found', 404);
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
     const profile = await ProfileModel.create({
@@ -38,7 +39,7 @@ class ProfileService {
       { new: true },
     );
     if (!profile) {
-      throw new HttpException('Profile not found', 404);
+      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
     return profile;
   }
