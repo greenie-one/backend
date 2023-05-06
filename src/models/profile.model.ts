@@ -11,9 +11,6 @@ export class Profile {
   public lastName!: string;
 
   @prop({ type: String })
-  public phone!: string;
-
-  @prop({ type: String })
   public greenie_id?: string;
 
   @prop({ ref: 'User' })
