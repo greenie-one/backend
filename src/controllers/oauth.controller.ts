@@ -1,7 +1,5 @@
-import { LinkedInOAuthDto } from '@/dtos/oauth.dto';
-import { ErrorEnum } from '@/exceptions/errorCodes';
-import { HttpException } from '@/exceptions/httpException';
-import { oAuthService } from '@/services/oauth.service';
+import { GoogleOAuthDto, LinkedInOAuthDto } from '@/dtos/oauth.dto';
+import { oAuthService } from '@/services/oauth.services/index.service';
 import { Controller } from '@/utils/decorators/controller';
 import { Get } from '@/utils/decorators/methods';
 import { Params, Query, Req } from '@/utils/decorators/request';
@@ -11,23 +9,17 @@ import { FastifyRequest } from 'fastify';
 export class OAuthController {
   @Get('/:provider/redirect')
   async getLinkedInRedirectionURL(@Params('provider') provider: string) {
-    let providerService: IOAuthService;
-    try {
-      providerService = oAuthService.RegisteredOAuthProviders[provider as OAuthProviders];
-    } catch (e) {
-      throw new HttpException(ErrorEnum.OAUTH_PROVIDER_NOT_FOUND);
-    }
-    return { url: providerService.getRedirectURL() };
+    return { url: oAuthService.getOAuthRedirectURL(provider) };
   }
 
   @Get('/:provider/callback')
-  async handleLinkedInCallback(@Params('provider') provider: string, @Query() query: LinkedInOAuthDto, @Req() request: FastifyRequest) {
-    let providerService: IOAuthService;
-    try {
-      providerService = oAuthService.RegisteredOAuthProviders[provider as OAuthProviders];
-    } catch (e) {
-      throw new HttpException(ErrorEnum.OAUTH_PROVIDER_NOT_FOUND);
-    }
-    return providerService.handleLogin(request, query);
+  async handleLinkedInCallback(
+    @Params('provider') provider: string,
+    @Query() query: GoogleOAuthDto | LinkedInOAuthDto,
+    @Req() request: FastifyRequest,
+  ) {
+    console.log('query', query);
+    console.log('provider', provider);
+    return await oAuthService.handleOAuthLogin(provider, request, query);
   }
 }

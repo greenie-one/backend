@@ -33,12 +33,7 @@ interface LinkedInJWTDiscovery {
   claims_supported: string[];
 }
 
-declare enum OAuthProviders {
-  LINKEDIN = 'linkedin',
-  GOOGLE = 'google',
-}
-
 interface IOAuthService {
-  handleLogin(request: FastifyRequest, params: unknown): Promise<User>;
+  handleLogin(request: FastifyRequest, params: unknown): Promise<{ accessToken: string; refreshToken: string }>;
   getRedirectURL(): string;
 }

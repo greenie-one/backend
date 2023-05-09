@@ -21,9 +21,6 @@ export class LinkedInAccessTokenResponse {
 export class GoogleOAuthDto {
   @IsString()
   code: string;
-
-  @IsString()
-  state: string;
 }
 
 export class GoogleAccessTokenResponse {
