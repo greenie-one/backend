@@ -1,5 +1,5 @@
 import { GoogleOAuthDto, LinkedInOAuthDto } from '@/dtos/oauth.dto';
-import { oAuthService } from '@/services/oauth.services/index.service';
+import { OAuthProviders, oAuthService } from '@/services/oauth.services/index.service';
 import { Controller } from '@/utils/decorators/controller';
 import { Get } from '@/utils/decorators/methods';
 import { Params, Query, Req } from '@/utils/decorators/request';
@@ -8,13 +8,13 @@ import { FastifyRequest } from 'fastify';
 @Controller('/oauth')
 export class OAuthController {
   @Get('/:provider/redirect')
-  async getLinkedInRedirectionURL(@Params('provider') provider: string) {
+  async getLinkedInRedirectionURL(@Params('provider') provider: OAuthProviders) {
     return { url: oAuthService.getOAuthRedirectURL(provider) };
   }
 
   @Get('/:provider/callback')
   async handleLinkedInCallback(
-    @Params('provider') provider: string,
+    @Params('provider') provider: OAuthProviders,
     @Query() query: GoogleOAuthDto | LinkedInOAuthDto,
     @Req() request: FastifyRequest,
   ) {
