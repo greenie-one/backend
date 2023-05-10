@@ -2,12 +2,13 @@ import { env } from '@/config';
 import { GoogleOAuthDto } from '@/dtos/oauth.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { User, UserModel, UserRoles } from '@/models/users.model';
+import { User, UserRoles } from '@/models/users.model';
 import { GoogleRemote } from '@/remote/auth/google.remote';
 import { FastifyRequest } from 'fastify';
 import { LoginTicket, OAuth2Client } from 'google-auth-library';
 import { authService } from '../auth.service';
 import { profileService } from '../profile.service';
+import { userService } from '../users.service';
 
 class GoogleOAuthService implements IOAuthService {
   private client = new OAuth2Client({
@@ -37,12 +38,12 @@ class GoogleOAuthService implements IOAuthService {
       console.error('Failed to verify authenticity of token', e);
       throw new HttpException(ErrorEnum.OAUTH_FAILED);
     }
-    console.log(decoded);
+    console.info(decoded);
     const payload = decoded.getPayload();
 
-    let user: User = await UserModel.findOne({ email: payload.email });
+    let user: User = await userService.findUser({ email: payload.email });
     if (!user) {
-      user = await UserModel.create({ email: payload.email, roles: [UserRoles.DEFAULT] });
+      user = await userService.createUser({ email: payload.email, roles: [UserRoles.DEFAULT] });
       if (!user) {
         throw new HttpException(ErrorEnum.FAILED_TO_CREATE_USER);
       }

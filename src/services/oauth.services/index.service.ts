@@ -1,5 +1,3 @@
-import { ErrorEnum } from '@/exceptions/errorCodes';
-import { HttpException } from '@/exceptions/httpException';
 import { FastifyRequest } from 'fastify';
 import { googleOAuthService } from './google.service';
 import { linkedInOAuthService } from './linkedin.service';
@@ -18,20 +16,12 @@ class OAuthService {
     return this._RegisteredOAuthProviders;
   }
 
-  public getOAuthRedirectURL(provider: string) {
-    try {
-      return this.RegisteredOAuthProviders[provider as OAuthProviders].getRedirectURL();
-    } catch (e) {
-      throw new HttpException(ErrorEnum.OAUTH_PROVIDER_NOT_FOUND);
-    }
+  public getOAuthRedirectURL(provider: OAuthProviders) {
+    return this.RegisteredOAuthProviders[provider].getRedirectURL();
   }
 
-  public async handleOAuthLogin(provider: string, request: FastifyRequest, query: unknown) {
-    try {
-      return await this.RegisteredOAuthProviders[provider as OAuthProviders].handleLogin(request, query);
-    } catch (e) {
-      throw new HttpException(ErrorEnum.OAUTH_PROVIDER_NOT_FOUND);
-    }
+  public async handleOAuthLogin(provider: OAuthProviders, request: FastifyRequest, query: unknown) {
+    return await this.RegisteredOAuthProviders[provider].handleLogin(request, query);
   }
 }
 
