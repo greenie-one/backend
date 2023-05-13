@@ -12,6 +12,7 @@ export enum ErrorEnum {
   LINKEDIN_AUTH_FAILED,
   USER_NOT_FOUND,
   PROFILE_NOT_FOUND,
+  PROFILE_ALREADY_EXISTS,
   USER_NO_PASSWORD,
   PASSWORD_MISMATCH,
 
@@ -128,5 +129,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0019',
     message: 'OAuth failed',
     status: 500,
+  },
+  [ErrorEnum.PROFILE_ALREADY_EXISTS]: {
+    code: 'GR0020',
+    message: 'Profile already exists',
+    status: 400,
   },
 };

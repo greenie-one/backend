@@ -18,6 +18,12 @@ class ProfileService {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
+    const findProfile = ProfileModel.findOne({
+      user: userId,
+    });
+
+    if (findProfile) throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
+
     const profile = await ProfileModel.create({
       firstName: profileData.first_name,
       lastName: profileData.last_name,
