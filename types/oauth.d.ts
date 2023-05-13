@@ -32,3 +32,8 @@ interface LinkedInJWTDiscovery {
   scopes_supported: string[];
   claims_supported: string[];
 }
+
+interface IOAuthService {
+  handleLogin(request: FastifyRequest, params: unknown): Promise<{ accessToken: string; refreshToken: string }>;
+  getRedirectURL(): string;
+}

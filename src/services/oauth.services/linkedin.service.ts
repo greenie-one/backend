@@ -7,11 +7,11 @@ import { LinkedInRemote } from '@/remote/auth/linkedIn.remote';
 import { createVerifier } from 'fast-jwt';
 import { FastifyRequest } from 'fastify';
 import buildGetJwks from 'get-jwks';
-import { authService } from './auth.service';
-import { profileService } from './profile.service';
-import { userService } from './users.service';
+import { authService } from '../auth.service';
+import { profileService } from '../profile.service';
+import { userService } from '../users.service';
 
-class OAuthService {
+class LinkedInOAuthService implements IOAuthService {
   private jwksBuilder = buildGetJwks({
     providerDiscovery: true,
   });
@@ -25,7 +25,7 @@ class OAuthService {
       }),
   });
 
-  async handleLinkedInLogin(request: FastifyRequest, { code }: LinkedInOAuthDto) {
+  async handleLogin(request: FastifyRequest, { code }: LinkedInOAuthDto) {
     const accessTokenResp = await LinkedInRemote.getAccessToken(code);
 
     if (accessTokenResp.error) {
@@ -68,7 +68,7 @@ class OAuthService {
     return authService.generateTokens(request, user);
   }
 
-  getLinkedInRedirectURL() {
+  getRedirectURL() {
     const baseURL = new URL('https://www.linkedin.com/oauth/v2/authorization');
     baseURL.searchParams.set('response_type', 'code');
     baseURL.searchParams.set('client_id', env('LINKEDIN_CLIENT_ID'));
@@ -77,6 +77,10 @@ class OAuthService {
 
     return baseURL.toString();
   }
+
+  async getLinkedInDiscovery() {
+    console.log('Fetching LinkedIn discovery document...');
+  }
 }
 
-export const oAuthService = new OAuthService();
+export const linkedInOAuthService = new LinkedInOAuthService();
