@@ -1,21 +1,23 @@
+import { TokenClaims } from '@/dtos/auth.dto';
 import { CreateProfileDto } from '@/dtos/profile.dto';
 import { profileService } from '@/services/profile.service';
-import { AuthGuard } from '@/utils/decorators/auth';
+import { AuthGuard, UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Post } from '@/utils/decorators/methods';
-import { Body, Params } from '@/utils/decorators/request';
+import { Body } from '@/utils/decorators/request';
 
 @Controller('/profiles')
 export default class ProfileController {
-  @Post('/create/:userId')
+  @Post('/create')
   @AuthGuard()
-  async createProfile(@Params('userId') userId: string, @Body() data: CreateProfileDto) {
-    return profileService.createProfile(userId, data);
+  async createProfile(@UserDetails() userDetails: TokenClaims, @Body() data: CreateProfileDto) {
+    console.log(userDetails);
+    return profileService.createProfile(userDetails.userId, data);
   }
 
-  @Post('/update/:userId')
+  @Post('/update')
   @AuthGuard()
-  async updateProfile(@Params('userId') userId: string, @Body() data: CreateProfileDto) {
-    return profileService.updateProfile(userId, data);
+  async updateProfile(@UserDetails() userDetails: TokenClaims, @Body() data: CreateProfileDto) {
+    return profileService.updateProfile(userDetails.userId, data);
   }
 }

@@ -49,6 +49,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
       const hasRequest: RequestValidation = Reflect.getMetadata('fastify:method:request', c.instance, method.property);
       const hasReply: RequestValidation = Reflect.getMetadata('fastify:method:reply', c.instance, method.property);
       const hasParams: ParamValidation[] = Reflect.getMetadata('fastify:method:params', c.instance, method.property) ?? [];
+      const hasUserDetails: RequestValidation = Reflect.getMetadata('fastify:method:user_details', c.instance, method.property);
 
       const routeProps: RouteOptions = {
         method: method.method,
@@ -89,6 +90,10 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           if (hasRequest) args[hasRequest.index] = req;
           if (hasReply) args[hasReply.index] = res;
+
+          if (hasUserDetails) {
+            args[hasUserDetails.index] = req.user;
+          }
 
           if (args.length === 0) {
             args.push(req, res);

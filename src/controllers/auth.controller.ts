@@ -12,21 +12,17 @@ export class AuthController {
   @Post('/signup')
   async signup(@Body() createUserRequest: CreateUserDto) {
     const validationId = await authService.createTempUser(createUserRequest);
-
-    if (createUserRequest.mobileNumber) {
-      await authService.requestOTP(createUserRequest.mobileNumber);
-    }
-
+    await authService.requestOTP(
+      createUserRequest.mobileNumber || createUserRequest.email,
+      createUserRequest.mobileNumber ? 'MOBILE_NUMBER' : 'EMAIL',
+    );
     return { validationId };
   }
 
   @Post('/login')
   async login(@Body() loginRequest: LoginDto) {
     const validationId = await authService.loadTempUser(loginRequest);
-    if (loginRequest.mobileNumber) {
-      await authService.requestOTP(loginRequest.mobileNumber);
-    }
-
+    await authService.requestOTP(loginRequest.mobileNumber || loginRequest.email, loginRequest.mobileNumber ? 'MOBILE_NUMBER' : 'EMAIL');
     return { validationId };
   }
 
