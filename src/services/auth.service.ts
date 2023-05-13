@@ -116,23 +116,21 @@ class AuthService {
     throw new HttpException(ErrorEnum.INVALID_VALIDATION_ID);
   }
 
-  async requestOTP(mobileNumber: string) {
+  async requestOTP(contact: string, type: 'EMAIL' | 'MOBILE_NUMBER') {
     const otp = generateOTP();
 
-    await redisClient.setEx(`${mobileNumber}_otp`, OTP_EXPIRY, otp);
-    await AuthRemote.requestOtp(mobileNumber, otp);
+    await redisClient.setEx(`${contact}_otp`, OTP_EXPIRY, otp);
+
+    if (type === 'MOBILE_NUMBER') await AuthRemote.requestOtpMobile(contact, otp);
+    else await AuthRemote.requestOtpEmail(contact, otp);
   }
 
   private async validateOTP(user: User, otp: string) {
-    if (user.mobileNumber) {
-      const data = await redisClient.getDel(`${user.mobileNumber}_otp`);
-      return otp === data;
-    }
-
-    if (user.email) {
+    const data = await redisClient.get(`${user.mobileNumber || user.email}_otp`);
+    if (otp === data) {
+      redisClient.del(`${user.mobileNumber || user.email}_otp`);
       return true;
     }
-
     return false;
   }
 
