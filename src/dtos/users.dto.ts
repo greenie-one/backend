@@ -20,14 +20,6 @@ export class CreateUserDto {
   @MaxLength(72)
   @ValidateIf((obj, val) => val || obj.email)
   password?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  firstName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  lastName: string;
 }
 
 export class LoginDto {
