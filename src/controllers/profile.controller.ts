@@ -11,7 +11,6 @@ export default class ProfileController {
   @Post('/create')
   @AuthGuard()
   async createProfile(@UserDetails() userDetails: TokenClaims, @Body() data: CreateProfileDto) {
-    console.log(userDetails);
     return profileService.createProfile(userDetails.userId, data);
   }
 
