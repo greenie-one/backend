@@ -99,11 +99,12 @@ class AuthService {
   }
 
   async validate(request: ValidateOtpDTO) {
-    const data = await redisClient.getDel(`validation_${request.validationId}`);
+    const data = await redisClient.get(`validation_${request.validationId}`);
     if (data) {
       const { type, user } = JSON.parse(data) as { user: User; type: ValidationType };
 
       if (await this.validateOTP(user, request.otp)) {
+        redisClient.del(`validation_${request.validationId}`);
         if (type === ValidationType.SINGUP) {
           return userService.createUser(user);
         }
