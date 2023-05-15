@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateProfileDto {
   @IsString()
@@ -8,6 +8,10 @@ export class CreateProfileDto {
   @IsString()
   @IsNotEmpty()
   public last_name: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  public description_tags: string[];
 }
 
 export class UpdateProfileDto {
@@ -21,4 +25,9 @@ export class UpdateProfileDto {
 
   @IsString()
   public greenie_id?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  public description_tags: string[];
 }
