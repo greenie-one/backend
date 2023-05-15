@@ -28,6 +28,7 @@ class ProfileService {
       firstName: profileData.first_name,
       lastName: profileData.last_name,
       user: userId,
+      descriptionTags: profileData.description_tags,
     });
     return profile;
   }
@@ -39,6 +40,7 @@ class ProfileService {
       {
         firstName: profileData.first_name,
         lastName: profileData.last_name,
+        descriptionTags: profileData.description_tags,
       },
       { new: true },
     );

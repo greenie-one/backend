@@ -16,6 +16,9 @@ export class Profile {
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 
+  @prop({ type: Array<string>, default: [] })
+  public descriptionTags!: string[];
+
   @prop({ type: () => Verification })
   public verification?: Verification;
 
