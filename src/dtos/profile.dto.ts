@@ -3,31 +3,31 @@ import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class CreateProfileDto {
   @IsString()
   @IsNotEmpty()
-  public first_name: string;
+  public firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  public last_name: string;
+  public lastName: string;
 
   @IsArray()
   @IsString({ each: true })
-  public description_tags: string[];
+  public descriptionTags: string[];
 }
 
 export class UpdateProfileDto {
   @IsString()
   @IsOptional()
-  public first_name?: string;
+  public firstName?: string;
 
   @IsString()
   @IsOptional()
-  public last_name?: string;
+  public lastName?: string;
 
   @IsString()
-  public greenie_id?: string;
+  public greenieId?: string;
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  public description_tags: string[];
+  public descriptionTags: string[];
 }
