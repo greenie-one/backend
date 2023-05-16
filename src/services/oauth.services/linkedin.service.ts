@@ -8,7 +8,6 @@ import { createVerifier } from 'fast-jwt';
 import { FastifyRequest } from 'fastify';
 import buildGetJwks from 'get-jwks';
 import { authService } from '../auth.service';
-import { profileService } from '../profile.service';
 import { userService } from '../users.service';
 
 class LinkedInOAuthService implements IOAuthService {
@@ -53,15 +52,6 @@ class LinkedInOAuthService implements IOAuthService {
 
       if (!user) {
         throw new HttpException(ErrorEnum.FAILED_TO_CREATE_USER);
-      }
-
-      const profile = await profileService.createProfile(user._id, {
-        first_name: decoded.given_name,
-        last_name: decoded.family_name,
-      });
-
-      if (!profile) {
-        throw new HttpException(ErrorEnum.FAILED_TO_CREATE_PROFILE);
       }
     }
 
