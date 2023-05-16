@@ -20,7 +20,7 @@ export default class ProfileController {
     return profileService.updateProfile(userDetails.userId, data);
   }
 
-  @Get('/')
+  @Get('/me')
   @AuthGuard()
   async getProfile(@UserDetails() userDetails: TokenClaims) {
     return profileService.getProfile(userDetails.userId);
