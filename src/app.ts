@@ -4,7 +4,6 @@ import './utils/logger';
 import { dbConnection } from '@database';
 import fastifyCookie from '@fastify/cookie';
 import middie from '@fastify/middie';
-import FastifyStatic from '@fastify/static';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { ClassConstructor } from 'class-transformer';
 import compression from 'compression';
@@ -14,7 +13,6 @@ import fastify from 'fastify';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import { connect, set } from 'mongoose';
-import path from 'path';
 import { env } from './config';
 import { registerControllers } from './controllers';
 import { registerJWTMiddleware } from './middlewares/jwt.middleware';
@@ -77,10 +75,6 @@ export class App {
     this.app.register(fastifyCookie, {
       secret: 'my-secret',
       hook: 'onRequest',
-    });
-
-    this.app.register(FastifyStatic, {
-      root: path.join(__dirname, 'public'),
     });
 
     this.app.use(cors({ origin: env('ORIGIN'), credentials: env('CREDENTIALS') }));
