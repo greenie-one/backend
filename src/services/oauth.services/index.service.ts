@@ -1,4 +1,3 @@
-import { env } from '@/config';
 import { FastifyRequest } from 'fastify';
 import { googleOAuthService } from './google.service';
 import { linkedInOAuthService } from './linkedin.service';
@@ -22,9 +21,7 @@ class OAuthService {
   }
 
   public async handleOAuthLogin(provider: OAuthProviders, request: FastifyRequest, query: unknown) {
-    const token = await this.RegisteredOAuthProviders[provider].handleLogin(request, query);
-    const client_url = env('CLIENT_DOMAIN');
-    return `${client_url}/auth?accessToken=${token.accessToken}&refreshToken=${token.refreshToken}`;
+    return await this.RegisteredOAuthProviders[provider].handleLogin(request, query);
   }
 }
 
