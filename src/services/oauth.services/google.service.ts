@@ -7,7 +7,6 @@ import { GoogleRemote } from '@/remote/auth/google.remote';
 import { FastifyRequest } from 'fastify';
 import { LoginTicket, OAuth2Client } from 'google-auth-library';
 import { authService } from '../auth.service';
-import { profileService } from '../profile.service';
 import { userService } from '../users.service';
 
 class GoogleOAuthService implements IOAuthService {
@@ -46,14 +45,6 @@ class GoogleOAuthService implements IOAuthService {
       user = await userService.createUser({ email: payload.email, roles: [UserRoles.DEFAULT] });
       if (!user) {
         throw new HttpException(ErrorEnum.FAILED_TO_CREATE_USER);
-      }
-      const profile = await profileService.createProfile(user._id, {
-        firstName: payload.given_name,
-        lastName: payload.family_name,
-        descriptionTags: [],
-      });
-      if (!profile) {
-        throw new HttpException(ErrorEnum.FAILED_TO_CREATE_PROFILE);
       }
     }
 
