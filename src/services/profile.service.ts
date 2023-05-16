@@ -25,10 +25,10 @@ class ProfileService {
     if (findProfile) throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
 
     const profile = await ProfileModel.create({
-      firstName: profileData.first_name,
-      lastName: profileData.last_name,
+      firstName: profileData.firstName,
+      lastName: profileData.lastName,
       user: userId,
-      descriptionTags: profileData.description_tags,
+      descriptionTags: profileData.descriptionTags,
     });
     return profile;
   }
@@ -38,9 +38,9 @@ class ProfileService {
     const profile = await ProfileModel.findOneAndUpdate(
       { user: userId },
       {
-        firstName: profileData.first_name,
-        lastName: profileData.last_name,
-        descriptionTags: profileData.description_tags,
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        descriptionTags: profileData.descriptionTags,
       },
       { new: true },
     );

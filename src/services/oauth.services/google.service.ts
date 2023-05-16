@@ -48,8 +48,9 @@ class GoogleOAuthService implements IOAuthService {
         throw new HttpException(ErrorEnum.FAILED_TO_CREATE_USER);
       }
       const profile = await profileService.createProfile(user._id, {
-        first_name: payload.given_name,
-        last_name: payload.family_name,
+        firstName: payload.given_name,
+        lastName: payload.family_name,
+        descriptionTags: [],
       });
       if (!profile) {
         throw new HttpException(ErrorEnum.FAILED_TO_CREATE_PROFILE);
