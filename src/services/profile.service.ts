@@ -2,11 +2,9 @@ import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Profile, ProfileModel } from '@/models/profile.model';
-import { AuthGuard } from '@/utils/decorators/auth';
 import { UserModel } from '@models/users.model';
 
 class ProfileService {
-  @AuthGuard()
   public async createProfile(userId: string, profileData: CreateProfileDto): Promise<Profile> {
     try {
       // Check if user exists
@@ -33,7 +31,6 @@ class ProfileService {
     return profile;
   }
 
-  @AuthGuard()
   public async updateProfile(userId: string, profileData: UpdateProfileDto): Promise<Profile> {
     const profile = await ProfileModel.findOneAndUpdate(
       { user: userId },
@@ -44,6 +41,14 @@ class ProfileService {
       },
       { new: true },
     );
+    if (!profile) {
+      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
+    }
+    return profile;
+  }
+
+  public async getProfile(userId: string): Promise<Profile> {
+    const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
