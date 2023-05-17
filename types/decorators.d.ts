@@ -22,6 +22,11 @@ type HeaderValidation = {
   queryName: string;
 };
 
+type ParamValidation = {
+  index: number;
+  queryName: string;
+};
+
 type RequestValidation = {
   index: number;
 };

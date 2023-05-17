@@ -3,24 +3,28 @@ import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsUUID } from 'class-
 
 export class TokenClaims {
   @IsEmail()
+  @IsOptional()
   email: string;
 
   @IsUUID(4)
   sessionId: string;
 
   @IsString()
+  @IsOptional()
   firstName: string;
 
   @IsString()
+  @IsOptional()
   lastName: string;
 
-  @IsEnum(UserRoles)
+  @IsEnum(UserRoles, { each: true })
   roles: UserRoles[];
 
   @IsOptional()
   iat?: number;
 
   @IsBoolean()
+  @IsOptional()
   isRefresh?: boolean;
 
   @IsString()

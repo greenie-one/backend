@@ -1,5 +1,6 @@
 import { env } from '@/config';
 import { TokenClaims } from '@/dtos/auth.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { authService } from '@/services/auth.service';
 import { validateRoute } from '@/utils/validation';
@@ -49,6 +50,8 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
     verify: { allowedIss: 'greenie.one' },
   });
 
+  // fastify.decorate('user_details', undefined);
+
   fastify.addHook('onRequest', async (req) => {
     const shouldValidate = !!routesToApplyAuthOn.find((val) => val.url === req.routerPath && val.method === req.method);
     if (shouldValidate) {
@@ -60,8 +63,11 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
 
         const validated = await authService.validateSessionId(decoded.sessionId, req.headers['authorization'].substring(7), 'token');
         if (!validated) throw new Error();
+
+        // (req as unknown as { user_details: TokenClaims }).user_details = decoded;
       } catch (e) {
-        throw new HttpException(e?.message || 'Unauthorized', 401);
+        console.error(e);
+        throw new HttpException(ErrorEnum.UNAUTHORIZED);
       }
     }
   });

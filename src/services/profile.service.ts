@@ -1,44 +1,59 @@
 import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Profile, ProfileModel } from '@/models/profile.model';
 import { UserModel } from '@models/users.model';
 
-export class ProfileService {
-  public async findProfileById(user: string): Promise<Profile> {
-    const profile = await ProfileModel.findOne({ user: user });
-    if (!profile) {
-      throw new HttpException('Profile not found', 404);
-    }
-    return profile;
-  }
-
-  public async createProfile(user: string, profileData: CreateProfileDto): Promise<Profile> {
-    // Check if user exists
+class ProfileService {
+  public async createProfile(userId: string, profileData: CreateProfileDto): Promise<Profile> {
     try {
-      const findUser = await UserModel.findById(user);
+      // Check if user exists
+      const findUser = await UserModel.findById(userId);
       if (!findUser) {
-        throw new HttpException('User not found', 404);
+        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
       }
-    } catch (error) {
-      throw new HttpException('Error with user id', 403);
+    } catch (e) {
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
-    const profile = await ProfileModel.create({ ...profileData, user: user });
+    const findProfile = ProfileModel.findOne({
+      user: userId,
+    });
+
+    if (findProfile) throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
+
+    const profile = await ProfileModel.create({
+      firstName: profileData.firstName,
+      lastName: profileData.lastName,
+      user: userId,
+      descriptionTags: profileData.descriptionTags,
+    });
     return profile;
   }
 
-  public async updateProfile(user: string, profileData: UpdateProfileDto): Promise<Profile> {
-    const profile = await ProfileModel.findOneAndUpdate({ user: user }, profileData, { new: true });
+  public async updateProfile(userId: string, profileData: UpdateProfileDto): Promise<Profile> {
+    const profile = await ProfileModel.findOneAndUpdate(
+      { user: userId },
+      {
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        descriptionTags: profileData.descriptionTags,
+      },
+      { new: true },
+    );
     if (!profile) {
-      throw new HttpException('Profile not found', 404);
+      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
     return profile;
   }
 
-  public async deleteProfile(user: string): Promise<void> {
-    const profile = await ProfileModel.findOneAndDelete({ user: user });
+  public async getProfile(userId: string): Promise<Profile> {
+    const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
-      throw new HttpException('Profile not found', 404);
+      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
+    return profile;
   }
 }
+
+export const profileService = new ProfileService();

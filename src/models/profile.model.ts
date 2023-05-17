@@ -10,14 +10,14 @@ export class Profile {
   @prop({ type: String, required: true })
   public lastName!: string;
 
-  @prop({ type: String, required: true })
-  public phone!: string;
-
   @prop({ type: String })
   public greenie_id?: string;
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;
+
+  @prop({ type: Array<string>, default: [] })
+  public descriptionTags!: string[];
 
   @prop({ type: () => Verification })
   public verification?: Verification;

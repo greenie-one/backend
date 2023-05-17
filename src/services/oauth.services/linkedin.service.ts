@@ -1,15 +1,16 @@
 import { env } from '@/config';
 import { LinkedInOAuthDto } from '@/dtos/oauth.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { User, UserModel } from '@/models/users.model';
+import { User, UserModel, UserRoles } from '@/models/users.model';
 import { LinkedInRemote } from '@/remote/auth/linkedIn.remote';
 import { createVerifier } from 'fast-jwt';
 import { FastifyRequest } from 'fastify';
 import buildGetJwks from 'get-jwks';
-import { authService } from './auth.service';
-import { userService } from './users.service';
+import { authService } from '../auth.service';
+import { userService } from '../users.service';
 
-class OAuthService {
+class LinkedInOAuthService implements IOAuthService {
   private jwksBuilder = buildGetJwks({
     providerDiscovery: true,
   });
@@ -23,11 +24,11 @@ class OAuthService {
       }),
   });
 
-  async handleLinkedInLogin(request: FastifyRequest, { code }: LinkedInOAuthDto) {
+  async handleLogin(request: FastifyRequest, { code }: LinkedInOAuthDto) {
     const accessTokenResp = await LinkedInRemote.getAccessToken(code);
 
     if (accessTokenResp.error) {
-      throw new HttpException(`LinkedIn auth failed, ${accessTokenResp.error}: ${accessTokenResp.error_description}`, 401);
+      throw new HttpException(ErrorEnum.LINKEDIN_AUTH_FAILED, accessTokenResp.error, accessTokenResp.error_description);
     }
 
     let decoded: LinkedInOauthTokenClaims;
@@ -35,7 +36,7 @@ class OAuthService {
       decoded = await this.verifyLinkedInJWT(accessTokenResp.id_token);
     } catch (e) {
       console.error('Failed to verify authenticity of token', e);
-      throw new HttpException('Failed to verify authenticity of token', 401);
+      throw new HttpException(ErrorEnum.LINKEDIN_TOKEN_UNAUTHENTICATED);
     }
 
     let user: User = await UserModel.findOne({
@@ -46,15 +47,18 @@ class OAuthService {
       console.info(`No user found by email ${decoded.email}, creating...`);
       user = await userService.createUser({
         email: decoded.email,
-        firstName: decoded.given_name,
-        lastName: decoded.family_name,
+        roles: [UserRoles.DEFAULT],
       });
+
+      if (!user) {
+        throw new HttpException(ErrorEnum.FAILED_TO_CREATE_USER);
+      }
     }
 
     return authService.generateTokens(request, user);
   }
 
-  getLinkedInRedirectURL() {
+  getRedirectURL() {
     const baseURL = new URL('https://www.linkedin.com/oauth/v2/authorization');
     baseURL.searchParams.set('response_type', 'code');
     baseURL.searchParams.set('client_id', env('LINKEDIN_CLIENT_ID'));
@@ -63,6 +67,10 @@ class OAuthService {
 
     return baseURL.toString();
   }
+
+  async getLinkedInDiscovery() {
+    console.log('Fetching LinkedIn discovery document...');
+  }
 }
 
-export const oAuthService = new OAuthService();
+export const linkedInOAuthService = new LinkedInOAuthService();

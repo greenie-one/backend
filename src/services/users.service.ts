@@ -1,8 +1,7 @@
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { ProfileModel } from '@/models/profile.model';
-import { VerificationModel } from '@/models/verified.model';
 import { User, UserModel, UserRoles } from '@models/users.model';
-import { compare, hash } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 
 class UserService {
   public async findAllUser(): Promise<User[]> {
@@ -10,7 +9,22 @@ class UserService {
     return users;
   }
 
-  public async createUser(userData: UserAndProfile) {
+  public async findUser({ id, email, mobileNumber }: { id?: string; email?: string; mobileNumber?: string }) {
+    if (id) {
+      return UserModel.findById(id);
+    }
+
+    const orMap = [];
+    if (email) orMap.push({ email });
+    if (mobileNumber) orMap.push({ mobileNumber });
+    const user = UserModel.findOne({
+      $or: orMap,
+    });
+
+    return user;
+  }
+
+  public async createUser(userData: User) {
     const orFilter = [];
     if (userData.email) orFilter.push({ email: userData.email });
     if (userData.mobileNumber) orFilter.push({ mobileNumber: userData.mobileNumber });
@@ -20,29 +34,15 @@ class UserService {
     });
 
     if (findUser) {
-      if (userData.email && userData.email === findUser.email) throw new HttpException(`This email ${userData.email} already exists`, 409);
-      else throw new HttpException(`This mobileNumber ${userData.mobileNumber} already exists`, 409);
-    }
-
-    let hashedPassword: string | undefined;
-    if (userData.password) {
-      hashedPassword = await hash(userData.password, 10);
+      if (userData.email && userData.email === findUser.email) throw new HttpException(ErrorEnum.USER_ALREADY_EXISTS);
+      else throw new HttpException(ErrorEnum.USER_ALREADY_EXISTS);
     }
 
     const createUserData = await UserModel.create({
       email: userData.email,
       mobileNumber: userData.mobileNumber,
       roles: [UserRoles.DEFAULT],
-      password: hashedPassword,
-    });
-
-    await ProfileModel.create({
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      verification: await VerificationModel.create({
-        is_verified: false,
-      }),
-      user: createUserData._id,
+      password: userData.password, // Should already be hashed
     });
 
     delete createUserData.password;
@@ -54,10 +54,10 @@ class UserService {
       email,
     });
 
-    if (!user) throw new HttpException(`No user by email ${email}`, 401);
-    if (!user.password) throw new HttpException(`User does not have a password`, 401);
+    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    if (!user.password) throw new HttpException(ErrorEnum.USER_NO_PASSWORD);
 
-    if (!(await compare(password, user.password))) throw new HttpException('Invalid user details', 401);
+    if (!(await compare(password, user.password))) throw new HttpException(ErrorEnum.PASSWORD_MISMATCH);
 
     delete user.password;
     return user;
@@ -68,7 +68,7 @@ class UserService {
       mobileNumber,
     });
 
-    if (!user) throw new HttpException(`No user by mobile ${mobileNumber}`, 401);
+    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
 
     delete user.password;
     return user;
