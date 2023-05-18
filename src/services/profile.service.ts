@@ -16,7 +16,7 @@ class ProfileService {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
-    const findProfile = ProfileModel.findOne({
+    const findProfile = await ProfileModel.findOne({
       user: userId,
     });
 
