@@ -7,13 +7,13 @@ export enum UserRoles {
 
 @modelOptions({ schemaOptions: { collection: 'users', timestamps: true } })
 export class User {
-  public _id: string;
+  public _id?: string;
 
   @prop({ type: String, required: false, unique: true, sparse: true })
   public email: string;
 
   @prop({ type: String, required: false, unique: true, sparse: true })
-  public mobileNumber: string;
+  public mobileNumber?: string;
 
   @prop({ type: String, required: false })
   public password?: string;

@@ -1,5 +1,6 @@
 import { TokenClaims } from '@/dtos/auth.dto';
 import { CreateUserDto, LoginDto, ValidateOtpDTO, ValidationType } from '@/dtos/users.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { AuthSessionModel } from '@/models/session.model';
@@ -22,8 +23,8 @@ class AuthService {
 
     const userDetails: TokenClaims = {
       email: user.email,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
+      firstName: profile?.firstName,
+      lastName: profile?.lastName,
       roles: user.roles,
       userId: user._id,
       sessionId: v4(),
@@ -44,7 +45,7 @@ class AuthService {
     const resp = await AuthSessionModel.findById(sessionId);
 
     if (!resp) {
-      throw new HttpException('Session does not exist', 400);
+      throw new HttpException(ErrorEnum.SESSION_NON_EXISTENT);
     }
   }
 
@@ -54,21 +55,24 @@ class AuthService {
   }
 
   async updateAccessTokenInStore(sessionId: string, accessToken: string) {
-    await AuthSessionModel.updateOne({
-      _id: sessionId,
-      token: accessToken,
-    });
+    await AuthSessionModel.updateOne(
+      { _id: sessionId },
+      {
+        token: accessToken,
+      },
+    );
   }
 
   async createTempUser(request: CreateUserDto): Promise<string> {
+    const existingUser = await userService.findUser({ email: request.email, mobileNumber: request.mobileNumber });
+    if (existingUser) throw new HttpException(ErrorEnum.USER_ALREADY_EXISTS);
+
     const validationId = v4();
-    const user: UserAndProfile = {
+    const user: User = {
       email: request.email,
       mobileNumber: request.mobileNumber,
       password: request.password && (await hash(request.password, 10)),
       roles: [UserRoles.DEFAULT],
-      firstName: request.firstName,
-      lastName: request.lastName,
     };
     const type = ValidationType.SINGUP;
     const data = { type, user };
@@ -95,11 +99,12 @@ class AuthService {
   }
 
   async validate(request: ValidateOtpDTO) {
-    const data = await redisClient.getDel(`validation_${request.validationId}`);
+    const data = await redisClient.get(`validation_${request.validationId}`);
     if (data) {
-      const { type, user } = JSON.parse(data) as { user: UserAndProfile; type: ValidationType.SINGUP } | { user: User; type: ValidationType.LOGIN };
+      const { type, user } = JSON.parse(data) as { user: User; type: ValidationType };
 
       if (await this.validateOTP(user, request.otp)) {
+        redisClient.del(`validation_${request.validationId}`);
         if (type === ValidationType.SINGUP) {
           return userService.createUser(user);
         }
@@ -109,42 +114,61 @@ class AuthService {
         }
       }
     }
+    throw new HttpException(ErrorEnum.INVALID_VALIDATION_ID);
   }
 
-  async requestOTP(mobileNumber: string) {
+  async requestOTP(contact: string, type: 'EMAIL' | 'MOBILE_NUMBER') {
     const otp = generateOTP();
 
-    await redisClient.setEx(`${mobileNumber}_otp`, OTP_EXPIRY, otp);
-    await AuthRemote.requestOtp(mobileNumber, otp);
+    await redisClient.setEx(`${contact}_otp`, OTP_EXPIRY, otp);
+
+    if (type === 'MOBILE_NUMBER') await AuthRemote.requestOtpMobile(contact, otp);
+    else await AuthRemote.requestOtpEmail(contact, otp);
   }
 
-  private async validateOTP(user: User | UserAndProfile, otp: string) {
-    if (user.mobileNumber) {
-      const data = await redisClient.getDel(`${user.mobileNumber}_otp`);
-      return otp === data;
-    }
-
-    if (user.email) {
+  private async validateOTP(user: User, otp: string) {
+    const data = await redisClient.get(`${user.mobileNumber || user.email}_otp`);
+    if (otp === data) {
+      redisClient.del(`${user.mobileNumber || user.email}_otp`);
       return true;
     }
-
     return false;
   }
 
   async generateTokens(req: FastifyRequest, user: User) {
-    const userDetails = await authService.createUserDetails(user);
+    const userDetails = await this.createUserDetails(user);
 
     try {
       const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
       const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true }, { algorithm: 'RS256', expiresIn: '60d' });
 
-      await authService.storeToken(userDetails.sessionId, accessToken, refreshToken);
+      await this.storeToken(userDetails.sessionId, accessToken, refreshToken);
 
       return { accessToken, refreshToken };
     } catch (e) {
-      authService.removeSession(userDetails.sessionId).catch(console.error);
+      this.removeSession(userDetails.sessionId).catch(console.error);
       throw e;
     }
+  }
+
+  async refreshToken(req: FastifyRequest, token: string) {
+    try {
+      const decoded: TokenClaims = req.server.jwt.verify(token);
+      if (decoded.isRefresh) {
+        const user = await userService.findUser({ id: decoded.userId });
+        const userDetails = await this.createUserDetails(user);
+
+        const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
+
+        await this.updateAccessTokenInStore(userDetails.sessionId, accessToken);
+
+        return { accessToken };
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    throw new HttpException(ErrorEnum.INVALID_REFRESH_TOKEN);
   }
 }
 

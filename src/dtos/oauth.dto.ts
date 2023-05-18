@@ -17,3 +17,18 @@ export class LinkedInAccessTokenResponse {
   error?: string;
   error_description?: string;
 }
+
+export class GoogleOAuthDto {
+  @IsString()
+  code: string;
+}
+
+export class GoogleAccessTokenResponse {
+  access_token: string;
+  expires_in: number;
+  scope: string;
+  id_token: string;
+  refresh_token: string;
+  error?: string;
+  error_description?: string;
+}

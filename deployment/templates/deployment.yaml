@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "greenie-mvp-backend-dev.fullname" . }}
+  name: {{ include "greenie-mvp-backend.fullname" . }}
   labels:
-    {{- include "greenie-mvp-backend-dev.labels" . | nindent 4 }}
+    {{- include "greenie-mvp-backend.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "greenie-mvp-backend-dev.selectorLabels" . | nindent 6 }}
+      {{- include "greenie-mvp-backend.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "greenie-mvp-backend-dev.selectorLabels" . | nindent 8 }}
+        {{- include "greenie-mvp-backend.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "greenie-mvp-backend-dev.serviceAccountName" . }}
+      serviceAccountName: {{ include "greenie-mvp-backend.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -89,13 +89,13 @@ spec:
             httpGet:
               path: /health-check
               port: http
-            initialDelaySeconds: 20
+            initialDelaySeconds: 3
             periodSeconds: 300
           readinessProbe:
             httpGet:
               path: /health-check
               port: http
-            initialDelaySeconds: 20
+            initialDelaySeconds: 3
             periodSeconds: 300
       {{- with .Values.nodeSelector }}
       nodeSelector:

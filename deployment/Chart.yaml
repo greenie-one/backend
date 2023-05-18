@@ -1,5 +1,5 @@
 apiVersion: v2
-name: greenie-mvp-backend-dev
+name: greenie-mvp-backend
 description: Backend for Greenie.one MVP
 
 # A chart can be either an 'application' or a 'library' chart.
