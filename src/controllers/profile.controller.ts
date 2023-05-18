@@ -1,5 +1,5 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateProfileDto } from '@/dtos/profile.dto';
+import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
 import { profileService } from '@/services/profile.service';
 import { AuthGuard, UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -16,7 +16,7 @@ export default class ProfileController {
 
   @Post('/update')
   @AuthGuard()
-  async updateProfile(@UserDetails() userDetails: TokenClaims, @Body() data: CreateProfileDto) {
+  async updateProfile(@UserDetails() userDetails: TokenClaims, @Body() data: UpdateProfileDto) {
     return profileService.updateProfile(userDetails.userId, data);
   }
 
