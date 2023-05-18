@@ -79,6 +79,18 @@ spec:
                 secretKeyRef:
                   name: db-{{ .Values.APP_ENV }}-password
                   key: value
+
+            - name: REDIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: redis-{{ .Values.APP_ENV }}-username
+                  key: value
+
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-{{ .Values.APP_ENV }}-password
+                  key: value
           {{ end }}
 
           ports:
