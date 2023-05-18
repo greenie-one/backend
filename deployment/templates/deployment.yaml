@@ -60,7 +60,27 @@ spec:
                 secretKeyRef:
                   name: service-account-key 
                   key: key.json
-            
+
+            {{ if eq .Values.APP_ENV "production" }}
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-{{ .Values.APP_ENV }}-host
+                  key: value
+                
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-{{ .Values.APP_ENV }}-user
+                  key: value
+          
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-{{ .Values.APP_ENV }}-password
+                  key: value
+          {{ end }}
+
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
