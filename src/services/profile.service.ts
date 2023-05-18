@@ -1,4 +1,4 @@
-import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
+import { CreateProfileDto, ProfileChangedEntity, UpdateProfileDto } from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Profile, ProfileModel } from '@/models/profile.model';
@@ -31,16 +31,22 @@ class ProfileService {
     return profile;
   }
 
+  private getUpdateProfileChanges(profileData: UpdateProfileDto) {
+    const changes: Partial<Profile> = {};
+    if (profileData.changedEntity === ProfileChangedEntity.NAME) {
+      changes.firstName = profileData.firstName;
+      changes.lastName = profileData.lastName;
+    }
+
+    if (profileData.changedEntity === ProfileChangedEntity.DESCRIPTION_TAGS) {
+      changes.descriptionTags = profileData.descriptionTags;
+    }
+
+    return changes;
+  }
+
   public async updateProfile(userId: string, profileData: UpdateProfileDto): Promise<Profile> {
-    const profile = await ProfileModel.findOneAndUpdate(
-      { user: userId },
-      {
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
-        descriptionTags: profileData.descriptionTags,
-      },
-      { new: true },
-    );
+    const profile = await ProfileModel.findOneAndUpdate({ user: userId }, this.getUpdateProfileChanges(profileData), { new: true });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
