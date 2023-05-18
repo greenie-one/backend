@@ -31,9 +31,6 @@ export class UpdateProfileDto {
   @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.NAME)
   public lastName?: string;
 
-  @IsString()
-  public greenieId?: string;
-
   @IsArray()
   @IsString({ each: true })
   @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.DESCRIPTION_TAGS)
