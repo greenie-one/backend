@@ -117,6 +117,16 @@ class AuthService {
     throw new HttpException(ErrorEnum.INVALID_VALIDATION_ID);
   }
 
+  async requestOTPByValidationId(validationId: string) {
+    const data = await redisClient.get(`validation_${validationId}`);
+    if (data) {
+      const { user } = JSON.parse(data) as { user: User; type: ValidationType };
+      const type = user.mobileNumber ? 'MOBILE_NUMBER' : 'EMAIL';
+      return this.requestOTP(user.mobileNumber ?? user.email, type);
+    }
+    throw new HttpException(ErrorEnum.INVALID_VALIDATION_ID);
+  }
+
   async requestOTP(contact: string, type: 'EMAIL' | 'MOBILE_NUMBER') {
     const otp = generateOTP();
 
