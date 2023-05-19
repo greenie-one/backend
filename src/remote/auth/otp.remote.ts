@@ -20,19 +20,18 @@ export class AuthRemote {
       body: {
         To: mobileNumber,
         From: FROM_MOBILE,
-        Body: body,
+        htlm: body,
       },
     });
     return true;
   }
 
   static async requestOtpEmail(email: string, otp: string) {
-    const text = await ejs.renderFile('templates/email/otpTemplate.ejs', { otp });
+    const html = await ejs.renderFile('templates/email/otpTemplate.ejs', { otp });
     return mailer.sendMail({
-      from: 'office@greenie.one',
       to: email,
       subject: 'Greenie login',
-      text,
+      html,
     });
     return true;
   }
