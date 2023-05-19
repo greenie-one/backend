@@ -51,3 +51,8 @@ export class ValidateOtpDTO {
   @IsString()
   validationId: string;
 }
+
+export class ResendOtpDTO {
+  @IsString()
+  validationId: string;
+}
