@@ -29,10 +29,15 @@ export class HttpClient {
       body,
     });
 
+    let response: T;
     if (request.toJSON !== false) {
-      return resp.json() as T;
+      response = resp.json() as T;
     } else {
-      return resp.text() as T;
+      response = resp.text() as T;
     }
+
+    console.info('Got response', response);
+
+    return response;
   }
 }
