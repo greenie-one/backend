@@ -20,7 +20,7 @@ export class AuthRemote {
       body: {
         To: mobileNumber,
         From: FROM_MOBILE,
-        htlm: body,
+        Body: body,
       },
     });
     return true;
