@@ -31,9 +31,9 @@ export class HttpClient {
 
     let response: T;
     if (request.toJSON !== false) {
-      response = resp.json() as T;
+      response = (await resp.json()) as T;
     } else {
-      response = resp.text() as T;
+      response = (await resp.text()) as T;
     }
 
     console.info('Got response', response);
