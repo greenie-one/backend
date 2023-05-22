@@ -1,5 +1,5 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateUserDto, LoginDto, ValidateOtpDTO } from '@/dtos/users.dto';
+import { CreateUserDto, LoginDto, ResendOtpDTO, ValidateOtpDTO } from '@/dtos/users.dto';
 import { authService } from '@/services/auth.service';
 import { AuthGuard } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -21,6 +21,11 @@ export class AuthController {
     const validationId = await authService.loadTempUser(loginRequest);
     authService.requestOTP(loginRequest.mobileNumber || loginRequest.email, loginRequest.mobileNumber ? 'MOBILE_NUMBER' : 'EMAIL');
     return { validationId };
+  }
+
+  @Post('/resendOTP')
+  async resendOtp(@Body() validateOtpRequest: ResendOtpDTO) {
+    await authService.requestOTPByValidationId(validateOtpRequest.validationId);
   }
 
   @Post('/validateOTP')
