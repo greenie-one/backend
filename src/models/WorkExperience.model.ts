@@ -15,11 +15,17 @@ export class WorkExperience {
   @prop({ type: Boolean, default: false })
   public isVerified?: boolean;
 
-  @prop({ type: String })
-  public companyDuration?: string;
+  @prop({ type: Date })
+  public companyStartYear?: Date;
+
+  @prop({ type: Date })
+  public companyEndYear?: Date;
 
   @prop({ type: String })
   public description?: string;
+
+  @prop({ ref: 'User' })
+  public user!: Ref<User>;
 
   @prop({ ref: 'User' })
   public verifiedBy?: Ref<User>;
