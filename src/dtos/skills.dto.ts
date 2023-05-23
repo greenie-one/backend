@@ -1,22 +1,23 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class createSkillDto {
   @IsString()
-  @IsNotEmpty()
-  public image: string;
+  @IsOptional()
+  public image?: string;
 
   @IsString()
   @IsNotEmpty()
-  public designation: string;
+  public designation!: string;
 
   @IsBoolean()
+  @IsOptional()
   public isVerified?: boolean;
 
   @IsNumber()
   @IsNotEmpty()
-  public skillRate: number;
+  public skillRate!: number;
 
   @IsString()
   @IsNotEmpty()
-  public user: string;
+  public user!: string;
 }

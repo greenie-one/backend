@@ -3,8 +3,8 @@ import { User } from './users.model';
 
 @modelOptions({ schemaOptions: { collection: 'work_experiences', timestamps: true } })
 export class WorkExperience {
-  @prop({ type: String, required: true })
-  public image!: string;
+  @prop({ type: String })
+  public image: string;
 
   @prop({ type: String, required: true })
   public designation!: string;

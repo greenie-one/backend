@@ -2,21 +2,23 @@ import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateWorkExperienceDto {
   @IsString()
-  @IsNotEmpty()
-  public image: string;
+  @IsOptional()
+  public image?: string;
 
   @IsString()
   @IsNotEmpty()
-  public designation: string;
+  public designation!: string;
 
   @IsString()
   @IsNotEmpty()
-  public companyName: string;
+  public companyName!: string;
 
   @IsBoolean()
+  @IsOptional()
   public isVerified?: boolean;
 
   @IsString()
+  @IsOptional()
   public description?: string;
 
   @IsString()
@@ -24,12 +26,14 @@ export class CreateWorkExperienceDto {
   public verifiedBy?: string;
 
   @IsString()
+  @IsOptional()
   public companyStartYear?: string;
 
   @IsString()
+  @IsOptional()
   public companyEndYear?: string;
 
   @IsString()
   @IsNotEmpty()
-  public user: string;
+  public user!: string;
 }
