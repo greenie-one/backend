@@ -4,6 +4,7 @@ import { AuthController } from './controllers/auth.controller';
 import { OAuthController } from './controllers/oauth.controller';
 import ProfileController from './controllers/profile.controller';
 import RootController from './controllers/root.controller';
+import SkillController from './controllers/skills.controller';
 import WaitlistController from './controllers/waitlist.controller';
 import workExperienceController from './controllers/workExperience.controller';
 
@@ -19,7 +20,15 @@ process.on('unhandledRejection', (e) => {
 
 ValidateEnv();
 
-const controllers = [RootController, AuthController, OAuthController, ProfileController, WaitlistController, workExperienceController];
+const controllers = [
+  RootController,
+  AuthController,
+  OAuthController,
+  ProfileController,
+  WaitlistController,
+  workExperienceController,
+  SkillController,
+];
 
 const app = new App(controllers);
 
