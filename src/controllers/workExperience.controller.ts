@@ -7,7 +7,7 @@ import { Get, Post } from '@/utils/decorators/methods';
 import { Body } from '@/utils/decorators/request';
 
 @Controller('/workExperience')
-export default class workExperienceController {
+export default class WorkExperienceController {
   @Post('/create')
   @AuthGuard()
   async createWorkExperience(@UserDetails() userDetails: TokenClaims, @Body() data: CreateWorkExperienceDto) {
