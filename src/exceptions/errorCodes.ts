@@ -29,7 +29,6 @@ export enum ErrorEnum {
   EDUCATION_NOT_FOUND,
   OAUTH_PROVIDER_NOT_FOUND,
   OAUTH_FAILED,
-  WORK_EXPERIENCE_NOT_FOUND,
   RESIDENTIAL_INFO_NOT_FOUND,
   DOCUMENTS_NOT_FOUND,
 }
@@ -150,18 +149,13 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'skills not found',
     status: 404,
   },
-  [ErrorEnum.WORK_EXPERIENCE_NOT_FOUND]: {
-    code: 'GR0021',
-    message: 'Work experience not found',
-    status: 404,
-  },
   [ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND]: {
-    code: 'GR0022',
+    code: 'GR0023',
     message: 'Residential info not found',
     status: 404,
   },
   [ErrorEnum.DOCUMENTS_NOT_FOUND]: {
-    code: 'GR0023',
+    code: 'GR0024',
     message: 'Documents not found',
     status: 404,
   },
