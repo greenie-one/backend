@@ -44,7 +44,7 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
   await fastify.register(jwt, {
     secret: {
       public: publicKey,
-      private: { key: privateKey, passphrase: env('JWT_KEY_PASSPHRASE') },
+      private: privateKey,
     },
     sign: { algorithm: 'RS256', iss: 'greenie.one' },
     verify: { allowedIss: 'greenie.one' },
