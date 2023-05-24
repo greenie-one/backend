@@ -15,6 +15,8 @@ export enum ErrorEnum {
   PROFILE_ALREADY_EXISTS,
   USER_NO_PASSWORD,
   PASSWORD_MISMATCH,
+  WORKEXPERIENCE_NOT_FOUND,
+  SKILL_NOT_FOUND,
 
   // Waitlist
   ALREADY_IN_WAITLIST,
@@ -137,6 +139,16 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0020',
     message: 'Profile already exists',
     status: 400,
+  },
+  [ErrorEnum.WORKEXPERIENCE_NOT_FOUND]: {
+    code: 'GR0021',
+    message: 'WorkExperience not found',
+    status: 404,
+  },
+  [ErrorEnum.SKILL_NOT_FOUND]: {
+    code: 'GR0022',
+    message: 'skills not found',
+    status: 404,
   },
   [ErrorEnum.WORK_EXPERIENCE_NOT_FOUND]: {
     code: 'GR0021',
