@@ -1,3 +1,4 @@
+import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { ValidationError, validateOrReject } from 'class-validator';
@@ -26,7 +27,7 @@ export function ValidateDto(
         await validateOrReject(dto, { skipMissingProperties, whitelist, forbidNonWhitelisted });
       } catch (errors) {
         const message = errors.map((error: ValidationError) => Object.values(error.constraints)).join(', ');
-        throw new HttpException(message, 400);
+        throw new HttpException(ErrorEnum.VALIDATION_ERROR, message);
       }
       return originalMethod.apply(this, args);
     };

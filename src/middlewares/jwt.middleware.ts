@@ -61,7 +61,7 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
         const transformed = plainToInstance(TokenClaims, decoded);
         await validateOrReject(transformed);
 
-        const validated = await authService.validateSessionId(decoded.sessionId, req.headers['authorization'].substring(7), 'token');
+        const validated = await authService.validateSessionId(decoded.session_id, req.headers['authorization'].substring(7), 'token');
         if (!validated) throw new Error();
 
         // (req as unknown as { user_details: TokenClaims }).user_details = decoded;

@@ -39,7 +39,7 @@ export class AuthController {
   @AuthGuard()
   @Post('/logout')
   async logout(@Req() req: FastifyRequest) {
-    const sessionId = (req.user as TokenClaims).sessionId;
+    const sessionId = (req.user as TokenClaims).session_id;
     authService.removeSession(sessionId);
   }
 
