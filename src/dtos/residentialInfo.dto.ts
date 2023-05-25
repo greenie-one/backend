@@ -32,10 +32,6 @@ export class AddResidentialInfoDto {
   @IsDate()
   @IsOptional()
   public end_date?: Date;
-
-  @IsString()
-  @IsNotEmpty()
-  public user_id!: string;
 }
 
 export class UpdateResidentialInfoDto {
