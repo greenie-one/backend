@@ -23,12 +23,18 @@ class DocumentsService {
 
   public async updateDocument(userId: string, documentData: UpdateDocumentDto): Promise<Document> {
     const documentId = documentData.document_id;
-    delete documentData.document_id;
-    const document = await DocumentModel.findOneAndUpdate({ _id: documentId, user: userId }, documentData, { new: true });
-    if (!document) {
-      throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
+    const old_doc = await DocumentModel.findOne({ _id: documentId });
+    if (!old_doc) {
+      throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
     }
-    return document;
+    const updated_doc = old_doc;
+    for (const key in documentData) {
+      if (key !== 'document_id') {
+        updated_doc[key] = documentData[key];
+      }
+    }
+    await updated_doc.save();
+    return updated_doc;
   }
 }
 

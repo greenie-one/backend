@@ -23,12 +23,18 @@ class ResidentialInfoService {
 
   public async updateResidentialInfo(userId: string, residentialInfoData: UpdateResidentialInfoDto): Promise<ResidentialInfo> {
     const residentialInfoId = residentialInfoData.residential_info_id;
-    delete residentialInfoData.residential_info_id;
-    const residentialInfo = await ResidentialInfoModel.findOneAndUpdate({ _id: residentialInfoId, user: userId }, residentialInfoData, { new: true });
-    if (!residentialInfo) {
+    const old_residential_info = await ResidentialInfoModel.findOne({ _id: residentialInfoId });
+    if (!old_residential_info) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
-    return residentialInfo;
+    const updated_residential_info = old_residential_info;
+    for (const key in residentialInfoData) {
+      if (key !== 'residential_info_id') {
+        updated_residential_info[key] = residentialInfoData[key];
+      }
+    }
+    await updated_residential_info.save();
+    return updated_residential_info;
   }
 }
 
