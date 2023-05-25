@@ -30,6 +30,7 @@ class AuthService {
       userId: user._id,
       session_id: v4(),
       sub: 'dummy value',
+      iss: 'greenie.one',
     };
 
     return userDetails;

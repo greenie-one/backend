@@ -26,6 +26,9 @@ export class TokenClaims {
   @IsOptional()
   sub: string;
 
+  @IsOptional()
+  iss?: string;
+
   @IsBoolean()
   @IsOptional()
   is_refresh?: boolean;
