@@ -11,7 +11,15 @@ export class CreateWorkExperienceDto {
 
   @IsString()
   @IsNotEmpty()
+  public email!: string;
+
+  @IsString()
+  @IsNotEmpty()
   public companyName!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  public companyId!: string;
 
   @IsBoolean()
   @IsOptional()

@@ -4,7 +4,7 @@ import { profileService } from '@/services/profile.service';
 import { AuthGuard, UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
-import { Body } from '@/utils/decorators/request';
+import { Body, Query } from '@/utils/decorators/request';
 
 @Controller('/profiles')
 export default class ProfileController {
@@ -24,5 +24,17 @@ export default class ProfileController {
   @AuthGuard()
   async getProfile(@UserDetails() userDetails: TokenClaims) {
     return profileService.getProfile(userDetails.userId);
+  }
+
+  @Get('')
+  @AuthGuard()
+  async searchProfile(@Query('search') searchValue: string) {
+    if (searchValue.startsWith('GRN')) {
+      const greenieId = searchValue;
+      return profileService.searchById(greenieId);
+    } else {
+      const [firstName, lastName] = searchValue.split(' ');
+      return profileService.searchByUsername(firstName, lastName);
+    }
   }
 }

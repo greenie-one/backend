@@ -2,10 +2,6 @@ import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-val
 
 export class createSkillDto {
   @IsString()
-  @IsOptional()
-  public image?: string;
-
-  @IsString()
   @IsNotEmpty()
   public designation!: string;
 

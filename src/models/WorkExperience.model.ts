@@ -10,7 +10,13 @@ export class WorkExperience {
   public designation!: string;
 
   @prop({ type: String, required: true })
+  public email!: string;
+
+  @prop({ type: String, required: true })
   public companyName!: string;
+
+  @prop({ type: String })
+  public companyId!: string;
 
   @prop({ type: Boolean, default: false })
   public isVerified?: boolean;

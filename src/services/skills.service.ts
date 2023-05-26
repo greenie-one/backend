@@ -17,7 +17,6 @@ class SkillService {
     }
 
     const skill = await SkillModel.create({
-      image: skillData.image,
       designation: skillData.designation,
       user: userId,
       isVerified: skillData.isVerified,
