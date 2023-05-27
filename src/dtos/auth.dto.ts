@@ -7,7 +7,7 @@ export class TokenClaims {
   email: string;
 
   @IsUUID(4)
-  sessionId: string;
+  session_id: string;
 
   @IsString()
   @IsOptional()
@@ -23,9 +23,15 @@ export class TokenClaims {
   @IsOptional()
   iat?: number;
 
+  @IsOptional()
+  sub: string;
+
+  @IsOptional()
+  iss?: string;
+
   @IsBoolean()
   @IsOptional()
-  isRefresh?: boolean;
+  is_refresh?: boolean;
 
   @IsString()
   userId: string;

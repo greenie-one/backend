@@ -85,7 +85,7 @@ export class App {
     await registerJWTMiddleware(this.app, this.controllers);
 
     this.app.addHook('onRequest', async (req) => {
-      console.debug(`Got request: [${req.method}] ${req.url}`);
+      console.debug(`Got request: [${req.method}] ${req.url} ${JSON.stringify(req.headers)}`);
     });
 
     this.app.addHook('onResponse', async (req, reply) => {

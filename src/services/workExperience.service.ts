@@ -1,7 +1,7 @@
 import { CreateWorkExperienceDto } from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { WorkExperienceModel } from '@/models/WorkExperience.model';
+import { WorkExperienceModel } from '@/models/workExperience.model';
 import { UserModel } from '@models/users.model';
 
 class WorkExperienceService {
