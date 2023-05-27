@@ -31,6 +31,7 @@ export enum ErrorEnum {
   OAUTH_FAILED,
   RESIDENTIAL_INFO_NOT_FOUND,
   DOCUMENTS_NOT_FOUND,
+  DOCUMENT_NOT_FOUND,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -157,6 +158,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.DOCUMENTS_NOT_FOUND]: {
     code: 'GR0024',
     message: 'Documents not found',
+    status: 404,
+  },
+  [ErrorEnum.DOCUMENT_NOT_FOUND]: {
+    code: 'GR0025',
+    message: 'Document not found',
     status: 404,
   },
 };

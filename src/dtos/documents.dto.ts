@@ -9,10 +9,6 @@ export class AddDocumentDto {
   @IsString()
   @IsNotEmpty()
   public document_number!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  public doument_data!: string;
 }
 
 export class UpdateDocumentDto {
@@ -25,11 +21,6 @@ export class UpdateDocumentDto {
   @IsNotEmpty()
   @IsOptional()
   public document_number?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  public doument_data?: string;
 
   @IsString()
   @IsNotEmpty()
