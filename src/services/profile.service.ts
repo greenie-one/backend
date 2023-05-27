@@ -60,6 +60,47 @@ class ProfileService {
     }
     return profile;
   }
+
+  // public async getSearchedProfile(searchQuery): Promise<Profile> {
+  //   let profile: Profile | null = null;
+
+  //   if (searchQuery.greenie_id) {
+  //     profile = await ProfileModel.findOne({ greenie_id: searchQuery.greenie_id });
+  //   } else if (searchQuery.firstName && searchQuery.lastName) {
+  //     profile = await ProfileModel.findOne({
+  //       $and: [{ firstName: { $regex: searchQuery.firstName, $options: 'i' } }, { lastName: { $regex: searchQuery.lastName, $options: 'i' } }],
+  //     });
+  //   }
+
+  //   if (!profile) {
+  //     throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
+  //   }
+
+  //   return profile;
+  // }
+
+  public async searchById(id: string): Promise<Profile> {
+    const profile = await ProfileModel.findOne({ greenie_id: id });
+    if (!profile) {
+      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
+    }
+    return profile;
+  }
+
+  public async searchByUsername(firstName: string, lastName: string): Promise<Profile> {
+    const regexFirstName = new RegExp(firstName, 'i');
+    const regexLastName = new RegExp(lastName, 'i');
+    console.log({ firstName, lastName });
+    const profile = await ProfileModel.findOne({
+      $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
+    });
+
+    if (!profile) {
+      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
+    }
+
+    return profile;
+  }
 }
 
 export const profileService = new ProfileService();

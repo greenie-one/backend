@@ -19,6 +19,8 @@ class WorkExperienceService {
     const WorkExperience = await WorkExperienceModel.create({
       image: workExperienceData.image,
       designation: workExperienceData.designation,
+      companyId: workExperienceData.companyId,
+      email: workExperienceData.email,
       user: userId,
       companyName: workExperienceData.companyName,
       companyStartYear: new Date(workExperienceData.companyStartYear),

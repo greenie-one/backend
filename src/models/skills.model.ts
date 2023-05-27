@@ -3,9 +3,6 @@ import { User } from './users.model';
 
 @modelOptions({ schemaOptions: { collection: 'skills', timestamps: true } })
 export class Skills {
-  @prop({ type: String })
-  public image: string;
-
   @prop({ type: String, required: true })
   public designation!: string;
 
