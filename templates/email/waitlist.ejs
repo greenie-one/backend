@@ -1,93 +1,489 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="msapplication-TileColor" content="#da532c" />
+        <meta name="theme-color" content="#ffffff" />
 
-<body>
-  <div style="
-      margin: 0;
-      padding: 2rem;
-      display: grid;
-      place-items: center;
-      box-sizing: border-box;
-      background-color: #229e57;
-      overflow-x: hidden !important;
-      font-family: 'Inter', sans-serif !important;
-    ">
-    <div class="template" style="
-        max-width: 750px;
-        margin: 1rem 2rem;
-        background-color: #fff;
-        border-radius: 12px;
-        align-items: center;
-        position: relative;
-        height: 100%;
-        width: 100%;
-      ">
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="https://dev.greenie.one/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="https://dev.greenie.one/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="https://dev.greenie.one/favicon-16x16.png"
+        />
+        <link rel="manifest" href="https://dev.greenie.one/site.webmanifest" />
+        <link
+            rel="mask-icon"
+            href="https://dev.greenie.one/safari-pinned-tab.svg"
+            color="#5bbad5"
+        />
 
-      <table>
-        <tr>
-          <td style="padding: 2rem 0 0 2rem">
-            <div class="logo"
-              style="font-weight: 700; font-size: 32px; line-height: 38px; align-items: center; gap: 0.5rem;">
-              Greenie <img style="width: 24px; vertical-align: middle; margin-top: -4px;"
-                src="https://i.imgur.com/nwZoCJL.png" />
-            </div>
-          </td>
-          <td style="padding: 1rem 2rem 0 0; width: 50%;" align="right">
-            <table>
-              <tr>
-                <td>
-                  <a class="login" target="_blank" href="https://greenie.one/" style="
-                                                                          color: black;
-                                                                          text-decoration: none;
-                                                                          font-weight: 600;
-                                                                          font-size: 21px;
-                                                                          line-height: 19px;
-                                                                          margin-right: 18px;
-                                                                          
-                                                                        ">Log in
-                  </a>
-                </td>
-                <td>
-                  <a href="https://www.linkedin.com/company/gogreenie/" target="_blank" rel="noopener noreferrer">
-                    <img style="width: 20px; margin-right: 10px; margin-top: 3px;"
-                      src="https://i.imgur.com/bYhPQcX.png">
-                  </a>
-                </td>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+        />
 
-                <td>
-                  <a href="https://instagram.com/greenie.one" target="_blank" rel="noopener noreferrer">
-                    <img style="width: 20px; margin-top: 3px;" src="https://i.imgur.com/FmqQrXo.png" />
-                  </a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+        <title>Welcome to Greenie</title>
 
-        <tr style="width: 100%; height: 100%;">
-          <td colspan="2">
-            <div style="margin-top: 2rem; position: relative;">
-              <div
-                style="font-weight: 800; font-size: 48px; line-height: 56px; color: #000; margin: 1rem 0 0 0; text-align: center;">
-                Thank you</div>
-              <div
-                style="font-weight: 600; font-size: 24px; line-height: 28px; color: #000; margin-top: 1rem; text-align: center;">
-                for joining to our waitlist</div>
-              <div
-                style="text-align: center; font-weight: 400; font-size: 18px; line-height: 21px; color: gray; margin: 2rem 3rem;">
-                We
-                will update you on your email when Greenie is up! We are excited to get you on
-                onboard. Stay tuned!</div>
-              <div style="height: 100%; background-color: #DAFFD2; border-radius: 14px; margin: 0 2rem; padding-top: 2rem; padding-bottom: 1rem;">
+        <style>
+            html,
+            html:focus-within {
+                font-size: 100%;
+            }
 
-                <img src="https://i.imgur.com/RQmfbJL.png" alt="girlCheckingPhone"
-                  style="display: block; margin: auto;">
-                </span>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </table>
-</body>
+            *,
+            *::before,
+            *::after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+            }
 
+            body {
+                font-family: "Inter", sans-serif;
+                font-size: 16px;
+                line-height: 1.3;
+                position: relative;
+                width: 100%;
+                background: #229e57;
+                padding: 48px 32px;
+                min-height: 100dvh;
+            }
+
+            body::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            body::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+
+            body::-webkit-scrollbar-thumb {
+                background: whitesmoke;
+                border-radius: 1.5rem;
+            }
+
+            h1,
+            h2,
+            h3 {
+                line-height: 1.1;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+            p {
+                margin-top: 0;
+                margin-bottom: 0;
+                color: inherit;
+            }
+
+            a,
+            a:active,
+            a:visited {
+                color: unset;
+                text-decoration: none;
+            }
+
+            img,
+            svg {
+                max-width: 100%;
+                max-height: 100%;
+                display: block;
+                object-fit: contain;
+            }
+
+            .template-table {
+                display: block;
+                border-collapse: collapse;
+                width: 90%;
+                max-width: 720px;
+                inset: 0;
+                margin: auto;
+                padding: 32px;
+                height: max-content;
+                background: white;
+                border-radius: 32px;
+                overflow: hidden;
+                position: absolute;
+                margin: auto;
+            }
+
+            .template-table-heading {
+                display: block;
+                width: 100%;
+            }
+
+            .template-table-body {
+                padding-top: 48px;
+                display: block;
+                width: 100%;
+            }
+
+            .table-rows {
+                width: 100%;
+            }
+
+            .table-cell {
+                width: 100%;
+            }
+
+            .table-heading-row {
+                display: block;
+            }
+
+            .table-body-row {
+                display: block;
+                text-align: center;
+            }
+
+            .table-heading-cell {
+                display: inline-block;
+                width: max-content;
+            }
+
+            .table-body-cell {
+                display: block;
+            }
+
+            .first-heading-cell {
+                width: 75%;
+            }
+
+            .header-logo-link {
+                display: block;
+                width: 120px;
+            }
+
+            .greenie-login-link {
+                font-weight: 500;
+                border-bottom: 1px solid black;
+            }
+
+            .header-social-links svg {
+                display: block;
+                width: 22px;
+                height: 22px;
+            }
+
+            .linkedin-heading-cell {
+                margin-left: 20px;
+                margin-right: 12px;
+            }
+
+            .template-heading {
+                font-size: 32px;
+                font-weight: 500;
+            }
+
+            .template-subheading {
+                font-size: 24px;
+                font-weight: 500;
+                padding-top: 20px;
+                padding-bottom: 16px;
+            }
+
+            .template-message {
+                color: #697082;
+                width: 90%;
+                max-width: 420px;
+                margin-left: auto;
+                margin-right: auto;
+                padding-bottom: 40px;
+            }
+
+            .footer-banner-image {
+                width: 100%;
+            }
+
+            /* Media Query for Large Tablets */
+            @media (min-width: 640px) and (max-width: 768px) {
+                body {
+                    font-size: 15px;
+                }
+
+                .header-logo-link {
+                    width: 100px;
+                }
+
+                .header-social-links svg {
+                    width: 20px;
+                    height: 20px;
+                }
+
+                .linkedin-heading-cell {
+                    margin-left: 18px;
+                    margin-right: 10px;
+                }
+
+                .template-heading {
+                    font-size: 25px;
+                    font-weight: 600;
+                }
+
+                .template-subheading {
+                    font-size: 20px;
+                    font-weight: 600;
+                    padding-top: 16px;
+                    padding-bottom: 12px;
+                }
+            }
+
+            /* Media Query for Smaller Tablets */
+            @media (min-width: 480px) and (max-width: 639.98px) {
+                body {
+                    font-size: 14px;
+                    padding: 20px;
+                }
+
+                .template-table {
+                    padding: 25px;
+                }
+
+                .first-heading-cell {
+                    width: 70%;
+                }
+
+                .header-logo-link {
+                    width: 90px;
+                }
+
+                .header-social-links svg {
+                    width: 17.5px;
+                    height: 17.5px;
+                }
+
+                .linkedin-heading-cell {
+                    margin-left: 14px;
+                    margin-right: 6px;
+                }
+
+                .template-heading {
+                    font-size: 22.5px;
+                    font-weight: 600;
+                }
+
+                .template-subheading {
+                    font-size: 17.5px;
+                    font-weight: 600;
+                    padding-top: 14px;
+                    padding-bottom: 10px;
+                }
+            }
+
+            /* Media Query for Large Mobiles */
+            @media (min-width: 375px) and (max-width: 479.98px) {
+                body {
+                    font-size: 13px;
+                    padding: 15px;
+                }
+
+                .template-table {
+                    padding: 20px;
+                }
+
+                .first-heading-cell {
+                    width: 65%;
+                }
+
+                .header-logo-link {
+                    width: 80px;
+                }
+
+                .header-social-links svg {
+                    width: 15px;
+                    height: 15px;
+                }
+
+                .linkedin-heading-cell {
+                    margin-left: 14px;
+                    margin-right: 6px;
+                }
+
+                .template-heading {
+                    font-size: 22.5px;
+                    font-weight: 600;
+                }
+
+                .template-subheading {
+                    font-size: 17.5px;
+                    font-weight: 600;
+                    padding-top: 14px;
+                    padding-bottom: 10px;
+                }
+            }
+
+            /* Media Query for Small Mobiles */
+            @media (max-width: 374.98px) {
+                body {
+                    font-size: 13px;
+                    padding: 15px;
+                }
+
+                .template-table {
+                    padding: 20px;
+                }
+
+                .first-heading-cell {
+                    width: 60%;
+                }
+
+                .header-logo-link {
+                    width: 75px;
+                }
+
+                .header-social-links svg {
+                    width: 14px;
+                    height: 14px;
+                }
+
+                .linkedin-heading-cell {
+                    margin-left: 12px;
+                    margin-right: 5px;
+                }
+
+                .template-heading {
+                    font-size: 20px;
+                }
+
+                .template-subheading {
+                    font-size: 16px;
+                    padding-top: 13px;
+                    padding-bottom: 9px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <table class="template-table">
+            <thead class="template-table-heading">
+                <tr class="table-rows table-heading-row">
+                    <th
+                        class="table-cell table-heading-cell first-heading-cell"
+                    >
+                        <a
+                            href="https://greenie.one/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="header-logo-link"
+                        >
+                            <img
+                                src="https://dev.greenie.one/logo.png"
+                                alt="greenie"
+                                class="header-logo-image"
+                            />
+                        </a>
+                    </th>
+                    <th class="table-cell table-heading-cell">
+                        <a
+                            href="https://greenie.one/auth/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="greenie-login-link"
+                        >
+                            <span class="login-text">Log In</span>
+                        </a>
+                    </th>
+                    <th
+                        class="table-cell table-heading-cell linkedin-heading-cell"
+                    >
+                        <a
+                            href="https://www.linkedin.com/company/gogreenie/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="header-social-links linkedin-link"
+                        >
+                            <span
+                                class="header-svg-containers linkedin-svg-container"
+                            >
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 448 512"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"
+                                        fill="black"
+                                    />
+                                </svg>
+                            </span>
+                        </a>
+                    </th>
+                    <th class="table-cell table-heading-cell">
+                        <a
+                            href="https://instagram.com/greenie.one?igshid=ZDdkNTZiNTM="
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="header-social-links instagram-link"
+                        >
+                            <span
+                                class="header-svg-containers instagram-svg-container"
+                            >
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 18 18"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M8.99986 4.59361C6.56138 4.59361 4.59341 6.56158 4.59341 9.00005C4.59341 11.4385 6.56138 13.4065 8.99986 13.4065C11.4383 13.4065 13.4063 11.4385 13.4063 9.00005C13.4063 6.56158 11.4383 4.59361 8.99986 4.59361ZM8.99986 11.8639C7.4229 11.8639 6.13599 10.577 6.13599 9.00005C6.13599 7.4231 7.4229 6.13619 8.99986 6.13619C10.5768 6.13619 11.8637 7.4231 11.8637 9.00005C11.8637 10.577 10.5768 11.8639 8.99986 11.8639ZM13.5868 3.38619C13.0174 3.38619 12.5577 3.84595 12.5577 4.41529C12.5577 4.98462 13.0174 5.44439 13.5868 5.44439C14.1561 5.44439 14.6159 4.98677 14.6159 4.41529C14.616 4.2801 14.5895 4.1462 14.5379 4.02127C14.4862 3.89633 14.4104 3.78282 14.3148 3.68722C14.2192 3.59163 14.1057 3.51583 13.9808 3.46418C13.8559 3.41252 13.722 3.38602 13.5868 3.38619ZM17.5893 9.00005C17.5893 7.81411 17.6001 6.63892 17.5335 5.45513C17.4669 4.08013 17.1532 2.85982 16.1477 1.85435C15.1401 0.846733 13.9219 0.535209 12.5469 0.468608C11.361 0.402006 10.1858 0.412748 9.00201 0.412748C7.81607 0.412748 6.64087 0.402006 5.45709 0.468608C4.08208 0.535209 2.86177 0.848881 1.8563 1.85435C0.848686 2.86197 0.537162 4.08013 0.470561 5.45513C0.403959 6.64107 0.414702 7.81626 0.414702 9.00005C0.414702 10.1838 0.403959 11.3612 0.470561 12.545C0.537162 13.92 0.850834 15.1403 1.8563 16.1458C2.86392 17.1534 4.08208 17.4649 5.45709 17.5315C6.64302 17.5981 7.81822 17.5874 9.00201 17.5874C10.1879 17.5874 11.3631 17.5981 12.5469 17.5315C13.9219 17.4649 15.1422 17.1512 16.1477 16.1458C17.1553 15.1381 17.4669 13.92 17.5335 12.545C17.6022 11.3612 17.5893 10.186 17.5893 9.00005ZM15.6987 14.0661C15.5419 14.4571 15.3528 14.7493 15.0499 15.0501C14.7469 15.353 14.4569 15.542 14.0659 15.6989C12.9358 16.1479 10.2524 16.0469 8.99986 16.0469C7.74732 16.0469 5.06177 16.1479 3.93169 15.701C3.54068 15.5442 3.24849 15.3551 2.94771 15.0522C2.64478 14.7493 2.45572 14.4592 2.29888 14.0682C1.85201 12.936 1.95298 10.2526 1.95298 9.00005C1.95298 7.74751 1.85201 5.06197 2.29888 3.93189C2.45572 3.54087 2.64478 3.24869 2.94771 2.9479C3.25064 2.64712 3.54068 2.45591 3.93169 2.29908C5.06177 1.8522 7.74732 1.95318 8.99986 1.95318C10.2524 1.95318 12.9379 1.8522 14.068 2.29908C14.459 2.45591 14.7512 2.64497 15.052 2.9479C15.3549 3.25083 15.544 3.54087 15.7008 3.93189C16.1477 5.06197 16.0467 7.74751 16.0467 9.00005C16.0467 10.2526 16.1477 12.936 15.6987 14.0661Z"
+                                        fill="black"
+                                    />
+                                </svg>
+                            </span>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="template-table-body">
+                <tr class="table-rows table-body-row">
+                    <td class="table-cell table-body-cell">
+                        <h1 class="template-heading">Thank You!</h1>
+                    </td>
+                </tr>
+                <tr class="table-rows table-body-row">
+                    <td class="table-cell table-body-cell">
+                        <h2 class="template-subheading">
+                            for joining our waitlist
+                        </h2>
+                    </td>
+                </tr>
+                <tr class="table-rows table-body-row">
+                    <td class="table-cell table-body-cell">
+                        <p class="template-message">
+                            We will update you on your email when Greenie is up!
+                            We are excited to get you on onboard. Stay tuned.
+                        </p>
+                    </td>
+                </tr>
+                <tr class="table-rows table-body-row">
+                    <td class="table-cell table-body-cell">
+                        <img
+                            src="https://dev.greenie.one/template-footer-banner.png"
+                            alt="footer-banner"
+                            class="footer-banner-image"
+                        />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
 </html>
