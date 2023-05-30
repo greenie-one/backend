@@ -21,11 +21,17 @@ export class WorkExperience {
   @prop({ type: Boolean, default: false })
   public isVerified?: boolean;
 
-  @prop({ type: Date })
-  public companyStartYear?: Date;
+  @prop({ type: String })
+  public workType?: string;
+
+  @prop({ type: String })
+  public workMode?: string;
 
   @prop({ type: Date })
-  public companyEndYear?: Date;
+  public companyStartDate?: Date;
+
+  @prop({ type: Date })
+  public companyEndDate?: Date;
 
   @prop({ type: String })
   public description?: string;

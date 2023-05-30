@@ -14,6 +14,14 @@ export class CreateWorkExperienceDto {
   public email!: string;
 
   @IsString()
+  @IsOptional()
+  public workMode?: string;
+
+  @IsString()
+  @IsOptional()
+  public workType?: string;
+
+  @IsString()
   @IsNotEmpty()
   public companyName!: string;
 
@@ -35,11 +43,11 @@ export class CreateWorkExperienceDto {
 
   @IsString()
   @IsOptional()
-  public companyStartYear?: string;
+  public companyStartDate?: string;
 
   @IsString()
   @IsOptional()
-  public companyEndYear?: string;
+  public companyEndDate?: string;
 
   @IsString()
   @IsNotEmpty()
