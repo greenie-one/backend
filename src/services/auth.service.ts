@@ -27,9 +27,8 @@ class AuthService {
       firstName: profile?.firstName,
       lastName: profile?.lastName,
       roles: user.roles,
-      userId: user._id,
+      sub: user._id,
       session_id: v4(),
-      sub: 'dummy value',
       iss: 'greenie.one',
     };
 
@@ -172,7 +171,7 @@ class AuthService {
     try {
       const decoded: TokenClaims = req.server.jwt.verify(token);
       if (decoded.is_refresh) {
-        const user = await userService.findUser({ id: decoded.userId });
+        const user = await userService.findUser({ id: decoded.sub });
         const userDetails = await this.createUserDetails(user);
 
         const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });

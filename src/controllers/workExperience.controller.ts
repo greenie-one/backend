@@ -11,12 +11,12 @@ export default class WorkExperienceController {
   @Post('/create')
   @AuthGuard()
   async createWorkExperience(@UserDetails() userDetails: TokenClaims, @Body() data: CreateWorkExperienceDto) {
-    return workExperienceService.createWorkExperience(userDetails.userId, data);
+    return workExperienceService.createWorkExperience(userDetails.sub, data);
   }
 
   @Get('/me')
   @AuthGuard()
   async getWorkExperience(@UserDetails() userDetails: TokenClaims) {
-    return workExperienceService.getWorkExperience(userDetails.userId);
+    return workExperienceService.getWorkExperience(userDetails.sub);
   }
 }
