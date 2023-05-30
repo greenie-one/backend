@@ -11,19 +11,19 @@ export default class ProfileController {
   @Post('/create')
   @AuthGuard()
   async createProfile(@UserDetails() userDetails: TokenClaims, @Body() data: CreateProfileDto) {
-    return profileService.createProfile(userDetails.userId, data);
+    return profileService.createProfile(userDetails.sub, data);
   }
 
   @Post('/update')
   @AuthGuard()
   async updateProfile(@UserDetails() userDetails: TokenClaims, @Body() data: UpdateProfileDto) {
-    return profileService.updateProfile(userDetails.userId, data);
+    return profileService.updateProfile(userDetails.sub, data);
   }
 
   @Get('/me')
   @AuthGuard()
   async getProfile(@UserDetails() userDetails: TokenClaims) {
-    return profileService.getProfile(userDetails.userId);
+    return profileService.getProfile(userDetails.sub);
   }
 
   @Get('')

@@ -24,9 +24,6 @@ export class TokenClaims {
   iat?: number;
 
   @IsOptional()
-  sub: string;
-
-  @IsOptional()
   iss?: string;
 
   @IsBoolean()
@@ -34,5 +31,5 @@ export class TokenClaims {
   is_refresh?: boolean;
 
   @IsString()
-  userId: string;
+  sub: string;
 }

@@ -13,7 +13,7 @@ export default class ResidentialInfoController {
   @Get('/me')
   @AuthGuard()
   public async findAUserResidentialInfo(@UserDetails() userDetails: TokenClaims) {
-    const userId = userDetails.userId;
+    const userId = userDetails.sub;
     const residentialInfo = await residentialInfoService.getUserResidentialInfo(userId);
     return { residentialInfo };
   }
@@ -21,7 +21,7 @@ export default class ResidentialInfoController {
   @Post('/')
   @AuthGuard()
   public async addResidentialInfo(@UserDetails() userDetails: TokenClaims, @Body() residentialInfoData: AddResidentialInfoDto) {
-    const userId = userDetails.userId;
+    const userId = userDetails.sub;
     const residentialInfo = await residentialInfoService.addResidentialInfo(userId, residentialInfoData);
     return { residentialInfo };
   }
@@ -29,7 +29,7 @@ export default class ResidentialInfoController {
   @Patch('/')
   @AuthGuard()
   public async updateResidentialInfo(@UserDetails() userDetails: TokenClaims, @Body() residentialInfoData: UpdateResidentialInfoDto) {
-    const userId = userDetails.userId;
+    const userId = userDetails.sub;
     const residentialInfo = await residentialInfoService.updateResidentialInfo(userId, residentialInfoData);
     return { residentialInfo };
   }
