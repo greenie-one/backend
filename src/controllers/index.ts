@@ -93,7 +93,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           if (hasUserDetails) {
             try {
-              args[hasUserDetails.index] = JSON.stringify(req.headers['x-user-details']);
+              args[hasUserDetails.index] = JSON.parse(req.headers['x-user-details'].toString());
             } catch (error) {
               throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error);
             }
