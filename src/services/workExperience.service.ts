@@ -23,8 +23,10 @@ class WorkExperienceService {
       email: workExperienceData.email,
       user: userId,
       companyName: workExperienceData.companyName,
-      companyStartYear: new Date(workExperienceData.companyStartYear),
-      companyEndYear: new Date(workExperienceData.companyEndYear),
+      companyStartDate: new Date(workExperienceData.companyStartDate),
+      companyEndDate: new Date(workExperienceData.companyEndDate),
+      workType: workExperienceData.workType,
+      workMode: workExperienceData.workMode,
       isVerified: workExperienceData.isVerified,
       description: workExperienceData.description,
     });
