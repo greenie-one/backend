@@ -17,6 +17,7 @@ export enum ErrorEnum {
   PASSWORD_MISMATCH,
   WORKEXPERIENCE_NOT_FOUND,
   SKILL_NOT_FOUND,
+  USER_DETAILS_NOT_FOUND,
 
   // Waitlist
   ALREADY_IN_WAITLIST,
@@ -163,6 +164,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.DOCUMENT_NOT_FOUND]: {
     code: 'GR0025',
     message: 'Document not found',
+    status: 404,
+  },
+  [ErrorEnum.USER_DETAILS_NOT_FOUND]: {
+    code: 'GR0026',
+    message: 'User details not found',
     status: 404,
   },
 };
