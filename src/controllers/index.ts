@@ -92,7 +92,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
           if (hasReply) args[hasReply.index] = res;
 
           if (hasUserDetails) {
-            args[hasUserDetails.index] = req.user;
+            args[hasUserDetails.index] = req.headers['x-user-details'];
           }
 
           if (args.length === 0) {
