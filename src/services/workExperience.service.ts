@@ -84,8 +84,11 @@ class WorkExperienceService {
     }
 
     // Update the work experience
-    const mergedData = Object.assign(workExperience, updatedData);
-    const updatedWorkExperience = await mergedData.save();
+    const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
+
+    if (!updatedWorkExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
 
     return updatedWorkExperience;
   }
