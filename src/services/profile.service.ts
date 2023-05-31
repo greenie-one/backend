@@ -79,27 +79,27 @@ class ProfileService {
   //   return profile;
   // }
 
-  public async searchById(id: string): Promise<Profile> {
-    const profile = await ProfileModel.findOne({ greenie_id: id });
-    if (!profile) {
+  public async searchById(id: string) {
+    const profiles = await ProfileModel.find({ greenie_id: id });
+    if (profiles.length === 0) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
-    return profile;
+    return profiles;
   }
 
-  public async searchByUsername(firstName: string, lastName: string): Promise<Profile> {
+  public async searchByUsername(firstName: string, lastName: string) {
     const regexFirstName = new RegExp(firstName, 'i');
     const regexLastName = new RegExp(lastName, 'i');
     console.log({ firstName, lastName });
-    const profile = await ProfileModel.findOne({
+    const profiles = await ProfileModel.find({
       $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
     });
 
-    if (!profile) {
+    if (profiles.length === 0) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    return profile;
+    return profiles;
   }
 }
 

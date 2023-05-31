@@ -1,4 +1,4 @@
-import { CreateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -40,6 +40,54 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
     return WorkExperience;
+  }
+
+  public async deleteWorkExperience(userId: string, workExperienceId: string) {
+    // Check if user exists
+    const findUser = await UserModel.findById(userId);
+    if (!findUser) {
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    }
+
+    // Find the work experience
+    const workExperience = await WorkExperienceModel.findById(workExperienceId);
+    if (!workExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    // Check if the work experience belongs to the user
+    if (workExperience.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    // Delete the work experience
+    await workExperience.deleteOne();
+
+    return { message: 'Work experience deleted successfully' };
+  }
+  public async updateWorkExperience(userId: string, workExperienceId: string, updatedData: UpdateWorkExperienceDto) {
+    // Check if user exists
+    const findUser = await UserModel.findById(userId);
+    if (!findUser) {
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    }
+
+    // Find the work experience
+    const workExperience = await WorkExperienceModel.findById(workExperienceId);
+    if (!workExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    // Check if the work experience belongs to the user
+    if (workExperience.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    // Update the work experience
+    const mergedData = Object.assign(workExperience, updatedData);
+    const updatedWorkExperience = await mergedData.save();
+
+    return updatedWorkExperience;
   }
 }
 

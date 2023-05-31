@@ -33,6 +33,30 @@ class SkillService {
     }
     return skills;
   }
+
+  public async deleteSkill(userId: string, skillId: string) {
+    // Check if user exists
+    const findUser = await UserModel.findById(userId);
+    if (!findUser) {
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    }
+
+    // Find the work experience
+    const skill = await SkillModel.findById(skillId);
+    if (!skill) {
+      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
+    }
+
+    // Check if the work experience belongs to the user
+    if (skill.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
+    }
+
+    // Delete the work experience
+    await skill.deleteOne();
+
+    return { message: ' Skill deleted successfully' };
+  }
 }
 
 export const skillService = new SkillService();
