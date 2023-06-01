@@ -1,10 +1,14 @@
 import { App } from '@/app';
 import { ValidateEnv } from '@utils/validateEnv';
 import { AuthController } from './controllers/auth.controller';
+import DocumentsController from './controllers/documents.controller';
 import { OAuthController } from './controllers/oauth.controller';
 import ProfileController from './controllers/profile.controller';
+import ResidentialInfoController from './controllers/residentialInfo.controller';
 import RootController from './controllers/root.controller';
+import SkillController from './controllers/skills.controller';
 import WaitlistController from './controllers/waitlist.controller';
+import WorkExperienceController from './controllers/workExperience.controller';
 
 process.on('uncaughtException', (e) => {
   console.error(e);
@@ -18,7 +22,17 @@ process.on('unhandledRejection', (e) => {
 
 ValidateEnv();
 
-const controllers = [RootController, AuthController, OAuthController, ProfileController, WaitlistController];
+const controllers = [
+  RootController,
+  AuthController,
+  OAuthController,
+  ProfileController,
+  WaitlistController,
+  WorkExperienceController,
+  SkillController,
+  ResidentialInfoController,
+  DocumentsController,
+];
 
 const app = new App(controllers);
 

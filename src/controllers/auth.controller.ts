@@ -1,5 +1,5 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateUserDto, LoginDto, ValidateOtpDTO } from '@/dtos/users.dto';
+import { CreateUserDto, LoginDto, ResendOtpDTO, ValidateOtpDTO } from '@/dtos/users.dto';
 import { authService } from '@/services/auth.service';
 import { AuthGuard } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -23,6 +23,11 @@ export class AuthController {
     return { validationId };
   }
 
+  @Post('/resendOTP')
+  async resendOtp(@Body() validateOtpRequest: ResendOtpDTO) {
+    await authService.requestOTPByValidationId(validateOtpRequest.validationId);
+  }
+
   @Post('/validateOTP')
   async validateOtp(@Body() validateOtpRequest: ValidateOtpDTO, @Req() request: FastifyRequest) {
     const user = await authService.validate(validateOtpRequest);
@@ -34,7 +39,7 @@ export class AuthController {
   @AuthGuard()
   @Post('/logout')
   async logout(@Req() req: FastifyRequest) {
-    const sessionId = (req.user as TokenClaims).sessionId;
+    const sessionId = (req.user as TokenClaims).session_id;
     authService.removeSession(sessionId);
   }
 

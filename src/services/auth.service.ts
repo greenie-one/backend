@@ -1,3 +1,4 @@
+import { env } from '@/config';
 import { TokenClaims } from '@/dtos/auth.dto';
 import { CreateUserDto, LoginDto, ValidateOtpDTO, ValidationType } from '@/dtos/users.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
@@ -26,8 +27,9 @@ class AuthService {
       firstName: profile?.firstName,
       lastName: profile?.lastName,
       roles: user.roles,
-      userId: user._id,
-      sessionId: v4(),
+      sub: user._id,
+      session_id: v4(),
+      iss: 'greenie.one',
     };
 
     return userDetails;
@@ -117,6 +119,16 @@ class AuthService {
     throw new HttpException(ErrorEnum.INVALID_VALIDATION_ID);
   }
 
+  async requestOTPByValidationId(validationId: string) {
+    const data = await redisClient.get(`validation_${validationId}`);
+    if (data) {
+      const { user } = JSON.parse(data) as { user: User; type: ValidationType };
+      const type = user.mobileNumber ? 'MOBILE_NUMBER' : 'EMAIL';
+      return this.requestOTP(user.mobileNumber ?? user.email, type);
+    }
+    throw new HttpException(ErrorEnum.INVALID_VALIDATION_ID);
+  }
+
   async requestOTP(contact: string, type: 'EMAIL' | 'MOBILE_NUMBER') {
     const otp = generateOTP();
 
@@ -127,6 +139,10 @@ class AuthService {
   }
 
   private async validateOTP(user: User, otp: string) {
+    if (env('APP_ENV') !== 'production') {
+      if (otp === '123456') return true;
+    }
+
     const data = await redisClient.get(`${user.mobileNumber || user.email}_otp`);
     if (otp === data) {
       redisClient.del(`${user.mobileNumber || user.email}_otp`);
@@ -142,11 +158,11 @@ class AuthService {
       const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
       const refreshToken = req.server.jwt.sign({ ...userDetails, isRefresh: true }, { algorithm: 'RS256', expiresIn: '60d' });
 
-      await this.storeToken(userDetails.sessionId, accessToken, refreshToken);
+      await this.storeToken(userDetails.session_id, accessToken, refreshToken);
 
       return { accessToken, refreshToken };
     } catch (e) {
-      this.removeSession(userDetails.sessionId).catch(console.error);
+      this.removeSession(userDetails.session_id).catch(console.error);
       throw e;
     }
   }
@@ -154,13 +170,13 @@ class AuthService {
   async refreshToken(req: FastifyRequest, token: string) {
     try {
       const decoded: TokenClaims = req.server.jwt.verify(token);
-      if (decoded.isRefresh) {
-        const user = await userService.findUser({ id: decoded.userId });
+      if (decoded.is_refresh) {
+        const user = await userService.findUser({ id: decoded.sub });
         const userDetails = await this.createUserDetails(user);
 
         const accessToken = req.server.jwt.sign(userDetails, { expiresIn: '30m', algorithm: 'RS256' });
 
-        await this.updateAccessTokenInStore(userDetails.sessionId, accessToken);
+        await this.updateAccessTokenInStore(userDetails.session_id, accessToken);
 
         return { accessToken };
       }

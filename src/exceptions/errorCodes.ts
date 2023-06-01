@@ -15,6 +15,9 @@ export enum ErrorEnum {
   PROFILE_ALREADY_EXISTS,
   USER_NO_PASSWORD,
   PASSWORD_MISMATCH,
+  WORKEXPERIENCE_NOT_FOUND,
+  SKILL_NOT_FOUND,
+  USER_DETAILS_NOT_FOUND,
 
   // Waitlist
   ALREADY_IN_WAITLIST,
@@ -27,6 +30,9 @@ export enum ErrorEnum {
   EDUCATION_NOT_FOUND,
   OAUTH_PROVIDER_NOT_FOUND,
   OAUTH_FAILED,
+  RESIDENTIAL_INFO_NOT_FOUND,
+  DOCUMENTS_NOT_FOUND,
+  DOCUMENT_NOT_FOUND,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -134,5 +140,35 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0020',
     message: 'Profile already exists',
     status: 400,
+  },
+  [ErrorEnum.WORKEXPERIENCE_NOT_FOUND]: {
+    code: 'GR0021',
+    message: 'WorkExperience not found',
+    status: 404,
+  },
+  [ErrorEnum.SKILL_NOT_FOUND]: {
+    code: 'GR0022',
+    message: 'skills not found',
+    status: 404,
+  },
+  [ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND]: {
+    code: 'GR0023',
+    message: 'Residential info not found',
+    status: 404,
+  },
+  [ErrorEnum.DOCUMENTS_NOT_FOUND]: {
+    code: 'GR0024',
+    message: 'Documents not found',
+    status: 404,
+  },
+  [ErrorEnum.DOCUMENT_NOT_FOUND]: {
+    code: 'GR0025',
+    message: 'Document not found',
+    status: 404,
+  },
+  [ErrorEnum.USER_DETAILS_NOT_FOUND]: {
+    code: 'GR0026',
+    message: 'User details not found',
+    status: 404,
   },
 };

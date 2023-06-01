@@ -6,7 +6,8 @@ interface Message {
   to: string;
   from: string;
   subject: string;
-  text: string;
+  text?: string;
+  html?: string;
 }
 
 class Mailer {
@@ -30,8 +31,11 @@ class Mailer {
     });
   }
 
-  public async sendMail(mailOptions: Message) {
-    return this.transporter.sendMail(mailOptions);
+  public async sendMail(mailOptions: Omit<Message, 'from'>) {
+    return this.transporter.sendMail({
+      ...mailOptions,
+      from: 'Greenie <office@greenie.one>',
+    });
   }
 }
 

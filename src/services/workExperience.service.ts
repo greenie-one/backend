@@ -1,0 +1,46 @@
+import { CreateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import { ErrorEnum } from '@/exceptions/errorCodes';
+import { HttpException } from '@/exceptions/httpException';
+import { WorkExperienceModel } from '@/models/workExperience.model';
+import { UserModel } from '@models/users.model';
+
+class WorkExperienceService {
+  public async createWorkExperience(userId: string, workExperienceData: CreateWorkExperienceDto) {
+    try {
+      // Check if user exists
+      const findUser = await UserModel.findById(userId);
+      if (!findUser) {
+        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+      }
+    } catch (e) {
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    }
+
+    const WorkExperience = await WorkExperienceModel.create({
+      image: workExperienceData.image,
+      designation: workExperienceData.designation,
+      companyId: workExperienceData.companyId,
+      email: workExperienceData.email,
+      user: userId,
+      companyName: workExperienceData.companyName,
+      companyStartDate: new Date(workExperienceData.companyStartDate),
+      companyEndDate: new Date(workExperienceData.companyEndDate),
+      workType: workExperienceData.workType,
+      workMode: workExperienceData.workMode,
+      isVerified: workExperienceData.isVerified,
+      description: workExperienceData.description,
+    });
+    return WorkExperience;
+  }
+
+  public async getWorkExperience(userId: string) {
+    const WorkExperience = await WorkExperienceModel.find({ user: userId });
+
+    if (!WorkExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+    return WorkExperience;
+  }
+}
+
+export const workExperienceService = new WorkExperienceService();

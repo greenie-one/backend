@@ -1,33 +1,38 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
+
+export enum ProfileChangedEntity {
+  NAME = 'NAME',
+  DESCRIPTION_TAGS = 'DESCRIPTION_TAGS',
+}
 
 export class CreateProfileDto {
   @IsString()
   @IsNotEmpty()
-  public first_name: string;
+  public firstName: string;
 
   @IsString()
   @IsNotEmpty()
-  public last_name: string;
+  public lastName: string;
 
   @IsArray()
   @IsString({ each: true })
-  public description_tags: string[];
+  public descriptionTags: string[];
 }
 
 export class UpdateProfileDto {
-  @IsString()
-  @IsOptional()
-  public first_name?: string;
+  @IsEnum(ProfileChangedEntity)
+  changedEntity: ProfileChangedEntity;
 
   @IsString()
-  @IsOptional()
-  public last_name?: string;
+  @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.NAME)
+  public firstName?: string;
 
   @IsString()
-  public greenie_id?: string;
+  @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.NAME)
+  public lastName?: string;
 
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
-  public description_tags: string[];
+  @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.DESCRIPTION_TAGS)
+  public descriptionTags: string[];
 }
