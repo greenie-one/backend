@@ -1,7 +1,7 @@
 import { TokenClaims } from '@/dtos/auth.dto';
 import { createSkillDto } from '@/dtos/skills.dto';
 import { skillService } from '@/services/skills.service';
-import { AuthGuard, UserDetails } from '@/utils/decorators/auth';
+import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
 import { Body } from '@/utils/decorators/request';
@@ -9,13 +9,11 @@ import { Body } from '@/utils/decorators/request';
 @Controller('/skill')
 export default class skillController {
   @Post('/create')
-  @AuthGuard()
   async createSkill(@UserDetails() userDetails: TokenClaims, @Body() data: createSkillDto) {
     return skillService.createSkill(userDetails.sub, data);
   }
 
   @Get('/me')
-  @AuthGuard()
   async getSkill(@UserDetails() userDetails: TokenClaims) {
     return skillService.getSkills(userDetails.sub);
   }

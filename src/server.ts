@@ -1,6 +1,5 @@
 import { App } from '@/app';
 import { ValidateEnv } from '@utils/validateEnv';
-import { AuthController } from './controllers/auth.controller';
 import DocumentsController from './controllers/documents.controller';
 import { OAuthController } from './controllers/oauth.controller';
 import ProfileController from './controllers/profile.controller';
@@ -24,7 +23,6 @@ ValidateEnv();
 
 const controllers = [
   RootController,
-  AuthController,
   OAuthController,
   ProfileController,
   WaitlistController,
