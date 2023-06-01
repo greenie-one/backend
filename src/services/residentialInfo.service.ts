@@ -24,7 +24,7 @@ class ResidentialInfoService {
   public async deleteResidentialInfo(userId: string, residentialInfoId: string) {
     const residentialInfo = await ResidentialInfoModel.findById(residentialInfoId);
     if (!residentialInfo) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
     if (residentialInfo.user.toString() !== userId) {
@@ -39,7 +39,7 @@ class ResidentialInfoService {
   public async updateResidentialInfo(userId: string, residentialInfoId: string, updatedData: UpdateResidentialInfoDto) {
     const residentialInfo = await ResidentialInfoModel.findById(residentialInfoId);
     if (!residentialInfo) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
     if (residentialInfo.user.toString() !== userId) {
@@ -49,7 +49,7 @@ class ResidentialInfoService {
     const updatedResidentialInfo = await ResidentialInfoModel.findByIdAndUpdate(residentialInfoId, { $set: updatedData }, { new: true });
 
     if (!updatedResidentialInfo) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
     return updatedResidentialInfo;

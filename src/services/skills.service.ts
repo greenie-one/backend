@@ -36,7 +36,7 @@ class SkillService {
   public async deleteSkill(userId: string, skillId: string) {
     const skill = await SkillModel.findById(skillId);
     if (!skill) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
     }
 
     if (skill.user.toString() !== userId) {
@@ -50,7 +50,7 @@ class SkillService {
   public async updateSkill(userId: string, skillId: string, updatedData: updateSkillDto) {
     const skill = await SkillModel.findById(skillId);
     if (!skill) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
     }
 
     if (skill.user.toString() !== userId) {
@@ -60,7 +60,7 @@ class SkillService {
     const updatedSkill = await SkillModel.findByIdAndUpdate(skillId, { $set: updatedData }, { new: true });
 
     if (!updatedSkill) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
     }
 
     return updatedSkill;

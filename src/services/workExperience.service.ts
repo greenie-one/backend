@@ -45,7 +45,7 @@ class WorkExperienceService {
   public async deleteWorkExperience(userId: string, workExperienceId: string) {
     const workExperience = await WorkExperienceModel.findById(workExperienceId);
     if (!workExperience) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
     if (workExperience.user.toString() !== userId) {
@@ -60,7 +60,7 @@ class WorkExperienceService {
   public async updateWorkExperience(userId: string, workExperienceId: string, updatedData: UpdateWorkExperienceDto) {
     const workExperience = await WorkExperienceModel.findById(workExperienceId);
     if (!workExperience) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
     if (workExperience.user.toString() !== userId) {
@@ -69,7 +69,7 @@ class WorkExperienceService {
     const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
 
     if (!updatedWorkExperience) {
-      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
     return updatedWorkExperience;
