@@ -1,4 +1,4 @@
-import { createSkillDto } from '@/dtos/skills.dto';
+import { createSkillDto, updateSkillDto } from '@/dtos/skills.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { SkillModel } from '@/models/skills.model';
@@ -7,7 +7,6 @@ import { UserModel } from '@models/users.model';
 class SkillService {
   public async createSkill(userId: string, skillData: createSkillDto) {
     try {
-      // Check if user exists
       const findUser = await UserModel.findById(userId);
       if (!findUser) {
         throw new HttpException(ErrorEnum.USER_NOT_FOUND);
@@ -35,27 +34,36 @@ class SkillService {
   }
 
   public async deleteSkill(userId: string, skillId: string) {
-    // Check if user exists
-    const findUser = await UserModel.findById(userId);
-    if (!findUser) {
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    }
-
-    // Find the work experience
     const skill = await SkillModel.findById(skillId);
     if (!skill) {
-      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    // Check if the work experience belongs to the user
     if (skill.user.toString() !== userId) {
-      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    // Delete the work experience
     await skill.deleteOne();
 
     return { message: ' Skill deleted successfully' };
+  }
+  public async updateSkill(userId: string, skillId: string, updatedData: updateSkillDto) {
+    const skill = await SkillModel.findById(skillId);
+    if (!skill) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    if (skill.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    const updatedSkill = await SkillModel.findByIdAndUpdate(skillId, { $set: updatedData }, { new: true });
+
+    if (!updatedSkill) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    return updatedSkill;
   }
 }
 

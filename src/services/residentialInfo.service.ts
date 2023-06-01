@@ -21,20 +21,38 @@ class ResidentialInfoService {
     return residentialInfo;
   }
 
-  public async updateResidentialInfo(userId: string, residentialInfoData: UpdateResidentialInfoDto): Promise<ResidentialInfo> {
-    const residentialInfoId = residentialInfoData.residential_info_id;
-    const old_residential_info = await ResidentialInfoModel.findOne({ _id: residentialInfoId });
-    if (!old_residential_info) {
-      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
+  public async deleteResidentialInfo(userId: string, residentialInfoId: string) {
+    const residentialInfo = await ResidentialInfoModel.findById(residentialInfoId);
+    if (!residentialInfo) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    const updated_residential_info = old_residential_info;
-    for (const key in residentialInfoData) {
-      if (key !== 'residential_info_id') {
-        updated_residential_info[key] = residentialInfoData[key];
-      }
+
+    if (residentialInfo.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    await updated_residential_info.save();
-    return updated_residential_info;
+
+    await residentialInfo.deleteOne();
+
+    return { message: 'Residential Info deleted successfully' };
+  }
+
+  public async updateResidentialInfo(userId: string, residentialInfoId: string, updatedData: UpdateResidentialInfoDto) {
+    const residentialInfo = await ResidentialInfoModel.findById(residentialInfoId);
+    if (!residentialInfo) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    if (residentialInfo.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    const updatedResidentialInfo = await ResidentialInfoModel.findByIdAndUpdate(residentialInfoId, { $set: updatedData }, { new: true });
+
+    if (!updatedResidentialInfo) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    return updatedResidentialInfo;
   }
 }
 

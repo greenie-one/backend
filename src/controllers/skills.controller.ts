@@ -1,9 +1,9 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { createSkillDto } from '@/dtos/skills.dto';
+import { createSkillDto, updateSkillDto } from '@/dtos/skills.dto';
 import { skillService } from '@/services/skills.service';
 import { AuthGuard, UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
-import { Delete, Get, Post } from '@/utils/decorators/methods';
+import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
 import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/skill')
@@ -22,7 +22,13 @@ export default class skillController {
 
   @Delete('/:id')
   @AuthGuard()
-  async deleteWorkExperience(@UserDetails() userDetails: TokenClaims, @Params('id') id: string) {
+  async deleteSkill(@UserDetails() userDetails: TokenClaims, @Params('id') id: string) {
     return skillService.deleteSkill(userDetails.userId, id);
+  }
+
+  @Patch('/:id')
+  @AuthGuard()
+  async updateSkill(@UserDetails() userDetails: TokenClaims, @Params('id') skillId: string, @Body() data: updateSkillDto) {
+    return skillService.updateSkill(userDetails.userId, skillId, data);
   }
 }

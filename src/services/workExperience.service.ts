@@ -43,51 +43,33 @@ class WorkExperienceService {
   }
 
   public async deleteWorkExperience(userId: string, workExperienceId: string) {
-    // Check if user exists
-    const findUser = await UserModel.findById(userId);
-    if (!findUser) {
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    }
-
-    // Find the work experience
     const workExperience = await WorkExperienceModel.findById(workExperienceId);
     if (!workExperience) {
-      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    // Check if the work experience belongs to the user
     if (workExperience.user.toString() !== userId) {
-      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    // Delete the work experience
     await workExperience.deleteOne();
 
     return { message: 'Work experience deleted successfully' };
   }
-  public async updateWorkExperience(userId: string, workExperienceId: string, updatedData: UpdateWorkExperienceDto) {
-    // Check if user exists
-    const findUser = await UserModel.findById(userId);
-    if (!findUser) {
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    }
 
-    // Find the work experience
+  public async updateWorkExperience(userId: string, workExperienceId: string, updatedData: UpdateWorkExperienceDto) {
     const workExperience = await WorkExperienceModel.findById(workExperienceId);
     if (!workExperience) {
-      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    // Check if the work experience belongs to the user
     if (workExperience.user.toString() !== userId) {
-      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-
-    // Update the work experience
     const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
 
     if (!updatedWorkExperience) {
-      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
     return updatedWorkExperience;

@@ -2,8 +2,8 @@ import { TokenClaims } from '@/dtos/auth.dto';
 
 import { AuthGuard, UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
-import { Get, Patch, Post } from '@/utils/decorators/methods';
-import { Body } from '@/utils/decorators/request';
+import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
+import { Body, Params } from '@/utils/decorators/request';
 
 import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/residentialInfo.dto';
 import { residentialInfoService } from '@/services/residentialInfo.service';
@@ -26,11 +26,19 @@ export default class ResidentialInfoController {
     return { residentialInfo };
   }
 
-  @Patch('/')
+  @Delete('/:id')
   @AuthGuard()
-  public async updateResidentialInfo(@UserDetails() userDetails: TokenClaims, @Body() residentialInfoData: UpdateResidentialInfoDto) {
-    const userId = userDetails.userId;
-    const residentialInfo = await residentialInfoService.updateResidentialInfo(userId, residentialInfoData);
-    return { residentialInfo };
+  async deleteResidentialInfo(@UserDetails() userDetails: TokenClaims, @Params('id') id: string) {
+    return residentialInfoService.deleteResidentialInfo(userDetails.userId, id);
+  }
+
+  @Patch('/:id')
+  @AuthGuard()
+  async updateResidentialInfo(
+    @UserDetails() userDetails: TokenClaims,
+    @Params('id') residentialInfoId: string,
+    @Body() data: UpdateResidentialInfoDto,
+  ) {
+    return residentialInfoService.updateResidentialInfo(userDetails.userId, residentialInfoId, data);
   }
 }
