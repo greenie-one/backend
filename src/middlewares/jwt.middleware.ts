@@ -1,12 +1,6 @@
 import { env } from '@/config';
-import { TokenClaims } from '@/dtos/auth.dto';
-import { ErrorEnum } from '@/exceptions/errorCodes';
-import { HttpException } from '@/exceptions/httpException';
-import { authService } from '@/services/auth.service';
 import { validateRoute } from '@/utils/validation';
 import jwt from '@fastify/jwt';
-import { plainToInstance } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
 import { FastifyInstance, HTTPMethods } from 'fastify';
 import { readFile } from 'fs/promises';
 
@@ -48,27 +42,5 @@ export async function registerJWTMiddleware(fastify: FastifyInstance, controller
     },
     sign: { algorithm: 'RS256', iss: 'greenie.one' },
     verify: { allowedIss: 'greenie.one' },
-  });
-
-  // fastify.decorate('user_details', undefined);
-
-  fastify.addHook('onRequest', async (req) => {
-    const shouldValidate = !!routesToApplyAuthOn.find((val) => val.url === req.routerPath && val.method === req.method);
-    if (shouldValidate) {
-      try {
-        const decoded: TokenClaims = await req.jwtVerify();
-
-        const transformed = plainToInstance(TokenClaims, decoded);
-        await validateOrReject(transformed);
-
-        const validated = await authService.validateSessionId(decoded.session_id, req.headers['authorization'].substring(7), 'token');
-        if (!validated) throw new Error();
-
-        // (req as unknown as { user_details: TokenClaims }).user_details = decoded;
-      } catch (e) {
-        console.error(e);
-        throw new HttpException(ErrorEnum.UNAUTHORIZED);
-      }
-    }
   });
 }
