@@ -17,3 +17,17 @@ export class createSkillDto {
   @IsNotEmpty()
   public user!: string;
 }
+
+export class updateSkillDto {
+  @IsString()
+  @IsOptional()
+  public designation?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  public isVerified?: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  public skillRate?: number;
+}

@@ -1,10 +1,10 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
 import { workExperienceService } from '@/services/workExperience.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
-import { Get, Post } from '@/utils/decorators/methods';
-import { Body } from '@/utils/decorators/request';
+import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
+import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/workExperience')
 export default class WorkExperienceController {
@@ -16,5 +16,19 @@ export default class WorkExperienceController {
   @Get('/me')
   async getWorkExperience(@UserDetails() userDetails: TokenClaims) {
     return workExperienceService.getWorkExperience(userDetails.sub);
+  }
+
+  @Delete('/:id')
+  async deleteWorkExperience(@UserDetails() userDetails: TokenClaims, @Params('id') id: string) {
+    return workExperienceService.deleteWorkExperience(userDetails.sub, id);
+  }
+
+  @Patch('/:id')
+  async updateWorkExperience(
+    @UserDetails() userDetails: TokenClaims,
+    @Params('id') workExpereienceId: string,
+    @Body() data: UpdateWorkExperienceDto,
+  ) {
+    return workExperienceService.updateWorkExperience(userDetails.sub, workExpereienceId, data);
   }
 }

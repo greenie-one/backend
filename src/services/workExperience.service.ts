@@ -1,4 +1,4 @@
-import { CreateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -40,6 +40,39 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
     return WorkExperience;
+  }
+
+  public async deleteWorkExperience(userId: string, workExperienceId: string) {
+    const workExperience = await WorkExperienceModel.findById(workExperienceId);
+    if (!workExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    if (workExperience.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    await workExperience.deleteOne();
+
+    return { message: 'Work experience deleted successfully' };
+  }
+
+  public async updateWorkExperience(userId: string, workExperienceId: string, updatedData: UpdateWorkExperienceDto) {
+    const workExperience = await WorkExperienceModel.findById(workExperienceId);
+    if (!workExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    if (workExperience.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+    const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
+
+    if (!updatedWorkExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    return updatedWorkExperience;
   }
 }
 

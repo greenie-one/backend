@@ -72,8 +72,4 @@ export class UpdateResidentialInfoDto {
   @IsDate()
   @IsOptional()
   public end_date?: Date;
-
-  @IsString()
-  @IsNotEmpty()
-  public residential_info_id!: string;
 }
