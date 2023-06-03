@@ -1,7 +1,7 @@
 import { TokenClaims } from '@/dtos/auth.dto';
 import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
 import { workExperienceService } from '@/services/workExperience.service';
-import { AuthGuard, UserDetails } from '@/utils/decorators/auth';
+import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
 import { Body, Params } from '@/utils/decorators/request';
@@ -9,15 +9,13 @@ import { Body, Params } from '@/utils/decorators/request';
 @Controller('/workExperience')
 export default class WorkExperienceController {
   @Post('/create')
-  @AuthGuard()
   async createWorkExperience(@UserDetails() userDetails: TokenClaims, @Body() data: CreateWorkExperienceDto) {
-    return workExperienceService.createWorkExperience(userDetails.userId, data);
+    return workExperienceService.createWorkExperience(userDetails.sub, data);
   }
 
   @Get('/me')
-  @AuthGuard()
   async getWorkExperience(@UserDetails() userDetails: TokenClaims) {
-    return workExperienceService.getWorkExperience(userDetails.userId);
+    return workExperienceService.getWorkExperience(userDetails.sub);
   }
 
   @Delete('/:id')

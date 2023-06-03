@@ -17,6 +17,7 @@ export enum ErrorEnum {
   PASSWORD_MISMATCH,
   WORKEXPERIENCE_NOT_FOUND,
   SKILL_NOT_FOUND,
+  USER_DETAILS_NOT_FOUND,
 
   // Waitlist
   ALREADY_IN_WAITLIST,
@@ -32,6 +33,9 @@ export enum ErrorEnum {
   RESIDENTIAL_INFO_NOT_FOUND,
   DOCUMENTS_NOT_FOUND,
   DOCUMENT_NOT_FOUND,
+  DOCUMENT_IS_PUBLIC,
+  DOCUMENT_ALREADY_SHARED,
+  DOCUMENT_NOT_SHARED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -164,5 +168,25 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0025',
     message: 'Document not found',
     status: 404,
+  },
+  [ErrorEnum.USER_DETAILS_NOT_FOUND]: {
+    code: 'GR0026',
+    message: 'User details not found',
+    status: 404,
+  },
+  [ErrorEnum.DOCUMENT_IS_PUBLIC]: {
+    code: 'GR0027',
+    message: 'Document is already public',
+    status: 400,
+  },
+  [ErrorEnum.DOCUMENT_ALREADY_SHARED]: {
+    code: 'GR0028',
+    message: 'Document is already shared',
+    status: 400,
+  },
+  [ErrorEnum.DOCUMENT_NOT_SHARED]: {
+    code: 'GR0029',
+    message: 'Document is not shared',
+    status: 400,
   },
 };

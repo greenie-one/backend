@@ -1,6 +1,6 @@
 import { TokenClaims } from '@/dtos/auth.dto';
 
-import { AuthGuard, UserDetails } from '@/utils/decorators/auth';
+import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
 import { Body, Params } from '@/utils/decorators/request';
@@ -11,20 +11,19 @@ import { residentialInfoService } from '@/services/residentialInfo.service';
 @Controller('/residential_info')
 export default class ResidentialInfoController {
   @Get('/me')
-  @AuthGuard()
   public async findAUserResidentialInfo(@UserDetails() userDetails: TokenClaims) {
-    const userId = userDetails.userId;
+    const userId = userDetails.sub;
     const residentialInfo = await residentialInfoService.getUserResidentialInfo(userId);
     return { residentialInfo };
   }
 
   @Post('/')
-  @AuthGuard()
   public async addResidentialInfo(@UserDetails() userDetails: TokenClaims, @Body() residentialInfoData: AddResidentialInfoDto) {
-    const userId = userDetails.userId;
+    const userId = userDetails.sub;
     const residentialInfo = await residentialInfoService.addResidentialInfo(userId, residentialInfoData);
     return { residentialInfo };
   }
+
 
   @Delete('/:id')
   @AuthGuard()
