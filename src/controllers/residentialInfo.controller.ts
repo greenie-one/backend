@@ -13,7 +13,7 @@ export default class ResidentialInfoController {
   @Get('/me')
   @AuthGuard()
   public async findAUserResidentialInfo(@UserDetails() userDetails: TokenClaims) {
-    const userId = userDetails.userId;
+    const userId = userDetails.sub;
     const residentialInfo = await residentialInfoService.getUserResidentialInfo(userId);
     return { residentialInfo };
   }
@@ -21,7 +21,7 @@ export default class ResidentialInfoController {
   @Post('/')
   @AuthGuard()
   public async addResidentialInfo(@UserDetails() userDetails: TokenClaims, @Body() residentialInfoData: AddResidentialInfoDto) {
-    const userId = userDetails.userId;
+    const userId = userDetails.sub;
     const residentialInfo = await residentialInfoService.addResidentialInfo(userId, residentialInfoData);
     return { residentialInfo };
   }
@@ -29,7 +29,7 @@ export default class ResidentialInfoController {
   @Delete('/:id')
   @AuthGuard()
   async deleteResidentialInfo(@UserDetails() userDetails: TokenClaims, @Params('id') id: string) {
-    return residentialInfoService.deleteResidentialInfo(userDetails.userId, id);
+    return residentialInfoService.deleteResidentialInfo(userDetails.sub, id);
   }
 
   @Patch('/:id')
@@ -39,6 +39,6 @@ export default class ResidentialInfoController {
     @Params('id') residentialInfoId: string,
     @Body() data: UpdateResidentialInfoDto,
   ) {
-    return residentialInfoService.updateResidentialInfo(userDetails.userId, residentialInfoId, data);
+    return residentialInfoService.updateResidentialInfo(userDetails.sub, residentialInfoId, data);
   }
 }

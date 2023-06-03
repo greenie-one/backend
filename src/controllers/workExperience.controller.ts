@@ -11,19 +11,19 @@ export default class WorkExperienceController {
   @Post('/create')
   @AuthGuard()
   async createWorkExperience(@UserDetails() userDetails: TokenClaims, @Body() data: CreateWorkExperienceDto) {
-    return workExperienceService.createWorkExperience(userDetails.userId, data);
+    return workExperienceService.createWorkExperience(userDetails.sub, data);
   }
 
   @Get('/me')
   @AuthGuard()
   async getWorkExperience(@UserDetails() userDetails: TokenClaims) {
-    return workExperienceService.getWorkExperience(userDetails.userId);
+    return workExperienceService.getWorkExperience(userDetails.sub);
   }
 
   @Delete('/:id')
   @AuthGuard()
   async deleteWorkExperience(@UserDetails() userDetails: TokenClaims, @Params('id') id: string) {
-    return workExperienceService.deleteWorkExperience(userDetails.userId, id);
+    return workExperienceService.deleteWorkExperience(userDetails.sub, id);
   }
 
   @Patch('/:id')
@@ -33,6 +33,6 @@ export default class WorkExperienceController {
     @Params('id') workExpereienceId: string,
     @Body() data: UpdateWorkExperienceDto,
   ) {
-    return workExperienceService.updateWorkExperience(userDetails.userId, workExpereienceId, data);
+    return workExperienceService.updateWorkExperience(userDetails.sub, workExpereienceId, data);
   }
 }
