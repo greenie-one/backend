@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 
 export enum ProfileChangedEntity {
   NAME = 'NAME',
@@ -14,6 +14,10 @@ export class CreateProfileDto {
   @IsNotEmpty()
   public lastName: string;
 
+  @IsString()
+  @IsOptional()
+  public Bio: string;
+
   @IsArray()
   @IsString({ each: true })
   public descriptionTags: string[];
@@ -26,6 +30,10 @@ export class UpdateProfileDto {
   @IsString()
   @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.NAME)
   public firstName?: string;
+
+  @IsString()
+  @IsOptional()
+  public Bio?: string;
 
   @IsString()
   @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.NAME)
