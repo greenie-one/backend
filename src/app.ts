@@ -10,6 +10,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import fastify from 'fastify';
+import fastifySwagger from 'fastify-swagger';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import { connect, set } from 'mongoose';
@@ -41,6 +42,8 @@ export class App {
     await this.connectToRedis();
     await this.initializeMiddlewares();
     this.initializeErrorHandling();
+
+    await this.registerSwaggerDocs();
 
     registerControllers(this.app, this.controllers);
     await this.app.listen({
@@ -104,5 +107,23 @@ export class App {
         instance: new c(),
       });
     }
+  }
+
+  private async registerSwaggerDocs() {
+    const swaggerOptions = {
+      routePrefix: '/docs',
+      exposeRoute: true,
+      swagger: {
+        info: {
+          title: 'Your API',
+          description: 'API documentation',
+          version: '1.0.0',
+        },
+        servers: [{ url: 'http://localhost:8080', description: 'Development server' }],
+        apis: ['./src/routes.ts', './src/schema/*.ts'],
+      },
+    };
+
+    this.app.register(fastifySwagger, swaggerOptions);
   }
 }
