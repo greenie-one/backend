@@ -1,0 +1,108 @@
+openapi: 3.0.0
+info:
+  title: Profile API
+  description: API documentation for profile management
+  version: 1.0.0
+paths:
+  /profiles/create:
+    post:
+      summary: Create a new profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProfileDto'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+  /profiles/update:
+    get:
+      summary: Update an existing profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileDto'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+  /profiles/me:
+    get:
+      summary: Get the profile for the currently logged-in user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+  /profiles:
+    get:
+      summary: Search profiles
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search value
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+components:
+  schemas:
+    CreateProfileDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        descriptionTags:
+          type: array
+          items:
+            type: string
+      required:
+        - firstName
+        - lastName
+    UpdateProfileDto:
+      type: object
+      properties:
+        changedEntity:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        descriptionTags:
+          type: array
+          items:
+            type: string
+      required:
+        - changedEntity
+    Profile:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        user:
+          type: string
+        descriptionTags:
+          type: array
+          items:
+            type: string

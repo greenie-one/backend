@@ -4,13 +4,13 @@ import './utils/logger';
 import { dbConnection } from '@database';
 import fastifyCookie from '@fastify/cookie';
 import middie from '@fastify/middie';
+import fastifySwagger from '@fastify/swagger';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { ClassConstructor } from 'class-transformer';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import fastify from 'fastify';
-import fastifySwagger from 'fastify-swagger';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import { connect, set } from 'mongoose';
@@ -111,6 +111,7 @@ export class App {
 
   private async registerSwaggerDocs() {
     const swaggerOptions = {
+      mode: 'static',
       routePrefix: '/docs',
       exposeRoute: true,
       swagger: {
@@ -120,7 +121,8 @@ export class App {
           version: '1.0.0',
         },
         servers: [{ url: 'http://localhost:8080', description: 'Development server' }],
-        apis: ['./src/routes.ts', './src/schema/*.ts'],
+        exposeRoute: true,
+        apis: ['./src/docs/api.yml'],
       },
     };
 
