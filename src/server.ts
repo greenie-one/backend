@@ -1,6 +1,6 @@
 import { App } from '@/app';
 import { ValidateEnv } from '@utils/validateEnv';
-import DocumentsController from './controllers/documents.controller';
+import IDsController from './controllers/ids.controller';
 import { OAuthController } from './controllers/oauth.controller';
 import ProfileController from './controllers/profile.controller';
 import ResidentialInfoController from './controllers/residentialInfo.controller';
@@ -29,7 +29,7 @@ const controllers = [
   WorkExperienceController,
   SkillController,
   ResidentialInfoController,
-  DocumentsController,
+  IDsController,
 ];
 
 const app = new App(controllers);

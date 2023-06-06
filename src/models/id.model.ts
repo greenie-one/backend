@@ -3,21 +3,21 @@ import { Mixed } from 'mongoose';
 import { User } from './users.model';
 import { Verification } from './verified.model';
 
-export enum DocumentTypeEnum {
+export enum IDTypeEnum {
   AADHAR = 'AADHAR',
   PAN = 'PAN',
   DRIVING_LICENSE = 'DRIVING_LICENSE',
 }
 
-export class Document {
-  @prop({ required: true, enum: DocumentTypeEnum, type: String })
-  public document_type!: DocumentTypeEnum;
+export class ID {
+  @prop({ required: true, enum: IDTypeEnum, type: String })
+  public id_type!: IDTypeEnum;
 
   @prop({ required: true })
-  public document_number!: string;
+  public id_number!: string;
 
   @prop({ required: true })
-  public doument_data!: Mixed;
+  public id_data!: Mixed;
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;
@@ -32,4 +32,4 @@ export class Document {
   public updatedAt?: Date;
 }
 
-export const DocumentModel = getModelForClass(Document);
+export const IDModel = getModelForClass(ID);
