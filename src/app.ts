@@ -4,6 +4,7 @@ import './utils/logger';
 import { dbConnection } from '@database';
 import fastifyCookie from '@fastify/cookie';
 import middie from '@fastify/middie';
+import swagger from '@fastify/swagger';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { ClassConstructor } from 'class-transformer';
 import compression from 'compression';
@@ -41,6 +42,8 @@ export class App {
     await this.connectToRedis();
     await this.initializeMiddlewares();
     this.initializeErrorHandling();
+
+    await this.registerSwaggerDocs();
 
     registerControllers(this.app, this.controllers);
     await this.app.listen({
@@ -104,5 +107,23 @@ export class App {
         instance: new c(),
       });
     }
+  }
+
+  private async registerSwaggerDocs() {
+    const swaggerOptions = {
+      routePrefix: '/docs',
+      exposeRoute: true,
+      swagger: {
+        info: {
+          title: 'Your API',
+          description: 'API documentation',
+          version: '1.0.0',
+        },
+        servers: [{ url: 'http://localhost:8080', description: 'Development server' }],
+        apis: ['./src/routes.ts', './src/schema/*.ts'],
+      },
+    };
+
+    this.app.register(swagger, swaggerOptions);
   }
 }
