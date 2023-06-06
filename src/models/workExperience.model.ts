@@ -12,6 +12,9 @@ export class WorkExperience {
   @prop({ type: String, required: true })
   public email!: string;
 
+  @prop({ type: String })
+  public linkedInUrl: string;
+
   @prop({ type: String, required: true })
   public companyName!: string;
 

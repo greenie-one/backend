@@ -47,6 +47,10 @@ export class CreateWorkExperienceDto {
 
   @IsString()
   @IsOptional()
+  public linkedInUr?: string;
+
+  @IsString()
+  @IsOptional()
   public companyEndDate?: string;
 
   @IsString()
