@@ -4,7 +4,7 @@ import './utils/logger';
 import { dbConnection } from '@database';
 import fastifyCookie from '@fastify/cookie';
 import middie from '@fastify/middie';
-import fastifySwagger from '@fastify/swagger';
+import swagger from '@fastify/swagger';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { ClassConstructor } from 'class-transformer';
 import compression from 'compression';
@@ -112,7 +112,9 @@ export class App {
   private async registerSwaggerDocs() {
     const swaggerOptions = {
       mode: 'static',
-      routePrefix: '/docs',
+      specification: {
+        path: './src/docs/api.yaml',
+      },
       exposeRoute: true,
       swagger: {
         info: {
@@ -120,12 +122,11 @@ export class App {
           description: 'API documentation',
           version: '1.0.0',
         },
-        servers: [{ url: 'http://localhost:8080', description: 'Development server' }],
-        exposeRoute: true,
-        apis: ['./src/docs/api.yml'],
       },
     };
 
-    this.app.register(fastifySwagger, swaggerOptions);
+    this.app.register(swagger, swaggerOptions);
+    // await this.app.ready();
+    // this.app.swagger();
   }
 }
