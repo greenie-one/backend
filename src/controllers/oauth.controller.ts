@@ -19,7 +19,7 @@ export class OAuthController {
     @Req() request: FastifyRequest,
   ) {
     const token = await oAuthService.handleOAuthLogin(provider, request, query);
-    console.info(`Generated token ${JSON.stringify(token)}`);
+    console.info(`Generated token ${token.accessToken}`);
     return token;
   }
 }
