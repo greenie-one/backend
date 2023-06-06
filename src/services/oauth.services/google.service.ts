@@ -37,7 +37,6 @@ class GoogleOAuthService implements IOAuthService {
       console.error('Failed to verify authenticity of token', e);
       throw new HttpException(ErrorEnum.OAUTH_FAILED);
     }
-    console.info(decoded);
     const payload = decoded.getPayload();
 
     let user: User = await userService.findUser({ email: payload.email });
