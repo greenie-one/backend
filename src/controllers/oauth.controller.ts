@@ -18,6 +18,8 @@ export class OAuthController {
     @Query() query: GoogleOAuthDto | LinkedInOAuthDto,
     @Req() request: FastifyRequest,
   ) {
-    return await oAuthService.handleOAuthLogin(provider, request, query);
+    const token = await oAuthService.handleOAuthLogin(provider, request, query);
+    console.info(`Generated token ${token}`);
+    return token;
   }
 }
