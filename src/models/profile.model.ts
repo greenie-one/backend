@@ -14,7 +14,7 @@ export class Profile {
   public greenie_id?: string;
 
   @prop({ type: String })
-  public Bio?: string;
+  public bio?: string;
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;

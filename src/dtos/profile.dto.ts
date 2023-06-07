@@ -16,7 +16,7 @@ export class CreateProfileDto {
 
   @IsString()
   @IsOptional()
-  public Bio: string;
+  public bio: string;
 
   @IsArray()
   @IsString({ each: true })
@@ -33,7 +33,7 @@ export class UpdateProfileDto {
 
   @IsString()
   @IsOptional()
-  public Bio?: string;
+  public bio?: string;
 
   @IsString()
   @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.NAME)
