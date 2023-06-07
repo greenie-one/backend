@@ -21,7 +21,8 @@ class OAuthService {
   }
 
   public async handleOAuthLogin(provider: OAuthProviders, request: FastifyRequest, query: unknown) {
-    return await this.RegisteredOAuthProviders[provider].handleLogin(request, query);
+    const token = this.RegisteredOAuthProviders[provider].handleLogin(request, query);
+    return token;
   }
 }
 
