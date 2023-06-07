@@ -43,6 +43,10 @@ class ProfileService {
       changes.descriptionTags = profileData.descriptionTags;
     }
 
+    if (profileData.changedEntity === ProfileChangedEntity.BIO) {
+      changes.bio = profileData.BIO;
+    }
+
     return changes;
   }
 

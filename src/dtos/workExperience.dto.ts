@@ -1,4 +1,5 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { companyTypeEnum } from '../models/workExperience.model';
 
 export class CreateWorkExperienceDto {
   @IsString()
@@ -8,6 +9,10 @@ export class CreateWorkExperienceDto {
   @IsString()
   @IsNotEmpty()
   public designation!: string;
+
+  @IsEnum(companyTypeEnum)
+  @IsOptional()
+  public companyType?: companyTypeEnum;
 
   @IsString()
   @IsNotEmpty()
@@ -70,6 +75,10 @@ export class UpdateWorkExperienceDto {
   @IsString()
   @IsOptional()
   public email?: string;
+
+  @IsEnum(companyTypeEnum)
+  @IsOptional()
+  public companyType?: companyTypeEnum;
 
   @IsString()
   @IsOptional()

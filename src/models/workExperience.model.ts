@@ -1,10 +1,19 @@
 import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { User } from './users.model';
 
+export enum companyTypeEnum {
+  Startup = 'Startup',
+  Registered = 'Registered',
+  Unregistered = 'Unregistered',
+}
+
 @modelOptions({ schemaOptions: { collection: 'work_experiences', timestamps: true } })
 export class WorkExperience {
   @prop({ type: String })
   public image: string;
+
+  @prop({ enum: companyTypeEnum, type: String })
+  public companyType!: companyTypeEnum;
 
   @prop({ type: String, required: true })
   public designation!: string;

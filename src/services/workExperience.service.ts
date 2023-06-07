@@ -22,6 +22,7 @@ class WorkExperienceService {
       companyId: workExperienceData.companyId,
       email: workExperienceData.email,
       user: userId,
+      companyType: workExperienceData.companyType,
       linkedInUrl: workExperienceData.linkedInUrl,
       companyName: workExperienceData.companyName,
       companyStartDate: new Date(workExperienceData.companyStartDate),

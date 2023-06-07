@@ -3,6 +3,7 @@ import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'c
 export enum ProfileChangedEntity {
   NAME = 'NAME',
   DESCRIPTION_TAGS = 'DESCRIPTION_TAGS',
+  BIO = 'BIO',
 }
 
 export class CreateProfileDto {
@@ -32,8 +33,8 @@ export class UpdateProfileDto {
   public firstName?: string;
 
   @IsString()
-  @IsOptional()
-  public bio?: string;
+  @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.BIO)
+  public BIO?: string;
 
   @IsString()
   @ValidateIf((obj) => obj.changedEntity === ProfileChangedEntity.NAME)
