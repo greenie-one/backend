@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateWorkExperienceDto {
   @IsString()
@@ -41,17 +41,13 @@ export class CreateWorkExperienceDto {
   @IsOptional()
   public verifiedBy?: string;
 
-  @IsString()
+  @IsISO8601()
   @IsOptional()
   public companyStartDate?: string;
 
-  @IsString()
+  @IsISO8601()
   @IsOptional()
   public companyEndDate?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  public user!: string;
 }
 
 export class UpdateWorkExperienceDto {
@@ -95,11 +91,11 @@ export class UpdateWorkExperienceDto {
   @IsOptional()
   public verifiedBy?: string;
 
-  @IsString()
+  @IsISO8601()
   @IsOptional()
   public companyStartDate?: string;
 
-  @IsString()
+  @IsISO8601()
   @IsOptional()
   public companyEndDate?: string;
 }
