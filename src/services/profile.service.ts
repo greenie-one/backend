@@ -1,4 +1,4 @@
-import { CreateProfileDto, ProfileChangedEntity, UpdateProfileDto } from '@/dtos/profile.dto';
+import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Profile, ProfileModel } from '@/models/profile.model';
@@ -26,31 +26,28 @@ class ProfileService {
       firstName: profileData.firstName,
       lastName: profileData.lastName,
       user: userId,
+      bio: profileData.bio,
       descriptionTags: profileData.descriptionTags,
     });
     return profile;
   }
 
-  private getUpdateProfileChanges(profileData: UpdateProfileDto) {
-    const changes: Partial<Profile> = {};
-    if (profileData.changedEntity === ProfileChangedEntity.NAME) {
-      changes.firstName = profileData.firstName;
-      changes.lastName = profileData.lastName;
-    }
-
-    if (profileData.changedEntity === ProfileChangedEntity.DESCRIPTION_TAGS) {
-      changes.descriptionTags = profileData.descriptionTags;
-    }
-
-    return changes;
-  }
-
-  public async updateProfile(userId: string, profileData: UpdateProfileDto): Promise<Profile> {
-    const profile = await ProfileModel.findOneAndUpdate({ user: userId }, this.getUpdateProfileChanges(profileData), { new: true });
+  public async updateProfile(userId: string, profileId: string, updatedData: UpdateProfileDto) {
+    const profile = await ProfileModel.findById(profileId);
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
-    return profile;
+
+    if (profile.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+    const updatedProfile = await ProfileModel.findByIdAndUpdate(profileId, { $set: updatedData }, { new: true });
+
+    if (!updatedProfile) {
+      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
+    }
+
+    return updatedProfile;
   }
 
   public async getProfile(userId: string): Promise<Profile> {
