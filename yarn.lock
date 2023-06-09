@@ -613,19 +613,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/swagger@npm:^8.5.1":
-  version: 8.5.1
-  resolution: "@fastify/swagger@npm:8.5.1"
-  dependencies:
-    fastify-plugin: ^4.0.0
-    json-schema-resolver: ^2.0.0
-    openapi-types: ^12.0.0
-    rfdc: ^1.3.0
-    yaml: ^2.2.2
-  checksum: 5522e5c50fcdc16387c3206dfa2fdf92bf8da07a96dff7c928d5aa23da76446732857288d5580a263608dace4956cba51b5a76fdfdc18ce35735ec73febfe5c5
-  languageName: node
-  linkType: hard
-
 "@gar/promisify@npm:^1.1.3":
   version: 1.1.3
   resolution: "@gar/promisify@npm:1.1.3"
@@ -4634,7 +4621,6 @@ __metadata:
     "@fastify/jwt": ^6.7.1
     "@fastify/middie": ^8.1.0
     "@fastify/static": ^6.10.2
-    "@fastify/swagger": ^8.5.1
     "@swc/cli": ^0.1.62
     "@swc/core": ^1.3.53
     "@swc/helpers": ^0.5.0
@@ -4687,7 +4673,6 @@ __metadata:
     rxjs: ^7.8.0
     supertest: ^6.3.3
     swagger-jsdoc: ^6.2.8
-    swagger-ui-express: ^4.6.3
     swc-loader: ^0.2.3
     terser-webpack-plugin: ^5.3.7
     ts-jest: ^29.1.0
@@ -5733,17 +5718,6 @@ __metadata:
   version: 2.3.1
   resolution: "json-parse-even-better-errors@npm:2.3.1"
   checksum: 798ed4cf3354a2d9ccd78e86d2169515a0097a5c133337807cdf7f1fc32e1391d207ccfc276518cc1d7d8d4db93288b8a50ba4293d212ad1336e52a8ec0a941f
-  languageName: node
-  linkType: hard
-
-"json-schema-resolver@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "json-schema-resolver@npm:2.0.0"
-  dependencies:
-    debug: ^4.1.1
-    rfdc: ^1.1.4
-    uri-js: ^4.2.2
-  checksum: cd380d8d51f261b122a2da08ffbf69837c368d2c9143a62a72b82940cbc836fb2fb32ae740246e3e81ee07ee8e4cc8129af290acfa7bbc14bb86e3ddfda08eda
   languageName: node
   linkType: hard
 
@@ -6821,13 +6795,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-types@npm:^12.0.0":
-  version: 12.1.3
-  resolution: "openapi-types@npm:12.1.3"
-  checksum: 7fa5547f87a58d2aa0eba6e91d396f42d7d31bc3ae140e61b5d60b47d2fd068b48776f42407d5a8da7280cf31195aa128c2fc285e8bb871d1105edee5647a0bb
-  languageName: node
-  linkType: hard
-
 "optionator@npm:^0.9.1":
   version: 0.9.1
   resolution: "optionator@npm:0.9.1"
@@ -7513,7 +7480,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rfdc@npm:^1.1.4, rfdc@npm:^1.2.0, rfdc@npm:^1.3.0":
+"rfdc@npm:^1.2.0, rfdc@npm:^1.3.0":
   version: 1.3.0
   resolution: "rfdc@npm:1.3.0"
   checksum: fb2ba8512e43519983b4c61bd3fa77c0f410eff6bae68b08614437bc3f35f91362215f7b4a73cbda6f67330b5746ce07db5dd9850ad3edc91271ad6deea0df32
@@ -8226,24 +8193,6 @@ __metadata:
   dependencies:
     "@apidevtools/swagger-parser": 10.0.3
   checksum: bd99d94543b9bdc6bf062ea211f70d4fa004e6e8ce97ee47a388a046f3cc2839e7349970e8a0b11136b55a674e1cc7b0bbdfbe4fb40adf0c68bc70736eedb8b7
-  languageName: node
-  linkType: hard
-
-"swagger-ui-dist@npm:>=4.11.0":
-  version: 4.19.0
-  resolution: "swagger-ui-dist@npm:4.19.0"
-  checksum: a813128a7a10534e57b2d56913b7c3c216445254c1eda7ac8198331fb63e50754232b4f53178814abab51ba17b8e8fdc6e6e8c438f5070f83dc2f33cfe840916
-  languageName: node
-  linkType: hard
-
-"swagger-ui-express@npm:^4.6.3":
-  version: 4.6.3
-  resolution: "swagger-ui-express@npm:4.6.3"
-  dependencies:
-    swagger-ui-dist: ">=4.11.0"
-  peerDependencies:
-    express: ">=4.0.0 || >=5.0.0-beta"
-  checksum: bd0e02d2572685fcd82701b29f27ba6a27bc72de2b1553e84f884d008a0bf85a3711c9e236bb658130d702892866744d1a8a30b52b887e4f8224635c57afc63d
   languageName: node
   linkType: hard
 
