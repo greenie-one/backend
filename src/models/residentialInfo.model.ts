@@ -16,6 +16,9 @@ export class ResidentialInfo {
   public pincode!: string;
 
   @prop({ required: true })
+  public city!: string;
+
+  @prop({ required: true })
   public state!: string;
 
   @prop({ required: true })
