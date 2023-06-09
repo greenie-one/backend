@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AddResidentialInfoDto {
   @IsString()
@@ -19,17 +19,21 @@ export class AddResidentialInfoDto {
 
   @IsString()
   @IsNotEmpty()
+  public city!: string;
+
+  @IsString()
+  @IsNotEmpty()
   public state!: string;
 
   @IsString()
   @IsNotEmpty()
   public country!: string;
 
-  @IsDate()
+  @IsISO8601()
   @IsOptional()
   public start_date?: Date;
 
-  @IsDate()
+  @IsISO8601()
   @IsOptional()
   public end_date?: Date;
 }
@@ -65,11 +69,11 @@ export class UpdateResidentialInfoDto {
   @IsOptional()
   public country?: string;
 
-  @IsDate()
+  @IsISO8601()
   @IsOptional()
   public start_date?: Date;
 
-  @IsDate()
+  @IsISO8601()
   @IsOptional()
   public end_date?: Date;
 }

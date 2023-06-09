@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { companyTypeEnum } from '../models/workExperience.model';
 
 export class CreateWorkExperienceDto {
@@ -46,21 +46,17 @@ export class CreateWorkExperienceDto {
   @IsOptional()
   public verifiedBy?: string;
 
-  @IsString()
+  @IsISO8601()
   @IsOptional()
   public companyStartDate?: string;
 
-  @IsString()
+  @IsISO8601()
   @IsOptional()
   public linkedInUrl?: string;
 
   @IsString()
   @IsOptional()
   public companyEndDate?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  public user!: string;
 }
 
 export class UpdateWorkExperienceDto {
@@ -108,11 +104,11 @@ export class UpdateWorkExperienceDto {
   @IsOptional()
   public verifiedBy?: string;
 
-  @IsString()
+  @IsISO8601()
   @IsOptional()
   public companyStartDate?: string;
 
-  @IsString()
+  @IsISO8601()
   @IsOptional()
   public companyEndDate?: string;
 }

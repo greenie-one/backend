@@ -12,10 +12,6 @@ export class createSkillDto {
   @IsNumber()
   @IsNotEmpty()
   public skillRate!: number;
-
-  @IsString()
-  @IsNotEmpty()
-  public user!: string;
 }
 
 export class updateSkillDto {
