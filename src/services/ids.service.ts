@@ -2,7 +2,6 @@ import { AddIDDto } from '@/dtos/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel, IDTypeEnum } from '@/models/id.model';
-import { UserModel } from '@/models/users.model';
 import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 
 class IDsService {
@@ -14,51 +13,45 @@ class IDsService {
     return id_document;
   }
 
-  public async verifyAadhaar(userId: string, idData: AddIDDto) {
-    // Create a new ID document
-    const id = await UserModel.create({
-      id_number: idData.id_number,
-      id_type: idData.id_type,
+  public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
+    const { id_number } = addIDDto;
+    const newId = await IDModel.create({
+      id_type: IDTypeEnum.AADHAR,
+      id_number,
       user: userId,
     });
 
-    // Request OTP
-    try {
-      const response = await AadhaarVerification.requestOtp(idData.id_number, id._id);
-      idData.request_id = response.request_id;
-      // Return the updated idData or modify it as per your requirement
-      if (idData.request_id && idData.otp) {
-        // Verify OTP
-        try {
-          const response = await AadhaarVerification.verifyOtp(idData.request_id, idData.otp, id._id);
-          // Handle the response and return the result
-          return response;
-        } catch (error) {
-          // Handle the error
-          throw new HttpException(ErrorEnum.API_ERROR, error.message);
-        }
-      }
-      return idData;
-    } catch (error) {
-      // Handle the error
-      throw new HttpException(ErrorEnum.API_ERROR, error.message);
-    }
+    const otpResponse = await AadhaarVerification.requestOtp(id_number, newId._id.toString());
+    console.log(otpResponse);
+
+    newId.id_data = otpResponse;
+    await newId.save();
+
+    return otpResponse;
   }
 
-  public async verifyId(userId: string, idData: AddIDDto) {
-    try {
-      // Check if user exists
-      const findUser = await UserModel.findById(userId);
-      if (!findUser) {
-        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-      }
-    } catch (e) {
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+  public async verifyAadharOtp(userId: string, addIDDto: AddIDDto) {
+    const { otp } = addIDDto;
+
+    // Retrieve the ID document based on the ID type and number
+    const idDocument = await IDModel.findOne({
+      id_type: IDTypeEnum.AADHAR,
+      id_number: addIDDto.id_number,
+    });
+
+    if (!idDocument) {
+      throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
     }
 
-    if (idData.id_type === IDTypeEnum.AADHAR) {
-      return this.verifyAadhaar(userId, idData);
+    const verificationResponse = await AadhaarVerification.verifyOtp(idDocument.id_data?.request_id, otp, idDocument.id_data?.task_id);
+
+    if (verificationResponse) {
+      // Update the ID document with the Aadhar details
+      idDocument.id_data = verificationResponse;
+      await idDocument.save();
     }
+
+    return verificationResponse;
   }
 }
 

@@ -1,5 +1,5 @@
 import { IDTypeEnum } from '@/models/id.model';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AddIDDto {
   @IsEnum(IDTypeEnum)
@@ -7,13 +7,17 @@ export class AddIDDto {
   public id_type!: IDTypeEnum;
 
   @IsString()
-  @IsNotEmpty()
-  public id_number!: string;
-
-  // Fields for Aadhaar verification
-  @IsString()
-  public request_id?: string;
+  @IsOptional()
+  public id_number?: string;
 
   @IsString()
   public otp?: string;
+}
+
+export interface AadharRequestOtpResponse {
+  request_id?: string;
+}
+
+export interface AadharVerifyOtpResponse {
+  aadhaar_data?: string;
 }

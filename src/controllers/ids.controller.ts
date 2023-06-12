@@ -15,10 +15,13 @@ export default class IDsController {
     return { ids };
   }
 
-  @Post('/verify')
-  public async verifyID(@UserDetails() userDetails: TokenClaims, @Body() idData: AddIDDto) {
-    const userId = userDetails.sub;
-    const id = await idsService.verifyId(userId, idData);
-    return id;
+  @Post('/aadhar/request-otp')
+  public async requestAadharOtp(@UserDetails() userDetails: TokenClaims, @Body() addIDDto: AddIDDto) {
+    return idsService.requestAadharOtp(userDetails.sub, addIDDto);
+  }
+
+  @Post('/aadhar/verify-otp')
+  public async verifyAadharOtp(@UserDetails() userDetails: TokenClaims, @Body() addIDDto: AddIDDto) {
+    return idsService.verifyAadharOtp(userDetails.sub, addIDDto);
   }
 }

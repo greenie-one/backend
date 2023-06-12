@@ -1,8 +1,9 @@
 import { env } from '@/config';
+import { AadharRequestOtpResponse, AadharVerifyOtpResponse } from '@dtos/ids.dto';
 import { HttpClient } from '../generic/httpClient';
 
 export class AadhaarVerification {
-  static async requestOtp(aadhaarNumber: string, taskId: string) {
+  static async requestOtp(aadhaarNumber: string, taskId: string): Promise<AadharRequestOtpResponse> {
     return HttpClient.callApi({
       url: `https://test.zoop.one/in/identity/okyc/otp/request`,
       method: 'POST',
@@ -23,7 +24,7 @@ export class AadhaarVerification {
     });
   }
 
-  static async verifyOtp(requestId: string, otp: string, taskId: string) {
+  static async verifyOtp(requestId: string, otp: string, taskId: string): Promise<AadharVerifyOtpResponse> {
     return HttpClient.callApi({
       url: `https://test.zoop.one/in/identity/okyc/otp/verify`,
       method: 'POST',
