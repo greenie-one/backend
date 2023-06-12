@@ -9,4 +9,11 @@ export class AddIDDto {
   @IsString()
   @IsNotEmpty()
   public id_number!: string;
+
+  // Fields for Aadhaar verification
+  @IsString()
+  public request_id?: string;
+
+  @IsString()
+  public otp?: string;
 }

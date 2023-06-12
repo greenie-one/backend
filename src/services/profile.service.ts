@@ -32,8 +32,8 @@ class ProfileService {
     return profile;
   }
 
-  public async updateProfile(userId: string, profileId: string, updatedData: UpdateProfileDto) {
-    const profile = await ProfileModel.findById(profileId);
+  public async updateProfile(userId: string, userProfileId: string, updatedData: UpdateProfileDto) {
+    const profile = await ProfileModel.findOne({ user: userProfileId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
@@ -41,7 +41,7 @@ class ProfileService {
     if (profile.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    const updatedProfile = await ProfileModel.findByIdAndUpdate(profileId, { $set: updatedData }, { new: true });
+    const updatedProfile = await ProfileModel.findByIdAndUpdate(profile._id, { $set: updatedData }, { new: true });
 
     if (!updatedProfile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);

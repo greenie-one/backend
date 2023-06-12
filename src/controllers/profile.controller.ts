@@ -14,8 +14,8 @@ export default class ProfileController {
   }
 
   @Patch('/:id')
-  async updateProfile(@UserDetails() userDetails: TokenClaims, @Params('id') profileId: string, @Body() data: UpdateProfileDto) {
-    return profileService.updateProfile(userDetails.sub, profileId, data);
+  async updateProfile(@UserDetails() userDetails: TokenClaims, @Params('id') userId: string, @Body() data: UpdateProfileDto) {
+    return profileService.updateProfile(userDetails.sub, userId, data);
   }
 
   @Get('/me')

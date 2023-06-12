@@ -7,7 +7,7 @@ type HttpRequest = {
   toJSON?: boolean;
 } & (
   | {
-      body?: Record<string, string | string[] | number | boolean>;
+      body?: Record<string, string | string[] | number | boolean | HttpRequest.body>;
       method: 'POST';
     }
   | {
