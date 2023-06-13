@@ -17,7 +17,7 @@ class IDsService {
     const { id_number } = addIDDto;
     const newId = await IDModel.create({
       id_type: IDTypeEnum.AADHAR,
-      id_number,
+      id_number: addIDDto.id_number,
       user: userId,
     });
 
@@ -36,7 +36,7 @@ class IDsService {
     // Retrieve the ID document based on the ID type and number
     const idDocument = await IDModel.findOne({
       id_type: IDTypeEnum.AADHAR,
-      id_number: addIDDto.id_number,
+      user: userId,
     });
 
     if (!idDocument) {
