@@ -1,4 +1,4 @@
-import { AddIDDto } from '@/dtos/ids.dto';
+import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel, IDTypeEnum } from '@/models/id.model';
@@ -30,7 +30,7 @@ class IDsService {
     return otpResponse;
   }
 
-  public async verifyAadharOtp(userId: string, addIDDto: AddIDDto) {
+  public async verifyAadharOtp(userId: string, addIDDto: VerifyIDDto) {
     const { otp } = addIDDto;
 
     // Retrieve the ID document based on the ID type and number

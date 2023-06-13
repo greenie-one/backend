@@ -9,9 +9,16 @@ export class AddIDDto {
   @IsString()
   @IsOptional()
   public id_number?: string;
+}
+
+export class VerifyIDDto {
+  @IsString()
+  @IsNotEmpty()
+  public otp: string;
 
   @IsString()
-  public otp?: string;
+  @IsNotEmpty()
+  public request_id: string;
 }
 
 export interface AadharRequestOtpResponse {
