@@ -32,16 +32,16 @@ class DocumentService {
   }
 
   public async deleteDocument(userID: string, documentId: string) {
-    const documenntToDelete = await this.getDocumentById(documentId);
-    if (!documenntToDelete) {
+    const documentToDelete = await this.getDocumentById(documentId);
+    if (!documentToDelete) {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
     }
 
-    if (documenntToDelete.user.toString() !== userID) {
+    if (documentToDelete.user.toString() !== userID) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    await documenntToDelete.deleteOne();
+    await documentToDelete.deleteOne();
 
     return { message: 'Document deleted successfully' };
   }
