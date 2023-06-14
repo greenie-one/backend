@@ -1,5 +1,6 @@
 import { App } from '@/app';
 import { ValidateEnv } from '@utils/validateEnv';
+import DocumentController from './controllers/document.controller';
 import IDsController from './controllers/ids.controller';
 import { OAuthController } from './controllers/oauth.controller';
 import ProfileController from './controllers/profile.controller';
@@ -22,6 +23,7 @@ process.on('unhandledRejection', (e) => {
 ValidateEnv();
 
 const controllers = [
+  DocumentController,
   RootController,
   OAuthController,
   ProfileController,
