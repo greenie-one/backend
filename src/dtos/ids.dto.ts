@@ -3,7 +3,7 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AddIDDto {
   @IsEnum(IDTypeEnum)
-  @IsNotEmpty()
+  @IsOptional()
   public id_type?: IDTypeEnum;
 
   @IsString()
@@ -12,13 +12,48 @@ export class AddIDDto {
 
   @IsString()
   @IsOptional()
-  public otp?: string;
+  public dob?: string;
+}
+
+export class VerifyIDDto {
+  @IsString()
+  @IsNotEmpty()
+  public otp!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  public request_id!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  public task_id!: string;
 }
 
 export interface AadharRequestOtpResponse {
+  result?: {
+    is_number_linked?: boolean;
+    is_aadhaar_valid?: boolean;
+  };
   request_id?: string;
 }
 
 export interface AadharVerifyOtpResponse {
-  aadhaar_data?: string;
+  result?: {
+    user_aadhaar_number?: string;
+  };
+  success?: boolean;
+  response_code?: string;
+  response_message?: string;
+}
+
+export interface PanVerifyResponse {
+  success?: boolean;
+  response_code?: string;
+  response_message?: string;
+}
+
+export interface DrivingLicenseResponse {
+  success?: boolean;
+  response_code?: string;
+  response_message?: string;
 }

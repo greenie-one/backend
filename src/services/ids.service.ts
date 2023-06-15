@@ -1,8 +1,11 @@
-import { AddIDDto } from '@/dtos/ids.dto';
+import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel, IDTypeEnum } from '@/models/id.model';
 import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
+import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
+import { PanVerification } from '@/remote/verification/pan.remote';
+import { v4 as uuidv4 } from 'uuid';
 
 class IDsService {
   public async getUserIDs(userId: string): Promise<ID[]> {
@@ -15,43 +18,88 @@ class IDsService {
 
   public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
     const { id_number } = addIDDto;
-    const newId = await IDModel.create({
-      id_type: IDTypeEnum.AADHAR,
-      id_number: addIDDto.id_number,
-      user: userId,
-    });
-
-    const otpResponse = await AadhaarVerification.requestOtp(id_number, newId._id.toString());
-    console.log(otpResponse);
-
-    newId.id_data = otpResponse;
-    await newId.save();
-
-    return otpResponse;
+    const taskId = uuidv4();
+    try {
+      const otpResponse = await AadhaarVerification.requestOtp(id_number, taskId.toString());
+      const requestId = otpResponse.request_id;
+      if (!otpResponse.result.is_number_linked) {
+        throw new HttpException(ErrorEnum.NUMBER_NOT_LINKED);
+      }
+      if (!otpResponse.result.is_aadhaar_valid) {
+        throw new HttpException(ErrorEnum.AADHAR_NOT_FOUND);
+      }
+      return { requestId, taskId };
+    } catch (error) {
+      throw new HttpException(ErrorEnum.Server_ERROR);
+    }
   }
 
-  public async verifyAadharOtp(userId: string, addIDDto: AddIDDto) {
-    const { otp } = addIDDto;
+  public async verifyAadharOtp(userId: string, verifyIdDto: VerifyIDDto) {
+    const { otp, request_id, task_id } = verifyIdDto;
 
-    // Retrieve the ID document based on the ID type and number
-    const idDocument = await IDModel.findOne({
-      id_type: IDTypeEnum.AADHAR,
-      user: userId,
-    });
+    try {
+      const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id);
 
-    if (!idDocument) {
-      throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
+      const aadhaar_number = verificationResponse.result.user_aadhaar_number;
+      // console.log(aadhaar_number);
+      const documentId = IDModel.create({
+        id_type: IDTypeEnum.AADHAR,
+        id_number: aadhaar_number,
+        user: userId,
+        id_data: verificationResponse,
+      });
+
+      console.log(documentId);
+      const { success, response_code, response_message } = verificationResponse;
+      return { success, response_code, response_message };
+    } catch (error) {
+      throw new HttpException(ErrorEnum.Server_ERROR);
     }
+  }
 
-    const verificationResponse = await AadhaarVerification.verifyOtp(idDocument.id_data?.request_id, otp, idDocument.id_data?.task_id);
+  public async verifyPan(userId: string, addIDDto: AddIDDto) {
+    const { id_number } = addIDDto;
 
-    if (verificationResponse) {
-      // Update the ID document with the Aadhar details
-      idDocument.id_data = verificationResponse;
-      await idDocument.save();
+    try {
+      const taskId = uuidv4();
+      const response = await PanVerification.verifyPan(id_number, taskId);
+      console.log(response);
+
+      await IDModel.create({
+        id_type: IDTypeEnum.PAN,
+        id_number: addIDDto.id_number,
+        user: userId,
+        id_data: response,
+      });
+
+      return response;
+    } catch (error) {
+      throw new HttpException(ErrorEnum.Server_ERROR);
     }
+  }
 
-    return verificationResponse;
+  public async verifyDrivingLicense(userId: string, addIDDto: AddIDDto) {
+    const { id_number, dob } = addIDDto;
+
+    try {
+      const taskId = uuidv4();
+      const response = await drivinLicenseVerification.verifyDrivingLicense(id_number, dob, taskId);
+      console.log(response);
+
+      if (response.success) {
+        await IDModel.create({
+          id_type: IDTypeEnum.DRIVING_LICENSE,
+          id_number: addIDDto.id_number,
+          user: userId,
+          id_data: response,
+        });
+        const { success, response_code, response_message } = response;
+        return { success, response_code, response_message };
+      } else {
+      }
+    } catch (error) {
+      throw new HttpException(ErrorEnum.Server_ERROR);
+    }
   }
 }
 

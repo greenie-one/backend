@@ -25,7 +25,6 @@ export enum ErrorEnum {
   // Models
   FAILED_TO_CREATE_USER,
   FAILED_TO_CREATE_PROFILE,
-  AADHAR_NOT_FOUND,
   INVALID_USER_ID,
   EDUCATION_NOT_FOUND,
   OAUTH_PROVIDER_NOT_FOUND,
@@ -36,6 +35,11 @@ export enum ErrorEnum {
   DOCUMENT_IS_PUBLIC,
   DOCUMENT_ALREADY_SHARED,
   DOCUMENT_NOT_SHARED,
+
+  //identity verification
+  NUMBER_NOT_LINKED,
+  Server_ERROR,
+  AADHAR_NOT_FOUND,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -187,6 +191,16 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.DOCUMENT_NOT_SHARED]: {
     code: 'GR0029',
     message: 'Document is not shared',
+    status: 400,
+  },
+  [ErrorEnum.Server_ERROR]: {
+    code: 'GR0030',
+    message: 'Internal Server Error',
+    status: 500,
+  },
+  [ErrorEnum.NUMBER_NOT_LINKED]: {
+    code: 'GR0030',
+    message: 'Number is not linked with Aadhar',
     status: 400,
   },
 };

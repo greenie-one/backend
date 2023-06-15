@@ -1,5 +1,5 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-import { AddIDDto } from '@/dtos/ids.dto';
+import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
 import { idsService } from '@/services/ids.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -21,7 +21,17 @@ export default class IDsController {
   }
 
   @Post('/aadhar/verify-otp')
-  public async verifyAadharOtp(@UserDetails() userDetails: TokenClaims, @Body() addIDDto: AddIDDto) {
-    return idsService.verifyAadharOtp(userDetails.sub, addIDDto);
+  public async verifyAadharOtp(@UserDetails() userDetails: TokenClaims, @Body() verifyIdDto: VerifyIDDto) {
+    return idsService.verifyAadharOtp(userDetails.sub, verifyIdDto);
+  }
+
+  @Post('/pan/verify')
+  public async verifyPan(@UserDetails() userDetails: TokenClaims, @Body() addIDDto: AddIDDto) {
+    return idsService.verifyPan(userDetails.sub, addIDDto);
+  }
+
+  @Post('/driving-license/verify')
+  public async verifyDrivingLicense(@UserDetails() userDetails: TokenClaims, @Body() addIDDto: AddIDDto) {
+    return idsService.verifyDrivingLicense(userDetails.sub, addIDDto);
   }
 }
