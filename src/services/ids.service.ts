@@ -2,10 +2,14 @@ import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel, IDTypeEnum } from '@/models/id.model';
+import { redisClient } from '@/redisClient';
 import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
 import { PanVerification } from '@/remote/verification/pan.remote';
 import { v4 as uuidv4 } from 'uuid';
+
+const OTP_LIMIT = 5;
+const VALIDATION_LIMIT = 10 * 60; // mins;
 
 class IDsService {
   public async getUserIDs(userId: string): Promise<ID[]> {
@@ -16,9 +20,23 @@ class IDsService {
     return id_document;
   }
 
-  public async requestAadharOtp(addIDDto: AddIDDto) {
+  public async otp_rate_limit_check(userId: string, id_type: IDTypeEnum) {
+    const key = `${userId}-${id_type}-otp-count`;
+    const exists = await redisClient.get(key);
+    if (!exists) {
+      await redisClient.setEx(key, VALIDATION_LIMIT, '1');
+    }
+    const current = await redisClient.incr(key);
+    if (current > OTP_LIMIT) {
+      throw new HttpException(ErrorEnum.RATE_LIMIT_EXCEEDED);
+    }
+  }
+
+  public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
+
+    await this.otp_rate_limit_check(userId, IDTypeEnum.AADHAR);
 
     const otpResponse = await AadhaarVerification.requestOtp(id_number, taskId.toString()).catch((err) => {
       console.log(err);
@@ -43,14 +61,13 @@ class IDsService {
 
     if (verificationResponse.success && verificationResponse.response_code === '100') {
       const aadhaar_number = verificationResponse.result.user_aadhaar_number;
-      const documentId = IDModel.create({
+      await IDModel.create({
         id_type: IDTypeEnum.AADHAR,
         id_number: aadhaar_number,
         user: userId,
         id_data: verificationResponse,
       });
 
-      console.log(documentId);
       const { success, response_code, response_message } = verificationResponse;
       return { success, response_code, response_message };
     } else {

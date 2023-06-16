@@ -43,6 +43,7 @@ export enum ErrorEnum {
   PAN_VERIFICATION_FAIL,
   DRIVING_LICENSE_VERIFICATION_FAIL,
   Aadhaar_Verification_FAIL,
+  RATE_LIMIT_EXCEEDED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -220,5 +221,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0033',
     message: '%s',
     status: 400,
+  },
+  [ErrorEnum.RATE_LIMIT_EXCEEDED]: {
+    code: 'GR0034',
+    message: 'Rate limit exceeded for OTP requests',
+    status: 429,
   },
 };
