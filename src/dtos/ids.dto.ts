@@ -35,6 +35,9 @@ export interface AadharRequestOtpResponse {
     is_aadhaar_valid?: boolean;
   };
   request_id?: string;
+  success?: boolean;
+  response_code?: string;
+  response_message?: string;
 }
 
 export interface AadharVerifyOtpResponse {

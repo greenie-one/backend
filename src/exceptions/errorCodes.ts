@@ -208,17 +208,17 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   },
   [ErrorEnum.PAN_VERIFICATION_FAIL]: {
     code: 'GR0031',
-    message: 'Pan Verification failed',
+    message: '%s',
     status: 400,
   },
   [ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL]: {
     code: 'GR0032',
-    message: 'Driving License Verification failed',
+    message: '%s',
     status: 400,
   },
   [ErrorEnum.Aadhaar_Verification_FAIL]: {
     code: 'GR0033',
-    message: 'Aadhar Verification failed',
+    message: '%s',
     status: 400,
   },
 };
