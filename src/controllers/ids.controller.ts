@@ -1,10 +1,10 @@
 import { TokenClaims } from '@/dtos/auth.dto';
-
+import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
+import { idsService } from '@/services/ids.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
-import { Get } from '@/utils/decorators/methods';
-
-import { idsService } from '@/services/ids.service';
+import { Get, Post } from '@/utils/decorators/methods';
+import { Body } from '@/utils/decorators/request';
 
 @Controller('/ids')
 export default class IDsController {
@@ -15,10 +15,23 @@ export default class IDsController {
     return { ids };
   }
 
-  // @Post('/')
-  // public async verifyID(@UserDetails() userDetails: TokenClaims, @Body() idData: AddIDDto) {
-  //   const userId = userDetails.sub;
-  //   // Make Service to handle zoop
+  @Post('/aadhar/request-otp')
+  public async requestAadharOtp(@UserDetails() userDetails: TokenClaims, @Body() addIDDto: AddIDDto) {
+    return idsService.requestAadharOtp(userDetails.sub, addIDDto);
+  }
 
-  // }
+  @Post('/aadhar/verify-otp')
+  public async verifyAadharOtp(@UserDetails() userDetails: TokenClaims, @Body() verifyIdDto: VerifyIDDto) {
+    return idsService.verifyAadharOtp(userDetails.sub, verifyIdDto);
+  }
+
+  @Post('/pan/verify')
+  public async verifyPan(@UserDetails() userDetails: TokenClaims, @Body() addIDDto: AddIDDto) {
+    return idsService.verifyPan(userDetails.sub, addIDDto);
+  }
+
+  @Post('/driving-license/verify')
+  public async verifyDrivingLicense(@UserDetails() userDetails: TokenClaims, @Body() addIDDto: AddIDDto) {
+    return idsService.verifyDrivingLicense(userDetails.sub, addIDDto);
+  }
 }

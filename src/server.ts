@@ -7,6 +7,7 @@ import ProfileController from './controllers/profile.controller';
 import ResidentialInfoController from './controllers/residentialInfo.controller';
 import RootController from './controllers/root.controller';
 import SkillController from './controllers/skills.controller';
+import UserController from './controllers/user.controller';
 import WaitlistController from './controllers/waitlist.controller';
 import WorkExperienceController from './controllers/workExperience.controller';
 
@@ -32,6 +33,7 @@ const controllers = [
   SkillController,
   ResidentialInfoController,
   IDsController,
+  UserController,
 ];
 
 const app = new App(controllers);

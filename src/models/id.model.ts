@@ -1,5 +1,5 @@
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
-import { Mixed } from 'mongoose';
+import { Schema } from 'mongoose';
 import { User } from './users.model';
 import { Verification } from './verified.model';
 
@@ -16,8 +16,8 @@ export class ID {
   @prop({ required: true })
   public id_number!: string;
 
-  @prop({ required: true })
-  public id_data!: Mixed;
+  @prop({ type: Schema.Types.Mixed })
+  public id_data?: object;
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;

@@ -25,7 +25,6 @@ export enum ErrorEnum {
   // Models
   FAILED_TO_CREATE_USER,
   FAILED_TO_CREATE_PROFILE,
-  AADHAR_NOT_FOUND,
   INVALID_USER_ID,
   EDUCATION_NOT_FOUND,
   OAUTH_PROVIDER_NOT_FOUND,
@@ -36,6 +35,15 @@ export enum ErrorEnum {
   DOCUMENT_IS_PUBLIC,
   DOCUMENT_ALREADY_SHARED,
   DOCUMENT_NOT_SHARED,
+
+  //identity verification
+  NUMBER_NOT_LINKED,
+  Server_ERROR,
+  AADHAR_NOT_FOUND,
+  PAN_VERIFICATION_FAIL,
+  DRIVING_LICENSE_VERIFICATION_FAIL,
+  Aadhaar_Verification_FAIL,
+  RATE_LIMIT_EXCEEDED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -188,5 +196,35 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0029',
     message: 'Document is not shared',
     status: 400,
+  },
+  [ErrorEnum.Server_ERROR]: {
+    code: 'GR0030',
+    message: 'Internal Server Error',
+    status: 500,
+  },
+  [ErrorEnum.NUMBER_NOT_LINKED]: {
+    code: 'GR0030',
+    message: 'Number is not linked with Aadhar',
+    status: 400,
+  },
+  [ErrorEnum.PAN_VERIFICATION_FAIL]: {
+    code: 'GR0031',
+    message: '%s',
+    status: 400,
+  },
+  [ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL]: {
+    code: 'GR0032',
+    message: '%s',
+    status: 400,
+  },
+  [ErrorEnum.Aadhaar_Verification_FAIL]: {
+    code: 'GR0033',
+    message: '%s',
+    status: 400,
+  },
+  [ErrorEnum.RATE_LIMIT_EXCEEDED]: {
+    code: 'GR0034',
+    message: 'Rate limit exceeded for OTP requests',
+    status: 429,
   },
 };
