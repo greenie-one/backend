@@ -19,6 +19,9 @@ export class Profile {
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 
+  @prop({ type: String, required: false })
+  public profilePicture?: string;
+
   @prop({ type: Array<string>, default: [] })
   public descriptionTags!: string[];
 

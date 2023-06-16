@@ -17,7 +17,7 @@ export class ID {
   public id_number!: string;
 
   @prop({ type: Schema.Types.Mixed })
-  public id_data?: any;
+  public id_data?: object;
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;
