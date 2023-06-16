@@ -30,7 +30,7 @@ class IDsService {
       }
       return { requestId, taskId };
     } catch (error) {
-      throw new HttpException(ErrorEnum.Server_ERROR);
+      throw new HttpException(ErrorEnum.AADHAR_NOT_FOUND);
     }
   }
 
@@ -40,20 +40,24 @@ class IDsService {
     try {
       const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id);
 
-      const aadhaar_number = verificationResponse.result.user_aadhaar_number;
-      // console.log(aadhaar_number);
-      const documentId = IDModel.create({
-        id_type: IDTypeEnum.AADHAR,
-        id_number: aadhaar_number,
-        user: userId,
-        id_data: verificationResponse,
-      });
+      if (verificationResponse.success && verificationResponse.response_code === '100') {
+        const aadhaar_number = verificationResponse.result.user_aadhaar_number;
+        // console.log(aadhaar_number);
+        const documentId = IDModel.create({
+          id_type: IDTypeEnum.AADHAR,
+          id_number: aadhaar_number,
+          user: userId,
+          id_data: verificationResponse,
+        });
 
-      console.log(documentId);
-      const { success, response_code, response_message } = verificationResponse;
-      return { success, response_code, response_message };
+        console.log(documentId);
+        const { success, response_code, response_message } = verificationResponse;
+        return { success, response_code, response_message };
+      } else {
+        throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL);
+      }
     } catch (error) {
-      throw new HttpException(ErrorEnum.Server_ERROR);
+      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL);
     }
   }
 
@@ -65,16 +69,21 @@ class IDsService {
       const response = await PanVerification.verifyPan(id_number, taskId);
       console.log(response);
 
-      await IDModel.create({
-        id_type: IDTypeEnum.PAN,
-        id_number: addIDDto.id_number,
-        user: userId,
-        id_data: response,
-      });
+      if (response.success && response.response_code === '100') {
+        await IDModel.create({
+          id_type: IDTypeEnum.PAN,
+          id_number: addIDDto.id_number,
+          user: userId,
+          id_data: response,
+        });
 
-      return response;
+        const { success, response_code, response_message } = response;
+        return { success, response_code, response_message };
+      } else {
+        throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL);
+      }
     } catch (error) {
-      throw new HttpException(ErrorEnum.Server_ERROR);
+      throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL);
     }
   }
 
@@ -86,7 +95,7 @@ class IDsService {
       const response = await drivinLicenseVerification.verifyDrivingLicense(id_number, dob, taskId);
       console.log(response);
 
-      if (response.success) {
+      if (response.success && response.response_code === '100') {
         await IDModel.create({
           id_type: IDTypeEnum.DRIVING_LICENSE,
           id_number: addIDDto.id_number,
@@ -96,9 +105,10 @@ class IDsService {
         const { success, response_code, response_message } = response;
         return { success, response_code, response_message };
       } else {
+        throw new HttpException(ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL);
       }
     } catch (error) {
-      throw new HttpException(ErrorEnum.Server_ERROR);
+      throw new HttpException(ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL);
     }
   }
 }

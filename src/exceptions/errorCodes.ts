@@ -40,6 +40,9 @@ export enum ErrorEnum {
   NUMBER_NOT_LINKED,
   Server_ERROR,
   AADHAR_NOT_FOUND,
+  PAN_VERIFICATION_FAIL,
+  DRIVING_LICENSE_VERIFICATION_FAIL,
+  Aadhaar_Verification_FAIL,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -201,6 +204,21 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.NUMBER_NOT_LINKED]: {
     code: 'GR0030',
     message: 'Number is not linked with Aadhar',
+    status: 400,
+  },
+  [ErrorEnum.PAN_VERIFICATION_FAIL]: {
+    code: 'GR0031',
+    message: 'Pan Verification failed',
+    status: 400,
+  },
+  [ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL]: {
+    code: 'GR0032',
+    message: 'Driving License Verification failed',
+    status: 400,
+  },
+  [ErrorEnum.Aadhaar_Verification_FAIL]: {
+    code: 'GR0033',
+    message: 'Aadhar Verification failed',
     status: 400,
   },
 };
