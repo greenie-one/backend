@@ -16,11 +16,14 @@ class IDsService {
     return id_document;
   }
 
-  public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
+  public async requestAadharOtp(addIDDto: AddIDDto) {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
-    const otpResponse = await AadhaarVerification.requestOtp(id_number, taskId.toString());
+    const otpResponse = await AadhaarVerification.requestOtp(id_number, taskId.toString()).catch((err) => {
+      console.log(err);
+      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `Internal API Error`);
+    });
 
     if (otpResponse.success && otpResponse.response_code === '100') {
       const { request_id, success, response_code, response_message } = otpResponse;
@@ -33,11 +36,13 @@ class IDsService {
   public async verifyAadharOtp(userId: string, verifyIdDto: VerifyIDDto) {
     const { otp, request_id, task_id } = verifyIdDto;
 
-    const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id);
+    const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
+      console.log(err);
+      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `Internal API Error`);
+    });
 
     if (verificationResponse.success && verificationResponse.response_code === '100') {
       const aadhaar_number = verificationResponse.result.user_aadhaar_number;
-      // console.log(aadhaar_number);
       const documentId = IDModel.create({
         id_type: IDTypeEnum.AADHAR,
         id_number: aadhaar_number,
@@ -57,8 +62,10 @@ class IDsService {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
-    const response = await PanVerification.verifyPan(id_number, taskId);
-    console.log(response);
+    const response = await PanVerification.verifyPan(id_number, taskId).catch((err) => {
+      console.error(err);
+      throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL, `Internal API Error`);
+    });
 
     if (response.success && response.response_code === '100') {
       await IDModel.create({
@@ -79,8 +86,10 @@ class IDsService {
     const { id_number, dob } = addIDDto;
     const taskId = uuidv4();
 
-    const response = await drivinLicenseVerification.verifyDrivingLicense(id_number, dob, taskId);
-    console.log(response);
+    const response = await drivinLicenseVerification.verifyDrivingLicense(id_number, dob, taskId).catch((err) => {
+      console.error(err);
+      throw new HttpException(ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL, `Internal API Error`);
+    });
 
     if (response.success && response.response_code === '100') {
       await IDModel.create({
