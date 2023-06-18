@@ -1,3 +1,4 @@
+import { UpdateUserDto } from '@/dtos/users.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { User, UserModel, UserRoles } from '@models/users.model';
@@ -47,6 +48,21 @@ class UserService {
 
     delete createUserData.password;
     return createUserData;
+  }
+
+  public async updateUser(userId: string, updatedData: UpdateUserDto) {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(userId, { $set: updatedData }, { new: true });
+
+    if (!updatedUser) {
+      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    }
+
+    return updatedUser;
   }
 
   public async validateUserByEmail(email: string, password: string) {

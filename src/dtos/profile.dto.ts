@@ -9,6 +9,10 @@ export class CreateProfileDto {
   @IsNotEmpty()
   public lastName: string;
 
+  @IsString()
+  @IsOptional()
+  public bio: string;
+
   @IsArray()
   @IsString({ each: true })
   public descriptionTags: string[];
@@ -24,10 +28,11 @@ export class UpdateProfileDto {
   public lastName?: string;
 
   @IsString()
-  public greenieId?: string;
+  @IsOptional()
+  public bio?: string;
 
   @IsArray()
-  @IsString({ each: true })
   @IsOptional()
-  public descriptionTags: string[];
+  @IsString({ each: true })
+  public descriptionTags?: string[];
 }

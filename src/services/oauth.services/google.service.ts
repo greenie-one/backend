@@ -22,7 +22,7 @@ class GoogleOAuthService implements IOAuthService {
       audience: env('GOOGLE_CLIENT_ID'),
     });
 
-  async handleLogin(request: FastifyRequest, { code }: GoogleOAuthDto) {
+  async handleLogin(request: FastifyRequest, { code }: GoogleOAuthDto): Promise<{ accessToken: string; refreshToken: string }> {
     const accessTokenResp = await GoogleRemote.getAccessToken(code);
     console.log(accessTokenResp);
 
@@ -37,7 +37,6 @@ class GoogleOAuthService implements IOAuthService {
       console.error('Failed to verify authenticity of token', e);
       throw new HttpException(ErrorEnum.OAUTH_FAILED);
     }
-    console.info(decoded);
     const payload = decoded.getPayload();
 
     let user: User = await userService.findUser({ email: payload.email });

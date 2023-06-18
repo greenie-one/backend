@@ -92,7 +92,11 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
           if (hasReply) args[hasReply.index] = res;
 
           if (hasUserDetails) {
-            args[hasUserDetails.index] = req.user;
+            try {
+              args[hasUserDetails.index] = JSON.parse(req.headers['x-user-details'].toString());
+            } catch (error) {
+              throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error);
+            }
           }
 
           if (args.length === 0) {

@@ -13,8 +13,14 @@ export class Profile {
   @prop({ type: String })
   public greenie_id?: string;
 
+  @prop({ type: String })
+  public bio?: string;
+
   @prop({ ref: 'User' })
   public user!: Ref<User>;
+
+  @prop({ type: String, required: false })
+  public profilePicture?: string;
 
   @prop({ type: Array<string>, default: [] })
   public descriptionTags!: string[];

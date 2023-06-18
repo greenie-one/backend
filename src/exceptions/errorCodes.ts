@@ -15,6 +15,9 @@ export enum ErrorEnum {
   PROFILE_ALREADY_EXISTS,
   USER_NO_PASSWORD,
   PASSWORD_MISMATCH,
+  WORKEXPERIENCE_NOT_FOUND,
+  SKILL_NOT_FOUND,
+  USER_DETAILS_NOT_FOUND,
 
   // Waitlist
   ALREADY_IN_WAITLIST,
@@ -22,11 +25,25 @@ export enum ErrorEnum {
   // Models
   FAILED_TO_CREATE_USER,
   FAILED_TO_CREATE_PROFILE,
-  AADHAR_NOT_FOUND,
   INVALID_USER_ID,
   EDUCATION_NOT_FOUND,
   OAUTH_PROVIDER_NOT_FOUND,
   OAUTH_FAILED,
+  RESIDENTIAL_INFO_NOT_FOUND,
+  DOCUMENTS_NOT_FOUND,
+  DOCUMENT_NOT_FOUND,
+  DOCUMENT_IS_PUBLIC,
+  DOCUMENT_ALREADY_SHARED,
+  DOCUMENT_NOT_SHARED,
+
+  //identity verification
+  NUMBER_NOT_LINKED,
+  Server_ERROR,
+  AADHAR_NOT_FOUND,
+  PAN_VERIFICATION_FAIL,
+  DRIVING_LICENSE_VERIFICATION_FAIL,
+  Aadhaar_Verification_FAIL,
+  RATE_LIMIT_EXCEEDED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -134,5 +151,80 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0020',
     message: 'Profile already exists',
     status: 400,
+  },
+  [ErrorEnum.WORKEXPERIENCE_NOT_FOUND]: {
+    code: 'GR0021',
+    message: 'WorkExperience not found',
+    status: 404,
+  },
+  [ErrorEnum.SKILL_NOT_FOUND]: {
+    code: 'GR0022',
+    message: 'skills not found',
+    status: 404,
+  },
+  [ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND]: {
+    code: 'GR0023',
+    message: 'Residential info not found',
+    status: 404,
+  },
+  [ErrorEnum.DOCUMENTS_NOT_FOUND]: {
+    code: 'GR0024',
+    message: 'Documents not found',
+    status: 404,
+  },
+  [ErrorEnum.DOCUMENT_NOT_FOUND]: {
+    code: 'GR0025',
+    message: 'Document not found',
+    status: 404,
+  },
+  [ErrorEnum.USER_DETAILS_NOT_FOUND]: {
+    code: 'GR0026',
+    message: 'User details not found',
+    status: 404,
+  },
+  [ErrorEnum.DOCUMENT_IS_PUBLIC]: {
+    code: 'GR0027',
+    message: 'Document is already public',
+    status: 400,
+  },
+  [ErrorEnum.DOCUMENT_ALREADY_SHARED]: {
+    code: 'GR0028',
+    message: 'Document is already shared',
+    status: 400,
+  },
+  [ErrorEnum.DOCUMENT_NOT_SHARED]: {
+    code: 'GR0029',
+    message: 'Document is not shared',
+    status: 400,
+  },
+  [ErrorEnum.Server_ERROR]: {
+    code: 'GR0030',
+    message: 'Internal Server Error',
+    status: 500,
+  },
+  [ErrorEnum.NUMBER_NOT_LINKED]: {
+    code: 'GR0030',
+    message: 'Number is not linked with Aadhar',
+    status: 400,
+  },
+  [ErrorEnum.PAN_VERIFICATION_FAIL]: {
+    code: 'GR0031',
+    message: '%s',
+    status: 400,
+  },
+  [ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL]: {
+    code: 'GR0032',
+    message: '%s',
+    status: 400,
+  },
+  [ErrorEnum.Aadhaar_Verification_FAIL]: {
+    code: 'GR0033',
+    message: '%s',
+    status: 400,
+  },
+  [ErrorEnum.RATE_LIMIT_EXCEEDED]: {
+    code: 'GR0034',
+    message: 'Rate limit exceeded for OTP requests',
+    status: 429,
   },
 };

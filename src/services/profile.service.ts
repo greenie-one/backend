@@ -26,25 +26,28 @@ class ProfileService {
       firstName: profileData.firstName,
       lastName: profileData.lastName,
       user: userId,
+      bio: profileData.bio,
       descriptionTags: profileData.descriptionTags,
     });
     return profile;
   }
 
-  public async updateProfile(userId: string, profileData: UpdateProfileDto): Promise<Profile> {
-    const profile = await ProfileModel.findOneAndUpdate(
-      { user: userId },
-      {
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
-        descriptionTags: profileData.descriptionTags,
-      },
-      { new: true },
-    );
+  public async updateProfile(userId: string, userProfileId: string, updatedData: UpdateProfileDto) {
+    const profile = await ProfileModel.findOne({ user: userProfileId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
-    return profile;
+
+    if (profile.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+    const updatedProfile = await ProfileModel.findByIdAndUpdate(profile._id, { $set: updatedData }, { new: true });
+
+    if (!updatedProfile) {
+      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
+    }
+
+    return updatedProfile;
   }
 
   public async getProfile(userId: string): Promise<Profile> {
@@ -53,6 +56,21 @@ class ProfileService {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
     return profile;
+  }
+
+  public async searchById(id: string) {
+    const profiles = await ProfileModel.find({ greenie_id: id });
+    return profiles;
+  }
+
+  public async searchByUsername(firstName: string, lastName: string) {
+    const regexFirstName = new RegExp(firstName, 'i');
+    const regexLastName = new RegExp(lastName, 'i');
+    const profiles = await ProfileModel.find({
+      $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
+    });
+
+    return profiles;
   }
 }
 

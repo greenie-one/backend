@@ -1,6 +1,6 @@
 import { sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength, ValidateIf } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, ValidateIf } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -39,6 +39,19 @@ export class LoginDto {
   password: string;
 }
 
+export class UpdateUserDto {
+  @IsEmail()
+  @IsOptional()
+  email: string;
+
+  @IsString()
+  @IsOptional()
+  @Matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/)
+  @Type(() => String)
+  @Transform((params) => sanitizeMobileNumber(params.value))
+  mobileNumber?: string;
+}
+
 export enum ValidationType {
   LOGIN = 'LOGIN',
   SINGUP = 'SIGNUP',
@@ -48,6 +61,11 @@ export class ValidateOtpDTO {
   @IsString()
   otp: string;
 
+  @IsString()
+  validationId: string;
+}
+
+export class ResendOtpDTO {
   @IsString()
   validationId: string;
 }
