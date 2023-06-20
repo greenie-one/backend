@@ -44,6 +44,10 @@ export enum ErrorEnum {
   DRIVING_LICENSE_VERIFICATION_FAIL,
   Aadhaar_Verification_FAIL,
   RATE_LIMIT_EXCEEDED,
+  AADHAR_ALREADY_SHARED,
+  PAN_ALREADY_SHARED,
+  DRIVING_LICENSE_ALREADY_SHARED,
+  AADHAR_VERIFICATION_REQUIRED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -226,5 +230,25 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0034',
     message: 'Rate limit exceeded for OTP requests',
     status: 429,
+  },
+  [ErrorEnum.AADHAR_ALREADY_SHARED]: {
+    code: 'GR0035',
+    message: 'Aadhar is already shared',
+    status: 400,
+  },
+  [ErrorEnum.PAN_ALREADY_SHARED]: {
+    code: 'GR0036',
+    message: 'Pan is already shared',
+    status: 400,
+  },
+  [ErrorEnum.DRIVING_LICENSE_ALREADY_SHARED]: {
+    code: 'GR0037',
+    message: 'Driving License is already shared',
+    status: 400,
+  },
+  [ErrorEnum.AADHAR_VERIFICATION_REQUIRED]: {
+    code: 'GR0038',
+    message: 'Aadhar verification is required',
+    status: 400,
   },
 };
