@@ -4,7 +4,7 @@ import { profileService } from '@/services/profile.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Patch, Post } from '@/utils/decorators/methods';
-import { Body, Params, Query } from '@/utils/decorators/request';
+import { Body, Query } from '@/utils/decorators/request';
 
 @Controller('/profiles')
 export default class ProfileController {
@@ -13,9 +13,9 @@ export default class ProfileController {
     return profileService.createProfile(userDetails.sub, data);
   }
 
-  @Patch('/:id')
-  async updateProfile(@UserDetails() userDetails: TokenClaims, @Params('id') userId: string, @Body() data: UpdateProfileDto) {
-    return profileService.updateProfile(userDetails.sub, userId, data);
+  @Patch('/update')
+  async updateProfile(@UserDetails() userDetails: TokenClaims, @Body() data: UpdateProfileDto) {
+    return profileService.updateProfile(userDetails.sub, data);
   }
 
   @Get('/me')
