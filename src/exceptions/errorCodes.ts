@@ -18,6 +18,7 @@ export enum ErrorEnum {
   WORKEXPERIENCE_NOT_FOUND,
   SKILL_NOT_FOUND,
   USER_DETAILS_NOT_FOUND,
+  INVALID_DATE,
 
   // Waitlist
   ALREADY_IN_WAITLIST,
@@ -35,6 +36,8 @@ export enum ErrorEnum {
   DOCUMENT_IS_PUBLIC,
   DOCUMENT_ALREADY_SHARED,
   DOCUMENT_NOT_SHARED,
+  DOCUMENT_EXPIRED,
+  DOCUMENT_ALREADY_UPLOADED,
 
   //identity verification
   NUMBER_NOT_LINKED,
@@ -226,5 +229,20 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0034',
     message: 'Rate limit exceeded for OTP requests',
     status: 429,
+  },
+  [ErrorEnum.DOCUMENT_EXPIRED]: {
+    code: 'GR0035',
+    message: 'Document has expired',
+    status: 400,
+  },
+  [ErrorEnum.INVALID_DATE]: {
+    code: 'GR0036',
+    message: 'Invalid date combination',
+    status: 400,
+  },
+  [ErrorEnum.DOCUMENT_ALREADY_UPLOADED]: {
+    code: 'GR0037',
+    message: 'Document already uploaded',
+    status: 400,
   },
 };
