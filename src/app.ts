@@ -67,6 +67,7 @@ export class App {
 
   private async connectToRedis() {
     await redisClient.connect();
+    await redisUtilClient.connect();
   }
 
   private async initializeMiddlewares() {
