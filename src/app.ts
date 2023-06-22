@@ -16,7 +16,7 @@ import { connect, set } from 'mongoose';
 import { env } from './config';
 import { registerControllers } from './controllers';
 import { registerJWTMiddleware } from './middlewares/jwt.middleware';
-import { redisClient } from './redisClient';
+import { redisClient, redisUtilClient } from './redisClient';
 
 export class App {
   public app: ReturnType<typeof fastify>;

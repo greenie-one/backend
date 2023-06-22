@@ -3,6 +3,7 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel, DocumentType } from '@/models/document.model';
 import { redisUtilClient } from '@/redisClient';
+import { SAStokenService } from './blobStorage.service';
 
 class DocumentService {
   public async createDocument(userID: string, documentData: createDocumentDto): Promise<Document> {
@@ -75,7 +76,7 @@ class DocumentService {
   }
 
   public async deleteDocument(userID: string, documentId: string) {
-    const documentToDelete = await this.getDocumentById(documentId);
+    const documentToDelete = await DocumentModel.findById(documentId);
     if (!documentToDelete) {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
     }
@@ -89,14 +90,19 @@ class DocumentService {
     return { message: 'Document deleted successfully' };
   }
 
-  public async getDocumentById(documentId: string) {
-    const document = await DocumentModel.findById(documentId);
+  public async getDocuments(userID: string) {
+    const documents: Document[] = await DocumentModel.find({ user: userID });
+    const sasToken = await SAStokenService.getSAStoken(userID);
 
-    if (!document) {
-      throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
+    if (!documents) {
+      throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
 
-    return document;
+    for (let index = 0; index < documents.length; index++) {
+      documents[index].url = documents[index].url + '?' + sasToken;
+    }
+
+    return documents;
   }
 
   public async getDocumentByType(userID: string, type: DocumentType): Promise<Document[]> {

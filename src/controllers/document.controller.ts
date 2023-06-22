@@ -25,8 +25,8 @@ export default class DocumentController {
   }
 
   @Get('/:id')
-  async getDocumentById(@Params('id') documentId: string) {
-    return documentService.getDocumentById(documentId);
+  async getDocuments(@UserDetails() userDetails: TokenClaims) {
+    return documentService.getDocuments(userDetails.sub);
   }
 
   @Get('/me/:type')
