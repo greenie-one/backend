@@ -18,6 +18,7 @@ export enum ErrorEnum {
   WORKEXPERIENCE_NOT_FOUND,
   SKILL_NOT_FOUND,
   USER_DETAILS_NOT_FOUND,
+  INVALID_DATE,
 
   // Waitlist
   ALREADY_IN_WAITLIST,
@@ -35,6 +36,8 @@ export enum ErrorEnum {
   DOCUMENT_IS_PUBLIC,
   DOCUMENT_ALREADY_SHARED,
   DOCUMENT_NOT_SHARED,
+  DOCUMENT_EXPIRED,
+  DOCUMENT_ALREADY_UPLOADED,
 
   //identity verification
   NUMBER_NOT_LINKED,
@@ -44,10 +47,6 @@ export enum ErrorEnum {
   DRIVING_LICENSE_VERIFICATION_FAIL,
   Aadhaar_Verification_FAIL,
   RATE_LIMIT_EXCEEDED,
-  AADHAR_ALREADY_SHARED,
-  PAN_ALREADY_SHARED,
-  DRIVING_LICENSE_ALREADY_SHARED,
-  AADHAR_VERIFICATION_REQUIRED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -231,24 +230,19 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'Rate limit exceeded for OTP requests',
     status: 429,
   },
-  [ErrorEnum.AADHAR_ALREADY_SHARED]: {
+  [ErrorEnum.DOCUMENT_EXPIRED]: {
     code: 'GR0035',
-    message: 'Aadhar is already shared',
+    message: 'Document has expired',
     status: 400,
   },
-  [ErrorEnum.PAN_ALREADY_SHARED]: {
+  [ErrorEnum.INVALID_DATE]: {
     code: 'GR0036',
-    message: 'Pan is already shared',
+    message: 'Invalid date combination',
     status: 400,
   },
-  [ErrorEnum.DRIVING_LICENSE_ALREADY_SHARED]: {
+  [ErrorEnum.DOCUMENT_ALREADY_UPLOADED]: {
     code: 'GR0037',
-    message: 'Driving License is already shared',
-    status: 400,
-  },
-  [ErrorEnum.AADHAR_VERIFICATION_REQUIRED]: {
-    code: 'GR0038',
-    message: 'Aadhar verification is required',
+    message: 'Document already uploaded',
     status: 400,
   },
 };
