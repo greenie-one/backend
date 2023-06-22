@@ -47,6 +47,10 @@ export enum ErrorEnum {
   DRIVING_LICENSE_VERIFICATION_FAIL,
   Aadhaar_Verification_FAIL,
   RATE_LIMIT_EXCEEDED,
+  AADHAR_VERIFICATION_REQUIRED,
+  AADHAR_ALREADY_EXIST,
+  PAN_ALREADY_EXIST,
+  DRIVING_LICENSE_ALREADY_EXIST,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -243,6 +247,26 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.DOCUMENT_ALREADY_UPLOADED]: {
     code: 'GR0037',
     message: 'Document already uploaded',
+    status: 400,
+  },
+  [ErrorEnum.AADHAR_VERIFICATION_REQUIRED]: {
+    code: 'GR0038',
+    message: 'Aadhar verification is required',
+    status: 400,
+  },
+  [ErrorEnum.AADHAR_ALREADY_EXIST]: {
+    code: 'GR0039',
+    message: 'Aadhar already exists',
+    status: 400,
+  },
+  [ErrorEnum.PAN_ALREADY_EXIST]: {
+    code: 'GR0040',
+    message: 'pan already exists',
+    status: 400,
+  },
+  [ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST]: {
+    code: 'GR0041',
+    message: 'Driving License already exists',
     status: 400,
   },
 };
