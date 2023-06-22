@@ -1,19 +1,17 @@
 import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { User } from './users.model';
+import { WorkExperience } from './workExperience.model';
 
 @modelOptions({ schemaOptions: { collection: 'skills', timestamps: true } })
 export class Skills {
-  @prop({ type: String, required: true })
-  public designation!: string;
-
-  @prop({ type: Boolean, default: false })
-  public isVerified?: boolean;
-
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 
-  @prop({ type: Number, required: true })
-  public skillRate?: number;
+  @prop({ type: String, required: true })
+  public skillName!: string;
+
+  @prop({ ref: 'WorkExperience' })
+  public workExperience!: Ref<WorkExperience>;
 
   public createdAt?: Date;
 
