@@ -11,6 +11,9 @@ export class Profile {
   public lastName!: string;
 
   @prop({ type: String })
+  public profilePic!: string;
+
+  @prop({ type: String })
   public greenie_id?: string;
 
   @prop({ type: String })
