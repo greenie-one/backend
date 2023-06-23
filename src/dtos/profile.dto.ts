@@ -13,6 +13,10 @@ export class CreateProfileDto {
   @IsOptional()
   public bio: string;
 
+  @IsString()
+  @IsOptional()
+  public profilePic: string;
+
   @IsArray()
   @IsString({ each: true })
   public descriptionTags: string[];
@@ -26,6 +30,10 @@ export class UpdateProfileDto {
   @IsString()
   @IsOptional()
   public lastName?: string;
+
+  @IsString()
+  @IsOptional()
+  public profilePic: string;
 
   @IsString()
   @IsOptional()

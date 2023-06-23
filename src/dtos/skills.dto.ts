@@ -1,29 +1,16 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { skillTypeEnum } from '@/models/skills.model';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class createSkillDto {
   @IsString()
   @IsNotEmpty()
-  public designation!: string;
+  public skillName!: string;
 
-  @IsBoolean()
-  @IsOptional()
-  public isVerified?: boolean;
-
-  @IsNumber()
-  @IsNotEmpty()
-  public skillRate!: number;
-}
-
-export class updateSkillDto {
   @IsString()
   @IsOptional()
-  public designation?: string;
+  public workExperience?: string;
 
-  @IsBoolean()
-  @IsOptional()
-  public isVerified?: boolean;
-
-  @IsNumber()
-  @IsOptional()
-  public skillRate?: number;
+  @IsEnum(skillTypeEnum)
+  @IsNotEmpty()
+  public expertise!: skillTypeEnum;
 }
