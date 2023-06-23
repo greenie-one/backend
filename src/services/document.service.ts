@@ -3,6 +3,7 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel, DocumentType } from '@/models/document.model';
 import { redisUtilClient } from '@/redisClient';
+import { RedisPUBSUB } from '@/redisClient/deleteService';
 import { SAStokenService } from './blobStorage.service';
 
 class DocumentService {
@@ -58,6 +59,9 @@ class DocumentService {
       if (timeDifference > 400000) {
         throw new HttpException(ErrorEnum.DOCUMENT_EXPIRED);
       }
+
+      const fileName = documentData.url.split(userID + '/');
+      await RedisPUBSUB.docDelete(fileName[1], userID);
     }
     const updatedDocument = await DocumentModel.findByIdAndUpdate(documentId, { $set: documentData }, { new: true });
 
@@ -86,6 +90,8 @@ class DocumentService {
     }
 
     await documentToDelete.deleteOne();
+    const fileName = documentToDelete.url.split(userID + '/');
+    await RedisPUBSUB.docDelete(fileName[1], userID);
 
     return { message: 'Document deleted successfully' };
   }
