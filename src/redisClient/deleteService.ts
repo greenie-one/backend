@@ -7,7 +7,6 @@ class redisPUBSUB {
       container_name: containerName,
     };
     await redisUtilClient.publish('doc_delete', JSON.stringify(deleteMessage));
-    console.log('Message Published');
   }
 }
 
