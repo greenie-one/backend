@@ -57,7 +57,7 @@ class IDsService {
     const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
 
     if (newId) {
-      throw new HttpException(ErrorEnum.AADHAR_ALREADY_SHARED);
+      throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
     }
 
     const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
@@ -85,9 +85,9 @@ class IDsService {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
-    const newId = await IDModel.findOne({ user: userId });
+    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.PAN });
     if (newId) {
-      throw new HttpException(ErrorEnum.PAN_ALREADY_SHARED);
+      throw new HttpException(ErrorEnum.PAN_ALREADY_EXIST);
     }
 
     const AadharId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
@@ -122,7 +122,7 @@ class IDsService {
     const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.DRIVING_LICENSE });
 
     if (newId) {
-      throw new HttpException(ErrorEnum.DRIVING_LICENSE_ALREADY_SHARED);
+      throw new HttpException(ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST);
     }
 
     const AadharId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
