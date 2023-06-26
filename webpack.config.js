@@ -5,10 +5,13 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './src/server.ts',
-  mode: 'none',
+  entry: {
+    server: './src/server.ts',
+    instrumentation: './src/instrumentation.ts',
+  },
+  mode: 'development',
   target: 'node',
-  devtool: false,
+  devtool: 'inline-source-map',
   plugins: [
     new CopyPlugin({
       patterns: [
@@ -48,7 +51,7 @@ module.exports = {
     ],
   },
   output: {
-    filename: 'server.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
 };

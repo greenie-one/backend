@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import './utils/logger';
 
+import fastifyOpenTelemetry from '@autotelic/fastify-opentelemetry';
 import { dbConnection } from '@database';
 import fastifyCookie from '@fastify/cookie';
 import middie from '@fastify/middie';
@@ -71,7 +72,8 @@ export class App {
   }
 
   private async initializeMiddlewares() {
-    this.app = await this.app.register(middie);
+    await this.app.register(fastifyOpenTelemetry, { wrapRoutes: true });
+    await this.app.register(middie);
 
     this.app.register(fastifyCookie, {
       secret: 'my-secret',

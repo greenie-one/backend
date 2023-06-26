@@ -37,5 +37,4 @@ const controllers = [
 ];
 
 const app = new App(controllers);
-
 app.listen();
