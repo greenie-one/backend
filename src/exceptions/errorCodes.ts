@@ -38,6 +38,7 @@ export enum ErrorEnum {
   DOCUMENT_NOT_SHARED,
   DOCUMENT_EXPIRED,
   DOCUMENT_ALREADY_UPLOADED,
+  INVALID_COORDINATES,
 
   //identity verification
   NUMBER_NOT_LINKED,
@@ -268,5 +269,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0041',
     message: 'Driving License already exists',
     status: 400,
+  },
+  [ErrorEnum.INVALID_COORDINATES]: {
+    code: 'GR0042',
+    message: 'coordinates are invalid',
+    status: 403,
   },
 };

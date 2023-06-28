@@ -7,6 +7,7 @@ import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
 import { PanVerification } from '@/remote/verification/pan.remote';
 import { v4 as uuidv4 } from 'uuid';
+import { locationService } from './location.service';
 
 const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 10 * 60; // mins;
@@ -67,6 +68,9 @@ class IDsService {
 
     if (verificationResponse.success && verificationResponse.response_code === '100') {
       const aadhaar_number = verificationResponse.result.user_aadhaar_number;
+      const user_address = verificationResponse.result.user_address;
+
+      await locationService.getCoordinates(userId, IDTypeEnum.AADHAR, user_address);
       await IDModel.create({
         id_type: IDTypeEnum.AADHAR,
         id_number: aadhaar_number,
