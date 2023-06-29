@@ -16,7 +16,6 @@ import hpp from 'hpp';
 import { connect, set } from 'mongoose';
 import { env } from './config';
 import { registerControllers } from './controllers';
-import { registerJWTMiddleware } from './middlewares/jwt.middleware';
 import { redisClient, redisUtilClient } from './redisClient';
 
 export class App {
@@ -85,7 +84,6 @@ export class App {
     this.app.use(helmet());
     this.app.use(compression());
     this.app.use(cookieParser());
-    await registerJWTMiddleware(this.app, this.controllers);
 
     this.app.addHook('onRequest', async (req) => {
       console.debug(`Got request: [${req.method}] ${req.url} ${JSON.stringify(req.headers)}`);

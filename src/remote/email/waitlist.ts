@@ -1,13 +1,15 @@
-import ejs from 'ejs';
-import { mailer } from '../generic/emailer';
+import { env } from '@/config';
+import { HttpClient } from '../generic/httpClient';
 
 export class WaitlistMailer {
-  static async sendMail(firstName: string, email: string) {
-    const html = await ejs.renderFile('templates/email/waitlist.ejs', { firstName });
-    return mailer.sendMail({
-      to: email,
-      subject: 'Added to Greenie Waitlist!',
-      html,
+  static async sendWaitlistMail(firstName: string, email: string) {
+    return HttpClient.callApi({
+      url: `${env('REMOTE_BASE_URL')}/waitlist/send`,
+      method: 'POST',
+      body: {
+        name: firstName,
+        email,
+      },
     });
   }
 }

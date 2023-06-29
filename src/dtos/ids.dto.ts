@@ -43,6 +43,18 @@ export interface AadharRequestOtpResponse {
 export interface AadharVerifyOtpResponse {
   result?: {
     user_aadhaar_number?: string;
+    user_address?: {
+      country?: string;
+      dist?: string;
+      state?: string;
+      po?: string;
+      loc?: string;
+      vtc?: string;
+      subdist?: string;
+      street?: string;
+      house?: string;
+      landmark?: string;
+    };
   };
   success?: boolean;
   response_code?: string;

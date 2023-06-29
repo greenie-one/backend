@@ -4,17 +4,9 @@ export enum ErrorEnum {
 
   // Auth
   UNAUTHORIZED,
-  SESSION_NON_EXISTENT,
-  USER_ALREADY_EXISTS,
-  INVALID_VALIDATION_ID,
-  INVALID_REFRESH_TOKEN,
-  LINKEDIN_TOKEN_UNAUTHENTICATED,
-  LINKEDIN_AUTH_FAILED,
   USER_NOT_FOUND,
   PROFILE_NOT_FOUND,
   PROFILE_ALREADY_EXISTS,
-  USER_NO_PASSWORD,
-  PASSWORD_MISMATCH,
   WORKEXPERIENCE_NOT_FOUND,
   SKILL_NOT_FOUND,
   USER_DETAILS_NOT_FOUND,
@@ -28,8 +20,6 @@ export enum ErrorEnum {
   FAILED_TO_CREATE_PROFILE,
   INVALID_USER_ID,
   EDUCATION_NOT_FOUND,
-  OAUTH_PROVIDER_NOT_FOUND,
-  OAUTH_FAILED,
   RESIDENTIAL_INFO_NOT_FOUND,
   DOCUMENTS_NOT_FOUND,
   DOCUMENT_NOT_FOUND,
@@ -38,6 +28,7 @@ export enum ErrorEnum {
   DOCUMENT_NOT_SHARED,
   DOCUMENT_EXPIRED,
   DOCUMENT_ALREADY_UPLOADED,
+  INVALID_COORDINATES,
 
   //identity verification
   NUMBER_NOT_LINKED,
@@ -47,6 +38,7 @@ export enum ErrorEnum {
   DRIVING_LICENSE_VERIFICATION_FAIL,
   Aadhaar_Verification_FAIL,
   RATE_LIMIT_EXCEEDED,
+  USER_LOCATION_NOT_FOUND,
   AADHAR_VERIFICATION_REQUIRED,
   AADHAR_ALREADY_EXIST,
   PAN_ALREADY_EXIST,
@@ -64,36 +56,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'Unauthorized',
     status: 401,
   },
-  [ErrorEnum.SESSION_NON_EXISTENT]: {
-    code: 'GR0002',
-    message: 'Session does not exist',
-    status: 400,
-  },
-  [ErrorEnum.USER_ALREADY_EXISTS]: {
-    code: 'GR0003',
-    message: 'User already exists',
-    status: 409,
-  },
-  [ErrorEnum.INVALID_VALIDATION_ID]: {
-    code: 'GR0004',
-    message: 'Invalid validation ID',
-    status: 400,
-  },
-  [ErrorEnum.INVALID_REFRESH_TOKEN]: {
-    code: 'GR0005',
-    message: 'Invalid refresh token',
-    status: 400,
-  },
-  [ErrorEnum.LINKEDIN_TOKEN_UNAUTHENTICATED]: {
-    code: 'GR0006',
-    message: 'Failed to verify authenticity of token',
-    status: 401,
-  },
-  [ErrorEnum.LINKEDIN_AUTH_FAILED]: {
-    code: 'GR0007',
-    message: 'LinkedIn auth failed, %s: %s',
-    status: 401,
-  },
+  // [ErrorEnum.USER_ALREADY_EXISTS]: {
+  //   code: 'GR0003',
+  //   message: 'User already exists',
+  //   status: 409,
+  // },
   [ErrorEnum.USER_NOT_FOUND]: {
     code: 'GR0008',
     message: 'User not found',
@@ -103,16 +70,6 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0009',
     message: 'Profile not found',
     status: 404,
-  },
-  [ErrorEnum.USER_NO_PASSWORD]: {
-    code: 'GR0010',
-    message: 'User does not have a password',
-    status: 500,
-  },
-  [ErrorEnum.PASSWORD_MISMATCH]: {
-    code: 'GR0011',
-    message: 'Invalid user details',
-    status: 401,
   },
   [ErrorEnum.ALREADY_IN_WAITLIST]: {
     code: 'GR0012',
@@ -143,16 +100,6 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0017',
     message: 'Education not found',
     status: 404,
-  },
-  [ErrorEnum.OAUTH_PROVIDER_NOT_FOUND]: {
-    code: 'GR0018',
-    message: 'OAuth provider not found',
-    status: 404,
-  },
-  [ErrorEnum.OAUTH_FAILED]: {
-    code: 'GR0019',
-    message: 'OAuth failed',
-    status: 500,
   },
   [ErrorEnum.PROFILE_ALREADY_EXISTS]: {
     code: 'GR0020',
@@ -268,5 +215,15 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0041',
     message: 'Driving License already exists',
     status: 400,
+  },
+  [ErrorEnum.INVALID_COORDINATES]: {
+    code: 'GR0042',
+    message: 'coordinates are invalid',
+    status: 403,
+  },
+  [ErrorEnum.USER_LOCATION_NOT_FOUND]: {
+    code: 'GR0043',
+    message: 'User location not found',
+    status: 500,
   },
 };
