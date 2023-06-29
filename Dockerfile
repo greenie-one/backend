@@ -16,4 +16,4 @@ COPY --from=build /app/dist /app
 EXPOSE 8080
 WORKDIR /app
 
-CMD ["node", "--require ./instrumentation.js", "./server.js"]
+CMD ["node", "--require", "./instrumentation.js", "./server.js"]
