@@ -11,7 +11,6 @@ export default class WaitlistController {
   @Post('/')
   public async addToWaitlist(@Body() AddToWaitlist: AddToWaitlistDto) {
     const waitlistData: AddToWaitlistDto = AddToWaitlist;
-    console.log(waitlistData);
     const waitlist = await this.waitlistService.addEmailToWaitlist(waitlistData);
     return { data: waitlist, message: 'added to waitlist' };
   }
