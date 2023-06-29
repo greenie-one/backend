@@ -38,6 +38,7 @@ export enum ErrorEnum {
   DRIVING_LICENSE_VERIFICATION_FAIL,
   Aadhaar_Verification_FAIL,
   RATE_LIMIT_EXCEEDED,
+  USER_LOCATION_NOT_FOUND,
   AADHAR_VERIFICATION_REQUIRED,
   AADHAR_ALREADY_EXIST,
   PAN_ALREADY_EXIST,
@@ -219,5 +220,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0042',
     message: 'coordinates are invalid',
     status: 403,
+  },
+  [ErrorEnum.USER_LOCATION_NOT_FOUND]: {
+    code: 'GR0043',
+    message: 'User location not found',
+    status: 500,
   },
 };
