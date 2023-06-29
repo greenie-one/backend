@@ -11,11 +11,7 @@ module.exports = {
   devtool: false,
   plugins: [
     new CopyPlugin({
-      patterns: [
-        { from: '.env*', to: '.' },
-        { from: 'keys/**', to: '.' },
-        { from: 'templates/**', to: '.' },
-      ],
+      patterns: [{ from: '.env*', to: '.' }],
     }),
   ],
   module: {
