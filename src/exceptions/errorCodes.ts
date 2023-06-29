@@ -18,6 +18,7 @@ export enum ErrorEnum {
   WORKEXPERIENCE_NOT_FOUND,
   SKILL_NOT_FOUND,
   USER_DETAILS_NOT_FOUND,
+  INVALID_DATE,
 
   // Waitlist
   ALREADY_IN_WAITLIST,
@@ -35,6 +36,9 @@ export enum ErrorEnum {
   DOCUMENT_IS_PUBLIC,
   DOCUMENT_ALREADY_SHARED,
   DOCUMENT_NOT_SHARED,
+  DOCUMENT_EXPIRED,
+  DOCUMENT_ALREADY_UPLOADED,
+  INVALID_COORDINATES,
 
   //identity verification
   NUMBER_NOT_LINKED,
@@ -45,6 +49,10 @@ export enum ErrorEnum {
   Aadhaar_Verification_FAIL,
   RATE_LIMIT_EXCEEDED,
   USER_LOCATION_NOT_FOUND,
+  AADHAR_VERIFICATION_REQUIRED,
+  AADHAR_ALREADY_EXIST,
+  PAN_ALREADY_EXIST,
+  DRIVING_LICENSE_ALREADY_EXIST,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -228,8 +236,48 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'Rate limit exceeded for OTP requests',
     status: 429,
   },
-  [ErrorEnum.USER_LOCATION_NOT_FOUND]: {
+  [ErrorEnum.DOCUMENT_EXPIRED]: {
     code: 'GR0035',
+    message: 'Document has expired',
+    status: 400,
+  },
+  [ErrorEnum.INVALID_DATE]: {
+    code: 'GR0036',
+    message: 'Invalid date combination',
+    status: 400,
+  },
+  [ErrorEnum.DOCUMENT_ALREADY_UPLOADED]: {
+    code: 'GR0037',
+    message: 'Document already uploaded',
+    status: 400,
+  },
+  [ErrorEnum.AADHAR_VERIFICATION_REQUIRED]: {
+    code: 'GR0038',
+    message: 'Aadhar verification is required',
+    status: 400,
+  },
+  [ErrorEnum.AADHAR_ALREADY_EXIST]: {
+    code: 'GR0039',
+    message: 'Aadhar already exists',
+    status: 400,
+  },
+  [ErrorEnum.PAN_ALREADY_EXIST]: {
+    code: 'GR0040',
+    message: 'pan already exists',
+    status: 400,
+  },
+  [ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST]: {
+    code: 'GR0041',
+    message: 'Driving License already exists',
+    status: 400,
+  },
+  [ErrorEnum.INVALID_COORDINATES]: {
+    code: 'GR0042',
+    message: 'coordinates are invalid',
+    status: 403,
+  },
+  [ErrorEnum.USER_LOCATION_NOT_FOUND]: {
+    code: 'GR0043',
     message: 'User location not found',
     status: 500,
   },

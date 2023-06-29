@@ -7,6 +7,7 @@ import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
 import { PanVerification } from '@/remote/verification/pan.remote';
 import { v4 as uuidv4 } from 'uuid';
+import { locationService } from './location.service';
 
 const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 10 * 60; // mins;
@@ -54,6 +55,12 @@ class IDsService {
   public async verifyAadharOtp(userId: string, verifyIdDto: VerifyIDDto) {
     const { otp, request_id, task_id } = verifyIdDto;
 
+    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
+
+    if (newId) {
+      throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
+    }
+
     const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
       console.log(err);
       throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `Internal API Error`);
@@ -61,6 +68,9 @@ class IDsService {
 
     if (verificationResponse.success && verificationResponse.response_code === '100') {
       const aadhaar_number = verificationResponse.result.user_aadhaar_number;
+      const user_address = verificationResponse.result.user_address;
+
+      await locationService.getCoordinates(userId, IDTypeEnum.AADHAR, user_address);
       await IDModel.create({
         id_type: IDTypeEnum.AADHAR,
         id_number: aadhaar_number,
@@ -79,6 +89,16 @@ class IDsService {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
+    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.PAN });
+    if (newId) {
+      throw new HttpException(ErrorEnum.PAN_ALREADY_EXIST);
+    }
+
+    const AadharId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
+
+    if (!AadharId) {
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_REQUIRED);
+    }
     const response = await PanVerification.verifyPan(id_number, taskId).catch((err) => {
       console.error(err);
       throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL, `Internal API Error`);
@@ -102,6 +122,18 @@ class IDsService {
   public async verifyDrivingLicense(userId: string, addIDDto: AddIDDto) {
     const { id_number, dob } = addIDDto;
     const taskId = uuidv4();
+
+    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.DRIVING_LICENSE });
+
+    if (newId) {
+      throw new HttpException(ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST);
+    }
+
+    const AadharId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
+
+    if (!AadharId) {
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_REQUIRED);
+    }
 
     const response = await drivinLicenseVerification.verifyDrivingLicense(id_number, dob, taskId).catch((err) => {
       console.error(err);

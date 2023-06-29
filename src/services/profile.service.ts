@@ -26,6 +26,7 @@ class ProfileService {
       firstName: profileData.firstName,
       lastName: profileData.lastName,
       user: userId,
+      profilePic: profileData.profilePic,
       bio: profileData.bio,
       descriptionTags: profileData.descriptionTags,
     });
