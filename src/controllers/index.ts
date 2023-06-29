@@ -50,6 +50,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
       const hasReply: RequestValidation = Reflect.getMetadata('fastify:method:reply', c.instance, method.property);
       const hasParams: ParamValidation[] = Reflect.getMetadata('fastify:method:params', c.instance, method.property) ?? [];
       const hasUserDetails: RequestValidation = Reflect.getMetadata('fastify:method:user_details', c.instance, method.property);
+      const hadUserLocation: RequestValidation = Reflect.getMetadata('fastify:method:user_location', c.instance, method.property);
 
       const routeProps: RouteOptions = {
         method: method.method,
@@ -96,6 +97,14 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
               args[hasUserDetails.index] = JSON.parse(req.headers['x-user-details'].toString());
             } catch (error) {
               throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error);
+            }
+          }
+
+          if (hadUserLocation) {
+            try {
+              args[hadUserLocation.index] = JSON.parse(req.headers['x-user-location'].toString());
+            } catch (error) {
+              throw new HttpException(ErrorEnum.USER_LOCATION_NOT_FOUND, error);
             }
           }
 
