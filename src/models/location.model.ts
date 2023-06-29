@@ -6,8 +6,7 @@ export enum AddressType {
   AADHAR = 'AADHAR',
   PAN = 'PAN',
   DRIVING_LICENSE = 'DRIVING_LICENSE',
-  GPS = 'GPS',
-  IP = 'IP',
+  DEVICE = 'DEVICE',
 }
 
 export class Location {
