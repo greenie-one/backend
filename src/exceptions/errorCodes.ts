@@ -44,6 +44,7 @@ export enum ErrorEnum {
   DRIVING_LICENSE_VERIFICATION_FAIL,
   Aadhaar_Verification_FAIL,
   RATE_LIMIT_EXCEEDED,
+  USER_LOCATION_NOT_FOUND,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -226,5 +227,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0034',
     message: 'Rate limit exceeded for OTP requests',
     status: 429,
+  },
+  [ErrorEnum.USER_LOCATION_NOT_FOUND]: {
+    code: 'GR0035',
+    message: 'User location not found',
+    status: 500,
   },
 };
