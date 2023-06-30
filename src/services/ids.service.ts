@@ -69,12 +69,20 @@ class IDsService {
     if (verificationResponse.success && verificationResponse.response_code === '100') {
       const aadhaar_number = verificationResponse.result.user_aadhaar_number;
       const user_address = verificationResponse.result.user_address;
-
-      await locationService.getCoordinates(userId, IDTypeEnum.AADHAR, user_address);
+      const address =
+        user_address.house +
+        user_address.street +
+        user_address.landmark +
+        user_address.subdist +
+        user_address.dist +
+        user_address.state +
+        user_address.country;
+      const location = await locationService.getCoordinates(userId, IDTypeEnum.AADHAR, address);
       await IDModel.create({
         id_type: IDTypeEnum.AADHAR,
         id_number: aadhaar_number,
         user: userId,
+        location: location._id,
         id_data: verificationResponse,
       });
 
