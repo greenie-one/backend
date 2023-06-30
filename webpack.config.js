@@ -9,12 +9,18 @@ module.exports = {
     server: './src/server.ts',
     instrumentation: './src/instrumentation.ts',
   },
-  mode: 'development',
+  mode: process.env.APP_ENV === 'production' ? 'production' : 'production',
   target: 'node',
   devtool: 'inline-source-map',
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: '.env*', to: '.' }],
+      patterns: [
+        { from: '.env*', to: '.' },
+        {
+          from: '.yarn/unplugged/is-core-module*/**/core.json',
+          to: './core.json',
+        },
+      ],
     }),
   ],
   module: {
@@ -45,6 +51,9 @@ module.exports = {
         extensions: ['.ts', '.js'],
       }),
     ],
+    // alias: {
+    //   'is-core-module': './is-core-module-mock.js',
+    // },
   },
   output: {
     filename: '[name].js',

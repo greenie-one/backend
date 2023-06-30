@@ -5,7 +5,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "start": "yarn build && webpack && node --require ./dist/instrumentation.js dist/server.js",
+    "start": "yarn build && node --require ./dist/instrumentation.js dist/server.js",
     "dev": "cross-env APP_ENV=local nodemon",
     "build": "webpack build",
     "build:tsc": "tsc",
@@ -102,5 +102,10 @@
     "typescript": "^5.0.4",
     "webpack-node-externals": "^3.0.0"
   },
-  "packageManager": "yarn@3.5.1"
+  "packageManager": "yarn@3.5.1",
+  "dependenciesMeta": {
+    "is-core-module@2.12.1": {
+      "unplugged": true
+    }
+  }
 }

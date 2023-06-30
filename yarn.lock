@@ -6086,6 +6086,9 @@ __metadata:
     webpack: ^5.80.0
     webpack-cli: ^5.0.2
     webpack-node-externals: ^3.0.0
+  dependenciesMeta:
+    is-core-module@2.12.1:
+      unplugged: true
   languageName: unknown
   linkType: soft
 
@@ -6397,16 +6400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-core-module@npm:^2.11.0":
-  version: 2.12.0
-  resolution: "is-core-module@npm:2.12.0"
-  dependencies:
-    has: ^1.0.3
-  checksum: f7f7eb2ab71fd769ee9fb2385c095d503aa4b5ce0028c04557de03f1e67a87c85e5bac1f215945fc3c955867a139a415a3ec4c4234a0bffdf715232660f440a6
-  languageName: node
-  linkType: hard
-
-"is-core-module@npm:^2.12.0":
+"is-core-module@npm:^2.12.1":
   version: 2.12.1
   resolution: "is-core-module@npm:2.12.1"
   dependencies:

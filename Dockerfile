@@ -7,8 +7,10 @@ COPY . ./app
 WORKDIR /app
 
 # Install Node Package
+ENV APP_ENV 'production'
 RUN yarn install --immutable
 RUN yarn build
+RUN yarn node patch-build.js
 
 FROM node:alpine3.17
 COPY --from=build /app/dist /app
