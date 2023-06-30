@@ -55,6 +55,10 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
       const routeProps: RouteOptions = {
         method: method.method,
         handler: async (req, res) => {
+          const telemetry = req.openTelemetry();
+
+          if (hasBody && req.body) telemetry.activeSpan.setAttribute('req.body', JSON.stringify(req.body).substring(0, 5000));
+
           const handler = c.instance[method.property].bind(c.instance);
 
           const args = [];

@@ -9,9 +9,8 @@ module.exports = {
     server: './src/server.ts',
     instrumentation: './src/instrumentation.ts',
   },
-  mode: process.env.APP_ENV === 'production' ? 'production' : 'production',
+  mode: process.env.APP_ENV !== 'local' ? 'production' : 'development',
   target: 'node',
-  devtool: 'inline-source-map',
   plugins: [
     new CopyPlugin({
       patterns: [
