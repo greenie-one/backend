@@ -102,7 +102,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           if (hadUserLocation) {
             try {
-              args[hadUserLocation.index] = JSON.parse(req.headers['x-user-location'].toString());
+              args[hadUserLocation.index] = req.headers['x-location'].toString();
             } catch (error) {
               throw new HttpException(ErrorEnum.USER_LOCATION_NOT_FOUND, error);
             }
