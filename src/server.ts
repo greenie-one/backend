@@ -9,6 +9,7 @@ import SkillController from './controllers/skills.controller';
 import UserController from './controllers/user.controller';
 import WaitlistController from './controllers/waitlist.controller';
 import WorkExperienceController from './controllers/workExperience.controller';
+import LocationController from './controllers/location.controller';
 
 process.on('uncaughtException', (e) => {
   console.error(e);
@@ -32,6 +33,7 @@ const controllers = [
   ResidentialInfoController,
   IDsController,
   UserController,
+  LocationController,
 ];
 
 const app = new App(controllers);
