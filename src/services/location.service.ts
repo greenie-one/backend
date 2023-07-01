@@ -35,7 +35,6 @@ class LocationService {
       const sinD = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(ipLat) * Math.cos(gpsLat) * Math.pow(Math.sin(deltaLong / 2), 2);
       const angluarDistance = 2 * Math.asin(Math.sqrt(sinD));
 
-      const radius = 6371; //in kms
       const distance = angluarDistance * radius;
 
       const response = distance < 30 ? true : false;
@@ -46,5 +45,7 @@ class LocationService {
     }
   }
 }
+
+export const radius = 6371;
 
 export const locationService = new LocationService();
