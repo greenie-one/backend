@@ -151,11 +151,6 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'Document is not shared',
     status: 400,
   },
-  [ErrorEnum.Server_ERROR]: {
-    code: 'GR0030',
-    message: 'Internal Server Error',
-    status: 500,
-  },
   [ErrorEnum.NUMBER_NOT_LINKED]: {
     code: 'GR0030',
     message: 'Number is not linked with Aadhar',
@@ -224,6 +219,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.USER_LOCATION_NOT_FOUND]: {
     code: 'GR0043',
     message: 'User location not found',
+    status: 500,
+  },
+  [ErrorEnum.Server_ERROR]: {
+    code: 'GR0044',
+    message: 'Internal Server Error',
     status: 500,
   },
 };
