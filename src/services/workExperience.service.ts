@@ -27,7 +27,6 @@ class WorkExperienceService {
     }
 
     const WorkExperience = await WorkExperienceModel.create({
-      image: workExperienceData.image,
       designation: workExperienceData.designation,
       companyId: workExperienceData.companyId,
       email: workExperienceData.email,
@@ -39,7 +38,6 @@ class WorkExperienceService {
       companyEndDate: new Date(workExperienceData.companyEndDate),
       workType: workExperienceData.workType,
       workMode: workExperienceData.workMode,
-      isVerified: workExperienceData.isVerified,
       description: workExperienceData.description,
     });
     return WorkExperience;

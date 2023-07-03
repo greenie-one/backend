@@ -9,9 +9,6 @@ export enum companyTypeEnum {
 
 @modelOptions({ schemaOptions: { collection: 'work_experiences', timestamps: true } })
 export class WorkExperience {
-  @prop({ type: String })
-  public image: string;
-
   @prop({ enum: companyTypeEnum, type: String })
   public companyType!: companyTypeEnum;
 
@@ -30,9 +27,6 @@ export class WorkExperience {
   @prop({ type: String })
   public companyId!: string;
 
-  @prop({ type: Boolean, default: false })
-  public isVerified?: boolean;
-
   @prop({ type: String })
   public workType?: string;
 
@@ -50,9 +44,6 @@ export class WorkExperience {
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;
-
-  @prop({ ref: 'User' })
-  public verifiedBy?: Ref<User>;
 
   public createdAt?: Date;
 
