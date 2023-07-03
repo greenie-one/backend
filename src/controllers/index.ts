@@ -55,6 +55,10 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
       const routeProps: RouteOptions = {
         method: method.method,
         handler: async (req, res) => {
+          const telemetry = req.openTelemetry();
+
+          if (hasBody && req.body) telemetry.activeSpan.setAttribute('req.body', JSON.stringify(req.body).substring(0, 5000));
+
           const handler = c.instance[method.property].bind(c.instance);
 
           const args = [];
@@ -102,7 +106,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           if (hadUserLocation) {
             try {
-              args[hadUserLocation.index] = JSON.parse(req.headers['x-user-location'].toString());
+              args[hadUserLocation.index] = req.headers['x-location'].toString();
             } catch (error) {
               throw new HttpException(ErrorEnum.USER_LOCATION_NOT_FOUND, error);
             }
