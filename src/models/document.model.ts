@@ -1,5 +1,5 @@
 import { Post, Ref, getModelForClass, prop } from '@typegoose/typegoose';
-import { PeerVerificationModel } from './peerVerification.model';
+import { PeerVerificationDocumentsModel } from './peerVerification.model';
 import { User } from './users.model';
 import { WorkExperience } from './workExperience.model';
 
@@ -13,7 +13,7 @@ export enum DocumentType {
 }
 
 @Post<Document>('deleteOne', async (doc) => {
-  await PeerVerificationModel.deleteMany({ type: 'DOCUMENT', ref: doc._id });
+  await PeerVerificationDocumentsModel.deleteMany({ document: doc._id });
 })
 export class Document {
   @prop({ required: true })

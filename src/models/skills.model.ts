@@ -1,5 +1,5 @@
 import { getModelForClass, modelOptions, Post, prop, Ref } from '@typegoose/typegoose';
-import { PeerVerificationModel } from './peerVerification.model';
+import { PeerVerificationSkillsModel } from './peerVerification.model';
 import { User } from './users.model';
 import { WorkExperience } from './workExperience.model';
 
@@ -9,7 +9,7 @@ export enum skillTypeEnum {
 }
 
 @Post<Skills>('deleteOne', async (doc) => {
-  await PeerVerificationModel.deleteMany({ type: 'SKILL', ref: doc._id });
+  await PeerVerificationSkillsModel.deleteMany({ skill: doc._id });
 })
 @modelOptions({ schemaOptions: { collection: 'skills', timestamps: true } })
 export class Skills {
