@@ -108,6 +108,7 @@ class IDsService {
     if (response.success && response.response_code === '100') {
       const user_address = response.result.user_address;
       const address = { address: user_address, type: IDTypeEnum.PAN };
+
       const location = await locationService.getCoordinates(userId, IDTypeEnum.PAN, address.toString());
       await IDModel.create({
         id_type: IDTypeEnum.PAN,
