@@ -1,4 +1,4 @@
-import { IDTypeEnum } from '@/models/id.model';
+import { IDTypeEnum } from '@/models/identity.model';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AddIDDto {

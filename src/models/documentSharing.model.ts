@@ -1,5 +1,5 @@
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
-import { ID } from './id.model';
+import { Identity } from './identity.model';
 import { User } from './users.model';
 
 export class DocumentSharing {
@@ -7,7 +7,7 @@ export class DocumentSharing {
   public user!: Ref<User>;
 
   @prop({ ref: 'Document', required: true })
-  public document!: Ref<ID>;
+  public document!: Ref<Identity>;
 
   @prop({ type: [{ ref: 'User' }], required: false, default: [] })
   public sharedWith?: Ref<User>[];

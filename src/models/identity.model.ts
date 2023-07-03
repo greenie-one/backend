@@ -10,7 +10,7 @@ export enum IDTypeEnum {
   DRIVING_LICENSE = 'DRIVING_LICENSE',
 }
 
-export class ID {
+export class Identity {
   @prop({ required: true, enum: IDTypeEnum, type: String })
   public id_type!: IDTypeEnum;
 
@@ -36,4 +36,4 @@ export class ID {
   public updatedAt?: Date;
 }
 
-export const IDModel = getModelForClass(ID);
+export const IdentityModel = getModelForClass(Identity);

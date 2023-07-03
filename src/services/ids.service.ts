@@ -1,7 +1,7 @@
 import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { ID, IDModel, IDTypeEnum } from '@/models/id.model';
+import { IDTypeEnum, Identity, IdentityModel } from '@/models/identity.model';
 import { redisClient } from '@/redisClient';
 import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
@@ -13,8 +13,8 @@ const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 10 * 60; // mins;
 
 class IDsService {
-  public async getUserIDs(userId: string): Promise<ID[]> {
-    const id_document: ID[] = await IDModel.find({ user: userId });
+  public async getUserIDs(userId: string): Promise<Identity[]> {
+    const id_document: Identity[] = await IdentityModel.find({ user: userId });
     if (!id_document) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
@@ -55,7 +55,7 @@ class IDsService {
   public async verifyAadharOtp(userId: string, verifyIdDto: VerifyIDDto) {
     const { otp, request_id, task_id } = verifyIdDto;
 
-    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
+    const newId = await IdentityModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
 
     if (newId) {
       throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
@@ -71,7 +71,7 @@ class IDsService {
       const user_address = verificationResponse.result.user_address;
 
       await locationService.getCoordinates(userId, IDTypeEnum.AADHAR, user_address);
-      await IDModel.create({
+      await IdentityModel.create({
         id_type: IDTypeEnum.AADHAR,
         id_number: aadhaar_number,
         user: userId,
@@ -89,12 +89,12 @@ class IDsService {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
-    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.PAN });
+    const newId = await IdentityModel.findOne({ user: userId, id_type: IDTypeEnum.PAN });
     if (newId) {
       throw new HttpException(ErrorEnum.PAN_ALREADY_EXIST);
     }
 
-    const AadharId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
+    const AadharId = await IdentityModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
 
     if (!AadharId) {
       throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_REQUIRED);
@@ -105,7 +105,7 @@ class IDsService {
     });
 
     if (response.success && response.response_code === '100') {
-      await IDModel.create({
+      await IdentityModel.create({
         id_type: IDTypeEnum.PAN,
         id_number: addIDDto.id_number,
         user: userId,
@@ -123,13 +123,13 @@ class IDsService {
     const { id_number, dob } = addIDDto;
     const taskId = uuidv4();
 
-    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.DRIVING_LICENSE });
+    const newId = await IdentityModel.findOne({ user: userId, id_type: IDTypeEnum.DRIVING_LICENSE });
 
     if (newId) {
       throw new HttpException(ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST);
     }
 
-    const AadharId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
+    const AadharId = await IdentityModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
 
     if (!AadharId) {
       throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_REQUIRED);
@@ -141,7 +141,7 @@ class IDsService {
     });
 
     if (response.success && response.response_code === '100') {
-      await IDModel.create({
+      await IdentityModel.create({
         id_type: IDTypeEnum.DRIVING_LICENSE,
         id_number: addIDDto.id_number,
         user: userId,
