@@ -7,9 +7,10 @@ class LocationService {
   public async getCoordinates(userId: string, addresstype: string, address: string) {
     const coordinates = await Geolocation.getLocation(address).catch((err) => {
       console.log(err);
+      console.log(coordinates);
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
     });
-    if (!coordinates) {
+    if (coordinates && coordinates.status_code === '200') {
       const location = await LocationModel.create({
         user: userId,
         address: address,
@@ -19,6 +20,7 @@ class LocationService {
 
       return location;
     } else {
+      console.log(coordinates);
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
     }
   }
