@@ -10,11 +10,11 @@ export enum AddressType {
 }
 
 export class Location {
-  @prop({ required: true, type: Schema.Types.Mixed })
-  public address!: object;
-
   @prop({ required: true })
-  public coordinates!: string;
+  public address!: string;
+
+  @prop({ required: true, type: Schema.Types.Mixed })
+  public coordinates!: object;
 
   @prop({ required: true, enum: AddressType, type: String })
   public type!: AddressType;
