@@ -6,6 +6,10 @@ import { WorkExperience } from './workExperience.model';
 export enum skillTypeEnum {
   AMATEUR = 'AMATEUR',
   EXPERT = 'EXPERT',
+  BEGINNER = 'BEGINNER',
+  SUPER_SPECIALIST = 'SUPER_SPECIALIST',
+  MASTER = 'MASTER',
+  HIGHLY_COMPETENT = 'HIGHLY_COMPETENT',
 }
 
 @Post<Skills>('deleteOne', async (doc) => {

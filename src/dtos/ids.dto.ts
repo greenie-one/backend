@@ -1,4 +1,4 @@
-import { IDTypeEnum } from '@/models/identity.model';
+import { IDTypeEnum } from '@/models/id.model';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AddIDDto {
@@ -65,10 +65,34 @@ export interface PanVerifyResponse {
   success?: boolean;
   response_code?: string;
   response_message?: string;
+  result?: {
+    user_address?: {
+      line1?: string;
+      line2?: string;
+      street_name?: string;
+      city?: string;
+      state?: string;
+      country?: string;
+      full?: string;
+    };
+  };
 }
 
 export interface DrivingLicenseResponse {
   success?: boolean;
+  result?: {
+    user_address?: [
+      {
+        addressLine1?: string;
+        completeAddress?: string;
+        country?: string;
+        district?: string;
+        pin?: string;
+        state?: string;
+        type?: string;
+      },
+    ];
+  };
   response_code?: string;
   response_message?: string;
 }

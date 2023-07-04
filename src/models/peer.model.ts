@@ -8,7 +8,7 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
-enum PeerType {
+export enum PeerType {
   COLLEAGUE = 'COLLEAGUE',
   REPORTING_MANAGER = 'REPORTING_MANAGER',
   LINE_MANAGER = 'LINE_MANAGER',

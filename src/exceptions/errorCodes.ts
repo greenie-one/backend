@@ -29,6 +29,7 @@ export enum ErrorEnum {
   DOCUMENT_EXPIRED,
   DOCUMENT_ALREADY_UPLOADED,
   INVALID_COORDINATES,
+  PEER_NOT_FOUND,
 
   //identity verification
   NUMBER_NOT_LINKED,
@@ -225,5 +226,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0044',
     message: 'Internal Server Error',
     status: 500,
+  },
+  [ErrorEnum.PEER_NOT_FOUND]: {
+    code: 'GR0045',
+    message: 'Peer not found',
+    status: 401,
   },
 };
