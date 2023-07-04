@@ -54,15 +54,16 @@ class PeerService {
   }
 
   public async getPeerVerification(userId: string, peerId: string) {
-    const peer = await PeerModel.findById({ peerId });
+    const peer = await PeerModel.findById(peerId);
+    // console.log(peer);
 
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
 
-    const peerSkillStatus = await PeerVerificationSkillsModel.findById({ peerId });
-    const peerDocumentStatus = await PeerVerificationDocumentsModel.findById({ peerId });
-    const peerVerificationStatus = await PeerVerificationModel.findById({ peerId });
+    const peerSkillStatus = await PeerVerificationSkillsModel.find({ peer: peerId });
+    const peerDocumentStatus = await PeerVerificationDocumentsModel.find({ peer: peerId });
+    const peerVerificationStatus = await PeerVerificationModel.find({ peer: peerId });
 
     return { peer, peerSkillStatus, peerDocumentStatus, peerVerificationStatus };
   }
