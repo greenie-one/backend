@@ -37,6 +37,37 @@ class SASTokenService {
 
     return newToken;
   }
+
+  private async generateToken(containerName: string, file: string) {
+    const blobServiceClient = new BlobServiceClient(
+      `https://${STORAGE_ACCOUNT}.blob.core.windows.net`,
+      new StorageSharedKeyCredential(STORAGE_ACCOUNT, STORAGE_ACCESS_KEY),
+    );
+
+    const container = await blobServiceClient.getContainerClient(containerName);
+    const blob = await container.getBlobClient(file);
+    const permissions = BlobSASPermissions.parse('r');
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 1);
+
+    const sasToken = await blob.generateSasUrl({
+      permissions: permissions,
+      startsOn: new Date(),
+      expiresOn: expiryDate,
+    });
+
+    return sasToken;
+  }
+
+  public async getToken(PeerVerificationDocumentsID: string, file: string) {
+    await redisUtilClient.del(PeerVerificationDocumentsID);
+
+    const newToken = await this.generateToken(PeerVerificationDocumentsID, file);
+    const expiry = 60 * 60 * 25;
+    await redisUtilClient.setEx(PeerVerificationDocumentsID, expiry, newToken);
+
+    return newToken;
+  }
 }
 
 export const SAStokenService = new SASTokenService();
