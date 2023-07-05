@@ -28,12 +28,19 @@ class SASTokenService {
   }
 
   public async getSAStoken(userID: string) {
-    // const token = await redisClient.get(userID);
     await redisUtilClient.del(userID);
 
     const newToken = await this.generateSASToken(userID);
-    const expiry = 1000 * 60 * 60 * 24 * 9;
+    const expiry = 60 * 60 * 24 * 9;
     await redisUtilClient.setEx(userID, expiry, newToken);
+
+    return newToken;
+  }
+
+  public async getSAStokenForPeer(userID: string, peerID: string) {
+    const newToken = await this.generateSASToken(userID);
+    const expiry = 60 * 60 * 24;
+    await redisUtilClient.setEx(peerID, expiry, newToken);
 
     return newToken;
   }
