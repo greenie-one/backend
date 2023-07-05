@@ -90,7 +90,7 @@ class DocumentService {
     }
 
     await documentToDelete.deleteOne();
-    const fileName = documentToDelete.url.split(userID + '/');
+    const fileName = documentToDelete.private_url.split(userID + '/');
     await RedisPUBSUB.docDelete(fileName[1], userID);
 
     return { message: 'Document deleted successfully' };
@@ -105,7 +105,7 @@ class DocumentService {
     }
 
     for (let index = 0; index < documents.length; index++) {
-      documents[index].url = documents[index].url + '?' + sasToken;
+      documents[index].private_url = documents[index].private_url + '?' + sasToken;
     }
 
     return documents;

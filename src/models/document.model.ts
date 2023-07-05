@@ -23,7 +23,7 @@ export class Document {
   public type!: DocumentType;
 
   @prop({ required: true })
-  public url!: string;
+  public private_url!: string;
 
   @prop({ required: true, ref: User })
   public user!: Ref<User>;
