@@ -69,12 +69,13 @@ class IDsService {
     if (verificationResponse.success && verificationResponse.response_code === '100') {
       const aadhaar_number = verificationResponse.result.user_aadhaar_number;
       const user_address = verificationResponse.result.user_address;
-
-      await locationService.getCoordinates(userId, IDTypeEnum.AADHAR, user_address);
+      const address = { address: user_address, type: IDTypeEnum.AADHAR };
+      const location = await locationService.getCoordinates(userId, IDTypeEnum.AADHAR, address.toString());
       await IDModel.create({
         id_type: IDTypeEnum.AADHAR,
         id_number: aadhaar_number,
         user: userId,
+        location: location._id,
         id_data: verificationResponse,
       });
 
@@ -105,10 +106,15 @@ class IDsService {
     });
 
     if (response.success && response.response_code === '100') {
+      const user_address = response.result.user_address;
+      const address = { address: user_address, type: IDTypeEnum.PAN };
+
+      const location = await locationService.getCoordinates(userId, IDTypeEnum.PAN, address.toString());
       await IDModel.create({
         id_type: IDTypeEnum.PAN,
         id_number: addIDDto.id_number,
         user: userId,
+        location: location._id,
         id_data: response,
       });
 
@@ -141,10 +147,15 @@ class IDsService {
     });
 
     if (response.success && response.response_code === '100') {
+      const user_address = response.result.user_address[0];
+      const address = { address: user_address, type: IDTypeEnum.DRIVING_LICENSE };
+      // console.log(address);
+      const location = await locationService.getCoordinates(userId, IDTypeEnum.DRIVING_LICENSE, address.toString());
       await IDModel.create({
         id_type: IDTypeEnum.DRIVING_LICENSE,
         id_number: addIDDto.id_number,
         user: userId,
+        location: location._id,
         id_data: response,
       });
       const { success, response_code, response_message } = response;

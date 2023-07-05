@@ -1,12 +1,17 @@
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { LocationModel } from '@/models/location.model';
+import { Geolocation } from '@/remote/location/location';
 import { GPScompare } from '../dtos/location.dto';
 
 class LocationService {
   public async getCoordinates(userId: string, addresstype: string, address: string) {
-    // const coordinates = await function(address) ;
-    if (!coordinates) {
+    const coordinates = await Geolocation.getLocation(address).catch((err) => {
+      console.log(err);
+      console.log(coordinates);
+      throw new HttpException(ErrorEnum.INVALID_COORDINATES);
+    });
+    if (coordinates && coordinates.code != 'RM003') {
       const location = await LocationModel.create({
         user: userId,
         address: address,
@@ -16,6 +21,7 @@ class LocationService {
 
       return location;
     } else {
+      console.log(coordinates);
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
     }
   }
