@@ -8,5 +8,5 @@
         "src/logs/*",
         "src/**/*.{spec,test}.ts"
     ],
-    "exec": "webpack && node dist/server.js"
+    "exec": "webpack && node --require ./dist/instrumentation.js dist/server.js"
 }

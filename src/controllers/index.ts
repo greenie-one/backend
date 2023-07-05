@@ -50,10 +50,15 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
       const hasReply: RequestValidation = Reflect.getMetadata('fastify:method:reply', c.instance, method.property);
       const hasParams: ParamValidation[] = Reflect.getMetadata('fastify:method:params', c.instance, method.property) ?? [];
       const hasUserDetails: RequestValidation = Reflect.getMetadata('fastify:method:user_details', c.instance, method.property);
+      const hadUserLocation: RequestValidation = Reflect.getMetadata('fastify:method:user_location', c.instance, method.property);
 
       const routeProps: RouteOptions = {
         method: method.method,
         handler: async (req, res) => {
+          const telemetry = req.openTelemetry();
+
+          if (hasBody && req.body) telemetry.activeSpan.setAttribute('req.body', JSON.stringify(req.body).substring(0, 5000));
+
           const handler = c.instance[method.property].bind(c.instance);
 
           const args = [];
@@ -96,6 +101,14 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
               args[hasUserDetails.index] = JSON.parse(req.headers['x-user-details'].toString());
             } catch (error) {
               throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error);
+            }
+          }
+
+          if (hadUserLocation) {
+            try {
+              args[hadUserLocation.index] = req.headers['x-location'].toString();
+            } catch (error) {
+              throw new HttpException(ErrorEnum.USER_LOCATION_NOT_FOUND, error);
             }
           }
 

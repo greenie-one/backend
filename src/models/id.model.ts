@@ -1,5 +1,6 @@
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 import { Schema } from 'mongoose';
+import { Location } from './location.model';
 import { User } from './users.model';
 import { Verification } from './verified.model';
 
@@ -21,6 +22,9 @@ export class ID {
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;
+
+  @prop({ ref: 'Location' })
+  public location?: Ref<Location>;
 
   @prop({ type: () => Verification })
   public verification?: Verification;

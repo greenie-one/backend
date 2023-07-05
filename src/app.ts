@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import './utils/logger';
 
+import fastifyOpenTelemetry from '@autotelic/fastify-opentelemetry';
 import { dbConnection } from '@database';
 import fastifyCookie from '@fastify/cookie';
 import middie from '@fastify/middie';
@@ -15,8 +16,7 @@ import hpp from 'hpp';
 import { connect, set } from 'mongoose';
 import { env } from './config';
 import { registerControllers } from './controllers';
-import { registerJWTMiddleware } from './middlewares/jwt.middleware';
-import { redisClient } from './redisClient';
+import { redisClient, redisUtilClient } from './redisClient';
 
 export class App {
   public app: ReturnType<typeof fastify>;
@@ -67,10 +67,12 @@ export class App {
 
   private async connectToRedis() {
     await redisClient.connect();
+    await redisUtilClient.connect();
   }
 
   private async initializeMiddlewares() {
-    this.app = await this.app.register(middie);
+    await this.app.register(fastifyOpenTelemetry, { wrapRoutes: true });
+    await this.app.register(middie);
 
     this.app.register(fastifyCookie, {
       secret: 'my-secret',
@@ -82,7 +84,6 @@ export class App {
     this.app.use(helmet());
     this.app.use(compression());
     this.app.use(cookieParser());
-    await registerJWTMiddleware(this.app, this.controllers);
 
     this.app.addHook('onRequest', async (req) => {
       console.debug(`Got request: [${req.method}] ${req.url} ${JSON.stringify(req.headers)}`);

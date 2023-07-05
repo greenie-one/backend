@@ -5,7 +5,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "start": "yarn build && node dist/server.js",
+    "start": "yarn build && node --require ./dist/instrumentation.js dist/server.js",
     "dev": "cross-env APP_ENV=local nodemon",
     "build": "webpack build",
     "build:tsc": "tsc",
@@ -16,16 +16,30 @@
     "postinstall": "husky install"
   },
   "dependencies": {
+    "@autotelic/fastify-opentelemetry": "^0.17.1",
+    "@azure/storage-blob": "^12.14.0",
     "@fastify/cookie": "^8.3.0",
-    "@fastify/jwt": "^6.7.1",
     "@fastify/middie": "^8.1.0",
     "@fastify/static": "^6.10.2",
+    "@opentelemetry/api": "^1.4.1",
+    "@opentelemetry/auto-instrumentations-node": "^0.37.1",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.40.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.40.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.40.0",
+    "@opentelemetry/instrumentation": "^0.40.0",
+    "@opentelemetry/instrumentation-fastify": "^0.31.4",
+    "@opentelemetry/instrumentation-http": "^0.40.0",
+    "@opentelemetry/resources": "^1.14.0",
+    "@opentelemetry/sdk-metrics": "^1.14.0",
+    "@opentelemetry/sdk-node": "^0.40.0",
+    "@opentelemetry/sdk-trace-base": "^1.14.0",
+    "@opentelemetry/sdk-trace-node": "^1.14.0",
+    "@opentelemetry/semantic-conventions": "^1.14.0",
     "@swc/helpers": "^0.5.0",
     "@typegoose/typegoose": "^11.0.2",
     "@types/bcryptjs": "^2.4.2",
     "@types/ejs": "^3.1.2",
     "@types/uuid": "^9.0.1",
-    "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "compression": "^1.7.4",
@@ -35,10 +49,7 @@
     "dotenv": "^16.0.3",
     "ejs": "^3.1.9",
     "envalid": "^7.3.1",
-    "fast-jwt": "^2.2.2",
     "fastify": "^4.15.0",
-    "get-jwks": "^8.0.5",
-    "google-auth-library": "^8.8.0",
     "helmet": "^6.1.5",
     "hpp": "^0.2.3",
     "loglevel": "^1.8.1",
@@ -91,7 +102,9 @@
     "webpack-node-externals": "^3.0.0"
   },
   "packageManager": "yarn@3.5.1",
-  "resolutions": {
-    "get-jwks@^8.0.5": "patch:get-jwks@npm%3A8.0.5#./.yarn/patches/get-jwks-npm-8.0.5-ffe2437545.patch"
+  "dependenciesMeta": {
+    "is-core-module@2.12.1": {
+      "unplugged": true
+    }
   }
 }

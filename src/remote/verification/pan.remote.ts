@@ -5,7 +5,7 @@ import { HttpClient } from '../generic/httpClient';
 export class PanVerification {
   static async verifyPan(panNumber: string, taskId: string): Promise<PanVerifyResponse> {
     return HttpClient.callApi({
-      url: `https://test.zoop.one/api/v1/in/identity/pan/lite`,
+      url: `https://test.zoop.one/api/v1/in/identity/pan/pro`,
       method: 'POST',
       headers: {
         'app-id': env('ZOOP_ID'),
@@ -13,6 +13,7 @@ export class PanVerification {
         'Content-Type': 'application/json',
       },
       body: {
+        mode: 'sync',
         data: {
           customer_pan_number: panNumber,
           consent: 'Y',

@@ -5,16 +5,20 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './src/server.ts',
-  mode: 'none',
+  entry: {
+    server: './src/server.ts',
+    instrumentation: './src/instrumentation.ts',
+  },
+  mode: process.env.APP_ENV !== 'local' ? 'production' : 'development',
   target: 'node',
-  devtool: false,
   plugins: [
     new CopyPlugin({
       patterns: [
         { from: '.env*', to: '.' },
-        { from: 'keys/**', to: '.' },
-        { from: 'templates/**', to: '.' },
+        {
+          from: '.yarn/unplugged/is-core-module*/**/core.json',
+          to: './core.json',
+        },
       ],
     }),
   ],
@@ -46,9 +50,12 @@ module.exports = {
         extensions: ['.ts', '.js'],
       }),
     ],
+    // alias: {
+    //   'is-core-module': './is-core-module-mock.js',
+    // },
   },
   output: {
-    filename: 'server.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
 };
