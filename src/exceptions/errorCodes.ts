@@ -230,6 +230,6 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.PEER_NOT_FOUND]: {
     code: 'GR0045',
     message: 'Peer not found',
-    status: 401,
+    status: 404,
   },
 };
