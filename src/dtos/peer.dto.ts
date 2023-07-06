@@ -49,6 +49,10 @@ export class DocumentDto {
   @IsNotEmpty()
   public documentType!: DocumentType;
 
+  @IsString()
+  @IsNotEmpty()
+  public public_url!: string;
+
   @IsEnum(State)
   @IsNotEmpty()
   public state!: State;

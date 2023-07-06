@@ -20,6 +20,10 @@ export class CreateWorkExperienceDto {
 
   @IsString()
   @IsOptional()
+  public department?: string;
+
+  @IsString()
+  @IsOptional()
   public workType?: string;
 
   @IsString()
@@ -55,6 +59,10 @@ export class UpdateWorkExperienceDto {
   @IsString()
   @IsOptional()
   public email?: string;
+
+  @IsString()
+  @IsOptional()
+  public department?: string;
 
   @IsEnum(companyTypeEnum)
   @IsOptional()

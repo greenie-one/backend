@@ -38,6 +38,7 @@ class WorkExperienceService {
       companyEndDate: new Date(workExperienceData.companyEndDate),
       workType: workExperienceData.workType,
       workMode: workExperienceData.workMode,
+      department: workExperienceData.department,
       description: workExperienceData.description,
     });
     return WorkExperience;

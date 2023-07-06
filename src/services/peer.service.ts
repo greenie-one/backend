@@ -1,11 +1,13 @@
-import { CreatePeerDto } from '@/dtos/peer.dto';
+import { CreatePeerDto, PeerVerificationResponse } from '@/dtos/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
 import { PeerModel } from '@/models/peer.model';
 import { PeerVerificationDocumentsModel, PeerVerificationModel, PeerVerificationSkillsModel } from '@/models/peerVerification.model';
 import { SkillModel } from '@/models/skills.model';
+import { WorkExperienceModel } from '@/models/workExperience.model';
 import { UserModel } from '@models/users.model';
+import { SAStokenService } from './blobStorage.service';
 
 class PeerService {
   public async createPeer(userId: string, peerData: CreatePeerDto) {
@@ -22,7 +24,7 @@ class PeerService {
       name: peerData.name,
       email: peerData.email,
       phone: peerData.phone,
-      workExperience: peerData.workExperience,
+      workExperience: peerData.workExperience, //to which the user want to get the verification
       peerType: peerData.peerType,
     });
 
@@ -53,19 +55,72 @@ class PeerService {
     return peer;
   }
 
-  public async getPeerVerification(userId: string, peerId: string) {
+  public async getPeerVerification(userId: string, peerId: string): Promise<PeerVerificationResponse> {
     const peer = await PeerModel.findById(peerId);
-    // console.log(peer);
 
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
 
-    const peerSkillStatus = await PeerVerificationSkillsModel.find({ peer: peerId });
-    const peerDocumentStatus = await PeerVerificationDocumentsModel.find({ peer: peerId });
-    const peerVerificationStatus = await PeerVerificationModel.find({ peer: peerId });
+    const skills = await PeerVerificationSkillsModel.find({ peer: peerId });
+    const skillWithDetails = [];
+    if (skills) {
+      for (const skill of skills) {
+        const skillFromModel = await SkillModel.findById(skill.skill);
 
-    return { peer, peerSkillStatus, peerDocumentStatus, peerVerificationStatus };
+        if (skillFromModel) {
+          const dets = {
+            skillName: skillFromModel.skillName,
+            expertise: skillFromModel.expertise,
+            state: skill.state,
+          };
+
+          skillWithDetails.push(dets);
+        }
+      }
+    }
+    const documents = await PeerVerificationDocumentsModel.find({ peer: peerId });
+    const documentWithDetails = [];
+    if (documents) {
+      for (const document of documents) {
+        const docFromModel = await DocumentModel.findById(document.document);
+
+        if (docFromModel) {
+          const public_url = await SAStokenService.getToken(document.document, docFromModel.private_url);
+          const dets = {
+            documentName: docFromModel.name,
+            documentType: docFromModel.type,
+            public_url: public_url,
+            state: document.state,
+          };
+
+          documentWithDetails.push(dets);
+        }
+      }
+    }
+
+    const userDetails = await PeerVerificationModel.findById(peerId);
+    const work_exp = await WorkExperienceModel.findById(peer.workExperience);
+
+    if (!work_exp) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    const userDetailsObj = {
+      candidateId: { state: userDetails.candidateId, value: work_exp.companyId },
+      department: { state: userDetails.department, value: work_exp.department },
+      designation: { state: userDetails.designation, value: work_exp.designation },
+      dateOfJoining: { state: userDetails.dateOfJoining, value: work_exp.companyStartDate.toString() },
+      dateOfLeaving: { state: userDetails.department, value: work_exp.companyEndDate.toString() },
+    };
+    const response = {
+      peerDetails: { name: peer.name, email: peer.email, phone: peer.phone, peerType: peer.peerType, workExperience: peer.workExperience.toString() },
+      peerSkillStatus: skillWithDetails,
+      peerVerificationStatus: userDetailsObj,
+      peerDocumentStatus: documentWithDetails,
+    };
+
+    return response;
   }
 }
 

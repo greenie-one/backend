@@ -15,6 +15,9 @@ export class WorkExperience {
   @prop({ type: String, required: true })
   public designation!: string;
 
+  @prop({ type: String })
+  public department?: string;
+
   @prop({ type: String, required: true })
   public email!: string;
 
