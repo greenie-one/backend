@@ -36,7 +36,7 @@ class SASTokenService {
 
     return newToken;
   }
-
+  
   private async generateBlobSASToken(containerName: string, file: string) {
     const blobServiceClient = new BlobServiceClient(
       `https://${STORAGE_ACCOUNT}.blob.core.windows.net`,

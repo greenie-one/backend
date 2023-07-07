@@ -8,6 +8,7 @@ import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.
 import { PanVerification } from '@/remote/verification/pan.remote';
 import { v4 as uuidv4 } from 'uuid';
 import { locationService } from './location.service';
+import { profileService } from './profile.service';
 
 const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 10 * 60; // mins;
@@ -80,6 +81,12 @@ class IDsService {
       });
 
       const { success, response_code, response_message } = verificationResponse;
+
+      if (success) {
+        // Update score based on document uploaded
+        await profileService.modScore(userId, IDTypeEnum.AADHAR, true);
+      }
+
       return { success, response_code, response_message };
     } else {
       throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `${verificationResponse.response_message}`);
@@ -119,6 +126,12 @@ class IDsService {
       });
 
       const { success, response_code, response_message } = response;
+
+      if (success) {
+        // Update score based on document uploaded
+        await profileService.modScore(userId, IDTypeEnum.PAN, true);
+      }
+
       return { success, response_code, response_message };
     } else {
       throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL, `${response.response_message}`);
@@ -158,7 +171,14 @@ class IDsService {
         location: location._id,
         id_data: response,
       });
+
       const { success, response_code, response_message } = response;
+
+      if (success) {
+        // Update score based on document uploaded
+        await profileService.modScore(userId, IDTypeEnum.DRIVING_LICENSE, true);
+      }
+
       return { success, response_code, response_message };
     } else {
       throw new HttpException(ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL, `${response.response_message}`);
