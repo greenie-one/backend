@@ -27,8 +27,7 @@ class SASTokenService {
     return sasToken;
   }
 
-  public async getSASTokenUser(userID: string) {
-    // const token = await redisClient.get(userID);
+  public async getSAStoken(userID: string) {
     await redisUtilClient.del(userID);
 
     const newToken = await this.generateContainerSASToken(userID);
