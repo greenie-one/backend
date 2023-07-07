@@ -114,8 +114,7 @@ class PeerService {
       dateOfLeaving: { state: userDetails.department, value: work_exp.companyEndDate.toString() },
     };
     const response = {
-      peerDetails: { name: peer.name, email: peer.email, phone: peer.phone, peerType: peer.peerType, workExperience: work_exp._id },
-      peerSkillStatus: skillWithDetails,
+      peerDetails: { name: peer.name, email: peer.email, phone: peer.phone, peerType: peer.peerType, workExperience: work_exp._id.toString() },
       peerVerificationStatus: userDetailsObj,
       peerDocumentStatus: documentWithDetails,
     };
