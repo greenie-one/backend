@@ -1,4 +1,4 @@
-import { CreatePeerDto, PeerVerificationResponse } from '@/dtos/peer.dto';
+import { CreatePeerDto, PeerVerificationResponse, UpdateDocumentVerificationDto, UpdateSkillVerificationDto } from '@/dtos/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
@@ -99,7 +99,7 @@ class PeerService {
       }
     }
 
-    const userDetails = await PeerVerificationModel.findById(peerId);
+    const userDetails = await PeerVerificationModel.findOne({ peer: peerId });
     const work_exp = await WorkExperienceModel.findById(peer.workExperience);
 
     if (!work_exp) {
@@ -114,13 +114,43 @@ class PeerService {
       dateOfLeaving: { state: userDetails.department, value: work_exp.companyEndDate.toString() },
     };
     const response = {
-      peerDetails: { name: peer.name, email: peer.email, phone: peer.phone, peerType: peer.peerType, workExperience: peer.workExperience.toString() },
+      peerDetails: { name: peer.name, email: peer.email, phone: peer.phone, peerType: peer.peerType, workExperience: work_exp._id },
       peerSkillStatus: skillWithDetails,
       peerVerificationStatus: userDetailsObj,
       peerDocumentStatus: documentWithDetails,
     };
 
     return response;
+  }
+
+  public async updateSkillVerification(userId: string, peerId: string, skillId: string, updatedData: UpdateSkillVerificationDto) {
+    const skill = await PeerVerificationSkillsModel.findOne({ peer: peerId, skill: skillId });
+    if (!skill) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+
+    const updatedState = await PeerVerificationSkillsModel.findByIdAndUpdate(skill._id, { $set: updatedData }, { new: true });
+
+    if (!updatedState) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+
+    return updatedState;
+  }
+
+  public async updateDocumentVerification(userId: string, peerId: string, documentId: string, updatedData: UpdateDocumentVerificationDto) {
+    const document = await PeerVerificationDocumentsModel.findOne({ peer: peerId, document: documentId });
+    if (!document) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+
+    const updatedState = await PeerVerificationDocumentsModel.findByIdAndUpdate(document._id, { $set: updatedData }, { new: true });
+
+    if (!updatedState) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+
+    return updatedState;
   }
 }
 

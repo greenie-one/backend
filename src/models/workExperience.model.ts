@@ -16,7 +16,7 @@ export class WorkExperience {
   public designation!: string;
 
   @prop({ type: String })
-  public department?: string;
+  public department!: string;
 
   @prop({ type: String, required: true })
   public email!: string;

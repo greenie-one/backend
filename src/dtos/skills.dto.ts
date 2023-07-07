@@ -1,5 +1,6 @@
 import { skillTypeEnum } from '@/models/skills.model';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class createSkillDto {
   @IsString()
@@ -8,7 +9,7 @@ export class createSkillDto {
 
   @IsString()
   @IsOptional()
-  public workExperience?: string;
+  public workExperience?: Types.ObjectId;
 
   @IsEnum(skillTypeEnum)
   @IsNotEmpty()
