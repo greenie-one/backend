@@ -98,7 +98,7 @@ class DocumentService {
 
   public async getDocuments(userID: string) {
     const documents: Document[] = await DocumentModel.find({ user: userID });
-    const sasToken = await SAStokenService.getSAStoken(userID);
+    const sasToken = await SAStokenService.getSASTokenUser(userID);
 
     if (!documents) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);

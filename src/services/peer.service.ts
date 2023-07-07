@@ -86,7 +86,7 @@ class PeerService {
         const docFromModel = await DocumentModel.findById(document.document);
 
         if (docFromModel) {
-          const public_url = await SAStokenService.getToken(document.document, docFromModel.private_url);
+          const public_url = await SAStokenService.getSASTokenPeer(document.document, docFromModel.private_url);
           const dets = {
             documentName: docFromModel.name,
             documentType: docFromModel.type,
