@@ -28,13 +28,13 @@ export default class PeerController {
     return peerService.updateSkillVerification(userDetails.sub, peerId, skillid, data);
   }
 
-  @Patch('/:peerid/:documentid')
-  async updatedocumentVerification(
-    @UserDetails() userDetails: TokenClaims,
-    @Params('peerid') peerId: string,
-    @Params('documentid') documentid: string,
-    @Body() data: UpdateSkillVerificationDto,
-  ) {
-    return peerService.updateSkillVerification(userDetails.sub, peerId, documentid, data);
-  }
+  // @Patch('/:peerid/:documentid')
+  // async updatedocumentVerification(
+  //   @UserDetails() userDetails: TokenClaims,
+  //   @Params('peerid') peerId: string,
+  //   @Params('documentid') documentid: string,
+  //   @Body() data: UpdateDocumentVerificationDto,
+  // ) {
+  //   return peerService.updateDocumentVerification(userDetails.sub, peerId, documentid, data);
+  // }
 }

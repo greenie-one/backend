@@ -9,26 +9,26 @@ export enum companyTypeEnum {
 
 @modelOptions({ schemaOptions: { collection: 'work_experiences', timestamps: true } })
 export class WorkExperience {
-  @prop({ enum: companyTypeEnum, type: String })
+  @prop({ enum: companyTypeEnum, type: String, required: true })
   public companyType!: companyTypeEnum;
 
   @prop({ type: String, required: true })
   public designation!: string;
 
-  @prop({ type: String })
+  @prop({ type: String, required: true })
   public department!: string;
 
   @prop({ type: String, required: true })
   public email!: string;
 
-  @prop({ type: String })
-  public linkedInUrl: string;
-
   @prop({ type: String, required: true })
   public companyName!: string;
 
-  @prop({ type: String })
+  @prop({ type: String, required: true })
   public companyId!: string;
+
+  @prop({ type: String })
+  public linkedInUrl?: string;
 
   @prop({ type: String })
   public workType?: string;
@@ -36,8 +36,8 @@ export class WorkExperience {
   @prop({ type: String })
   public workMode?: string;
 
-  @prop({ type: Date })
-  public companyStartDate?: Date;
+  @prop({ type: Date, required: true })
+  public companyStartDate!: Date;
 
   @prop({ type: Date })
   public companyEndDate?: Date;
