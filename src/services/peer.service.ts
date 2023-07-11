@@ -86,7 +86,7 @@ class PeerService {
         const docFromModel = await DocumentModel.findById(document.document);
 
         if (docFromModel) {
-          const public_url = await SAStokenService.getToken(document.document, docFromModel.private_url);
+          const public_url = await SAStokenService.getSASTokenPeer(document.document, docFromModel.private_url);
           const dets = {
             documentName: docFromModel.name,
             documentType: docFromModel.type,
@@ -114,8 +114,7 @@ class PeerService {
       dateOfLeaving: { state: userDetails.department, value: work_exp.companyEndDate.toString() },
     };
     const response = {
-      peerDetails: { name: peer.name, email: peer.email, phone: peer.phone, peerType: peer.peerType, workExperience: work_exp._id },
-      peerSkillStatus: skillWithDetails,
+      peerDetails: { name: peer.name, email: peer.email, phone: peer.phone, peerType: peer.peerType, workExperience: work_exp._id.toString() },
       peerVerificationStatus: userDetailsObj,
       peerDocumentStatus: documentWithDetails,
     };

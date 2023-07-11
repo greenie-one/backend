@@ -3,7 +3,6 @@ import { skillTypeEnum } from '@/models/skills.model';
 import { PeerType, State } from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { Types } from 'mongoose';
 
 export class CreatePeerDto {
   @IsString()
@@ -24,7 +23,7 @@ export class CreatePeerDto {
 
   @IsString()
   @IsNotEmpty()
-  public workExperience!: Types.ObjectId;
+  public workExperience!: string;
 }
 
 export class UpdateSkillVerificationDto {

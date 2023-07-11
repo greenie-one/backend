@@ -5,7 +5,7 @@ const STORAGE_ACCOUNT = env('STORAGE_ACCOUNT');
 const STORAGE_ACCESS_KEY = env('STORAGE_ACCESS_KEY');
 
 class SASTokenService {
-  private async generateSASToken(containerName) {
+  private async generateContainerSASToken(containerName) {
     const blobServiceClient = new BlobServiceClient(
       `https://${STORAGE_ACCOUNT}.blob.core.windows.net`,
       new StorageSharedKeyCredential(STORAGE_ACCOUNT, STORAGE_ACCESS_KEY),
@@ -27,18 +27,17 @@ class SASTokenService {
     return sasToken;
   }
 
-  public async getSAStoken(userID: string) {
-    // const token = await redisClient.get(userID);
+  public async getSASTokenUser(userID: string) {
     await redisUtilClient.del(userID);
 
-    const newToken = await this.generateSASToken(userID);
-    const expiry = 1000 * 60 * 60 * 24 * 9;
+    const newToken = await this.generateContainerSASToken(userID);
+    const expiry = 60 * 60 * 24 * 9;
     await redisUtilClient.setEx(userID, expiry, newToken);
 
     return newToken;
   }
 
-  private async generateToken(containerName: string, file: string) {
+  private async generateBlobSASToken(containerName: string, file: string) {
     const blobServiceClient = new BlobServiceClient(
       `https://${STORAGE_ACCOUNT}.blob.core.windows.net`,
       new StorageSharedKeyCredential(STORAGE_ACCOUNT, STORAGE_ACCESS_KEY),
@@ -59,10 +58,10 @@ class SASTokenService {
     return sasToken;
   }
 
-  public async getToken(PeerVerificationDocumentsID: string, file: string) {
+  public async getSASTokenPeer(PeerVerificationDocumentsID: string, file: string) {
     await redisUtilClient.del(PeerVerificationDocumentsID);
 
-    const newToken = await this.generateToken(PeerVerificationDocumentsID, file);
+    const newToken = await this.generateBlobSASToken(PeerVerificationDocumentsID, file);
     const expiry = 60 * 60 * 25;
     await redisUtilClient.setEx(PeerVerificationDocumentsID, expiry, newToken);
 

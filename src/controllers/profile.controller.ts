@@ -33,4 +33,9 @@ export default class ProfileController {
       return profileService.searchByUsername(firstName, lastName);
     }
   }
+
+  @Get('/me/ranking')
+  async getRanking(@UserDetails() userDetails: TokenClaims) {
+    return profileService.getPercentileRanking(userDetails.sub);
+  }
 }

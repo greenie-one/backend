@@ -5,6 +5,7 @@ import { Document, DocumentModel, DocumentType } from '@/models/document.model';
 import { redisUtilClient } from '@/redisClient';
 import { RedisPUBSUB } from '@/redisClient/deleteService';
 import { SAStokenService } from './blobStorage.service';
+import { profileService } from './profile.service';
 
 class DocumentService {
   public async createDocument(userID: string, documentData: createDocumentDto): Promise<Document> {
@@ -29,6 +30,10 @@ class DocumentService {
       const updatedData = JSON.parse(data);
       updatedData.commited = true;
       await redisUtilClient.set(documentData.url, JSON.stringify(updatedData));
+
+      // Update score based on document uploaded
+      await profileService.modScore(userID, documentData.type, true);
+
       return newDocument;
     } else {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
@@ -93,12 +98,15 @@ class DocumentService {
     const fileName = documentToDelete.private_url.split(userID + '/');
     await RedisPUBSUB.docDelete(fileName[1], userID);
 
+    // Update score based on document deleted
+    await profileService.modScore(userID, documentToDelete.type, false);
+
     return { message: 'Document deleted successfully' };
   }
 
   public async getDocuments(userID: string) {
     const documents: Document[] = await DocumentModel.find({ user: userID });
-    const sasToken = await SAStokenService.getSAStoken(userID);
+    const sasToken = await SAStokenService.getSASTokenUser(userID);
 
     if (!documents) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);

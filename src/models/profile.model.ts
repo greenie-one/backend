@@ -28,6 +28,9 @@ export class Profile {
   @prop({ type: () => Verification })
   public verification?: Verification;
 
+  @prop({ type: Number, default: 0, index: true })
+  public score: number;
+
   public createdAt?: Date;
 
   public updatedAt?: Date;
