@@ -95,7 +95,7 @@ class DocumentService {
     }
 
     await documentToDelete.deleteOne();
-    const fileName = documentToDelete.url.split(userID + '/');
+    const fileName = documentToDelete.private_url.split(userID + '/');
     await RedisPUBSUB.docDelete(fileName[1], userID);
 
     // Update score based on document deleted
@@ -106,14 +106,14 @@ class DocumentService {
 
   public async getDocuments(userID: string) {
     const documents: Document[] = await DocumentModel.find({ user: userID });
-    const sasToken = await SAStokenService.getSAStoken(userID);
+    const sasToken = await SAStokenService.getSASTokenUser(userID);
 
     if (!documents) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
 
     for (let index = 0; index < documents.length; index++) {
-      documents[index].url = documents[index].url + '?' + sasToken;
+      documents[index].private_url = documents[index].private_url + '?' + sasToken;
     }
 
     return documents;

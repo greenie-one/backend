@@ -11,7 +11,7 @@ export class Profile {
   public lastName!: string;
 
   @prop({ type: String })
-  public profilePic!: string;
+  public profilePic?: string;
 
   @prop({ type: String })
   public greenie_id?: string;
@@ -21,9 +21,6 @@ export class Profile {
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;
-
-  @prop({ type: String, required: false })
-  public profilePicture?: string;
 
   @prop({ type: Array<string>, default: [] })
   public descriptionTags!: string[];

@@ -2,10 +2,10 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { LocationModel } from '@/models/location.model';
 import { Geolocation } from '@/remote/location/location';
-import { GPScompare } from '../dtos/location.dto';
+import { GPScompare, GetLocationResponse } from '../dtos/location.dto';
 
 class LocationService {
-  public async getCoordinates(userId: string, addresstype: string, address: string) {
+  public async getCoordinates(userId: string, addresstype: string, address: string): Promise<GetLocationResponse> {
     const coordinates = await Geolocation.getLocation(address).catch((err) => {
       console.log(err);
       console.log(coordinates);
@@ -19,7 +19,13 @@ class LocationService {
         coordinates: coordinates,
       });
 
-      return location;
+      return {
+        locationId: location._id.toString(),
+        address: location.address,
+        coordinates: location.coordinates.toString(),
+        type: location.type,
+        user: location.user.toString(),
+      };
     } else {
       console.log(coordinates);
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
