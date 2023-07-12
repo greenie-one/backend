@@ -76,7 +76,7 @@ class IDsService {
         id_type: IDTypeEnum.AADHAR,
         id_number: aadhaar_number,
         user: userId,
-        location: location._id,
+        location: location.locationId,
         id_data: verificationResponse,
       });
 
@@ -121,7 +121,7 @@ class IDsService {
         id_type: IDTypeEnum.PAN,
         id_number: addIDDto.id_number,
         user: userId,
-        location: location._id,
+        location: location.locationId,
         id_data: response,
       });
 
@@ -168,7 +168,7 @@ class IDsService {
         id_type: IDTypeEnum.DRIVING_LICENSE,
         id_number: addIDDto.id_number,
         user: userId,
-        location: location._id,
+        location: location.locationId,
         id_data: response,
       });
 

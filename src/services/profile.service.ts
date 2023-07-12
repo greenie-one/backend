@@ -1,14 +1,14 @@
-import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
+import { AddProfileResponse, CreateProfileDto, GetProfileResponse, GetSearchedProfilesResponse, UpdateProfileDto } from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentType } from '@/models/document.model';
 import { IDTypeEnum } from '@/models/id.model';
-import { Profile, ProfileModel } from '@/models/profile.model';
+import { ProfileModel } from '@/models/profile.model';
 import { documentWeights, scoreConstant } from '@/utils/documentWeight';
 import { UserModel } from '@models/users.model';
 
 class ProfileService {
-  public async createProfile(userId: string, profileData: CreateProfileDto): Promise<Profile> {
+  public async createProfile(userId: string, profileData: CreateProfileDto): Promise<AddProfileResponse> {
     try {
       // Check if user exists
       const findUser = await UserModel.findById(userId);
@@ -33,7 +33,7 @@ class ProfileService {
       bio: profileData.bio,
       descriptionTags: profileData.descriptionTags,
     });
-    return profile;
+    return { success: true, profileId: profile._id.toString() };
   }
 
   public async updateProfile(userId: string, updatedData: UpdateProfileDto) {
@@ -48,15 +48,25 @@ class ProfileService {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    return updatedProfile;
+    return { success: true, message: 'Updated Successfully' };
   }
 
-  public async getProfile(userId: string): Promise<Profile> {
+  public async getProfile(userId: string): Promise<GetProfileResponse> {
     const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
-    return profile;
+
+    const profileObj = {
+      profileId: profile._id.toString(),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      profilePic: profile.profilePic,
+      bio: profile.bio,
+      descriptionTags: profile.descriptionTags,
+    };
+
+    return profileObj;
   }
 
   public async getPercentileRanking(userId: string) {
@@ -108,14 +118,30 @@ class ProfileService {
     return profiles;
   }
 
-  public async searchByUsername(firstName: string, lastName: string) {
+  public async searchByUsername(firstName: string, lastName: string): Promise<GetSearchedProfilesResponse> {
     const regexFirstName = new RegExp(firstName, 'i');
     const regexLastName = new RegExp(lastName, 'i');
     const profiles = await ProfileModel.find({
       $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
     });
 
-    return profiles;
+    const profileArry = [];
+
+    if (profiles) {
+      for (const profile of profiles) {
+        const profileObj = {
+          profileId: profile._id.toString(),
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          profilePic: profile.profilePic,
+          bio: profile.bio,
+          descriptionTags: profile.descriptionTags,
+        };
+        profileArry.push(profileObj);
+      }
+    }
+
+    return { profiles: profileArry };
   }
 
   public async modScore(userId: string, documentType: DocumentType | IDTypeEnum, hasUploaded: boolean) {
