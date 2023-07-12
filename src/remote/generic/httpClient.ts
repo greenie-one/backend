@@ -12,7 +12,7 @@ export class HttpClient {
     let body: string | undefined = undefined;
     if (request.method === 'POST' && request.body) {
       if (request.headers?.['Content-Type'] === 'application/x-www-form-urlencoded') {
-        body = querystring.encode(request.body);
+        body = querystring.encode(request.body as Record<string, string>);
       } else {
         body = JSON.stringify(request.body);
       }
