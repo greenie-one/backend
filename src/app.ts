@@ -14,9 +14,14 @@ import fastify from 'fastify';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import { connect, set } from 'mongoose';
+import path from 'path';
 import { env } from './config';
 import { registerControllers } from './controllers';
 import { redisClient, redisUtilClient } from './redisClient';
+import { DtoCopyScript } from './script/script';
+
+const sourceDir = path.join(__dirname, '..', 'src', 'dtos');
+const destinationDir = path.join(__dirname, '..', 'src', 'copiedDtos');
 
 export class App {
   public app: ReturnType<typeof fastify>;
@@ -41,6 +46,8 @@ export class App {
     await this.connectToRedis();
     await this.initializeMiddlewares();
     this.initializeErrorHandling();
+
+    DtoCopyScript.copyDtoFiles(sourceDir, destinationDir);
 
     registerControllers(this.app, this.controllers);
     await this.app.listen({

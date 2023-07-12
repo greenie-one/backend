@@ -1,4 +1,4 @@
-import { AddWorkExperienceResponse, CreateWorkExperienceDto, GetWorkExperienceResponse, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import { AddWorkExperienceResponse, CreateWorkExperienceDto, FieldDto, GetWorkExperienceResponse, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -27,19 +27,10 @@ class WorkExperienceService {
     }
 
     const workExperience = await WorkExperienceModel.create({
-      designation: workExperienceData.designation,
-      companyId: workExperienceData.companyId,
-      email: workExperienceData.email,
+      ...workExperienceData,
       user: userId,
-      companyType: workExperienceData.companyType,
-      linkedInUrl: workExperienceData.linkedInUrl,
-      companyName: workExperienceData.companyName,
       companyStartDate: new Date(workExperienceData.companyStartDate),
       companyEndDate: new Date(workExperienceData.companyEndDate),
-      workType: workExperienceData.workType,
-      workMode: workExperienceData.workMode,
-      department: workExperienceData.department,
-      description: workExperienceData.description,
     });
     return { success: true, workExperienceId: workExperience._id.toString() };
   }
@@ -53,7 +44,7 @@ class WorkExperienceService {
 
     const workExpArry = [];
     for (const workExp of workExperiences) {
-      const workExpObj = {
+      const workExpObj: FieldDto = {
         workExpId: workExp._id.toString(),
         designation: workExp.designation,
         companyType: workExp.companyType,
@@ -63,10 +54,11 @@ class WorkExperienceService {
         workType: workExp.workType,
         companyName: workExp.companyName,
         companyId: workExp.companyId,
-        description: workExp.description,
-        companyStartDate: workExp.companyStartDate,
+        salary: workExp.salary,
+        reason_for_leaving: workExp.reason_for_leaving,
+        companyStartDate: workExp.companyStartDate.toString(),
         linkedInUrl: workExp.linkedInUrl,
-        companyEndDate: workExp.companyEndDate,
+        companyEndDate: workExp.companyEndDate.toString(),
       };
       workExpArry.push(workExpObj);
     }
