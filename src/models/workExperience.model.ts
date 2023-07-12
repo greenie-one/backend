@@ -45,6 +45,9 @@ export class WorkExperience {
   @prop({ type: String })
   public reason_for_leaving?: string;
 
+  @prop({ type: String })
+  public salary?: string;
+
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 

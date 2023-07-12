@@ -34,18 +34,22 @@ export class CreateWorkExperienceDto {
   @IsString()
   @IsNotEmpty()
   public companyId!: string;
+  
+  @IsString()
+  @IsOptional()
+  public linkedInUrl?: string;
 
   @IsString()
   @IsOptional()
-  public description?: string;
+  public reason_for_leaving?: string;
+
+  @IsString()
+  @IsOptional()
+  public salary?: string;
 
   @IsISO8601()
   @IsNotEmpty()
   public companyStartDate!: string;
-
-  @IsString()
-  @IsOptional()
-  public linkedInUrl?: string;
 
   @IsISO8601()
   @IsOptional()
@@ -87,7 +91,11 @@ export class UpdateWorkExperienceDto {
 
   @IsString()
   @IsOptional()
-  public description?: string;
+  public reason_for_leaving?: string;
+
+  @IsString()
+  @IsOptional()
+  public salary?: string;
 
   @IsISO8601()
   @IsOptional()
