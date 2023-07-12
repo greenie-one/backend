@@ -43,7 +43,7 @@ export class WorkExperience {
   public companyEndDate?: Date;
 
   @prop({ type: String })
-  public description?: string;
+  public reason_for_leaving?: string;
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;

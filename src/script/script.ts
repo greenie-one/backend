@@ -12,9 +12,9 @@ export class DtoCopyScript {
 
       if (!fs.existsSync(destinationFile)) {
         fs.copyFileSync(sourceFile, destinationFile);
-        console.log(`Copied ${file}`);
+        console.info(`Copied ${file}`);
       } else {
-        console.log(`Skipping ${file} (already exists)`);
+        console.info(`Skipping ${file} (already exists)`);
       }
     });
 
