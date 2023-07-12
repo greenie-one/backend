@@ -142,8 +142,16 @@ export class FieldDto {
   public workMode?: string;
 
   @IsString()
-  @IsNotEmpty()
-  public department!: string;
+  @IsOptional()
+  public department?: string;
+
+  @IsString()
+  @IsOptional()
+  public reason_for_leaving?: string;
+
+  @IsString()
+  @IsOptional()
+  public salary?: string;
 
   @IsString()
   @IsOptional()
