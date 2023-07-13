@@ -34,7 +34,7 @@ export class CreateWorkExperienceDto {
   @IsString()
   @IsNotEmpty()
   public companyId!: string;
-  
+
   @IsString()
   @IsOptional()
   public linkedInUrl?: string;
