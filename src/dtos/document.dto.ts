@@ -12,7 +12,7 @@ export class createDocumentDto {
 
   @IsNotEmpty()
   @IsString()
-  public url: string;
+  public private_url: string;
 }
 
 export class updateDocumentDto {
@@ -26,5 +26,5 @@ export class updateDocumentDto {
 
   @IsString()
   @IsOptional()
-  public url: string;
+  public private_url: string;
 }
