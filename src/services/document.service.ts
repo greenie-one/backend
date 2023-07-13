@@ -9,7 +9,7 @@ import { profileService } from './profile.service';
 
 class DocumentService {
   public async createDocument(userID: string, documentData: createDocumentDto): Promise<Document> {
-    const data = await redisUtilClient.get(documentData.url);
+    const data = await redisUtilClient.get(documentData.private_url);
     if (!data) {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
     }
@@ -29,7 +29,7 @@ class DocumentService {
       });
       const updatedData = JSON.parse(data);
       updatedData.commited = true;
-      await redisUtilClient.set(documentData.url, JSON.stringify(updatedData));
+      await redisUtilClient.set(documentData.private_url, JSON.stringify(updatedData));
 
       // Update score based on document uploaded
       await profileService.modScore(userID, documentData.type, true);
@@ -50,8 +50,8 @@ class DocumentService {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    if (documentData.url) {
-      const data = await redisUtilClient.get(documentData.url);
+    if (documentData.private_url) {
+      const data = await redisUtilClient.get(documentData.private_url);
 
       if (!data) {
         throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
@@ -65,16 +65,16 @@ class DocumentService {
         throw new HttpException(ErrorEnum.DOCUMENT_EXPIRED);
       }
 
-      const fileName = documentData.url.split(userID + '/');
+      const fileName = documentData.private_url.split(userID + '/');
       await RedisPUBSUB.docDelete(fileName[1], userID);
     }
     const updatedDocument = await DocumentModel.findByIdAndUpdate(documentId, { $set: documentData }, { new: true });
 
-    if (documentData.url && updatedDocument) {
-      const data = await redisUtilClient.get(documentData.url);
+    if (documentData.private_url && updatedDocument) {
+      const data = await redisUtilClient.get(documentData.private_url);
       const updatedData = JSON.parse(data);
       updatedData.commited = false;
-      await redisUtilClient.set(documentData.url, JSON.stringify(updatedData));
+      await redisUtilClient.set(documentData.private_url, JSON.stringify(updatedData));
     }
 
     if (!updatedDocument) {
