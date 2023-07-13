@@ -74,7 +74,7 @@ jobs:
       - name: Push DTO files to Destination Repository
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          SSH_DEPLOY_KEY: 'greenie.one'
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
           source-directory: 'src/dtos'
           destination-github-username: greenie-one
