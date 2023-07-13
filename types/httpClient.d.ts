@@ -1,3 +1,5 @@
+type PostBody = string | string[] | number | boolean | { [key: string]: PostBody };
+
 type HttpRequest = {
   url: string;
   headers?:
@@ -7,7 +9,7 @@ type HttpRequest = {
   toJSON?: boolean;
 } & (
   | {
-      body?: Record<string, string | string[] | number | boolean | HttpRequest.body>;
+      body?: Record<string, PostBody>;
       method: 'POST';
     }
   | {
