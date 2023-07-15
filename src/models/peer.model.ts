@@ -1,5 +1,5 @@
-import { getModelForClass, modelOptions, Post, prop, Ref } from '@typegoose/typegoose';
-import { PeerVerificationDocumentsModel, PeerVerificationModel, PeerVerificationSkillsModel } from './peerVerification.model';
+import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { Location } from './location.model';
 import { WorkExperience } from './workExperience.model';
 
 export enum State {
@@ -8,7 +8,34 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
-export enum PeerType {
+enum PeerFor {
+  LOCATION = 'Location',
+  WORKEXPERIENCE = 'WorkExperience',
+}
+
+class VerifictionByManager {
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public candidateId?: State;
+
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public department?: State;
+
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public designation?: State;
+
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public dateOfJoining?: State;
+
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public dateOfLeaving?: State;
+}
+
+class LocationFields {
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public success?: State;
+}
+
+export enum WorkVerificationBy {
   COLLEAGUE = 'COLLEAGUE',
   REPORTING_MANAGER = 'REPORTING_MANAGER',
   LINE_MANAGER = 'LINE_MANAGER',
@@ -16,13 +43,14 @@ export enum PeerType {
   CXO = 'CXO',
 }
 
-@Post<Peer>('deleteOne', async (doc) => {
-  await PeerVerificationModel.deleteMany({ peer: doc._id });
-  await PeerVerificationSkillsModel.deleteMany({ peer: doc._id });
-  await PeerVerificationDocumentsModel.deleteMany({ peer: doc._id });
-})
 @modelOptions({ schemaOptions: { timestamps: true } })
 export class Peer {
+  @prop({ required: true, enum: PeerFor, type: String })
+  public peerFor!: PeerFor;
+
+  @prop({ required: true, refPath: 'peerFor' })
+  public peerForRef!: Ref<WorkExperience | Location>;
+
   @prop({ required: true })
   public name!: string;
 
@@ -32,11 +60,10 @@ export class Peer {
   @prop({ required: true })
   public phone!: string;
 
-  @prop({ required: true, enum: PeerType, type: String })
-  public peerType!: PeerType;
+  @prop({ required: true })
+  public verification_by!: string;
 
-  @prop({ ref: 'WorkExperience', required: true })
-  public workExperience!: Ref<WorkExperience>;
+  public verification_fields!: VerifictionByManager | LocationFields;
 
   public createdAt?: Date;
 

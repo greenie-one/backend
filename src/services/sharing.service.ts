@@ -1,7 +1,7 @@
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
-import { DocumentSharing, DocumentSharingModel } from '@/models/documentSharing.model';
+import { DocumentSharing, DocumentSharingModel } from '@/models/sharing.model';
 
 class documentsSharingService {
   public async newPrivateDocument(userId: string, documentId: string): Promise<void> {
