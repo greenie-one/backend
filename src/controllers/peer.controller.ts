@@ -1,14 +1,16 @@
-import { CreatePeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
+import { TokenClaims } from '@/dtos/auth.dto';
+import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
 import { peerService } from '@/services/peer.service';
+import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Patch, Post } from '@/utils/decorators/methods';
 import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/peer')
 export default class PeerController {
-  @Post('/create')
-  async createPeer(@Body() data: CreatePeerDto) {
-    return peerService.createPeer(data);
+  @Post('work/create')
+  async createWorkPeer(@UserDetails() userDetails: TokenClaims, @Body() data: CreateWorkPeerDto) {
+    return peerService.createWorkPeer(userDetails.sub, data);
   }
 
   @Patch('/work/:pid')

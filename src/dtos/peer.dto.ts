@@ -1,30 +1,35 @@
-import { PeerFor } from '@models/peer.model';
+import { State, WorkVerificationBy } from '@models/peer.model';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class WorkExFieldsDTO {
   @IsString()
   @IsOptional()
-  public candidateId?: string;
+  @IsEnum(State)
+  public candidateId?: State;
 
   @IsString()
   @IsOptional()
-  public department?: string;
+  @IsEnum(State)
+  public department?: State;
 
   @IsString()
   @IsOptional()
-  public designation?: string;
+  @IsEnum(State)
+  public designation?: State;
 
   @IsString()
   @IsOptional()
-  public dateOfJoining?: string;
+  @IsEnum(State)
+  public dateOfJoining?: State;
 
   @IsString()
   @IsOptional()
-  public dateOfLeaving?: string;
+  @IsEnum(State)
+  public dateOfLeaving?: State;
 }
 
-export class CreatePeerDto {
+export class CreateWorkPeerDto {
   @IsString()
   @IsNotEmpty()
   public name!: string;
@@ -39,21 +44,17 @@ export class CreatePeerDto {
 
   @IsString()
   @IsNotEmpty()
-  public peerForRef!: string;
+  public ref!: string;
 
   @IsString()
+  @IsEnum(WorkVerificationBy)
   @IsNotEmpty()
-  public verification_by!: string;
+  public verification_by!: WorkVerificationBy;
 
-  @IsEnum(PeerFor)
-  @IsNotEmpty()
-  public peerFor!: PeerFor;
-
-  @ValidateIf((o) => o.peerFor === PeerFor.WORKEXPERIENCE)
   @ValidateNested()
   @Type(() => WorkExFieldsDTO)
   @IsNotEmpty()
-  public verification_fields?: WorkExFieldsDTO;
+  public verification_fields!: WorkExFieldsDTO;
 }
 
 export class UpdatePeerWorkVerificationDto {

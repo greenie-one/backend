@@ -1,16 +1,10 @@
 import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
-import { Location } from './location.model';
-import { WorkExperience } from './workExperience.model';
+import { User } from './users.model';
 
 export enum State {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
-}
-
-export enum PeerFor {
-  LOCATION = 'Location',
-  WORKEXPERIENCE = 'WorkExperience',
 }
 
 export class WorkExFields {
@@ -30,11 +24,6 @@ export class WorkExFields {
   public dateOfLeaving?: State;
 }
 
-class LocationFields {
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public success?: State;
-}
-
 export enum WorkVerificationBy {
   COLLEAGUE = 'COLLEAGUE',
   REPORTING_MANAGER = 'REPORTING_MANAGER',
@@ -44,12 +33,12 @@ export enum WorkVerificationBy {
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-export class Peer {
-  @prop({ required: true, enum: PeerFor, type: String })
-  public peerFor!: PeerFor;
+export class WorkPeer {
+  @prop({ required: true, ref: 'User', type: String })
+  public user!: Ref<User, string>;
 
-  @prop({ required: true, refPath: 'peerFor' })
-  public peerForRef!: Ref<WorkExperience | Location>;
+  @prop({ required: true, ref: 'WorkExperience', type: String })
+  public ref!: Ref<User, string>;
 
   @prop({ required: true })
   public name!: string;
@@ -60,15 +49,15 @@ export class Peer {
   @prop({ required: true })
   public phone!: string;
 
-  @prop({ required: true })
-  public verification_by!: string;
+  @prop({ required: true, enum: WorkVerificationBy, type: String })
+  public verification_by!: WorkVerificationBy;
 
   @prop({ required: true })
-  public verification_fields!: WorkExFields | LocationFields;
+  public verification_fields!: WorkExFields;
 
   public createdAt?: Date;
 
   public updatedAt?: Date;
 }
 
-export const PeerModel = getModelForClass(Peer);
+export const WorkPeerModel = getModelForClass(WorkPeer);
