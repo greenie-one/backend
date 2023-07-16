@@ -121,8 +121,12 @@ class DocumentService {
 
   public async getDocumentByType(userID: string, type: DocumentType): Promise<Document[]> {
     const documents: Document[] = await DocumentModel.find({ user: userID, type: type });
+    const sasToken = await SAStokenService.getSASTokenUser(userID);
     if (!documents) {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
+    }
+    for (let index = 0; index < documents.length; index++) {
+      documents[index].private_url = documents[index].private_url + '?' + sasToken;
     }
     return documents;
   }
