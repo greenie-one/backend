@@ -2,6 +2,8 @@ import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dt
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkPeer, WorkPeerModel } from '@/models/peer.model';
+import { ProfileModel } from '@/models/profile.model';
+import { verification } from '@/remote/peer/verification';
 
 class PeerService {
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto) {
@@ -10,7 +12,15 @@ class PeerService {
       user: userId,
     };
     const peer = await WorkPeerModel.create(peerDataObj);
+    const profile = await ProfileModel.findOne({ user: peer.user });
+    const url = `dev.greenie.one/verification/${peer.verification_by}/${peer._id}`;
 
+    await verification
+      .GetPeerVerification(peer.email, peer.phone, peer.name, `${profile.firstName} + ' ' + ${profile.lastName}`, url)
+      .catch((err) => {
+        console.error(err);
+        throw new HttpException(ErrorEnum.Server_ERROR);
+      });
     return peer;
   }
 

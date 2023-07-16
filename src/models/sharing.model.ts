@@ -1,6 +1,6 @@
 import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Document } from 'mongoose';
-import { Peer, State } from './peer.model';
+import { State, WorkPeer } from './peer.model';
 import { Skills } from './skills.model';
 import { User } from './users.model';
 
@@ -20,7 +20,7 @@ class Sharing {
   public sharedWith?: SharedWith;
 
   @prop({ refPath: 'sharedWith', required: true })
-  public sharedWithRef!: Ref<Peer | User>;
+  public sharedWithRef!: Ref<WorkPeer | User>;
 
   @prop({ enum: SharedThing, type: String, default: SharedThing.SKILLS })
   public sharedThing?: SharedThing;
