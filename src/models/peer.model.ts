@@ -7,6 +7,19 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
+export enum Bool {
+  YES = 'yes',
+  NO = 'no',
+}
+
+export enum Rating {
+  NON_COLLABORATIVE = 'non-collaborative',
+  RARELY_COLLABORATIVE = 'rarely-collaborative',
+  OCCASIONALLY_COLLABORATIVE = 'occasionally-collaborative',
+  MODERATELY_COLLABORATIVE = 'moderately-collaborative',
+  HIGHLY_COLLABORATIVE = 'highly-collaborative',
+}
+
 export class WorkExFields {
   @prop({ enum: State, type: String, default: State.PENDING })
   public candidateId?: State;
@@ -22,6 +35,24 @@ export class WorkExFields {
 
   @prop({ enum: State, type: String, default: State.PENDING })
   public dateOfLeaving?: State;
+
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public peerPost?: State;
+
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public salary?: State;
+
+  @prop({ enum: Rating, type: String })
+  public attitudeRating?: Rating;
+
+  @prop({ enum: Bool, type: String })
+  public eligibleForRehire?: Bool;
+
+  @prop({ enum: Bool, type: String })
+  public exitStatus?: Bool;
+
+  @prop({ type: String })
+  public review?: State;
 }
 
 export enum WorkVerificationBy {
