@@ -4,6 +4,7 @@ import { HttpException } from '@/exceptions/httpException';
 import { WorkPeer, WorkPeerModel } from '@/models/peer.model';
 import { ProfileModel } from '@/models/profile.model';
 import { verification } from '@/remote/peer/verification';
+import { env } from '@config';
 
 class PeerService {
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto) {
@@ -13,7 +14,7 @@ class PeerService {
     };
     const peer = await WorkPeerModel.create(peerDataObj);
     const profile = await ProfileModel.findOne({ user: peer.user });
-    const url = `dev.greenie.one/verification/${peer.verification_by}/${peer._id}`;
+    const url = `${env('REMOTE_BASE_URL')}/verification/${peer.verification_by}/${peer._id}`;
 
     await verification
       .GetPeerVerification(peer.email, peer.phone, peer.name, `${profile.firstName} + ' ' + ${profile.lastName}`, url)
@@ -21,6 +22,14 @@ class PeerService {
         console.error(err);
         throw new HttpException(ErrorEnum.Server_ERROR);
       });
+    return peer;
+  }
+
+  public async getPeerInformation(peerId: string) {
+    const peer = await WorkPeerModel.findById(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
     return peer;
   }
 

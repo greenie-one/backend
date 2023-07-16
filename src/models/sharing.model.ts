@@ -4,18 +4,21 @@ import { State, WorkPeer } from './peer.model';
 import { Skills } from './skills.model';
 import { User } from './users.model';
 
-enum SharedThing {
+export enum SharedThing {
   SKILLS = 'Skills',
   DOCUMENT = 'Document',
 }
 
-enum SharedWith {
+export enum SharedWith {
   PEER = 'Peer',
   USER = 'User',
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class Sharing {
+  @prop({ ref: 'User' })
+  public user!: Ref<User>;
+
   @prop({ enum: SharedWith, type: String, default: SharedWith.PEER })
   public sharedWith?: SharedWith;
 

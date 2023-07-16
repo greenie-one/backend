@@ -21,20 +21,29 @@ class WorkExperienceService {
     } catch (e) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
+    if (workExperienceData.companyEndDate) {
+      if (workExperienceData.companyEndDate && workExperienceData.companyStartDate < workExperienceData.companyEndDate) {
+        const workExperience = await WorkExperienceModel.create({
+          ...workExperienceData,
+          user: userId,
+          companyStartDate: new Date(workExperienceData.companyStartDate),
+          companyEndDate: new Date(workExperienceData.companyEndDate),
+        });
+        return { success: true, workExperienceId: workExperience._id.toString() };
+      } else {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
+    } else {
+      const workExperience = await WorkExperienceModel.create({
+        ...workExperienceData,
+        user: userId,
+        companyStartDate: new Date(workExperienceData.companyStartDate),
+        companyEndDate: new Date(workExperienceData.companyEndDate),
+      });
 
-    if (!(workExperienceData.companyEndDate && workExperienceData.companyStartDate < workExperienceData.companyEndDate)) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+      return { success: true, workExperienceId: workExperience._id.toString() };
     }
-
-    const workExperience = await WorkExperienceModel.create({
-      ...workExperienceData,
-      user: userId,
-      companyStartDate: new Date(workExperienceData.companyStartDate),
-      companyEndDate: new Date(workExperienceData.companyEndDate),
-    });
-    return { success: true, workExperienceId: workExperience._id.toString() };
   }
-
   public async getWorkExperience(userId: string): Promise<GetWorkExperienceResponse> {
     const workExperiences = await WorkExperienceModel.find({ user: userId });
 
@@ -89,7 +98,7 @@ class WorkExperienceService {
     if (workExperience.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    if (!(updatedData.companyStartDate && updatedData.companyEndDate && updatedData.companyStartDate < updatedData.companyEndDate)) {
+    if (!(updatedData.companyEndDate && updatedData.companyStartDate < updatedData.companyEndDate)) {
       throw new HttpException(ErrorEnum.INVALID_DATE);
     }
     const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
