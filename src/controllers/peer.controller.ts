@@ -16,8 +16,8 @@ export default class PeerController {
     return peerService.UpdatePeer(peerId, data);
   }
 
-  // @Get('/:id')
-  // async getPeerVerification(@UserDetails() userDetails: TokenClaims, @Params('id') peerId: string) {
+  // @Get('/get')
+  // async getPeerVerification(@Params('id') peerId: string) {
   //   return peerService.getPeerVerification(userDetails.sub, peerId);
   // }
 }
