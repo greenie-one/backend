@@ -13,7 +13,7 @@ export default class PeerController {
 
   @Patch('/work/:pid')
   async updatePeer(@Params('pid') peerId: string, @Body() data: UpdatePeerWorkVerificationDto) {
-    return peerService.UpdatePeer(peerId, data);
+    return peerService.UpdatePeerWorkVerification(peerId, data);
   }
 
   // @Get('/get')
