@@ -22,13 +22,7 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
-    if (
-      !(
-        workExperienceData.companyStartDate &&
-        workExperienceData.companyEndDate &&
-        workExperienceData.companyStartDate < workExperienceData.companyEndDate
-      )
-    ) {
+    if (!(workExperienceData.companyEndDate && workExperienceData.companyStartDate < workExperienceData.companyEndDate)) {
       throw new HttpException(ErrorEnum.INVALID_DATE);
     }
 

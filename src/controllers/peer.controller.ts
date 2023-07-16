@@ -1,4 +1,4 @@
-import { CreatePeerDto, UpdatePeerDto } from '@/dtos/peer.dto';
+import { CreatePeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
 import { peerService } from '@/services/peer.service';
 import { Controller } from '@/utils/decorators/controller';
 import { Patch, Post } from '@/utils/decorators/methods';
@@ -11,8 +11,8 @@ export default class PeerController {
     return peerService.createPeer(data);
   }
 
-  @Patch('/:pid')
-  async updatePeer(@Params('pid') peerId: string, @Body() data: UpdatePeerDto) {
+  @Patch('/work/:pid')
+  async updatePeer(@Params('pid') peerId: string, @Body() data: UpdatePeerWorkVerificationDto) {
     return peerService.UpdatePeer(peerId, data);
   }
 

@@ -13,7 +13,7 @@ export enum PeerFor {
   WORKEXPERIENCE = 'WorkExperience',
 }
 
-export class VerifictionByManager {
+export class WorkExFields {
   @prop({ enum: State, type: String, default: State.PENDING })
   public candidateId?: State;
 
@@ -64,7 +64,7 @@ export class Peer {
   public verification_by!: string;
 
   @prop({ required: true })
-  public verification_fields!: VerifictionByManager | LocationFields;
+  public verification_fields!: WorkExFields | LocationFields;
 
   public createdAt?: Date;
 
