@@ -16,6 +16,9 @@ export enum SharedWith {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class Sharing {
+  @prop({ ref: 'User' })
+  public user!: Ref<User>;
+
   @prop({ enum: SharedWith, type: String, default: SharedWith.PEER })
   public sharedWith?: SharedWith;
 

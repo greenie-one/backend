@@ -47,6 +47,7 @@ export enum ErrorEnum {
 
   // Peer
   SHARING_FAILED,
+  SHARING_NOT_FOUND,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -239,5 +240,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0046',
     message: 'Sharing failed',
     status: 500,
+  },
+  [ErrorEnum.SHARING_NOT_FOUND]: {
+    code: 'GR0047',
+    message: 'Sharing not found',
+    status: 404,
   },
 };
