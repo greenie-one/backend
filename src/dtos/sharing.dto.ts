@@ -17,6 +17,13 @@ export class sharingDTO {
   public sharedWith!: SharedWith;
 }
 
+export class getSharingThings {
+  @IsString()
+  public id!: string;
+
+  @IsString()
+  public data!: string;
+}
 export class sharingUpdateStateDTO {
   @IsString()
   @IsNotEmpty()

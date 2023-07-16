@@ -23,7 +23,7 @@ class ResidentialInfoService {
         state: residentialInfo.state,
         country: residentialInfo.country,
         start_date: residentialInfo.start_date,
-        end_date: residentialInfo.end_date,
+        end_date: residentialInfo.end_date ? residentialInfo.end_date : Date.now(),
       };
       residentialInfoArry.push(residentialInfObj);
     }
@@ -32,7 +32,7 @@ class ResidentialInfoService {
   }
 
   public async addResidentialInfo(userId: string, residentialInfoData: AddResidentialInfoDto): Promise<AddResidentialInfoResponse> {
-    if (!(residentialInfoData.start_date && residentialInfoData.end_date && residentialInfoData.end_date > residentialInfoData.start_date)) {
+    if (!(residentialInfoData.end_date && residentialInfoData.end_date > residentialInfoData.start_date)) {
       throw new HttpException(ErrorEnum.INVALID_DATE);
     }
     const residentialInfo = await ResidentialInfoModel.create({
@@ -58,7 +58,7 @@ class ResidentialInfoService {
   }
 
   public async updateResidentialInfo(userId: string, residentialInfoId: string, updatedData: UpdateResidentialInfoDto) {
-    if (!(updatedData.start_date && updatedData.end_date && updatedData.end_date > updatedData.start_date)) {
+    if (!(updatedData.end_date && updatedData.end_date > updatedData.start_date)) {
       throw new HttpException(ErrorEnum.INVALID_DATE);
     }
     const residentialInfo = await ResidentialInfoModel.findById(residentialInfoId);

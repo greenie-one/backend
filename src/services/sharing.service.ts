@@ -1,4 +1,4 @@
-import { sharingDTO, sharingUpdateStateDTO } from '@/dtos/sharing.dto';
+import { getSharingThings, sharingDTO, sharingUpdateStateDTO } from '@/dtos/sharing.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
@@ -48,19 +48,19 @@ class SharingService {
     }
   }
 
-  public async getSharedWithData(userOrPeerId: string) {
+  public async getSharedWithData(userOrPeerId: string): Promise<getSharingThings[]> {
     const data = await SharingModel.find({ sharedWithRef: userOrPeerId });
     const sharedThingsData = [];
     for (const item of data) {
       if (item.sharedThing == SharedThing.SKILLS) {
         const fetched = await SkillModel.findById(item.sharedThingRef);
-        sharedThingsData.push({ id: item.id, data: fetched });
+        sharedThingsData.push({ id: item.id, data: fetched.skillName });
       } else if (item.sharedThing == SharedThing.DOCUMENT) {
         const fetched = await DocumentModel.findById(item.sharedThingRef);
-        sharedThingsData.push({ id: item.id, data: fetched });
+        sharedThingsData.push({ id: item.id, data: fetched.name });
       }
     }
-    return { sharedThingsData };
+    return sharedThingsData;
   }
 
   public async updateShared(userOrPeerId: string, stateUpadte: sharingUpdateStateDTO) {

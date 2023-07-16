@@ -3,7 +3,7 @@ import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dt
 import { peerService } from '@/services/peer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
-import { Patch, Post } from '@/utils/decorators/methods';
+import { Get, Patch, Post } from '@/utils/decorators/methods';
 import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/peer')
@@ -18,8 +18,8 @@ export default class PeerController {
     return peerService.UpdatePeerWorkVerification(peerId, data);
   }
 
-  // @Get('/get')
-  // async getPeerVerification(@Params('id') peerId: string) {
-  //   return peerService.getPeerVerification(userDetails.sub, peerId);
-  // }
+  @Get('/get/:pid')
+  async getPeerVerification(@Params('id') peerId: string) {
+    return peerService.getPeerInformation(peerId);
+  }
 }
