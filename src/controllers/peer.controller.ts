@@ -18,7 +18,7 @@ export default class PeerController {
     return peerService.UpdatePeerWorkVerification(peerId, data);
   }
 
-  @Get('/get/:pid')
+  @Get('/work/:pid')
   async getPeerVerification(@Params('id') peerId: string) {
     return peerService.getPeerInformation(peerId);
   }
