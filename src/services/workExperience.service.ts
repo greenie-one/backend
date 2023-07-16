@@ -1,4 +1,10 @@
-import { AddWorkExperienceResponse, CreateWorkExperienceDto, FieldDto, GetWorkExperienceResponse, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import {
+  AddWorkExperienceResponse,
+  CreateWorkExperienceDto,
+  FieldDto,
+  GetWorkExperienceResponse,
+  UpdateWorkExperienceDto,
+} from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -16,13 +22,7 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
-    if (
-      !(
-        workExperienceData.companyStartDate &&
-        workExperienceData.companyEndDate &&
-        workExperienceData.companyStartDate < workExperienceData.companyEndDate
-      )
-    ) {
+    if (!(workExperienceData.companyEndDate && workExperienceData.companyStartDate < workExperienceData.companyEndDate)) {
       throw new HttpException(ErrorEnum.INVALID_DATE);
     }
 

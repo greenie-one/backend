@@ -1,8 +1,28 @@
-import { DocumentType } from '@/models/document.model';
-import { skillTypeEnum } from '@/models/skills.model';
-import { PeerType, State } from '@models/peer.model';
+import { PeerFor } from '@models/peer.model';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+
+export class WorkExFieldsDTO {
+  @IsString()
+  @IsOptional()
+  public candidateId?: string;
+
+  @IsString()
+  @IsOptional()
+  public department?: string;
+
+  @IsString()
+  @IsOptional()
+  public designation?: string;
+
+  @IsString()
+  @IsOptional()
+  public dateOfJoining?: string;
+
+  @IsString()
+  @IsOptional()
+  public dateOfLeaving?: string;
+}
 
 export class CreatePeerDto {
   @IsString()
@@ -17,108 +37,28 @@ export class CreatePeerDto {
   @IsNotEmpty()
   public phone!: string;
 
-  @IsEnum(PeerType)
+  @IsString()
   @IsNotEmpty()
-  public peerType!: PeerType;
+  public peerForRef!: string;
 
   @IsString()
   @IsNotEmpty()
-  public workExperience!: string;
+  public verification_by!: string;
+
+  @IsEnum(PeerFor)
+  @IsNotEmpty()
+  public peerFor!: PeerFor;
+
+  @ValidateIf((o) => o.peerFor === PeerFor.WORKEXPERIENCE)
+  @ValidateNested()
+  @Type(() => WorkExFieldsDTO)
+  @IsNotEmpty()
+  public verification_fields?: WorkExFieldsDTO;
 }
 
-export class UpdateSkillVerificationDto {
-  @IsEnum(State)
-  @IsNotEmpty()
-  public state!: State;
-}
-
-export class UpdateDocumentVerificationDto {
-  @IsEnum(State)
-  @IsNotEmpty()
-  public state!: State;
-}
-
-export class SkillDto {
-  @IsString()
-  @IsNotEmpty()
-  public skillName!: string;
-
-  @IsEnum(skillTypeEnum)
-  @IsNotEmpty()
-  public expertise!: skillTypeEnum;
-
-  @IsEnum(State)
-  @IsNotEmpty()
-  public state!: State;
-}
-
-export class DocumentDto {
-  @IsString()
-  @IsNotEmpty()
-  public documentName!: string;
-
-  @IsEnum(DocumentType)
-  @IsNotEmpty()
-  public documentType!: DocumentType;
-
-  @IsString()
-  @IsNotEmpty()
-  public public_url!: string;
-
-  @IsEnum(State)
-  @IsNotEmpty()
-  public state!: State;
-}
-
-export class FieldDto {
-  @IsNotEmpty()
-  public value!: string;
-
-  @IsEnum(State)
-  @IsNotEmpty()
-  public state!: State;
-}
-
-export class ExperienceDetailsDto {
+export class UpdatePeerWorkVerificationDto {
   @ValidateNested()
-  @Type(() => FieldDto)
-  public candidateId!: FieldDto;
-
-  @ValidateNested()
-  @Type(() => FieldDto)
-  public department!: FieldDto;
-
-  @ValidateNested()
-  @Type(() => FieldDto)
-  public designation!: FieldDto;
-
-  @ValidateNested()
-  @Type(() => FieldDto)
-  public dateOfJoining!: FieldDto;
-
-  @ValidateNested()
-  @Type(() => FieldDto)
-  public dateOfLeaving!: FieldDto;
-}
-
-export class PeerVerificationResponse {
-  @ValidateNested()
-  @Type(() => CreatePeerDto)
+  @Type(() => WorkExFieldsDTO)
   @IsNotEmpty()
-  public peerDetails!: CreatePeerDto;
-
-  @ValidateNested()
-  @Type(() => ExperienceDetailsDto)
-  @IsNotEmpty()
-  public peerVerificationStatus!: ExperienceDetailsDto;
-
-  @ValidateNested({ each: true })
-  @Type(() => SkillDto)
-  @IsOptional()
-  public peerSkillStatus?: SkillDto[];
-
-  @ValidateNested({ each: true })
-  @Type(() => DocumentDto)
-  @IsOptional()
-  public peerDocumentStatus?: DocumentDto[];
+  public verification_fields!: WorkExFieldsDTO;
 }
