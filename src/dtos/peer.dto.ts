@@ -1,6 +1,6 @@
 import { DocumentType } from '@/models/document.model';
 import { skillTypeEnum } from '@/models/skills.model';
-import { PeerType, State } from '@models/peer.model';
+import { PeerFor, State } from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 
@@ -17,9 +17,9 @@ export class CreatePeerDto {
   @IsNotEmpty()
   public phone!: string;
 
-  @IsEnum(PeerType)
+  @IsEnum(PeerFor)
   @IsNotEmpty()
-  public peerType!: PeerType;
+  public peerFor!: PeerFor;
 
   @IsString()
   @IsNotEmpty()

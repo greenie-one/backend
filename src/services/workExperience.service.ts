@@ -1,4 +1,10 @@
-import { AddWorkExperienceResponse, CreateWorkExperienceDto, FieldDto, GetWorkExperienceResponse, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import {
+  AddWorkExperienceResponse,
+  CreateWorkExperienceDto,
+  FieldDto,
+  GetWorkExperienceResponse,
+  UpdateWorkExperienceDto,
+} from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';

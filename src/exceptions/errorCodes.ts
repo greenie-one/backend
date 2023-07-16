@@ -44,6 +44,9 @@ export enum ErrorEnum {
   AADHAR_ALREADY_EXIST,
   PAN_ALREADY_EXIST,
   DRIVING_LICENSE_ALREADY_EXIST,
+
+  // Peer
+  SHARING_FAILED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -231,5 +234,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0045',
     message: 'Peer not found',
     status: 404,
+  },
+  [ErrorEnum.SHARING_FAILED]: {
+    code: 'GR0046',
+    message: 'Sharing failed',
+    status: 500,
   },
 };

@@ -4,12 +4,12 @@ import { Peer, State } from './peer.model';
 import { Skills } from './skills.model';
 import { User } from './users.model';
 
-enum SharedThing {
+export enum SharedThing {
   SKILLS = 'Skills',
   DOCUMENT = 'Document',
 }
 
-enum SharedWith {
+export enum SharedWith {
   PEER = 'Peer',
   USER = 'User',
 }

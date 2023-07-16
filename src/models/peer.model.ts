@@ -8,7 +8,7 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
-enum PeerFor {
+export enum PeerFor {
   LOCATION = 'Location',
   WORKEXPERIENCE = 'WorkExperience',
 }
