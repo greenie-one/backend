@@ -8,7 +8,7 @@ import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/peer')
 export default class PeerController {
-  @Post('work/create')
+  @Post('/work/create')
   async createWorkPeer(@UserDetails() userDetails: TokenClaims, @Body() data: CreateWorkPeerDto) {
     return peerService.createWorkPeer(userDetails.sub, data);
   }
@@ -18,7 +18,7 @@ export default class PeerController {
     return peerService.UpdatePeerWorkVerification(peerId, data);
   }
 
-  @Get('/get/:pid')
+  @Get('/work/:pid')
   async getPeerVerification(@Params('id') peerId: string) {
     return peerService.getPeerInformation(peerId);
   }
