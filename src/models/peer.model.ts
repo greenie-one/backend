@@ -8,12 +8,12 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
-enum PeerFor {
+export enum PeerFor {
   LOCATION = 'Location',
   WORKEXPERIENCE = 'WorkExperience',
 }
 
-class VerifictionByManager {
+export class VerifictionByManager {
   @prop({ enum: State, type: String, default: State.PENDING })
   public candidateId?: State;
 
@@ -63,6 +63,7 @@ export class Peer {
   @prop({ required: true })
   public verification_by!: string;
 
+  @prop({ required: true })
   public verification_fields!: VerifictionByManager | LocationFields;
 
   public createdAt?: Date;
