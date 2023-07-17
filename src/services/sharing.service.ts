@@ -1,4 +1,4 @@
-import { sharingDTO, sharingUpdateStateDTO } from '@/dtos/sharing.dto';
+import { getSharedResponseDTO, sharingDTO, sharingUpdateStateDTO } from '@/dtos/sharing.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
@@ -11,7 +11,7 @@ class SharingService {
     const sharingType = data.thing;
     try {
       if (sharingType == SharedThing.SKILLS) {
-        //check whether the skill is present with the userid
+        // check whether the skill is present with the userid
         data.thingId.forEach((id) => {
           if (SkillModel.findById(id, { user: userId })) {
             SharingModel.create({
@@ -26,7 +26,7 @@ class SharingService {
           }
         });
       } else if (sharingType == SharedThing.DOCUMENT) {
-        //check whether the document is present with the userid
+        // check whether the document is present with the userid
         data.thingId.forEach((id) => {
           if (DocumentModel.findById(id, { user: userId })) {
             SharingModel.create({
@@ -50,14 +50,32 @@ class SharingService {
 
   public async getSharedWithData(userOrPeerId: string) {
     const data = await SharingModel.find({ sharedWithRef: userOrPeerId });
-    const sharedThingsData = [];
+    let sharedThingsData: getSharedResponseDTO[];
     for (const item of data) {
       if (item.sharedThing == SharedThing.SKILLS) {
         const fetched = await SkillModel.findById(item.sharedThingRef);
-        sharedThingsData.push({ id: item.id, data: fetched });
+        sharedThingsData.push({
+          id: item._id.toString(),
+          state: item.state,
+          data: {
+            id: fetched._id.toString(),
+            skillName: fetched.skillName,
+            workExperience: fetched.workExperience.toString(),
+            expertise: fetched.expertise,
+          },
+        });
       } else if (item.sharedThing == SharedThing.DOCUMENT) {
         const fetched = await DocumentModel.findById(item.sharedThingRef);
-        sharedThingsData.push({ id: item.id, data: fetched });
+        sharedThingsData.push({
+          id: item._id.toString(),
+          state: item.state,
+          data: {
+            id: fetched._id.toString(),
+            name: fetched.name,
+            type: fetched.type,
+            private_url: fetched.private_url,
+          },
+        });
       }
     }
     return sharedThingsData;
