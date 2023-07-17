@@ -50,8 +50,8 @@ class DocumentService {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    if (documentData.private_url) {
-      const data = await redisUtilClient.get(documentData.private_url);
+    if (documentData.privateUrl) {
+      const data = await redisUtilClient.get(documentData.privateUrl);
 
       if (!data) {
         throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
@@ -65,16 +65,16 @@ class DocumentService {
         throw new HttpException(ErrorEnum.DOCUMENT_EXPIRED);
       }
 
-      const fileName = documentData.private_url.split(userID + '/');
+      const fileName = documentData.privateUrl.split(userID + '/');
       await RedisPUBSUB.docDelete(fileName[1], userID);
     }
     const updatedDocument = await DocumentModel.findByIdAndUpdate(documentId, { $set: documentData }, { new: true });
 
-    if (documentData.private_url && updatedDocument) {
-      const data = await redisUtilClient.get(documentData.private_url);
+    if (documentData.privateUrl && updatedDocument) {
+      const data = await redisUtilClient.get(documentData.privateUrl);
       const updatedData = JSON.parse(data);
       updatedData.commited = false;
-      await redisUtilClient.set(documentData.private_url, JSON.stringify(updatedData));
+      await redisUtilClient.set(documentData.privateUrl, JSON.stringify(updatedData));
     }
 
     if (!updatedDocument) {
@@ -95,7 +95,7 @@ class DocumentService {
     }
 
     await documentToDelete.deleteOne();
-    const fileName = documentToDelete.private_url.split(userID + '/');
+    const fileName = documentToDelete.privateUrl.split(userID + '/');
     await RedisPUBSUB.docDelete(fileName[1], userID);
 
     // Update score based on document deleted
@@ -113,7 +113,7 @@ class DocumentService {
     }
 
     for (let index = 0; index < documents.length; index++) {
-      documents[index].private_url = documents[index].private_url + '?' + sasToken;
+      documents[index].privateUrl = documents[index].privateUrl + '?' + sasToken;
     }
 
     return documents;
@@ -126,7 +126,7 @@ class DocumentService {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
     }
     for (let index = 0; index < documents.length; index++) {
-      documents[index].private_url = documents[index].private_url + '?' + sasToken;
+      documents[index].privateUrl = documents[index].privateUrl + '?' + sasToken;
     }
     return documents;
   }

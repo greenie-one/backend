@@ -73,7 +73,7 @@ class SharingService {
             id: fetched._id.toString(),
             name: fetched.name,
             type: fetched.type,
-            private_url: fetched.private_url,
+            privateUrl: fetched.privateUrl,
           },
         });
       }

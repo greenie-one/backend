@@ -26,7 +26,7 @@ export class updateDocumentDto {
 
   @IsString()
   @IsOptional()
-  public private_url: string;
+  public privateUrl: string;
 }
 
 export interface getDocumentResponseDto {
@@ -36,5 +36,5 @@ export interface getDocumentResponseDto {
 
   type: DocumentType;
 
-  private_url: string;
+  privateUrl: string;
 }
