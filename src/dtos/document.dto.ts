@@ -28,3 +28,13 @@ export class updateDocumentDto {
   @IsOptional()
   public private_url: string;
 }
+
+export interface getDocumentResponseDto {
+  id: string;
+
+  name: string;
+
+  type: DocumentType;
+
+  private_url: string;
+}
