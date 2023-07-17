@@ -31,10 +31,7 @@ export class updateDocumentDto {
 
 export interface getDocumentResponseDto {
   id: string;
-
   name: string;
-
   type: DocumentType;
-
   private_url: string;
 }

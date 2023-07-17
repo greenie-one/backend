@@ -1,5 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateProfileDto {
   @IsString()
@@ -47,46 +46,20 @@ export class UpdateProfileDto {
   public descriptionTags?: string[];
 }
 
-export class AddProfileResponse {
-  @IsString()
-  @IsOptional()
-  public profileId?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  public success?: boolean;
+export interface AddProfileResponse {
+  id: string;
+  success: boolean;
 }
 
-export class GetProfileResponse {
-  @IsString()
-  @IsOptional()
-  public profileId?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  public firstName!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  public lastName!: string;
-
-  @IsString()
-  @IsOptional()
-  public bio?: string;
-
-  @IsString()
-  @IsOptional()
-  public profilePic?: string;
-
-  @IsArray()
-  @IsOptional()
-  @IsString({ each: true })
-  public descriptionTags: string[];
+export interface profileResponseDto {
+  id: string;
+  firstName: string;
+  lastName: string;
+  bio: string;
+  profilePic: string;
+  descriptionTags: string[];
 }
 
-export class GetSearchedProfilesResponse {
-  @ValidateNested({ each: true })
-  @Type(() => GetProfileResponse)
-  @IsOptional()
-  public profiles?: GetProfileResponse[];
+export interface GetProfileResponse {
+  profiles: profileResponseDto[];
 }
