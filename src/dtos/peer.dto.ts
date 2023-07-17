@@ -1,4 +1,4 @@
-import { State, WorkVerificationBy } from '@models/peer.model';
+import { Bool, Rating, State, WorkVerificationBy } from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 
@@ -7,6 +7,35 @@ export class WorkExFieldsDTO {
   @IsOptional()
   @IsEnum(State)
   public candidateId?: State;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(State)
+  public peerPost?: State;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(State)
+  public salary?: State;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(Rating)
+  public attitudeRating?: Rating;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(Bool)
+  public eligibleForRehire?: Bool;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(Bool)
+  public exitStatus?: Bool;
+
+  @IsString()
+  @IsOptional()
+  public review?: string;
 
   @IsString()
   @IsOptional()
