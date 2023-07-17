@@ -8,11 +8,11 @@ export class VerifyOtpDTO {
 
   @IsEnum(otpType)
   @IsNotEmpty()
-  otp_type: otpType;
+  otpType: otpType;
 }
 
 export class SendPeerOtpDTO {
   @IsEnum(otpType)
   @IsNotEmpty()
-  otp_type: otpType;
+  otpType: otpType;
 }

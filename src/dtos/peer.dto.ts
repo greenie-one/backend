@@ -90,5 +90,5 @@ export class UpdatePeerWorkVerificationDto {
   @ValidateNested()
   @Type(() => WorkExFieldsDTO)
   @IsNotEmpty()
-  public verification_fields!: WorkExFieldsDTO;
+  public verificationFields!: WorkExFieldsDTO;
 }

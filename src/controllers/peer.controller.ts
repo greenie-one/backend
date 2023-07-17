@@ -31,12 +31,12 @@ export default class PeerController {
 
   @Post('/work/:peer_uuid/send-otp')
   async peerSendOTP(@Params('peer_uuid') peer_uuid: string, @Body() otp_data: SendPeerOtpDTO) {
-    return await peerService.peerSendOTP(peer_uuid, otp_data.otp_type);
+    return await peerService.peerSendOTP(peer_uuid, otp_data.otpType);
   }
 
   @Post('/work/:peer_uuid/verify-otp')
   async verifyPeerConatct(@Params('peer_uuid') peer_uuid: string, @Body() otp_data: VerifyOtpDTO) {
-    const status = await peerService.verifyPeerConatct(peer_uuid, otp_data.otp_type, otp_data.otp);
+    const status = await peerService.verifyPeerConatct(peer_uuid, otp_data.otpType, otp_data.otp);
     return { success: status, message: 'Verified' };
   }
 }
