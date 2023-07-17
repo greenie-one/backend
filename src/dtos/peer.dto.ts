@@ -78,12 +78,12 @@ export class CreateWorkPeerDto {
   @IsString()
   @IsEnum(WorkVerificationBy)
   @IsNotEmpty()
-  public verification_by!: WorkVerificationBy;
+  public verificationBy!: WorkVerificationBy;
 
   @ValidateNested()
   @Type(() => WorkExFieldsDTO)
   @IsNotEmpty()
-  public verification_fields!: WorkExFieldsDTO;
+  public verificationFields!: WorkExFieldsDTO;
 }
 
 export class UpdatePeerWorkVerificationDto {

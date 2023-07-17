@@ -78,7 +78,7 @@ class SharingService {
         });
       }
     }
-    return sharedThingsData;
+    return { data: sharedThingsData };
   }
 
   public async updateShared(userOrPeerId: string, stateUpadte: sharingUpdateStateDTO) {

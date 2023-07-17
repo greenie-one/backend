@@ -48,6 +48,9 @@ export enum ErrorEnum {
   // Peer
   SHARING_FAILED,
   SHARING_NOT_FOUND,
+  INVALID_PEER_UUID,
+  INVALID_PEER_ID,
+  PEER_NOT_VERIFIED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -245,5 +248,20 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0047',
     message: 'Sharing not found',
     status: 404,
+  },
+  [ErrorEnum.INVALID_PEER_UUID]: {
+    code: 'GR0048',
+    message: 'Invalid peer uuid',
+    status: 400,
+  },
+  [ErrorEnum.INVALID_PEER_ID]: {
+    code: 'GR0049',
+    message: 'Invalid peer id',
+    status: 400,
+  },
+  [ErrorEnum.PEER_NOT_VERIFIED]: {
+    code: 'GR0050',
+    message: 'Peer not verified',
+    status: 400,
   },
 };

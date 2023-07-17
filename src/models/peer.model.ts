@@ -49,10 +49,10 @@ export class WorkExFields {
   public eligibleForRehire?: Bool;
 
   @prop({ enum: Bool, type: String })
-  public exitStatus?: Bool;
+  public exitProcedure?: Bool;
 
   @prop({ type: String })
-  public review?: State;
+  public review?: string;
 }
 
 export enum WorkVerificationBy {
@@ -80,11 +80,17 @@ export class WorkPeer {
   @prop({ required: true })
   public phone!: string;
 
+  @prop({ type: Boolean, default: false })
+  public emailVerified?: boolean;
+
+  @prop({ type: Boolean, default: false })
+  public phoneVerified?: boolean;
+
   @prop({ required: true, enum: WorkVerificationBy, type: String })
-  public verification_by!: WorkVerificationBy;
+  public verificationBy!: WorkVerificationBy;
 
   @prop({ required: true })
-  public verification_fields!: WorkExFields;
+  public verificationFields!: WorkExFields;
 
   public createdAt?: Date;
 
