@@ -1,4 +1,5 @@
 import { TokenClaims } from '@/dtos/auth.dto';
+import { SendPeerOtpDTO, VerifyOtpDTO } from '@/dtos/otp.dto';
 import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
 import { peerService } from '@/services/peer.service';
 import { UserDetails } from '@/utils/decorators/auth';
@@ -26,5 +27,16 @@ export default class PeerController {
   @Get('/work/:peer_uuid')
   async getPeerVerification(@Params('peer_uuid') peer_uuid: string) {
     return peerService.getPeerInformation(peer_uuid);
+  }
+
+  @Post('/work/:peer_uuid/send-otp')
+  async peerSendOTP(@Params('peer_uuid') peer_uuid: string, @Body() otp_data: SendPeerOtpDTO) {
+    return await peerService.peerSendOTP(peer_uuid, otp_data.otp_type);
+  }
+
+  @Post('/work/:peer_uuid/verify-otp')
+  async verifyPeerConatct(@Params('peer_uuid') peer_uuid: string, @Body() otp_data: VerifyOtpDTO) {
+    const status = await peerService.verifyPeerConatct(peer_uuid, otp_data.otp_type, otp_data.otp);
+    return { success: status, message: 'Verified' };
   }
 }

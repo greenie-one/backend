@@ -4,9 +4,11 @@ import { HttpException } from '@/exceptions/httpException';
 import { WorkPeer, WorkPeerModel } from '@/models/peer.model';
 import { ProfileModel } from '@/models/profile.model';
 import { redisClient } from '@/redisClient';
+import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
 import { env } from '@config';
 import { randomUUID } from 'crypto';
+import { otpService } from './otp.service';
 
 class PeerService {
   public async peerUUIDtoPeerId(uuid: string) {
@@ -77,7 +79,33 @@ class PeerService {
       await peer.save();
     }
 
+    if (!peer.emailVerified || !peer.phoneVerified) {
+      throw new HttpException(ErrorEnum.PEER_NOT_VERIFIED);
+    }
+
     return peer;
+  }
+
+  public async peerSendOTP(peer_uuid: string, otp_type: otpType) {
+    const { peerId } = await this.peerUUIDtoPeerId(peer_uuid);
+    const peer = await WorkPeerModel.findById(peerId);
+    const { email, phone } = peer;
+    if (otp_type === 'EMAIL') {
+      await otpService.sendOTP(email, otp_type);
+    } else {
+      await otpService.sendOTP(phone, otp_type);
+    }
+  }
+
+  public async verifyPeerConatct(peer_uuid: string, otp_type: otpType, otp: string) {
+    const { peerId } = await this.peerUUIDtoPeerId(peer_uuid);
+    const peer = await WorkPeerModel.findById(peerId);
+    const { email, phone } = peer;
+    if (otp_type === 'EMAIL') {
+      return await otpService.verifyOTP(email, otp_type, otp);
+    } else {
+      return await otpService.verifyOTP(phone, otp_type, otp);
+    }
   }
 
   public async UpdatePeerWorkVerification(peerId: string, updatedData: UpdatePeerWorkVerificationDto) {

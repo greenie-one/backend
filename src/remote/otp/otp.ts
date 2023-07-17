@@ -1,27 +1,23 @@
 import { env } from '@/config';
 import { HttpClient } from '../generic/httpClient';
 
-enum otpType {
+export enum otpType {
   EMAIL = 'EMAIL',
   MOBILE = 'MOBILE',
 }
 
-export type SendOtp = {
+type SendOtp = {
   contact: string;
   type: otpType;
   otp: string;
 };
 
-export class EmailOtp {
-  static async sendOtp(email: string, otp: string) {
+export class Otp {
+  static async sendOtp(otp_data: SendOtp) {
     return HttpClient.callApi({
       url: `${env('REMOTE_BASE_URL')}/otp/send`,
       method: 'POST',
-      body: {
-        contact: email,
-        type: otpType.EMAIL,
-        otp,
-      } as SendOtp,
+      body: otp_data,
     });
   }
 }

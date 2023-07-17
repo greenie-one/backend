@@ -51,6 +51,7 @@ export enum ErrorEnum {
   INVALID_PEER_UUID,
   INVALID_PEER_ID,
   PEER_NOT_VERIFIED,
+  INVALID_OTP,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -262,6 +263,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.PEER_NOT_VERIFIED]: {
     code: 'GR0050',
     message: 'Peer not verified',
+    status: 400,
+  },
+  [ErrorEnum.INVALID_OTP]: {
+    code: 'GRA0014',
+    message: 'Invalid OTP',
     status: 400,
   },
 };
