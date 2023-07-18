@@ -1,11 +1,12 @@
 import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { WorkPeer, WorkPeerModel } from '@/models/peer.model';
+import { WorkExFields, WorkPeer, WorkPeerModel, defaultWorkExFields } from '@/models/peer.model';
 import { ProfileModel } from '@/models/profile.model';
 import { redisClient } from '@/redisClient';
 import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
+import { copyFieldsFromInstance, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
 import { randomUUID } from 'crypto';
 import { otpService } from './otp.service';
@@ -43,8 +44,15 @@ class PeerService {
   }
 
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto) {
+    let obj: WorkExFields;
+    try {
+      obj = createClassInstanceWithFields<WorkExFields>(Object.keys(peerData), new WorkExFields(), defaultWorkExFields());
+    } catch (e) {
+      throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, e.message);
+    }
     const peerDataObj: WorkPeer = {
       ...peerData,
+      verificationFields: obj,
       user: userId,
     };
     const peer = await WorkPeerModel.create(peerDataObj);
@@ -108,17 +116,21 @@ class PeerService {
     }
   }
 
-  public async UpdatePeerWorkVerification(peerId: string, updatedData: UpdatePeerWorkVerificationDto) {
+  public async UpdatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
+    const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
     if (!peer.emailVerified || !peer.phoneVerified) {
       throw new HttpException(ErrorEnum.PEER_NOT_VERIFIED);
     }
-
-    const updatedstate = await WorkPeerModel.findByIdAndUpdate(peerId, { $set: updatedData }, { new: true });
-
-    if (!updatedstate) {
-      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    try {
+      copyFieldsFromInstance(updatedData.verificationFields, peer.verificationFields);
+    } catch (error) {
+      throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
+    peer.save();
 
     return { success: true, message: 'Updated Successfully' };
   }
