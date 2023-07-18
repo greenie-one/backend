@@ -19,9 +19,9 @@ export default class PeerController {
     return peerService.resendLinksToPeers(userDetails.sub, peerId);
   }
 
-  @Patch('/work/:id')
-  async updatePeer(@Params('id') peerId: string, @Body() data: UpdatePeerWorkVerificationDto) {
-    return peerService.UpdatePeerWorkVerification(peerId, data);
+  @Patch('/work/:peerUUID')
+  async updatePeer(@Params('peerUUID') peerUUID: string, @Body() data: UpdatePeerWorkVerificationDto) {
+    return peerService.UpdatePeerWorkVerification(peerUUID, data);
   }
 
   @Get('/work/:peerUUID')
