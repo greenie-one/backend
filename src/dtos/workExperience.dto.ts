@@ -50,8 +50,8 @@ export class CreateWorkExperienceDto {
   @IsNotEmpty()
   public companyStartDate!: string;
 
-  @IsISO8601()
   @IsOptional()
+  @IsISO8601()
   public companyEndDate?: string;
 }
 
