@@ -4,7 +4,7 @@ import { skillService } from '@/services/skills.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Get, Post } from '@/utils/decorators/methods';
-import { Body } from '@/utils/decorators/request';
+import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/skill')
 export default class skillController {
@@ -16,5 +16,10 @@ export default class skillController {
   @Get('/get')
   async getSkill(@UserDetails() userDetails: TokenClaims) {
     return skillService.getSkills(userDetails.sub);
+  }
+
+  @Get('/get/:id')
+  async getSkillById(@UserDetails() userDetails: TokenClaims, @Params('id') skillId: string) {
+    return skillService.getSkillById(userDetails.sub, skillId);
   }
 }

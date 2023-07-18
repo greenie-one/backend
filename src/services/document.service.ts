@@ -1,4 +1,4 @@
-import { createDocumentDto, updateDocumentDto } from '@/dtos/document.dto';
+import { createDocumentDto, getDocumentResponseDto, updateDocumentDto } from '@/dtos/document.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel, DocumentType } from '@/models/document.model';
@@ -129,6 +129,23 @@ class DocumentService {
       documents[index].privateUrl = documents[index].privateUrl + '?' + sasToken;
     }
     return documents;
+  }
+
+  public async getDocumentById(userId: string, id: string): Promise<getDocumentResponseDto> {
+    const document = await DocumentModel.findById(id);
+
+    if (!document) {
+      throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
+    }
+
+    const resp: getDocumentResponseDto = {
+      id: document._id.toString(),
+      name: document.name,
+      type: document.type,
+      privateUrl: document.privateUrl,
+    };
+
+    return resp;
   }
 }
 

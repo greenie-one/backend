@@ -1,4 +1,10 @@
-import { AddWorkExperienceResponse, CreateWorkExperienceDto, GetWorkExperienceResponse, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import {
+  AddWorkExperienceResponse,
+  CreateWorkExperienceDto,
+  GetWorkExperienceResponse,
+  UpdateWorkExperienceDto,
+  workExperienceResponseDto,
+} from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -104,6 +110,33 @@ class WorkExperienceService {
     }
 
     return { success: true, message: 'Updated Successfully' };
+  }
+
+  public async getWorkExperienceById(userId: string, id: string): Promise<workExperienceResponseDto> {
+    const workExperience = await WorkExperienceModel.findById(id);
+
+    if (!workExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    const resp: workExperienceResponseDto = {
+      id: workExperience._id.toString(),
+      designation: workExperience.designation,
+      companyType: workExperience.companyType,
+      email: workExperience.email,
+      workMode: workExperience.workMode,
+      department: workExperience.department,
+      workType: workExperience.workType,
+      companyName: workExperience.companyName,
+      companyId: workExperience.companyId,
+      salary: workExperience.salary,
+      reason_for_leaving: workExperience.reason_for_leaving,
+      companyStartDate: workExperience.companyStartDate.toString(),
+      linkedInUrl: workExperience.linkedInUrl,
+      companyEndDate: workExperience.companyEndDate.toString(),
+    };
+
+    return resp;
   }
 }
 
