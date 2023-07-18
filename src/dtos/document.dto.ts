@@ -32,6 +32,11 @@ export class updateDocumentDto {
   @IsString()
   @IsOptional()
   public privateUrl: string;
+
+  @ValidateIf((o) => o.type === DocumentType.WORK)
+  @IsNotEmpty()
+  @IsString()
+  public workExperience?: string;
 }
 
 export interface getDocumentResponseDto {
