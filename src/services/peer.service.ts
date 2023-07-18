@@ -126,13 +126,17 @@ class PeerService {
     if (!peer.emailVerified || !peer.phoneVerified) {
       throw new HttpException(ErrorEnum.PEER_NOT_VERIFIED);
     }
+
+    let to_update;
     try {
-      copyFieldsFromInstance(updatedData.verificationFields, peer.verificationFields);
-      console.info(`Updated Peer Verification Fields: ${peer.verificationFields}`);
+      console.info(`Before Updating Peer Verification Fields: ${peer.verificationFields}`);
+      to_update = copyFieldsFromInstance(updatedData.verificationFields, peer.verificationFields, new WorkExFields());
+      console.info(`Updated Peer Verification Fields: ${to_update}`);
     } catch (error) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
-    peer.save();
+
+    await WorkPeerModel.findByIdAndUpdate(peerId, { verificationFields: to_update }, { new: true });
 
     return { success: true, message: 'Updated Successfully' };
   }
