@@ -7,11 +7,6 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
-export enum Bool {
-  YES = 'yes',
-  NO = 'no',
-}
-
 export enum Rating {
   NON_COLLABORATIVE = 'non-collaborative',
   RARELY_COLLABORATIVE = 'rarely-collaborative',
@@ -45,11 +40,11 @@ export class WorkExFields {
   @prop({ enum: Rating, type: String })
   public attitudeRating?: Rating;
 
-  @prop({ enum: Bool, type: String })
-  public eligibleForRehire?: Bool;
+  @prop({ type: Boolean })
+  public eligibleForRehire?: boolean;
 
-  @prop({ enum: Bool, type: String })
-  public exitProcedure?: Bool;
+  @prop({ type: Boolean })
+  public exitProcedure?: boolean;
 
   @prop({ type: String })
   public review?: string;
