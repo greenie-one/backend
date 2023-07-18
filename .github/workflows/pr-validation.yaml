@@ -19,7 +19,7 @@ jobs:
       with:
         fetch-depth: 1
     - name: Run relicx-ai/body-regex-validator-action
-      uses: relicx-ai/body-regex-validator-action@master
+      uses: relicx-ai/body-regex-validator-action@main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PULL_REQUEST_PATTERN: '\b(AB#[0-9]+)$'
