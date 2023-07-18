@@ -16,8 +16,7 @@ jobs:
     steps:
     - name: Run actions/checkout 
       uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
+
     - name: Run relicx-ai/body-regex-validator-action
       uses: relicx-ai/body-regex-validator-action@main
       env:
@@ -25,4 +24,4 @@ jobs:
         PULL_REQUEST_PATTERN: '\b(AB#[0-9]+)$'
         PULL_REQUEST_COMMENT: 'Pull request is not linked to Azure booards item.'
         ISSUE_PATTERN: '(?s).*'
-        ISSUE_COMMENT: ''
+        ISSUE_COMMENT: 'We don't use github issues'
