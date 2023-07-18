@@ -1,0 +1,28 @@
+name: PR Validation
+on: 
+  pull_request:
+    branches:
+      - dev
+      - main
+    types: 
+      - opened
+      - edited
+      - reopened
+      - synchronize
+jobs:
+  pull_request_validator:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run actions/checkout 
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Run relicx-ai/body-regex-validator-action
+      uses: relicx-ai/body-regex-validator-action
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PULL_REQUEST_PATTERN: '\b(AB#[0-9]+)$'
+        PULL_REQUEST_COMMENT: 'Pull request is not linked to Azure booards item.'
+        ISSUE_PATTERN: '(?s).*'
+        ISSUE_COMMENT: ''
