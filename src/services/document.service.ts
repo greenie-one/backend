@@ -26,7 +26,7 @@ class DocumentService {
       const newDocument = await DocumentModel.create({
         ...documentData,
         user: userID,
-      });
+      } as Document);
       const updatedData = JSON.parse(data);
       updatedData.commited = true;
       await redisUtilClient.set(documentData.privateUrl, JSON.stringify(updatedData));
