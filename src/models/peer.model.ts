@@ -7,6 +7,14 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
+export class Status {
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public state: State;
+
+  @prop({ type: String })
+  public reason?: string;
+}
+
 export enum Rating {
   NON_COLLABORATIVE = 'non-collaborative',
   RARELY_COLLABORATIVE = 'rarely-collaborative',
@@ -16,26 +24,26 @@ export enum Rating {
 }
 
 export class WorkExFields {
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public candidateId?: State;
+  @prop()
+  public candidateId?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public department?: State;
+  @prop()
+  public department?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public designation?: State;
+  @prop()
+  public designation?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public dateOfJoining?: State;
+  @prop()
+  public dateOfJoining?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public dateOfLeaving?: State;
+  @prop()
+  public dateOfLeaving?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public peerPost?: State;
+  @prop()
+  public peerPost?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public salary?: State;
+  @prop()
+  public salary?: Status;
 
   @prop({ enum: Rating, type: String })
   public attitudeRating?: Rating;
