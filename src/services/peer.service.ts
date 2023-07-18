@@ -47,6 +47,7 @@ class PeerService {
     let obj: WorkExFields;
     try {
       obj = createClassInstanceWithFields<WorkExFields>(Object.keys(peerData), new WorkExFields(), defaultWorkExFields());
+      console.info(`created work peer with fields ${JSON.stringify(obj)}`);
     } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, e.message);
     }
@@ -127,6 +128,7 @@ class PeerService {
     }
     try {
       copyFieldsFromInstance(updatedData.verificationFields, peer.verificationFields);
+      console.info(`Updated Peer Verification Fields: ${peer.verificationFields}`);
     } catch (error) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
