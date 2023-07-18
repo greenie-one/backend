@@ -2,6 +2,7 @@ import { createDocumentDto, getDocumentResponseDto, updateDocumentDto } from '@/
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel, DocumentType } from '@/models/document.model';
+import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisUtilClient } from '@/redisClient';
 import { RedisPUBSUB } from '@/redisClient/deleteService';
 import { SAStokenService } from './blobStorage.service';
@@ -23,10 +24,16 @@ class DocumentService {
     }
 
     if (data) {
+      if (documentData.workExperience) {
+        const workex = await WorkExperienceModel.findById(documentData.workExperience, { user: userID });
+        if (!workex) {
+          throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+        }
+      }
       const newDocument = await DocumentModel.create({
         ...documentData,
         user: userID,
-      });
+      } as Document);
       const updatedData = JSON.parse(data);
       updatedData.commited = true;
       await redisUtilClient.set(documentData.privateUrl, JSON.stringify(updatedData));
@@ -48,6 +55,13 @@ class DocumentService {
 
     if (document.user.toString() !== userID) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    if (documentData.workExperience) {
+      const workex = await WorkExperienceModel.findById(documentData.workExperience, { user: userID });
+      if (!workex) {
+        throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+      }
     }
 
     if (documentData.privateUrl) {

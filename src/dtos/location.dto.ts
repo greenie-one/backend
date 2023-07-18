@@ -1,4 +1,3 @@
-import { AddressType } from '@/models/location.model';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export interface locationResponse {
@@ -13,8 +12,6 @@ export class GPScompare {
 
 export interface GetLocationResponse {
   id: string;
-  address: string;
   coordinates: string;
-  type: AddressType;
   user: string;
 }

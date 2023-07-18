@@ -61,5 +61,9 @@ export interface profileResponseDto {
 }
 
 export interface GetProfileResponse {
+  profile: profileResponseDto;
+}
+
+export interface SearchProfilesResponse {
   profiles: profileResponseDto[];
 }

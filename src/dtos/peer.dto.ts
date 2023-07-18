@@ -1,37 +1,46 @@
-import { Bool, Rating, State, WorkVerificationBy } from '@models/peer.model';
+import { Rating, State, WorkVerificationBy } from '@models/peer.model';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+
+class StatusField {
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(State)
+  public state!: State;
+
+  @IsString()
+  @IsOptional()
+  public reason?: string;
+}
 
 export class WorkExFieldsDTO {
-  @IsString()
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  @IsEnum(State)
-  public candidateId?: State;
+  public candidateId?: StatusField;
 
-  @IsString()
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  @IsEnum(State)
-  public peerPost?: State;
+  public peerPost?: StatusField;
 
-  @IsString()
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  @IsEnum(State)
-  public salary?: State;
+  public salary?: StatusField;
 
   @IsString()
   @IsOptional()
   @IsEnum(Rating)
   public attitudeRating?: Rating;
 
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  @IsEnum(Bool)
-  public eligibleForRehire?: Bool;
+  public eligibleForRehire?: boolean;
 
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  @IsEnum(Bool)
-  public exitStatus?: Bool;
+  public exitStatusField?: boolean;
 
   @IsString()
   @IsOptional()
@@ -39,23 +48,22 @@ export class WorkExFieldsDTO {
 
   @IsString()
   @IsOptional()
-  @IsEnum(State)
-  public department?: State;
+  public department?: StatusField;
 
-  @IsString()
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  @IsEnum(State)
-  public designation?: State;
+  public designation?: StatusField;
 
-  @IsString()
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  @IsEnum(State)
-  public dateOfJoining?: State;
+  public dateOfJoining?: StatusField;
 
-  @IsString()
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  @IsEnum(State)
-  public dateOfLeaving?: State;
+  public dateOfLeaving?: StatusField;
 }
 
 export class CreateWorkPeerDto {

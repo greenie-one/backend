@@ -24,19 +24,19 @@ export default class PeerController {
     return peerService.UpdatePeerWorkVerification(peerId, data);
   }
 
-  @Get('/work/:peer_uuid')
-  async getPeerVerification(@Params('peer_uuid') peer_uuid: string) {
-    return peerService.getPeerInformation(peer_uuid);
+  @Get('/work/:peerUUID')
+  async getPeerVerification(@Params('peerUUID') peerUUID: string) {
+    return peerService.getPeerInformation(peerUUID);
   }
 
-  @Post('/work/:peer_uuid/send-otp')
-  async peerSendOTP(@Params('peer_uuid') peer_uuid: string, @Body() otp_data: SendPeerOtpDTO) {
-    return await peerService.peerSendOTP(peer_uuid, otp_data.otpType);
+  @Post('/work/:peerUUID/send-otp')
+  async peerSendOTP(@Params('peerUUID') peerUUID: string, @Body() otp_data: SendPeerOtpDTO) {
+    return await peerService.peerSendOTP(peerUUID, otp_data.otpType);
   }
 
-  @Post('/work/:peer_uuid/verify-otp')
-  async verifyPeerConatct(@Params('peer_uuid') peer_uuid: string, @Body() otp_data: VerifyOtpDTO) {
-    const status = await peerService.verifyPeerConatct(peer_uuid, otp_data.otpType, otp_data.otp);
+  @Post('/work/:peerUUID/verify-otp')
+  async verifyPeerConatct(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyOtpDTO) {
+    const status = await peerService.verifyPeerConatct(peerUUID, otp_data.otpType, otp_data.otp);
     return { success: status, message: 'Verified' };
   }
 }

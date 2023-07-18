@@ -1,16 +1,12 @@
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 import { Schema } from 'mongoose';
 import { User } from './users.model';
-import { ResidentialInfo } from './residentialInfo.model';
 
 export class Location {
-  @prop({ required: true, ref: User })
-  public residentialInfo!: Ref<ResidentialInfo>;
-
   @prop({ required: true, type: Schema.Types.Mixed })
   public coordinates!: object;
 
-  @prop({ required: true, ref: User })
+  @prop({ required: true, ref: 'User' })
   public user!: Ref<User>;
 
   @prop({ type: Date, default: Date.now })
