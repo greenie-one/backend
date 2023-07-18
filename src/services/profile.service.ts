@@ -1,4 +1,4 @@
-import { AddProfileResponse, CreateProfileDto, GetProfileResponse, UpdateProfileDto } from '@/dtos/profile.dto';
+import { AddProfileResponse, CreateProfileDto, GetProfileResponse, SearchProfilesResponse, UpdateProfileDto } from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentType } from '@/models/document.model';
@@ -53,26 +53,21 @@ class ProfileService {
   }
 
   public async getProfile(userId: string): Promise<GetProfileResponse> {
-    const profiles = await ProfileModel.find({ user: userId });
-    if (!profiles) {
+    const profile = await ProfileModel.findOne({ user: userId });
+    if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
     const res: GetProfileResponse = {
-      profiles: [],
-    };
-
-    for (const profile of profiles) {
-      res.profiles.push({
+      profile: {
         id: profile._id.toString(),
         firstName: profile.firstName,
         lastName: profile.lastName,
         profilePic: profile.profilePic,
         bio: profile.bio,
         descriptionTags: profile.descriptionTags,
-      });
-    }
-
+      },
+    };
     return res;
   }
 
@@ -125,14 +120,14 @@ class ProfileService {
     return profiles;
   }
 
-  public async searchByUsername(firstName: string, lastName: string): Promise<GetProfileResponse> {
+  public async searchByUsername(firstName: string, lastName: string): Promise<SearchProfilesResponse> {
     const regexFirstName = new RegExp(firstName, 'i');
     const regexLastName = new RegExp(lastName, 'i');
     const profiles = await ProfileModel.find({
       $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
     });
 
-    const res: GetProfileResponse = {
+    const res: SearchProfilesResponse = {
       profiles: [],
     };
 
