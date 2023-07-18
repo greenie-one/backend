@@ -1,4 +1,4 @@
-import { AddSkillResponse, GetSkillResponse, createSkillDto } from '@/dtos/skills.dto';
+import { AddSkillResponse, GetSkillsResponse, createSkillDto } from '@/dtos/skills.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { SkillModel } from '@/models/skills.model';
@@ -21,27 +21,29 @@ class SkillService {
       workExperience: skillData.workExperience,
       expertise: skillData.expertise,
     });
-    return { success: true, skillId: skill._id.toString() };
+    const res: AddSkillResponse = { success: true, id: skill._id.toString() };
+    return res;
   }
 
-  public async getSkills(userId: string): Promise<GetSkillResponse> {
+  public async getSkills(userId: string): Promise<GetSkillsResponse> {
     const skills = await SkillModel.find({ user: userId });
 
     if (!skills) {
       throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
     }
 
-    const skillArry = [];
+    const resp: GetSkillsResponse = {
+      skills: [],
+    };
     for (const skill of skills) {
-      const skillObj = {
-        skillId: skill._id.toString(),
+      resp.skills.push({
+        id: skill._id.toString(),
         skillName: skill.skillName,
-        workExperience: skill.workExperience,
+        workExperience: skill.workExperience.toString(),
         expertise: skill.expertise,
-      };
-      skillArry.push(skillObj);
+      });
     }
-    return { skills: skillArry };
+    return resp;
   }
 }
 

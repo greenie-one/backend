@@ -5,7 +5,7 @@ import { Geolocation } from '@/remote/location/location';
 import { GPScompare, GetLocationResponse } from '../dtos/location.dto';
 
 class LocationService {
-  public async getCoordinates(userId: string, addresstype: string, address: string): Promise<GetLocationResponse> {
+  public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
     const coordinates = await Geolocation.getLocation(address).catch((err) => {
       console.log(err);
       console.log(coordinates);
@@ -14,18 +14,15 @@ class LocationService {
     if (coordinates && coordinates.code != 'RM003') {
       const location = await LocationModel.create({
         user: userId,
-        address: address,
-        type: addresstype,
         coordinates: coordinates,
       });
 
-      return {
-        locationId: location._id.toString(),
-        address: location.address,
+      const res: GetLocationResponse = {
+        id: location._id.toString(),
         coordinates: location.coordinates.toString(),
-        type: location.type,
         user: location.user.toString(),
       };
+      return res;
     } else {
       console.log(coordinates);
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);

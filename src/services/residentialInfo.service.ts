@@ -11,10 +11,12 @@ class ResidentialInfoService {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    const residentialInfoArry = [];
+    const res: GetResidentialInfoResponse = {
+      residentialInfos: [],
+    };
     for (const residentialInfo of residentialInfos) {
-      const residentialInfObj = {
-        residentialInfoId: residentialInfo._id,
+      res.residentialInfos.push({
+        id: residentialInfo._id.toString(),
         address_line_1: residentialInfo.address_line_1,
         address_line_2: residentialInfo.address_line_2,
         landmark: residentialInfo.landmark,
@@ -22,13 +24,12 @@ class ResidentialInfoService {
         city: residentialInfo.city,
         state: residentialInfo.state,
         country: residentialInfo.country,
-        start_date: residentialInfo.start_date,
-        end_date: residentialInfo.end_date ? residentialInfo.end_date : Date.now(),
-      };
-      residentialInfoArry.push(residentialInfObj);
+        start_date: residentialInfo.start_date.toString(),
+        end_date: residentialInfo.end_date.toString() ? residentialInfo.end_date.toString() : Date.now().toString(),
+      });
     }
 
-    return { residentialInfos: residentialInfoArry };
+    return res;
   }
 
   public async addResidentialInfo(userId: string, residentialInfoData: AddResidentialInfoDto): Promise<AddResidentialInfoResponse> {
@@ -39,7 +40,9 @@ class ResidentialInfoService {
       ...residentialInfoData,
       user: userId,
     });
-    return { success: true, residentialInfoId: residentialInfo._id.toString() };
+
+    const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };
+    return res;
   }
 
   public async deleteResidentialInfo(userId: string, residentialInfoId: string) {
