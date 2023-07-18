@@ -53,6 +53,9 @@ class SkillService {
       throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
     }
 
+    if (skill.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
     const resp: skillResponseDto = {
       id: skill._id.toString(),
       skillName: skill.skillName,

@@ -152,6 +152,10 @@ class DocumentService {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
 
+    if (document.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
     const resp: getDocumentResponseDto = {
       id: document._id.toString(),
       name: document.name,

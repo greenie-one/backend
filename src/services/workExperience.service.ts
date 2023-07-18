@@ -118,6 +118,9 @@ class WorkExperienceService {
     if (!workExperience) {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
+    if (workExperience.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
 
     const resp: workExperienceResponseDto = {
       id: workExperience._id.toString(),
