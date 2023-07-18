@@ -34,14 +34,10 @@ class SkillService {
       skills: [],
     };
     for (const skill of skills) {
-      let workExperience: string = null;
-      if (skill.workExperience) {
-        workExperience = skill.workExperience.toString();
-      }
       resp.skills.push({
         id: skill._id.toString(),
         skillName: skill.skillName,
-        workExperience: workExperience,
+        workExperience: skill.workExperience?.toString() ?? null,
         expertise: skill.expertise,
       });
     }
