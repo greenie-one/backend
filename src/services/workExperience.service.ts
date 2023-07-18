@@ -1,10 +1,4 @@
-import {
-  AddWorkExperienceResponse,
-  CreateWorkExperienceDto,
-  FieldDto,
-  GetWorkExperienceResponse,
-  UpdateWorkExperienceDto,
-} from '@/dtos/workExperience.dto';
+import { AddWorkExperienceResponse, CreateWorkExperienceDto, GetWorkExperienceResponse, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -29,7 +23,8 @@ class WorkExperienceService {
           companyStartDate: new Date(workExperienceData.companyStartDate),
           companyEndDate: new Date(workExperienceData.companyEndDate),
         });
-        return { success: true, workExperienceId: workExperience._id.toString() };
+        const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
+        return res;
       } else {
         throw new HttpException(ErrorEnum.INVALID_DATE);
       }
@@ -40,8 +35,8 @@ class WorkExperienceService {
         companyStartDate: new Date(workExperienceData.companyStartDate),
         companyEndDate: new Date(workExperienceData.companyEndDate),
       });
-
-      return { success: true, workExperienceId: workExperience._id.toString() };
+      const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
+      return res;
     }
   }
   public async getWorkExperience(userId: string): Promise<GetWorkExperienceResponse> {
@@ -51,10 +46,12 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    const workExpArry = [];
+    const res: GetWorkExperienceResponse = {
+      workExperiences: [],
+    };
     for (const workExp of workExperiences) {
-      const workExpObj: FieldDto = {
-        workExpId: workExp._id.toString(),
+      res.workExperiences.push({
+        id: workExp._id.toString(),
         designation: workExp.designation,
         companyType: workExp.companyType,
         email: workExp.email,
@@ -68,10 +65,9 @@ class WorkExperienceService {
         companyStartDate: workExp.companyStartDate.toString(),
         linkedInUrl: workExp.linkedInUrl,
         companyEndDate: workExp.companyEndDate.toString(),
-      };
-      workExpArry.push(workExpObj);
+      });
     }
-    return { workExperinces: workExpArry };
+    return res;
   }
 
   public async deleteWorkExperience(userId: string, workExperienceId: string) {

@@ -1,6 +1,5 @@
 import { skillTypeEnum } from '@/models/skills.model';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class createSkillDto {
   @IsString()
@@ -16,37 +15,18 @@ export class createSkillDto {
   public expertise!: skillTypeEnum;
 }
 
-export class AddSkillResponse {
-  @IsString()
-  @IsOptional()
-  public skillId?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  public success?: boolean;
+export interface AddSkillResponse {
+  id: string;
+  success: boolean;
 }
 
-export class FieldDto {
-  @IsString()
-  @IsOptional()
-  public skillId?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  public skillName!: string;
-
-  @IsString()
-  @IsOptional()
-  public workExperience?: string;
-
-  @IsEnum(skillTypeEnum)
-  @IsNotEmpty()
-  public expertise!: skillTypeEnum;
+export interface skillResponseDto {
+  id: string;
+  skillName: string;
+  workExperience?: string;
+  expertise: skillTypeEnum;
 }
 
-export class GetSkillResponse {
-  @ValidateNested({ each: true })
-  @Type(() => FieldDto)
-  @IsOptional()
-  public skills?: FieldDto[];
+export interface GetSkillsResponse {
+  skills: skillResponseDto[];
 }

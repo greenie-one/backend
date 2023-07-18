@@ -1,6 +1,6 @@
 import { AddToWaitlistDto } from '@/dtos/waitlist.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
-import { WaitlistMailer } from '@/remote/email/waitlist';
+import { WaitlistMailer } from '@/remote/waitlist/email';
 import { HttpException } from '@exceptions/httpException';
 import { Waitlist, WaitlistModel } from '@models/waitlist.model';
 

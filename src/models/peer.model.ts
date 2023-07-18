@@ -7,9 +7,12 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
-export enum Bool {
-  YES = 'yes',
-  NO = 'no',
+export class Status {
+  @prop({ enum: State, type: String, default: State.PENDING })
+  public state: State;
+
+  @prop({ type: String })
+  public reason?: string;
 }
 
 export enum Rating {
@@ -21,38 +24,38 @@ export enum Rating {
 }
 
 export class WorkExFields {
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public candidateId?: State;
+  @prop()
+  public candidateId?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public department?: State;
+  @prop()
+  public department?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public designation?: State;
+  @prop()
+  public designation?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public dateOfJoining?: State;
+  @prop()
+  public dateOfJoining?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public dateOfLeaving?: State;
+  @prop()
+  public dateOfLeaving?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public peerPost?: State;
+  @prop()
+  public peerPost?: Status;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public salary?: State;
+  @prop()
+  public salary?: Status;
 
   @prop({ enum: Rating, type: String })
   public attitudeRating?: Rating;
 
-  @prop({ enum: Bool, type: String })
-  public eligibleForRehire?: Bool;
+  @prop({ type: Boolean })
+  public eligibleForRehire?: boolean;
 
-  @prop({ enum: Bool, type: String })
-  public exitStatus?: Bool;
+  @prop({ type: Boolean })
+  public exitProcedure?: boolean;
 
   @prop({ type: String })
-  public review?: State;
+  public review?: string;
 }
 
 export enum WorkVerificationBy {
@@ -80,11 +83,17 @@ export class WorkPeer {
   @prop({ required: true })
   public phone!: string;
 
+  @prop({ type: Boolean, default: false })
+  public emailVerified?: boolean;
+
+  @prop({ type: Boolean, default: false })
+  public phoneVerified?: boolean;
+
   @prop({ required: true, enum: WorkVerificationBy, type: String })
-  public verification_by!: WorkVerificationBy;
+  public verificationBy!: WorkVerificationBy;
 
   @prop({ required: true })
-  public verification_fields!: WorkExFields;
+  public verificationFields!: WorkExFields;
 
   public createdAt?: Date;
 

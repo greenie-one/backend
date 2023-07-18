@@ -1,5 +1,5 @@
 import { DocumentType } from '@/models/document.model';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 
 export class createDocumentDto {
   @IsNotEmpty()
@@ -12,7 +12,12 @@ export class createDocumentDto {
 
   @IsNotEmpty()
   @IsString()
-  public private_url: string;
+  public privateUrl: string;
+
+  @ValidateIf((o) => o.type === DocumentType.WORK)
+  @IsNotEmpty()
+  @IsString()
+  public workExperience?: string;
 }
 
 export class updateDocumentDto {
@@ -26,5 +31,17 @@ export class updateDocumentDto {
 
   @IsString()
   @IsOptional()
-  public private_url: string;
+  public privateUrl: string;
+
+  @ValidateIf((o) => o.type === DocumentType.WORK)
+  @IsNotEmpty()
+  @IsString()
+  public workExperience?: string;
+}
+
+export interface getDocumentResponseDto {
+  id: string;
+  name: string;
+  type: DocumentType;
+  privateUrl: string;
 }

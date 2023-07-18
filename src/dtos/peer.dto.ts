@@ -1,32 +1,69 @@
-import { State, WorkVerificationBy } from '@models/peer.model';
+import { Rating, State, WorkVerificationBy } from '@models/peer.model';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+
+class StatusField {
+  @IsString()
+  @IsNotEmpty()
+  @IsEnum(State)
+  public state!: State;
+
+  @IsString()
+  @IsOptional()
+  public reason?: string;
+}
 
 export class WorkExFieldsDTO {
-  @IsString()
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  @IsEnum(State)
-  public candidateId?: State;
+  public candidateId?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public peerPost?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public salary?: StatusField;
 
   @IsString()
   @IsOptional()
-  @IsEnum(State)
-  public department?: State;
+  @IsEnum(Rating)
+  public attitudeRating?: Rating;
+
+  @IsBoolean()
+  @IsOptional()
+  public eligibleForRehire?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  public exitStatusField?: boolean;
 
   @IsString()
   @IsOptional()
-  @IsEnum(State)
-  public designation?: State;
+  public review?: string;
 
   @IsString()
   @IsOptional()
-  @IsEnum(State)
-  public dateOfJoining?: State;
+  public department?: StatusField;
 
-  @IsString()
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  @IsEnum(State)
-  public dateOfLeaving?: State;
+  public designation?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public dateOfJoining?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public dateOfLeaving?: StatusField;
 }
 
 export class CreateWorkPeerDto {
@@ -49,17 +86,17 @@ export class CreateWorkPeerDto {
   @IsString()
   @IsEnum(WorkVerificationBy)
   @IsNotEmpty()
-  public verification_by!: WorkVerificationBy;
+  public verificationBy!: WorkVerificationBy;
 
   @ValidateNested()
   @Type(() => WorkExFieldsDTO)
   @IsNotEmpty()
-  public verification_fields!: WorkExFieldsDTO;
+  public verificationFields!: WorkExFieldsDTO;
 }
 
 export class UpdatePeerWorkVerificationDto {
   @ValidateNested()
   @Type(() => WorkExFieldsDTO)
   @IsNotEmpty()
-  public verification_fields!: WorkExFieldsDTO;
+  public verificationFields!: WorkExFieldsDTO;
 }

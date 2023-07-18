@@ -17,14 +17,14 @@ export class ID {
   @prop({ required: true })
   public id_number!: string;
 
-  @prop({ type: Schema.Types.Mixed })
-  public id_data?: object;
-
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 
-  @prop({ ref: 'Location' })
-  public location?: Ref<Location>;
+  @prop({ required: true, type: Schema.Types.Mixed })
+  public address!: object;
+
+  @prop({ ref: 'Location', type: String })
+  public location?: Ref<Location, string>;
 
   @prop({ type: () => Verification })
   public verification?: Verification;
