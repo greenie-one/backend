@@ -64,8 +64,8 @@ class PeerService {
     return { success: true, message: 'Link Sent' };
   }
 
-  public async getPeerInformation(peer_uuid: string) {
-    const { peerId, type } = await this.peerUUIDtoPeerId(peer_uuid);
+  public async getPeerInformation(peerUUID: string) {
+    const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
@@ -86,8 +86,8 @@ class PeerService {
     return peer;
   }
 
-  public async peerSendOTP(peer_uuid: string, otp_type: otpType) {
-    const { peerId } = await this.peerUUIDtoPeerId(peer_uuid);
+  public async peerSendOTP(peerUUID: string, otp_type: otpType) {
+    const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     const { email, phone } = peer;
     if (otp_type === 'EMAIL') {
@@ -97,8 +97,8 @@ class PeerService {
     }
   }
 
-  public async verifyPeerConatct(peer_uuid: string, otp_type: otpType, otp: string) {
-    const { peerId } = await this.peerUUIDtoPeerId(peer_uuid);
+  public async verifyPeerConatct(peerUUID: string, otp_type: otpType, otp: string) {
+    const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     const { email, phone } = peer;
     if (otp_type === 'EMAIL') {
