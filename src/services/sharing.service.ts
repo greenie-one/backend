@@ -50,7 +50,7 @@ class SharingService {
 
   public async getSharedWithData(userOrPeerId: string) {
     const data = await SharingModel.find({ sharedWithRef: userOrPeerId });
-    let sharedThingsData: getSharedResponseDTO[];
+    const sharedThingsData: getSharedResponseDTO[] = [];
     for (const item of data) {
       if (item.sharedThing == SharedThing.SKILLS) {
         const fetched = await SkillModel.findById(item.sharedThingRef);
@@ -78,7 +78,7 @@ class SharingService {
         });
       }
     }
-    return { data: sharedThingsData };
+    return { sharedThingsData };
   }
 
   public async updateShared(userOrPeerId: string, stateUpadte: sharingUpdateStateDTO) {
