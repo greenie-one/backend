@@ -1,6 +1,6 @@
 import { Rating, State, WorkVerificationBy } from '@models/peer.model';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 
 class StatusField {
   @IsString()
@@ -10,7 +10,13 @@ class StatusField {
 
   @IsString()
   @IsOptional()
-  public reason?: string;
+  @ValidateIf((o) => o.state === State.REJECTED)
+  public dispute_type?: string;
+
+  @IsString()
+  @IsOptional()
+  @ValidateIf((o) => o.state === State.REJECTED)
+  public dispute_description?: string;
 }
 
 export class WorkExFieldsDTO {

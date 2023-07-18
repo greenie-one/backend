@@ -11,8 +11,22 @@ export class Status {
   @prop({ enum: State, type: String, default: State.PENDING })
   public state: State;
 
+  @prop({
+    type: String,
+    required: function (this: Status) {
+      return this.state === State.REJECTED;
+    },
+  })
+  public dispute_type?: string;
+
   @prop({ type: String })
-  public reason?: string;
+  @prop({
+    type: String,
+    required: function (this: Status) {
+      return this.state === State.REJECTED;
+    },
+  })
+  public dispute_reason?: string;
 }
 
 export enum Rating {
