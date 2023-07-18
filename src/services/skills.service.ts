@@ -34,13 +34,19 @@ class SkillService {
       skills: [],
     };
     for (const skill of skills) {
+      let workExperience: string = null;
+      if (skill.workExperience) {
+        workExperience = skill.workExperience.toString();
+      }
       resp.skills.push({
         id: skill._id.toString(),
         skillName: skill.skillName,
-        workExperience: skill.workExperience ? skill.workExperience.toString() : undefined,
+        workExperience: workExperience,
         expertise: skill.expertise,
       });
     }
+
+    console.info(resp);
     return resp;
   }
 }
