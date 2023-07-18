@@ -15,7 +15,7 @@ export function copyFieldsFromInstance<T>(source: T, destination: T, instance: T
   const destinationFields = Object.keys(destination);
   for (const field of sourceFields) {
     if (destinationFields.includes(field)) {
-      destination[field] = source[field];
+      // destination[field] = source[field];
       instance[field] = source[field];
     } else {
       throw new Error(`Field ${field} not found in destination entity`);
