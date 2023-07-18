@@ -1,7 +1,7 @@
 import { AddSkillResponse, GetSkillsResponse, createSkillDto } from '@/dtos/skills.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { SkillModel } from '@/models/skills.model';
+import { SkillModel, Skills } from '@/models/skills.model';
 import { UserModel } from '@models/users.model';
 
 class SkillService {
@@ -16,11 +16,9 @@ class SkillService {
     }
 
     const skill = await SkillModel.create({
-      skillName: skillData.skillName,
       user: userId,
-      workExperience: skillData.workExperience,
-      expertise: skillData.expertise,
-    });
+      ...skillData,
+    } as Skills);
     const res: AddSkillResponse = { success: true, id: skill._id.toString() };
     return res;
   }

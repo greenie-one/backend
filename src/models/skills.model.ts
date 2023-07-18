@@ -22,8 +22,8 @@ export class Skills {
   @prop({ required: true, enum: skillTypeEnum, type: String })
   public expertise!: skillTypeEnum;
 
-  @prop({ ref: 'WorkExperience' })
-  public workExperience?: Ref<WorkExperience>;
+  @prop({ ref: 'WorkExperience', type: String })
+  public workExperience?: Ref<WorkExperience, string>;
 
   public createdAt?: Date;
 
