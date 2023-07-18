@@ -39,7 +39,7 @@ class SkillService {
       resp.skills.push({
         id: skill._id.toString(),
         skillName: skill.skillName,
-        workExperience: skill.workExperience.toString(),
+        workExperience: skill.workExperience ? skill.workExperience.toString() : undefined,
         expertise: skill.expertise,
       });
     }
