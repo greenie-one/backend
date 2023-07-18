@@ -21,7 +21,8 @@ class SkillService {
       workExperience: skillData.workExperience,
       expertise: skillData.expertise,
     });
-    return { success: true, skillId: skill._id.toString() };
+    const res: AddSkillResponse = { success: true, id: skill._id.toString() };
+    return res;
   }
 
   public async getSkills(userId: string): Promise<GetSkillsResponse> {

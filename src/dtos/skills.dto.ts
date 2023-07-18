@@ -1,5 +1,5 @@
 import { skillTypeEnum } from '@/models/skills.model';
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class createSkillDto {
   @IsString()
@@ -15,14 +15,9 @@ export class createSkillDto {
   public expertise!: skillTypeEnum;
 }
 
-export class AddSkillResponse {
-  @IsString()
-  @IsOptional()
-  public skillId?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  public success?: boolean;
+export interface AddSkillResponse {
+  id: string;
+  success: boolean;
 }
 
 export interface skillResponseDto {

@@ -1,4 +1,4 @@
-import { AddProfileResponse, CreateProfileDto, GetProfileResponse, GetSearchedProfilesResponse, UpdateProfileDto } from '@/dtos/profile.dto';
+import { AddProfileResponse, CreateProfileDto, GetProfileResponse, UpdateProfileDto } from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentType } from '@/models/document.model';
@@ -33,7 +33,8 @@ class ProfileService {
       bio: profileData.bio,
       descriptionTags: profileData.descriptionTags,
     });
-    return { success: true, profileId: profile._id.toString() };
+    const res: AddProfileResponse = { success: true, id: profile._id.toString() };
+    return res;
   }
 
   public async updateProfile(userId: string, updatedData: UpdateProfileDto) {
@@ -52,21 +53,27 @@ class ProfileService {
   }
 
   public async getProfile(userId: string): Promise<GetProfileResponse> {
-    const profile = await ProfileModel.findOne({ user: userId });
-    if (!profile) {
+    const profiles = await ProfileModel.find({ user: userId });
+    if (!profiles) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    const profileObj = {
-      profileId: profile._id.toString(),
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      profilePic: profile.profilePic,
-      bio: profile.bio,
-      descriptionTags: profile.descriptionTags,
+    const res: GetProfileResponse = {
+      profiles: [],
     };
 
-    return profileObj;
+    for (const profile of profiles) {
+      res.profiles.push({
+        id: profile._id.toString(),
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        profilePic: profile.profilePic,
+        bio: profile.bio,
+        descriptionTags: profile.descriptionTags,
+      });
+    }
+
+    return res;
   }
 
   public async getPercentileRanking(userId: string) {
@@ -118,30 +125,31 @@ class ProfileService {
     return profiles;
   }
 
-  public async searchByUsername(firstName: string, lastName: string): Promise<GetSearchedProfilesResponse> {
+  public async searchByUsername(firstName: string, lastName: string): Promise<GetProfileResponse> {
     const regexFirstName = new RegExp(firstName, 'i');
     const regexLastName = new RegExp(lastName, 'i');
     const profiles = await ProfileModel.find({
       $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
     });
 
-    const profileArry = [];
+    const res: GetProfileResponse = {
+      profiles: [],
+    };
 
     if (profiles) {
       for (const profile of profiles) {
-        const profileObj = {
-          profileId: profile._id.toString(),
+        res.profiles.push({
+          id: profile._id.toString(),
           firstName: profile.firstName,
           lastName: profile.lastName,
           profilePic: profile.profilePic,
           bio: profile.bio,
           descriptionTags: profile.descriptionTags,
-        };
-        profileArry.push(profileObj);
+        });
       }
     }
 
-    return { profiles: profileArry };
+    return res;
   }
 
   public async modScore(userId: string, documentType: DocumentType | IDTypeEnum, hasUploaded: boolean) {

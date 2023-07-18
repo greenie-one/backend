@@ -9,7 +9,7 @@ import { profileService } from './profile.service';
 
 class DocumentService {
   public async createDocument(userID: string, documentData: createDocumentDto): Promise<Document> {
-    const data = await redisUtilClient.get(documentData.private_url);
+    const data = await redisUtilClient.get(documentData.privateUrl);
     if (!data) {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
     }
@@ -29,7 +29,7 @@ class DocumentService {
       });
       const updatedData = JSON.parse(data);
       updatedData.commited = true;
-      await redisUtilClient.set(documentData.private_url, JSON.stringify(updatedData));
+      await redisUtilClient.set(documentData.privateUrl, JSON.stringify(updatedData));
 
       // Update score based on document uploaded
       await profileService.modScore(userID, documentData.type, true);

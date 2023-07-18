@@ -19,13 +19,14 @@ class LocationService {
         coordinates: coordinates,
       });
 
-      return {
-        locationId: location._id.toString(),
+      const res: GetLocationResponse = {
+        id: location._id.toString(),
         address: location.address,
         coordinates: location.coordinates.toString(),
         type: location.type,
         user: location.user.toString(),
       };
+      return res;
     } else {
       console.log(coordinates);
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
