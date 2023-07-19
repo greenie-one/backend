@@ -10,16 +10,13 @@ export function createClassInstanceWithFields<T extends object>(fieldNames: stri
   return instance as T;
 }
 
-export function copyFieldsFromInstance<T>(source: T, destination: T, instance: T): T {
+export function copyFieldsFromInstance<T>(source: T, destination: T) {
   const sourceFields = Object.keys(source);
   const destinationFields = Object.keys(destination);
   for (const field of sourceFields) {
     if (destinationFields.includes(field)) {
-      // destination[field] = source[field];
-      instance[field] = source[field];
-    } else {
-      throw new Error(`Field ${field} not found in destination entity`);
+      destination[field] = source[field];
+      // instance[field] = source[field];
     }
   }
-  return instance;
 }
