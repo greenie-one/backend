@@ -50,10 +50,11 @@ export enum ErrorEnum {
   SHARING_NOT_FOUND,
   INVALID_PEER_UUID,
   INVALID_PEER_ID,
-  PEER_NOT_VERIFIED,
+  PEER_EMAIL_NOT_VERIFIED,
   INVALID_OTP,
   INVALID_VERIFICATION_FIELDS,
   CALL_API_FAILED,
+  PEER_PHONE_NOT_VERIFIED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -262,9 +263,14 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'Invalid peer id',
     status: 400,
   },
-  [ErrorEnum.PEER_NOT_VERIFIED]: {
+  [ErrorEnum.PEER_EMAIL_NOT_VERIFIED]: {
     code: 'GR0050',
-    message: 'Peer not verified',
+    message: 'Peer Email not verified',
+    status: 400,
+  },
+  [ErrorEnum.PEER_PHONE_NOT_VERIFIED]: {
+    code: 'GR0051',
+    message: 'Peer Phone not verified',
     status: 400,
   },
   [ErrorEnum.INVALID_OTP]: {
@@ -273,12 +279,12 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     status: 400,
   },
   [ErrorEnum.INVALID_VERIFICATION_FIELDS]: {
-    code: 'GR0051',
+    code: 'GR0052',
     message: 'Invalid verification fields %s',
     status: 400,
   },
   [ErrorEnum.CALL_API_FAILED]: {
-    code: 'GR0052',
+    code: 'GR0053',
     message: 'Call API failed - %s',
     status: 500,
   },

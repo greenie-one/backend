@@ -1,4 +1,4 @@
-import { CreateWorkPeerDto, ResponseCreateWorkPeer, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
+import { CreateWorkPeerDto, CreateWorkPeerResponse, GetUserWorkPeerResponse, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
@@ -81,7 +81,21 @@ class PeerService {
     }
   }
 
-  public async getPeerInformation(peerUUID: string): Promise<ResponseCreateWorkPeer> {
+  public async getUserWorkPeers(userId: string) {
+    const data = await WorkPeerModel.find({ user: userId });
+    const res: GetUserWorkPeerResponse[] = [];
+    for (const peer of data) {
+      res.push({
+        id: peer._id.toString(),
+        name: peer.name,
+        email: peer.email,
+        phone: peer.phone,
+      });
+    }
+    return res;
+  }
+
+  public async getPeerInformation(peerUUID: string) {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -96,14 +110,17 @@ class PeerService {
       await peer.save();
     }
 
-    if (!peer.emailVerified || !peer.phoneVerified) {
-      throw new HttpException(ErrorEnum.PEER_NOT_VERIFIED);
+    if (!peer.emailVerified) {
+      throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
+    }
+    if (!peer.phoneVerified) {
+      throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
 
-    return peer as ResponseCreateWorkPeer;
+    return;
   }
 
-  public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto): Promise<ResponseCreateWorkPeer> {
+  public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto): Promise<CreateWorkPeerResponse> {
     let obj: OptionalWorkExFields;
     try {
       obj = createClassInstanceWithFields(peerData.optionalVerificationFields, new OptionalWorkExFields(), OptionalWorkExFields.defaultFields());
@@ -121,7 +138,7 @@ class PeerService {
     };
     const peer = await WorkPeerModel.create(peerDataObj);
     await this.sendLinksToPeers(peer._id.toString(), peer);
-    return { id: peer._id.toString(), name: peer.name } as ResponseCreateWorkPeer;
+    return { id: peer._id.toString(), name: peer.name } as CreateWorkPeerResponse;
   }
 
   public async UpdatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
@@ -131,7 +148,7 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     if (!peer.emailVerified || !peer.phoneVerified) {
-      throw new HttpException(ErrorEnum.PEER_NOT_VERIFIED);
+      throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
     }
 
     const upadtedFieldsArr = Object.keys(updatedData.verificationFields);

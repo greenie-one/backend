@@ -9,6 +9,11 @@ import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/peer')
 export default class PeerController {
+  @Get('/work/me')
+  async getMyPeers(@UserDetails() userDetails: TokenClaims) {
+    return peerService.getUserWorkPeers(userDetails.sub);
+  }
+
   @Post('/work')
   async createWorkPeer(@UserDetails() userDetails: TokenClaims, @Body() data: CreateWorkPeerDto) {
     return peerService.createWorkPeer(userDetails.sub, data);
@@ -25,7 +30,7 @@ export default class PeerController {
   }
 
   @Get('/work/:peerUUID')
-  async getPeerVerification(@Params('peerUUID') peerUUID: string) {
+  async getPeerInformation(@Params('peerUUID') peerUUID: string) {
     return peerService.getPeerInformation(peerUUID);
   }
 

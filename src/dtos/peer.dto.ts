@@ -129,7 +129,14 @@ export class UpdatePeerWorkVerificationDto {
   public verificationFields!: WorkExFieldsDTO;
 }
 
-export interface ResponseCreateWorkPeer {
+export interface CreateWorkPeerResponse {
   id: string;
   name: string;
+}
+
+export interface GetUserWorkPeerResponse {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
 }
