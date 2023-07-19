@@ -1,4 +1,10 @@
-import { CreateWorkPeerDto, CreateWorkPeerResponse, GetUserWorkPeerResponse, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
+import {
+  CreateWorkPeerDto,
+  CreateWorkPeerResponse,
+  GetPeerInformationResponse,
+  GetUserWorkPeerResponse,
+  UpdatePeerWorkVerificationDto,
+} from '@/dtos/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
@@ -117,7 +123,21 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
 
-    return;
+    const res: GetPeerInformationResponse = {
+      id: peer._id.toString(),
+      name: peer.name,
+      email: peer.email,
+      phone: peer.phone,
+      emailVerified: peer.emailVerified,
+      phoneVerified: peer.phoneVerified,
+      verificationBy: peer.verificationBy,
+      optionalVerificationFields: peer.optionalVerificationFields,
+      mandatoryVerificationFields: peer.mandatoryVerificationFields,
+      mandatoryQuestionFields: peer.mandatoryQuestionFields,
+      otherQuestionFields: peer.otherQuestionFields,
+    };
+
+    return res;
   }
 
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto): Promise<CreateWorkPeerResponse> {

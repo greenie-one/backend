@@ -1,4 +1,13 @@
-import { Rating, State, WorkVerificationBy } from '@models/peer.model';
+import {
+  ExceptHRQuestionFields,
+  HRQuestionFields,
+  MandatoryQuestionFields,
+  MandatoryWorkExFields,
+  OptionalWorkExFields,
+  Rating,
+  State,
+  WorkVerificationBy,
+} from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 
@@ -139,4 +148,18 @@ export interface GetUserWorkPeerResponse {
   name: string;
   email: string;
   phone: string;
+}
+
+export interface GetPeerInformationResponse {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+  verificationBy: WorkVerificationBy;
+  optionalVerificationFields?: OptionalWorkExFields;
+  mandatoryVerificationFields?: MandatoryWorkExFields;
+  mandatoryQuestionFields?: MandatoryQuestionFields;
+  otherQuestionFields: HRQuestionFields | ExceptHRQuestionFields;
 }
