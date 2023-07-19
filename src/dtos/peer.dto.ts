@@ -1,4 +1,4 @@
-import { Rating, State, WorkVerificationBy, YESNO } from '@models/peer.model';
+import { Rating, State, WorkVerificationBy } from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 
@@ -20,6 +20,7 @@ class StatusField {
 }
 
 export class WorkExFieldsDTO {
+  // From Work Ex Optional fields
   @ValidateNested()
   @Type(() => StatusField)
   @IsOptional()
@@ -28,37 +29,7 @@ export class WorkExFieldsDTO {
   @ValidateNested()
   @Type(() => StatusField)
   @IsOptional()
-  public peerPost?: StatusField;
-
-  @ValidateNested()
-  @Type(() => StatusField)
-  @IsOptional()
-  public salary?: StatusField;
-
-  @IsOptional()
-  @IsEnum(Rating)
-  public attitudeRating?: Rating;
-
-  @IsEnum(YESNO)
-  @IsOptional()
-  public eligibleForRehire?: YESNO;
-
-  @IsEnum(YESNO)
-  @IsOptional()
-  public exitStatusField?: YESNO;
-
-  @IsString()
-  @IsOptional()
-  public review?: string;
-
-  @IsString()
-  @IsOptional()
   public department?: StatusField;
-
-  @ValidateNested()
-  @Type(() => StatusField)
-  @IsOptional()
-  public designation?: StatusField;
 
   @ValidateNested()
   @Type(() => StatusField)
@@ -69,6 +40,58 @@ export class WorkExFieldsDTO {
   @Type(() => StatusField)
   @IsOptional()
   public dateOfLeaving?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public companyName?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public workType?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public workMode?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public salary?: StatusField;
+
+  // From Work Ex Mandatory fields
+  @IsString()
+  @IsOptional()
+  public review?: string;
+
+  // From Work Ex Mandatory Questions
+  @IsEnum(Rating)
+  @IsOptional()
+  public attitudeRating?: Rating;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public eligibleForRehire?: StatusField;
+
+  // From Work Ex HR Questions
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public exitProcedure?: StatusField;
+
+  // From Work Ex Except HR Questions
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public designation?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public peerPost?: StatusField;
 }
 
 export class CreateWorkPeerDto {
@@ -96,7 +119,7 @@ export class CreateWorkPeerDto {
   @IsArray()
   @IsNotEmpty()
   @IsString({ each: true })
-  public verificationFields!: string[];
+  public optionalVerificationFields!: string[];
 }
 
 export class UpdatePeerWorkVerificationDto {
@@ -104,4 +127,9 @@ export class UpdatePeerWorkVerificationDto {
   @Type(() => WorkExFieldsDTO)
   @IsNotEmpty()
   public verificationFields!: WorkExFieldsDTO;
+}
+
+export interface ResponseCreateWorkPeer {
+  id: string;
+  name: string;
 }

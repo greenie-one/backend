@@ -7,6 +7,7 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
+@modelOptions({ schemaOptions: { _id: false } })
 export class Status {
   @prop({ enum: State, type: String })
   public state: State;
@@ -27,6 +28,12 @@ export class Status {
     },
   })
   public dispute_reason?: string;
+
+  static defaultStatus() {
+    const defaultStatus = new Status();
+    defaultStatus.state = State.PENDING;
+    return defaultStatus;
+  }
 }
 
 export enum Rating {
@@ -38,21 +45,13 @@ export enum Rating {
   NOT_GIVEN = 'not-given',
 }
 
-export enum YESNO {
-  YES = 'YES',
-  NO = 'NO',
-  NOT_GIVEN = 'NOT_GIVEN',
-}
-
-export class WorkExFields {
+@modelOptions({ schemaOptions: { _id: false } })
+export class OptionalWorkExFields {
   @prop()
   public candidateId?: Status;
 
   @prop()
   public department?: Status;
-
-  @prop()
-  public designation?: Status;
 
   @prop()
   public dateOfJoining?: Status;
@@ -61,44 +60,72 @@ export class WorkExFields {
   public dateOfLeaving?: Status;
 
   @prop()
-  public peerPost?: Status;
+  public companyName?: Status;
+
+  @prop()
+  public workType?: Status;
+
+  @prop()
+  public workMode?: Status;
 
   @prop()
   public salary?: Status;
 
-  @prop({ enum: Rating, type: String })
-  public attitudeRating?: Rating;
+  static defaultFields() {
+    const defaultOptionalWorkExFields = new OptionalWorkExFields();
+    defaultOptionalWorkExFields.candidateId = Status.defaultStatus();
+    defaultOptionalWorkExFields.department = Status.defaultStatus();
+    defaultOptionalWorkExFields.dateOfJoining = Status.defaultStatus();
+    defaultOptionalWorkExFields.dateOfLeaving = Status.defaultStatus();
+    defaultOptionalWorkExFields.companyName = Status.defaultStatus();
+    defaultOptionalWorkExFields.workType = Status.defaultStatus();
+    defaultOptionalWorkExFields.workMode = Status.defaultStatus();
+    defaultOptionalWorkExFields.salary = Status.defaultStatus();
+    return defaultOptionalWorkExFields;
+  }
+}
 
-  @prop({ enum: YESNO, type: String })
-  public eligibleForRehire?: YESNO;
-
-  @prop({ enum: YESNO, type: String })
-  public exitProcedure?: YESNO;
-
-  @prop({ type: String })
+@modelOptions({ schemaOptions: { _id: false } })
+export class MandatoryWorkExFields {
+  @prop({ type: String, default: 'No Review' })
   public review?: string;
 }
 
-export function defaultWorkExFields() {
-  const defaultStatus = new Status();
-  defaultStatus.state = State.PENDING;
+@modelOptions({ schemaOptions: { _id: false } })
+export class MandatoryQuestionFields {
+  @prop({ enum: Rating, type: String, default: Rating.NOT_GIVEN })
+  public attitudeRating?: Rating;
 
-  const defaultRating = Rating.NOT_GIVEN;
-  const defaultValues: Partial<WorkExFields> = {
-    candidateId: defaultStatus,
-    department: defaultStatus,
-    designation: defaultStatus,
-    dateOfJoining: defaultStatus,
-    dateOfLeaving: defaultStatus,
-    peerPost: defaultStatus,
-    salary: defaultStatus,
+  @prop({ default: Status.defaultStatus() })
+  public eligibleForRehire?: Status;
+}
 
-    attitudeRating: defaultRating,
-    eligibleForRehire: YESNO.NOT_GIVEN,
-    exitProcedure: YESNO.NOT_GIVEN,
-    review: '',
-  };
-  return defaultValues;
+@modelOptions({ schemaOptions: { _id: false } })
+export class HRQuestionFields {
+  @prop({ default: Status.defaultStatus() })
+  public exitProcedure?: Status;
+
+  static defaultFields() {
+    const defaultHRQuestionFields = new HRQuestionFields();
+    defaultHRQuestionFields.exitProcedure = Status.defaultStatus();
+    return defaultHRQuestionFields;
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class ExceptHRQuestionFields {
+  @prop({ default: Status.defaultStatus() })
+  public designation!: Status;
+
+  @prop({ default: Status.defaultStatus() })
+  public peerPost!: Status;
+
+  static defaultFields() {
+    const defaultExceptHRQuestionFields = new ExceptHRQuestionFields();
+    defaultExceptHRQuestionFields.designation = Status.defaultStatus();
+    defaultExceptHRQuestionFields.peerPost = Status.defaultStatus();
+    return defaultExceptHRQuestionFields;
+  }
 }
 
 export enum WorkVerificationBy {
@@ -135,8 +162,17 @@ export class WorkPeer {
   @prop({ required: true, enum: WorkVerificationBy, type: String })
   public verificationBy!: WorkVerificationBy;
 
-  @prop({ required: true })
-  public verificationFields!: WorkExFields;
+  @prop()
+  public optionalVerificationFields?: OptionalWorkExFields;
+
+  @prop()
+  public mandatoryVerificationFields?: MandatoryWorkExFields;
+
+  @prop()
+  public mandatoryQuestionFields?: MandatoryQuestionFields;
+
+  @prop()
+  public otherQuestionFields!: HRQuestionFields | ExceptHRQuestionFields;
 
   public createdAt?: Date;
 
