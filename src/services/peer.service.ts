@@ -34,6 +34,8 @@ class PeerService {
     await redisClient.setEx(mobileUUID, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'mobile' }));
     await redisClient.setEx(emailUUID, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'email' }));
 
+    console.info(`Sending links to ${peer.name} with email ${peer.email} and phone ${peer.phone}`);
+
     await verification
       .GetPeerVerification(peer.email, peer.phone, peer.name, `${profile.firstName} + ' ' + ${profile.lastName}`, mobileLink, emailLink)
       .catch((err) => {
