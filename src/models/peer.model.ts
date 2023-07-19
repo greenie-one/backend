@@ -7,6 +7,7 @@ export enum State {
   REJECTED = 'REJECTED',
 }
 
+@modelOptions({ schemaOptions: { _id: false } })
 export class Status {
   @prop({ enum: State, type: String })
   public state: State;
@@ -164,8 +165,10 @@ export class WorkPeer {
   @prop()
   public optionalVerificationFields?: OptionalWorkExFields;
 
+  @prop()
   public mandatoryVerificationFields?: MandatoryWorkExFields;
 
+  @prop()
   public mandatoryQuestionFields?: MandatoryQuestionFields;
 
   @prop()
