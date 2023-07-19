@@ -9,7 +9,7 @@ export class sharingDTO {
   @IsNotEmpty()
   public thing!: SharedThing;
 
-  public thingId!: [];
+  public thingId!: string[];
 
   @IsString()
   public userId!: string;
