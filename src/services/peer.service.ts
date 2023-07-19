@@ -1,4 +1,4 @@
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
+import { CreateWorkPeerDto, ResponseCreateWorkPeer, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
@@ -85,7 +85,7 @@ class PeerService {
     }
   }
 
-  public async getPeerInformation(peerUUID: string) {
+  public async getPeerInformation(peerUUID: string): Promise<ResponseCreateWorkPeer> {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -104,7 +104,7 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_NOT_VERIFIED);
     }
 
-    return peer;
+    return peer as ResponseCreateWorkPeer;
   }
 
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto) {
@@ -136,6 +136,28 @@ class PeerService {
     }
     if (!peer.emailVerified || !peer.phoneVerified) {
       throw new HttpException(ErrorEnum.PEER_NOT_VERIFIED);
+    }
+
+    const upadtedFieldsArr = Object.keys(updatedData.verificationFields);
+
+    const mandatoryFieldsArr = Object.keys(peer.mandatoryVerificationFields);
+    const optionalFieldsArr = Object.keys(peer.optionalVerificationFields);
+    const otherQuestionFieldsArr = Object.keys(peer.otherQuestionFields);
+    const mandatoryQuestionFieldsArr = Object.keys(peer.mandatoryQuestionFields);
+
+    const union = [...new Set([...mandatoryFieldsArr, ...optionalFieldsArr, ...otherQuestionFieldsArr, ...mandatoryQuestionFieldsArr])];
+    const invalid_fields: string[] = [];
+    if (
+      !upadtedFieldsArr.every((field) => {
+        const res = union.includes(field);
+        if (!res) {
+          invalid_fields.push(field);
+        }
+        return res;
+      })
+    ) {
+      console.error(`Invalid Fields: ${invalid_fields}`);
+      throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, JSON.stringify(invalid_fields));
     }
 
     try {

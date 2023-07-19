@@ -128,3 +128,8 @@ export class UpdatePeerWorkVerificationDto {
   @IsNotEmpty()
   public verificationFields!: WorkExFieldsDTO;
 }
+
+export interface ResponseCreateWorkPeer {
+  id: string;
+  name: string;
+}
