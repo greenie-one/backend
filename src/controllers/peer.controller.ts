@@ -19,6 +19,11 @@ export default class PeerController {
     return peerService.createWorkPeer(userDetails.sub, data);
   }
 
+  @Delete('/work/:peerId')
+  async deletePeer(@Params('peerId') peerId: string) {
+    return peerService.deletePeer(peerId);
+  }
+
   @Get('/work/:id/resend')
   async resendLinksToPeers(@UserDetails() userDetails: TokenClaims, @Params('id') peerId: string) {
     return peerService.resendLinksToPeers(userDetails.sub, peerId);
@@ -43,10 +48,5 @@ export default class PeerController {
   async verifyPeerConatct(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyOtpDTO) {
     const status = await peerService.verifyPeerConatct(peerUUID, otp_data.otpType, otp_data.otp);
     return { success: status, message: 'Verified' };
-  }
-
-  @Delete('/work/:peerUUID')
-  async deletePeer(@Params('peerUUID') peerUUID: string) {
-    return peerService.deletePeer(peerUUID);
   }
 }

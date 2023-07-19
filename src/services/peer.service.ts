@@ -68,6 +68,9 @@ class PeerService {
   public async peerSendOTP(peerUUID: string, otp_type: otpType) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
     const { email, phone } = peer;
     if (otp_type === 'EMAIL') {
       await otpService.sendOTP(email, otp_type);
@@ -79,6 +82,9 @@ class PeerService {
   public async verifyPeerConatct(peerUUID: string, otp_type: otpType, otp: string) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
     const { email, phone } = peer;
     if (otp_type === 'EMAIL') {
       return await otpService.verifyOTP(email, otp_type, otp);
@@ -213,10 +219,8 @@ class PeerService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async deletePeer(peerUUID: string) {
-    const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
-    await redisClient.del(peerUUID);
-    const peer = await WorkPeerModel.findByIdAndDelete(peerId);
+  public async deletePeer(peerid: string) {
+    const peer = await WorkPeerModel.findByIdAndDelete(peerid);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
