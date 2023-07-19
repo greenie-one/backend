@@ -55,6 +55,9 @@ export class WorkExFields {
   public dateOfLeaving?: Status;
 
   @prop()
+  public peerPost?: Status;
+
+  @prop()
   public companyName?: Status;
 
   @prop()
@@ -93,6 +96,7 @@ export function defaultWorkExFields() {
     salary: defaultStatus,
     eligibleForRehire: defaultStatus,
     exitProcedure: defaultStatus,
+    peerPost: defaultStatus,
     companyName: defaultStatus,
     workMode: defaultStatus,
     workType: defaultStatus,
