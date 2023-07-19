@@ -46,7 +46,7 @@ class PeerService {
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto) {
     let obj: WorkExFields;
     try {
-      obj = createClassInstanceWithFields<WorkExFields>(Object.keys(peerData), new WorkExFields(), defaultWorkExFields());
+      obj = createClassInstanceWithFields(peerData.verificationFields, new WorkExFields(), defaultWorkExFields());
       console.info(`created work peer with fields ${JSON.stringify(obj)}`);
     } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, e.message);
