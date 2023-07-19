@@ -130,7 +130,3 @@ export interface workExperienceResponseDto {
   linkedInUrl: string;
   companyEndDate: string;
 }
-
-export interface GetWorkExperienceResponse {
-  workExperiences: workExperienceResponseDto[];
-}

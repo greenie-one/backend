@@ -60,10 +60,6 @@ export interface profileResponseDto {
   descriptionTags: string[];
 }
 
-export interface GetProfileResponse {
-  profile: profileResponseDto;
-}
-
 export interface SearchProfilesResponse {
   profiles: profileResponseDto[];
 }

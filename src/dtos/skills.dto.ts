@@ -26,7 +26,3 @@ export interface skillResponseDto {
   workExperience?: string;
   expertise: skillTypeEnum;
 }
-
-export interface GetSkillsResponse {
-  skills: skillResponseDto[];
-}

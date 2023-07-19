@@ -1,10 +1,4 @@
-import {
-  AddWorkExperienceResponse,
-  CreateWorkExperienceDto,
-  GetWorkExperienceResponse,
-  UpdateWorkExperienceDto,
-  workExperienceResponseDto,
-} from '@/dtos/workExperience.dto';
+import { AddWorkExperienceResponse, CreateWorkExperienceDto, UpdateWorkExperienceDto, workExperienceResponseDto } from '@/dtos/workExperience.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -45,18 +39,16 @@ class WorkExperienceService {
       return res;
     }
   }
-  public async getWorkExperience(userId: string): Promise<GetWorkExperienceResponse> {
+  public async getWorkExperience(userId: string): Promise<workExperienceResponseDto[]> {
     const workExperiences = await WorkExperienceModel.find({ user: userId });
 
     if (!workExperiences) {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    const res: GetWorkExperienceResponse = {
-      workExperiences: [],
-    };
+    const res: workExperienceResponseDto[] = [];
     for (const workExp of workExperiences) {
-      res.workExperiences.push({
+      res.push({
         id: workExp._id.toString(),
         designation: workExp.designation,
         companyType: workExp.companyType,

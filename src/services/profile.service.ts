@@ -1,4 +1,4 @@
-import { AddProfileResponse, CreateProfileDto, GetProfileResponse, SearchProfilesResponse, UpdateProfileDto } from '@/dtos/profile.dto';
+import { AddProfileResponse, CreateProfileDto, UpdateProfileDto, profileResponseDto } from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentType } from '@/models/document.model';
@@ -52,21 +52,19 @@ class ProfileService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async getProfile(userId: string): Promise<GetProfileResponse> {
+  public async getProfile(userId: string): Promise<profileResponseDto> {
     const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    const res: GetProfileResponse = {
-      profile: {
-        id: profile._id.toString(),
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        profilePic: profile.profilePic,
-        bio: profile.bio,
-        descriptionTags: profile.descriptionTags,
-      },
+    const res: profileResponseDto = {
+      id: profile._id.toString(),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      profilePic: profile.profilePic,
+      bio: profile.bio,
+      descriptionTags: profile.descriptionTags,
     };
     return res;
   }
@@ -120,20 +118,18 @@ class ProfileService {
     return profiles;
   }
 
-  public async searchByUsername(firstName: string, lastName: string): Promise<SearchProfilesResponse> {
+  public async searchByUsername(firstName: string, lastName: string): Promise<profileResponseDto[]> {
     const regexFirstName = new RegExp(firstName, 'i');
     const regexLastName = new RegExp(lastName, 'i');
     const profiles = await ProfileModel.find({
       $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
     });
 
-    const res: SearchProfilesResponse = {
-      profiles: [],
-    };
+    const res: profileResponseDto[] = [];
 
     if (profiles) {
       for (const profile of profiles) {
-        res.profiles.push({
+        res.push({
           id: profile._id.toString(),
           firstName: profile.firstName,
           lastName: profile.lastName,
