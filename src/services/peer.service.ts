@@ -23,7 +23,7 @@ class PeerService {
 
   public async sendLinksToPeers(peerId: string, peer: WorkPeer) {
     const profile = await ProfileModel.findOne({ user: peer.user });
-    const base_url = `${env('REMOTE_BASE_URL')}/verification/${peer.verificationBy}/`;
+    const base_url = `${env('FRONTEND_URL')}/verification/${peer.verificationBy}`;
 
     const mobileUUID = randomUUID().toString();
     const mobileLink = `${base_url}/${mobileUUID}`;
