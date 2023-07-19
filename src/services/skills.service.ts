@@ -35,10 +35,12 @@ class SkillService {
       resp.push({
         id: skill._id.toString(),
         skillName: skill.skillName,
-        workExperience: skill.workExperience ? skill.workExperience.toString() : undefined,
+        workExperience: skill.workExperience?.toString() ?? null,
         expertise: skill.expertise,
       });
     }
+
+    console.info(resp);
     return resp;
   }
 

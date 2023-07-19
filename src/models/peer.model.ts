@@ -8,11 +8,25 @@ export enum State {
 }
 
 export class Status {
-  @prop({ enum: State, type: String, default: State.PENDING })
+  @prop({ enum: State, type: String })
   public state: State;
 
+  @prop({
+    type: String,
+    required: function (this: Status) {
+      return this.state === State.REJECTED;
+    },
+  })
+  public dispute_type?: string;
+
   @prop({ type: String })
-  public reason?: string;
+  @prop({
+    type: String,
+    required: function (this: Status) {
+      return this.state === State.REJECTED;
+    },
+  })
+  public dispute_reason?: string;
 }
 
 export enum Rating {
@@ -21,6 +35,13 @@ export enum Rating {
   OCCASIONALLY_COLLABORATIVE = 'occasionally-collaborative',
   MODERATELY_COLLABORATIVE = 'moderately-collaborative',
   HIGHLY_COLLABORATIVE = 'highly-collaborative',
+  NOT_GIVEN = 'not-given',
+}
+
+export enum YESNO {
+  YES = 'YES',
+  NO = 'NO',
+  NOT_GIVEN = 'NOT_GIVEN',
 }
 
 export class WorkExFields {
@@ -48,14 +69,36 @@ export class WorkExFields {
   @prop({ enum: Rating, type: String })
   public attitudeRating?: Rating;
 
-  @prop({ type: Boolean })
-  public eligibleForRehire?: boolean;
+  @prop({ enum: YESNO, type: String })
+  public eligibleForRehire?: YESNO;
 
-  @prop({ type: Boolean })
-  public exitProcedure?: boolean;
+  @prop({ enum: YESNO, type: String })
+  public exitProcedure?: YESNO;
 
   @prop({ type: String })
   public review?: string;
+}
+
+export function defaultWorkExFields() {
+  const defaultStatus = new Status();
+  defaultStatus.state = State.PENDING;
+
+  const defaultRating = Rating.NOT_GIVEN;
+  const defaultValues: Partial<WorkExFields> = {
+    candidateId: defaultStatus,
+    department: defaultStatus,
+    designation: defaultStatus,
+    dateOfJoining: defaultStatus,
+    dateOfLeaving: defaultStatus,
+    peerPost: defaultStatus,
+    salary: defaultStatus,
+
+    attitudeRating: defaultRating,
+    eligibleForRehire: YESNO.NOT_GIVEN,
+    exitProcedure: YESNO.NOT_GIVEN,
+    review: '',
+  };
+  return defaultValues;
 }
 
 export enum WorkVerificationBy {
