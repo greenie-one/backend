@@ -55,6 +55,7 @@ export enum ErrorEnum {
   INVALID_VERIFICATION_FIELDS,
   CALL_API_FAILED,
   PEER_PHONE_NOT_VERIFIED,
+  PEER_ALREADY_EXISTS,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -287,5 +288,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0053',
     message: 'Call API failed - %s',
     status: 500,
+  },
+  [ErrorEnum.PEER_ALREADY_EXISTS]: {
+    code: 'GR0054',
+    message: 'Peer already exists',
+    status: 400,
   },
 };

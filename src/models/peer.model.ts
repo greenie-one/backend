@@ -1,4 +1,4 @@
-import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { getModelForClass, index, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { User } from './users.model';
 
 export enum State {
@@ -137,6 +137,7 @@ export enum WorkVerificationBy {
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
+@index({ user: 1, email: 1 }, { unique: true })
 export class WorkPeer {
   @prop({ required: true, ref: 'User', type: String })
   public user!: Ref<User, string>;

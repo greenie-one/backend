@@ -141,6 +141,10 @@ class PeerService {
   }
 
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto): Promise<CreateWorkPeerResponse> {
+    const find = await WorkPeerModel.findOne({ user: userId, email: peerData.email });
+    if (find) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_EXISTS);
+    }
     let obj: OptionalWorkExFields;
     try {
       obj = createClassInstanceWithFields(peerData.optionalVerificationFields, new OptionalWorkExFields(), OptionalWorkExFields.defaultFields());
