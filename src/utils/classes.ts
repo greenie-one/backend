@@ -3,7 +3,7 @@ export function createClassInstanceWithFields<T extends object>(fieldNames: stri
     if (fieldName in defaultValues) {
       instance[fieldName] = defaultValues[fieldName];
     } else {
-      throw new Error(`Field "${fieldName}" not found in class`);
+      throw new Error(`Field "${fieldName}" not found or not allowed in DTO`);
     }
   }
 

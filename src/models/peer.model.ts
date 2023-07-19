@@ -72,38 +72,14 @@ export class WorkExFields {
   @prop({ enum: Rating, type: String })
   public attitudeRating?: Rating;
 
-  @prop({})
+  @prop()
   public eligibleForRehire?: Status;
 
-  @prop({})
+  @prop()
   public exitProcedure?: Status;
 
   @prop({ type: String })
   public review?: string;
-}
-
-export function defaultWorkExFields() {
-  const defaultStatus = new Status();
-  defaultStatus.state = State.PENDING;
-
-  const defaultRating = Rating.NOT_GIVEN;
-  const defaultValues: Partial<WorkExFields> = {
-    candidateId: defaultStatus,
-    department: defaultStatus,
-    designation: defaultStatus,
-    dateOfJoining: defaultStatus,
-    dateOfLeaving: defaultStatus,
-    salary: defaultStatus,
-    eligibleForRehire: defaultStatus,
-    exitProcedure: defaultStatus,
-    peerPost: defaultStatus,
-    companyName: defaultStatus,
-    workMode: defaultStatus,
-    workType: defaultStatus,
-    attitudeRating: defaultRating,
-    review: '',
-  };
-  return defaultValues;
 }
 
 export enum WorkVerificationBy {
