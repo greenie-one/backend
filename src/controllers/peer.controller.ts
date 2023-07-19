@@ -4,7 +4,7 @@ import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dt
 import { peerService } from '@/services/peer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
-import { Get, Patch, Post } from '@/utils/decorators/methods';
+import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
 import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/peer')
@@ -43,5 +43,10 @@ export default class PeerController {
   async verifyPeerConatct(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyOtpDTO) {
     const status = await peerService.verifyPeerConatct(peerUUID, otp_data.otpType, otp_data.otp);
     return { success: status, message: 'Verified' };
+  }
+
+  @Delete('/work/:peerUUID')
+  async deletePeer(@Params('peerUUID') peerUUID: string) {
+    return peerService.deletePeer(peerUUID);
   }
 }

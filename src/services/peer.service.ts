@@ -212,6 +212,16 @@ class PeerService {
 
     return { success: true, message: 'Updated Successfully' };
   }
+
+  public async deletePeer(peerUUID: string) {
+    const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
+    await redisClient.del(peerUUID);
+    const peer = await WorkPeerModel.findByIdAndDelete(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+    return { success: true, message: 'Deleted Successfully' };
+  }
 }
 
 export const peerService = new PeerService();
