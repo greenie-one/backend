@@ -10,6 +10,7 @@ export class verification {
     mobileVerificationLink: string,
     emailVerificationLink: string,
   ) {
+    console.info(`Sending links to ${verifierName} with email ${email} and phone ${phone}`);
     return HttpClient.callApi({
       url: `${env('REMOTE_BASE_URL')}/remote/verification/send`,
       method: 'POST',

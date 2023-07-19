@@ -7,6 +7,7 @@ import PeerController from './controllers/peer.controller';
 import ProfileController from './controllers/profile.controller';
 import ResidentialInfoController from './controllers/residentialInfo.controller';
 import RootController from './controllers/root.controller';
+import SharingController from './controllers/sharing.controller';
 import SkillController from './controllers/skills.controller';
 import UserController from './controllers/user.controller';
 import WaitlistController from './controllers/waitlist.controller';
@@ -36,6 +37,7 @@ const controllers = [
   UserController,
   LocationController,
   PeerController,
+  SharingController,
 ];
 
 const app = new App(controllers);
