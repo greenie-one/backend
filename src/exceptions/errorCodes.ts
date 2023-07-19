@@ -53,6 +53,7 @@ export enum ErrorEnum {
   PEER_NOT_VERIFIED,
   INVALID_OTP,
   INVALID_VERIFICATION_FIELDS,
+  CALL_API_FAILED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -275,5 +276,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0051',
     message: 'Invalid verification fields %s',
     status: 400,
+  },
+  [ErrorEnum.CALL_API_FAILED]: {
+    code: 'GR0052',
+    message: 'Call API failed - %s',
+    status: 500,
   },
 };

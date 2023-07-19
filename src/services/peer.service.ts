@@ -121,7 +121,7 @@ class PeerService {
     };
     const peer = await WorkPeerModel.create(peerDataObj);
     await this.sendLinksToPeers(peer._id.toString(), peer);
-    return peer as ResponseCreateWorkPeer;
+    return { id: peer._id.toString(), name: peer.name } as ResponseCreateWorkPeer;
   }
 
   public async UpdatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
