@@ -19,7 +19,7 @@ export default class PeerController {
     return peerService.createWorkPeer(userDetails.sub, data);
   }
 
-  @Post('/work/:id/resend')
+  @Get('/work/:id/resend')
   async resendLinksToPeers(@UserDetails() userDetails: TokenClaims, @Params('id') peerId: string) {
     return peerService.resendLinksToPeers(userDetails.sub, peerId);
   }
