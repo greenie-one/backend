@@ -107,7 +107,7 @@ class PeerService {
     return peer as ResponseCreateWorkPeer;
   }
 
-  public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto) {
+  public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto): Promise<ResponseCreateWorkPeer> {
     let obj: OptionalWorkExFields;
     try {
       obj = createClassInstanceWithFields(peerData.optionalVerificationFields, new OptionalWorkExFields(), OptionalWorkExFields.defaultFields());
@@ -125,7 +125,7 @@ class PeerService {
     };
     const peer = await WorkPeerModel.create(peerDataObj);
     await this.sendLinksToPeers(peer._id.toString(), peer);
-    return peer;
+    return peer as ResponseCreateWorkPeer;
   }
 
   public async UpdatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
