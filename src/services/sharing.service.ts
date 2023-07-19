@@ -19,7 +19,7 @@ class SharingService {
               sharedThing: sharingType,
               sharedThingRef: id,
               sharedWith: data.sharedWith,
-              sharedWithRef: data.userId,
+              sharedWithRef: data.sharedWithId,
             });
           } else {
             throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
@@ -34,7 +34,7 @@ class SharingService {
               sharedThing: sharingType,
               sharedThingRef: id,
               sharedWith: data.sharedWith,
-              sharedWithRef: data.userId,
+              sharedWithRef: data.sharedWithId,
             });
           } else {
             throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);

@@ -8,7 +8,7 @@ import { Body, Params } from '@/utils/decorators/request';
 
 @Controller('/share')
 export default class sharingController {
-  @Post('/create')
+  @Post('/')
   async shareThing(@UserDetails() userDetails: TokenClaims, @Body() data: sharingDTO) {
     return sharingService.share(userDetails.sub, data);
   }
