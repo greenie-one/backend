@@ -148,6 +148,7 @@ export interface GetUserWorkPeerResponse {
   name: string;
   email: string;
   phone: string;
+  workExperience: string;
 }
 
 export interface GetPeerInformationResponse {

@@ -136,8 +136,9 @@ export enum WorkVerificationBy {
   CXO = 'CXO',
 }
 
+// Index for unique peer, scoped to user, email and workExperience ref
 @modelOptions({ schemaOptions: { timestamps: true } })
-@index({ user: 1, email: 1 }, { unique: true })
+@index({ user: 1, email: 1, ref: 1 }, { unique: true })
 export class WorkPeer {
   @prop({ required: true, ref: 'User', type: String })
   public user!: Ref<User, string>;

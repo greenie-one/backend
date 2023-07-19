@@ -96,6 +96,7 @@ class PeerService {
         name: peer.name,
         email: peer.email,
         phone: peer.phone,
+        workExperience: peer.ref.toString(),
       });
     }
     return res;
