@@ -1,4 +1,4 @@
-import { Rating, State, WorkVerificationBy, YESNO } from '@models/peer.model';
+import { Rating, State, WorkVerificationBy } from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 
@@ -39,13 +39,15 @@ export class WorkExFieldsDTO {
   @IsEnum(Rating)
   public attitudeRating?: Rating;
 
-  @IsEnum(YESNO)
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  public eligibleForRehire?: YESNO;
+  public eligibleForRehire?: StatusField;
 
-  @IsEnum(YESNO)
+  @ValidateNested()
+  @Type(() => StatusField)
   @IsOptional()
-  public exitStatusField?: YESNO;
+  public exitStatusField?: StatusField;
 
   @IsString()
   @IsOptional()
@@ -69,6 +71,21 @@ export class WorkExFieldsDTO {
   @Type(() => StatusField)
   @IsOptional()
   public dateOfLeaving?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public companyName?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public workType?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public workMode?: StatusField;
 }
 
 export class CreateWorkPeerDto {
