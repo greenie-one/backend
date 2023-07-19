@@ -38,12 +38,6 @@ export enum Rating {
   NOT_GIVEN = 'not-given',
 }
 
-export enum YESNO {
-  YES = 'YES',
-  NO = 'NO',
-  NOT_GIVEN = 'NOT_GIVEN',
-}
-
 export class WorkExFields {
   @prop()
   public candidateId?: Status;
@@ -61,7 +55,13 @@ export class WorkExFields {
   public dateOfLeaving?: Status;
 
   @prop()
-  public peerPost?: Status;
+  public companyName?: Status;
+
+  @prop()
+  public workType?: Status;
+
+  @prop()
+  public workMode?: Status;
 
   @prop()
   public salary?: Status;
@@ -69,11 +69,11 @@ export class WorkExFields {
   @prop({ enum: Rating, type: String })
   public attitudeRating?: Rating;
 
-  @prop({ enum: YESNO, type: String })
-  public eligibleForRehire?: YESNO;
+  @prop({})
+  public eligibleForRehire?: Status;
 
-  @prop({ enum: YESNO, type: String })
-  public exitProcedure?: YESNO;
+  @prop({})
+  public exitProcedure?: Status;
 
   @prop({ type: String })
   public review?: string;
@@ -90,12 +90,13 @@ export function defaultWorkExFields() {
     designation: defaultStatus,
     dateOfJoining: defaultStatus,
     dateOfLeaving: defaultStatus,
-    peerPost: defaultStatus,
     salary: defaultStatus,
-
+    eligibleForRehire: defaultStatus,
+    exitProcedure: defaultStatus,
+    companyName: defaultStatus,
+    workMode: defaultStatus,
+    workType: defaultStatus,
     attitudeRating: defaultRating,
-    eligibleForRehire: YESNO.NOT_GIVEN,
-    exitProcedure: YESNO.NOT_GIVEN,
     review: '',
   };
   return defaultValues;
