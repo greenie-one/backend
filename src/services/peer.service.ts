@@ -36,12 +36,14 @@ class PeerService {
 
     console.info(`Sending links to ${peer.name} with email ${peer.email} and phone ${peer.phone}`);
 
-    await verification
-      .GetPeerVerification(peer.email, peer.phone, peer.name, `${profile.firstName} + ' ' + ${profile.lastName}`, mobileLink, emailLink)
-      .catch((err) => {
-        console.error(err);
-        throw new HttpException(ErrorEnum.Server_ERROR);
-      });
+    await verification.GetPeerVerification(
+      peer.email,
+      peer.phone,
+      peer.name,
+      `${profile.firstName} + ' ' + ${profile.lastName}`,
+      mobileLink,
+      emailLink,
+    );
     return { success: true, message: 'Link Sent' };
   }
 
