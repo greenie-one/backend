@@ -44,7 +44,6 @@ class PeerService {
       mobileLink,
       emailLink,
     );
-    return { success: true, message: 'Link Sent' };
   }
 
   private getQuestionsBasedOnType(type: WorkVerificationBy) {
