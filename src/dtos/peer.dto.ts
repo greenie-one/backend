@@ -1,4 +1,4 @@
-import { Rating, State, WorkVerificationBy } from '@models/peer.model';
+import { State, WorkVerificationBy } from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 
@@ -28,26 +28,7 @@ export class WorkExFieldsDTO {
   @ValidateNested()
   @Type(() => StatusField)
   @IsOptional()
-  public peerPost?: StatusField;
-
-  @ValidateNested()
-  @Type(() => StatusField)
-  @IsOptional()
   public salary?: StatusField;
-
-  @IsOptional()
-  @IsEnum(Rating)
-  public attitudeRating?: Rating;
-
-  @ValidateNested()
-  @Type(() => StatusField)
-  @IsOptional()
-  public eligibleForRehire?: StatusField;
-
-  @ValidateNested()
-  @Type(() => StatusField)
-  @IsOptional()
-  public exitStatusField?: StatusField;
 
   @IsString()
   @IsOptional()
@@ -56,11 +37,6 @@ export class WorkExFieldsDTO {
   @IsString()
   @IsOptional()
   public department?: StatusField;
-
-  @ValidateNested()
-  @Type(() => StatusField)
-  @IsOptional()
-  public designation?: StatusField;
 
   @ValidateNested()
   @Type(() => StatusField)
@@ -86,6 +62,24 @@ export class WorkExFieldsDTO {
   @Type(() => StatusField)
   @IsOptional()
   public workMode?: StatusField;
+}
+
+export function defaultWorkExFields() {
+  const defaultStatus = new StatusField();
+  defaultStatus.state = State.PENDING;
+
+  const defaultValues: Partial<WorkExFieldsDTO> = {
+    candidateId: defaultStatus,
+    department: defaultStatus,
+    dateOfJoining: defaultStatus,
+    dateOfLeaving: defaultStatus,
+    salary: defaultStatus,
+    companyName: defaultStatus,
+    workMode: defaultStatus,
+    workType: defaultStatus,
+    review: '',
+  };
+  return defaultValues;
 }
 
 export class CreateWorkPeerDto {

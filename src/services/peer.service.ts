@@ -1,7 +1,7 @@
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
+import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto, defaultWorkExFields } from '@/dtos/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { WorkExFields, WorkPeer, WorkPeerModel, defaultWorkExFields } from '@/models/peer.model';
+import { Rating, State, Status, WorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
 import { ProfileModel } from '@/models/profile.model';
 import { redisClient } from '@/redisClient';
 import { otpType } from '@/remote/otp/otp';
@@ -43,11 +43,47 @@ class PeerService {
     return { success: true, message: 'Link Sent' };
   }
 
+  private setPeerQuestionsBasedOnType(obj: WorkExFields, type: WorkVerificationBy) {
+    const HR_ONLY = ['exitProcedure'];
+    const EVERYONE = ['eligibleForRehire', 'attitudeRating'];
+    const EXCEPT_HR = ['designation', 'peerPost'];
+
+    const defaultStatus = new Status();
+    defaultStatus.state = State.PENDING;
+
+    const defaultRating = Rating.NOT_GIVEN;
+    const defaultValues: Partial<WorkExFields> = {
+      designation: defaultStatus,
+      eligibleForRehire: defaultStatus,
+      exitProcedure: defaultStatus,
+      peerPost: defaultStatus,
+      attitudeRating: defaultRating,
+    };
+
+    for (const key in EVERYONE) {
+      obj[key] = defaultValues[key];
+    }
+
+    if (type === WorkVerificationBy.HR) {
+      for (const key in HR_ONLY) {
+        obj[key] = defaultValues[key];
+      }
+    } else {
+      for (const key in EXCEPT_HR) {
+        obj[key] = defaultValues[key];
+      }
+    }
+
+    return obj;
+  }
+
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto) {
     let obj: WorkExFields;
     try {
       obj = createClassInstanceWithFields(peerData.verificationFields, new WorkExFields(), defaultWorkExFields());
       console.info(`created work peer with fields ${JSON.stringify(obj)}`);
+      obj = this.setPeerQuestionsBasedOnType(obj, peerData.verificationBy);
+      console.info(`created work peer with fields and default questions ${JSON.stringify(obj)}`);
     } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, e.message);
     }

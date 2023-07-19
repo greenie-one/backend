@@ -12,7 +12,7 @@ export class sharingDTO {
   public thingId!: string[];
 
   @IsString()
-  public userId!: string;
+  public sharedWithId!: string;
 
   @IsEnum(SharedWith)
   @IsNotEmpty()
