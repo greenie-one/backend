@@ -36,14 +36,7 @@ class PeerService {
 
     console.info(`Sending links to ${peer.name} with email ${peer.email} and phone ${peer.phone}`);
 
-    await verification.GetPeerVerification(
-      peer.email,
-      peer.phone,
-      peer.name,
-      `${profile.firstName} + ' ' + ${profile.lastName}`,
-      mobileLink,
-      emailLink,
-    );
+    await verification.GetPeerVerification(peer.email, peer.phone, peer.name, `${profile.firstName} ${profile.lastName}`, mobileLink, emailLink);
   }
 
   private getQuestionsBasedOnType(type: WorkVerificationBy) {
