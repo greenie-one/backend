@@ -1,4 +1,4 @@
-import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { getModelForClass, index, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { User } from './users.model';
 
 export enum State {
@@ -89,6 +89,12 @@ export class OptionalWorkExFields {
 export class MandatoryWorkExFields {
   @prop({ type: String, default: 'No Review' })
   public review?: string;
+
+  static defaultFields() {
+    const defaultMandatoryWorkExFields = new MandatoryWorkExFields();
+    defaultMandatoryWorkExFields.review = 'No Review';
+    return defaultMandatoryWorkExFields;
+  }
 }
 
 @modelOptions({ schemaOptions: { _id: false } })
@@ -98,6 +104,13 @@ export class MandatoryQuestionFields {
 
   @prop({ default: Status.defaultStatus() })
   public eligibleForRehire?: Status;
+
+  static defaultFields() {
+    const defaultMandatoryQuestionFields = new MandatoryQuestionFields();
+    defaultMandatoryQuestionFields.attitudeRating = Rating.NOT_GIVEN;
+    defaultMandatoryQuestionFields.eligibleForRehire = Status.defaultStatus();
+    return defaultMandatoryQuestionFields;
+  }
 }
 
 @modelOptions({ schemaOptions: { _id: false } })
@@ -136,7 +149,9 @@ export enum WorkVerificationBy {
   CXO = 'CXO',
 }
 
+// Index for unique peer, scoped to user, email and workExperience ref
 @modelOptions({ schemaOptions: { timestamps: true } })
+@index({ user: 1, email: 1, ref: 1 }, { unique: true })
 export class WorkPeer {
   @prop({ required: true, ref: 'User', type: String })
   public user!: Ref<User, string>;
@@ -165,10 +180,10 @@ export class WorkPeer {
   @prop()
   public optionalVerificationFields?: OptionalWorkExFields;
 
-  @prop()
+  @prop({ default: MandatoryWorkExFields.defaultFields() })
   public mandatoryVerificationFields?: MandatoryWorkExFields;
 
-  @prop()
+  @prop({ default: MandatoryQuestionFields.defaultFields() })
   public mandatoryQuestionFields?: MandatoryQuestionFields;
 
   @prop()
@@ -177,6 +192,9 @@ export class WorkPeer {
   public createdAt?: Date;
 
   public updatedAt?: Date;
+
+  @prop({ type: Boolean, default: false })
+  public verified?: boolean;
 }
 
 export const WorkPeerModel = getModelForClass(WorkPeer);

@@ -1,12 +1,35 @@
-import { Rating, State, WorkVerificationBy } from '@models/peer.model';
+import {
+  ExceptHRQuestionFields,
+  HRQuestionFields,
+  MandatoryQuestionFields,
+  MandatoryWorkExFields,
+  OptionalWorkExFields,
+  Rating,
+  State,
+  WorkVerificationBy,
+} from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { workExperienceResponseDto } from './workExperience.dto';
+
+enum UpdateSate {
+  REJECTED = 'REJECTED',
+  APPROVED = 'APPROVED',
+}
+
+enum UpdateRating {
+  NON_COLLABORATIVE = 'non-collaborative',
+  RARELY_COLLABORATIVE = 'rarely-collaborative',
+  OCCASIONALLY_COLLABORATIVE = 'occasionally-collaborative',
+  MODERATELY_COLLABORATIVE = 'moderately-collaborative',
+  HIGHLY_COLLABORATIVE = 'highly-collaborative',
+}
 
 class StatusField {
   @IsString()
   @IsNotEmpty()
   @IsEnum(State)
-  public state!: State;
+  public state!: UpdateSate;
 
   @IsString()
   @IsOptional()
@@ -63,13 +86,12 @@ export class WorkExFieldsDTO {
 
   // From Work Ex Mandatory fields
   @IsString()
-  @IsOptional()
-  public review?: string;
+  public review: string;
 
   // From Work Ex Mandatory Questions
   @IsEnum(Rating)
   @IsOptional()
-  public attitudeRating?: Rating;
+  public attitudeRating?: UpdateRating;
 
   @ValidateNested()
   @Type(() => StatusField)
@@ -129,7 +151,36 @@ export class UpdatePeerWorkVerificationDto {
   public verificationFields!: WorkExFieldsDTO;
 }
 
-export interface ResponseCreateWorkPeer {
+export interface CreateWorkPeerResponse {
   id: string;
   name: string;
+}
+
+export interface GetUserWorkPeerResponse {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  workExperience: string;
+}
+
+export interface GetWorkExDataResponse extends Partial<workExperienceResponseDto> {
+  name: string;
+  profilePic: string;
+  peerPost?: string;
+}
+
+export interface GetPeerInformationResponse {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+  verificationBy: WorkVerificationBy;
+  optionalVerificationFields?: OptionalWorkExFields;
+  mandatoryVerificationFields?: MandatoryWorkExFields;
+  mandatoryQuestionFields?: MandatoryQuestionFields;
+  otherQuestionFields: HRQuestionFields | ExceptHRQuestionFields;
+  data: GetWorkExDataResponse;
 }

@@ -15,29 +15,17 @@ class WorkExperienceService {
     } catch (e) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
-    if (workExperienceData.companyEndDate) {
-      if (workExperienceData.companyEndDate && workExperienceData.companyStartDate < workExperienceData.companyEndDate) {
-        const workExperience = await WorkExperienceModel.create({
-          ...workExperienceData,
-          user: userId,
-          companyStartDate: new Date(workExperienceData.companyStartDate),
-          companyEndDate: new Date(workExperienceData.companyEndDate),
-        });
-        const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
-        return res;
-      } else {
-        throw new HttpException(ErrorEnum.INVALID_DATE);
-      }
-    } else {
-      const workExperience = await WorkExperienceModel.create({
-        ...workExperienceData,
-        user: userId,
-        companyStartDate: new Date(workExperienceData.companyStartDate),
-        companyEndDate: new Date(workExperienceData.companyEndDate),
-      });
-      const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
-      return res;
+    if (workExperienceData.dateOfLeaving && workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
+      throw new HttpException(ErrorEnum.INVALID_DATE);
     }
+    const workExperience = await WorkExperienceModel.create({
+      ...workExperienceData,
+      user: userId,
+      dateOfJoining: new Date(workExperienceData.dateOfJoining),
+      dateOfLeaving: workExperienceData.dateOfLeaving ? new Date(workExperienceData.dateOfLeaving) : null,
+    });
+    const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
+    return res;
   }
   public async getWorkExperience(userId: string): Promise<GetWorkExperienceResponse> {
     const workExperiences = await WorkExperienceModel.find({ user: userId });
@@ -62,9 +50,9 @@ class WorkExperienceService {
         companyId: workExp.companyId,
         salary: workExp.salary,
         reason_for_leaving: workExp.reason_for_leaving,
-        companyStartDate: workExp.companyStartDate.toString(),
+        dateOfJoining: workExp.dateOfJoining ? workExp.dateOfJoining.toString() : null,
         linkedInUrl: workExp.linkedInUrl,
-        companyEndDate: workExp.companyEndDate.toString(),
+        dateOfLeaving: workExp.dateOfLeaving ? workExp.dateOfLeaving.toString() : null,
       });
     }
     return res;
@@ -94,7 +82,7 @@ class WorkExperienceService {
     if (workExperience.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    if (!(updatedData.companyEndDate && updatedData.companyStartDate < updatedData.companyEndDate)) {
+    if (!(updatedData.dateOfLeaving && updatedData.dateOfJoining < updatedData.dateOfLeaving)) {
       throw new HttpException(ErrorEnum.INVALID_DATE);
     }
     const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
