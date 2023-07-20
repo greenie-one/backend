@@ -236,23 +236,27 @@ class PeerService {
 
     try {
       const source = JSON.parse(JSON.stringify(updatedData.verificationFields));
-      const destination = {
-        mandatoryVerificationFields: {},
-        optionalVerificationFields: {},
-        otherQuestionFields: {},
-        mandatoryQuestionFields: {},
-      };
+      const mandatoryVerificationFields = {};
+      const optionalVerificationFields = {};
+      const otherQuestionFields = {};
+      const mandatoryQuestionFields = {};
+
+      const destination = {};
       if (peer.mandatoryVerificationFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), destination);
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), mandatoryVerificationFields);
+        destination['mandatoryVerificationFields'] = mandatoryVerificationFields;
       }
       if (peer.optionalVerificationFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), destination);
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), optionalVerificationFields);
+        destination['optionalVerificationFields'] = optionalVerificationFields;
       }
       if (peer.otherQuestionFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), destination);
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), otherQuestionFields);
+        destination['otherQuestionFields'] = otherQuestionFields;
       }
       if (peer.mandatoryQuestionFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), destination);
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), mandatoryQuestionFields);
+        destination['mandatoryQuestionFields'] = mandatoryQuestionFields;
       }
       console.info(`Updated Peer Verification Fields: ${destination}`);
 
