@@ -6285,6 +6285,7 @@ __metadata:
     "@opentelemetry/sdk-trace-base": ^1.15.0
     "@opentelemetry/sdk-trace-node": ^1.15.0
     "@opentelemetry/semantic-conventions": ^1.15.0
+    "@opentelemetry/sql-common": ^0.40.0
     "@swc/cli": ^0.1.62
     "@swc/core": ^1.3.70
     "@swc/helpers": ^0.5.1
@@ -6324,6 +6325,7 @@ __metadata:
     jest: ^29.6.1
     lint-staged: ^13.2.3
     loglevel: ^1.8.1
+    memory-pager: ^1.5.0
     mongoose: ^7.4.0
     nodemailer: ^6.9.4
     nodemon: ^3.0.1
@@ -6331,6 +6333,8 @@ __metadata:
     redis: ^4.6.7
     reflect-metadata: ^0.1.13
     rxjs: ^7.8.1
+    saslprep: ^1.0.3
+    sparse-bitfield: ^3.0.3
     supertest: ^6.3.3
     swagger-jsdoc: ^6.2.8
     swc-loader: ^0.2.3
@@ -6350,6 +6354,12 @@ __metadata:
     webpack-node-externals: ^3.0.0
   dependenciesMeta:
     is-core-module@2.12.1:
+      unplugged: true
+    memory-pager@1.5.0:
+      unplugged: true
+    saslprep@1.0.3:
+      unplugged: true
+    sparse-bitfield@3.0.3:
       unplugged: true
   languageName: unknown
   linkType: soft
@@ -7839,7 +7849,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"memory-pager@npm:^1.0.2":
+"memory-pager@npm:^1.0.2, memory-pager@npm:^1.5.0":
   version: 1.5.0
   resolution: "memory-pager@npm:1.5.0"
   checksum: d1a2e684583ef55c61cd3a49101da645b11ad57014dfc565e0b43baa9004b743f7e4ab81493d8fff2ab24e9950987cc3209c94bcc4fc8d7e30a475489a1f15e9
