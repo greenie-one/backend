@@ -61,6 +61,9 @@ export class WorkExperience {
   public createdAt?: Date;
 
   public updatedAt?: Date;
+
+  @prop({ type: Number, default: 0 })
+  public noOfVerifications?: number;
 }
 
 export const WorkExperienceModel = getModelForClass(WorkExperience);

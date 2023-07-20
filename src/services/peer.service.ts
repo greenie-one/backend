@@ -6,7 +6,7 @@ import {
   GetWorkExDataResponse,
   UpdatePeerWorkVerificationDto,
 } from '@/dtos/peer.dto';
-import { ErrorEnum } from '@/exceptions/errorCodes';
+import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
@@ -17,6 +17,7 @@ import { verification } from '@/remote/peer/verification';
 import { copyDataFrom, copySourceDataWithKeysFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
 import { randomUUID } from 'crypto';
+import { FastifyReply } from 'fastify';
 import { otpService } from './otp.service';
 
 class PeerService {
@@ -116,7 +117,7 @@ class PeerService {
     return res;
   }
 
-  public async getPeerInformation(peerUUID: string) {
+  public async getPeerInformation(peerUUID: string, reply: FastifyReply) {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -132,10 +133,14 @@ class PeerService {
     }
 
     if (!peer.emailVerified) {
-      throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
+      const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
+      console.log(err);
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name });
     }
     if (!peer.phoneVerified) {
-      throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
+      const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
+      console.log(err);
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name });
     }
 
     const workExperience: WorkExperience = await WorkExperienceModel.findById(peer.ref);
@@ -249,6 +254,8 @@ class PeerService {
       throw new HttpException(ErrorEnum.Server_ERROR, error.message);
     }
 
+    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { verified: true } });
+    await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
     return { success: true, message: 'Updated Successfully' };
   }
 

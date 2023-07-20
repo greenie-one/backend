@@ -192,6 +192,9 @@ export class WorkPeer {
   public createdAt?: Date;
 
   public updatedAt?: Date;
+
+  @prop({ type: Boolean, default: false })
+  public verified?: boolean;
 }
 
 export const WorkPeerModel = getModelForClass(WorkPeer);
