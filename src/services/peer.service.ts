@@ -151,8 +151,8 @@ class PeerService {
       JSON.parse(JSON.stringify(workExperience)),
       data,
     );
-    fieldsData.dateOfJoining = workExperience.dateOfJoining.toDateString();
-    fieldsData.dateOfLeaving = workExperience.dateOfLeaving.toDateString();
+    fieldsData.dateOfJoining = workExperience.dateOfJoining.toString();
+    fieldsData.dateOfLeaving = workExperience.dateOfLeaving.toString();
 
     const res: GetPeerInformationResponse = {
       id: peer._id.toString(),
