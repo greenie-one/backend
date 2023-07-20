@@ -131,9 +131,6 @@ class PeerService {
       await peer.save();
     }
 
-    console.log(`Peer mobile verified: ${peer.phoneVerified}`);
-    console.log(`Peer email verified: ${peer.emailVerified}`);
-
     if (!peer.emailVerified) {
       throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
     }
@@ -148,7 +145,12 @@ class PeerService {
       name: profile.firstName + ' ' + profile.lastName,
       profilePic: profile.profilePic,
     };
-    const fieldsData = copyDataFromInstance(peer.optionalVerificationFields, workExperience, data);
+
+    const fieldsData = copyDataFromInstance(
+      JSON.parse(JSON.stringify(peer.optionalVerificationFields)),
+      JSON.parse(JSON.stringify(workExperience)),
+      data,
+    );
     fieldsData.dateOfJoining = JSON.stringify(workExperience.dateOfJoining);
     fieldsData.dateOfLeaving = JSON.stringify(workExperience.dateOfLeaving);
 
@@ -201,12 +203,13 @@ class PeerService {
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
-    if (!peer.emailVerified || !peer.phoneVerified) {
+    if (!peer.emailVerified) {
       throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
+    } else if (!peer.phoneVerified) {
+      throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
 
     const upadtedFieldsArr = Object.keys(updatedData.verificationFields);
-
     const mandatoryFieldsArr = Object.keys(peer.mandatoryVerificationFields);
     const optionalFieldsArr = Object.keys(peer.optionalVerificationFields);
     const otherQuestionFieldsArr = Object.keys(peer.otherQuestionFields);
@@ -229,12 +232,15 @@ class PeerService {
 
     try {
       console.info(`Before Updating Peer Verification Fields: ${peer as WorkPeer}`);
-      copyFieldsFromInstance(updatedData.verificationFields, peer.optionalVerificationFields);
-      copyFieldsFromInstance(updatedData.verificationFields, peer.mandatoryVerificationFields);
-      copyFieldsFromInstance(updatedData.verificationFields, peer.otherQuestionFields);
-      copyFieldsFromInstance(updatedData.verificationFields, peer.mandatoryQuestionFields);
+      const source = JSON.parse(JSON.stringify(updatedData.verificationFields));
+      const destination = JSON.parse(JSON.stringify(peer));
+      copyFieldsFromInstance(source, destination);
+      copyFieldsFromInstance(source, destination);
+      copyFieldsFromInstance(source, destination);
+      copyFieldsFromInstance(source, destination);
       console.info(`Updated Peer Verification Fields: ${peer as WorkPeer}`);
-      peer.save();
+
+      await WorkPeerModel.findByIdAndUpdate(peerId, { $set: destination }, { new: true });
     } catch (error) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
