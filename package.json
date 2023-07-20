@@ -106,5 +106,13 @@
     "is-core-module@2.12.1": {
       "unplugged": true
     }
+  },
+  "resolutions": {
+    "mongoose": "^7.4.0",
+    "bson": "^5.4.0",
+    "async": "^3.2.4",
+    "semver": "^7.5.4",
+    "mpath": "^0.9.0",
+    "mquery": "^5.0.0"
   }
 }
