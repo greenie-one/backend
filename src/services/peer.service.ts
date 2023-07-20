@@ -16,8 +16,8 @@ import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
 import { copyDataFrom, copySourceDataWithKeysFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
-import { randomUUID } from 'crypto';
 import { FastifyReply } from 'fastify';
+import { customAlphabet } from 'nanoid/async';
 import { otpService } from './otp.service';
 
 class PeerService {
@@ -34,10 +34,10 @@ class PeerService {
     const profile = await ProfileModel.findOne({ user: peer.user });
     const base_url = `${env('FRONTEND_URL')}/verification/${peer.verificationBy}`;
 
-    const mobileUUID = randomUUID().toString();
+    const mobileUUID = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
     const mobileLink = `${base_url}/${mobileUUID}`;
 
-    const emailUUID = randomUUID().toString();
+    const emailUUID = await customAlphabet('0123476789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
     const emailLink = `${base_url}/${emailUUID}`;
 
     await redisClient.setEx(mobileUUID, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'mobile' }));
@@ -112,6 +112,7 @@ class PeerService {
         email: peer.email,
         phone: peer.phone,
         workExperience: peer.ref.toString(),
+        completedVerification: peer.completedVerification,
       });
     }
     return res;
@@ -122,6 +123,9 @@ class PeerService {
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+    if (peer.completedVerification) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
 
     if (type === 'mobile' && !peer.phoneVerified) {
@@ -212,6 +216,9 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
     } else if (!peer.phoneVerified) {
       throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
+    }
+    if (peer.completedVerification) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
 
     try {

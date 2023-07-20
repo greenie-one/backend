@@ -1,3 +1,4 @@
+import { sanitizeMobileNumber } from '@/utils/validation';
 import {
   ExceptHRQuestionFields,
   HRQuestionFields,
@@ -8,8 +9,8 @@ import {
   State,
   WorkVerificationBy,
 } from '@models/peer.model';
-import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 import { workExperienceResponseDto } from './workExperience.dto';
 
 enum UpdateSate {
@@ -123,10 +124,12 @@ export class CreateWorkPeerDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsEmail()
   public email!: string;
 
   @IsString()
   @IsNotEmpty()
+  @Transform((params) => sanitizeMobileNumber(params.value))
   public phone!: string;
 
   @IsString()
@@ -162,6 +165,7 @@ export interface GetUserWorkPeerResponse {
   email: string;
   phone: string;
   workExperience: string;
+  completedVerification: boolean;
 }
 
 export interface GetWorkExDataResponse extends Partial<workExperienceResponseDto> {
