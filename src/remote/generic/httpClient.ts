@@ -1,5 +1,3 @@
-import { ErrorEnum } from '@/exceptions/errorCodes';
-import { HttpException } from '@/exceptions/httpException';
 import querystring from 'node:querystring';
 
 export class HttpClient {
@@ -39,7 +37,9 @@ export class HttpClient {
         response = (await resp.text()) as T;
       }
     } else {
-      throw new HttpException(ErrorEnum.CALL_API_FAILED, resp.body.toString());
+      const errResp = await resp.text();
+      console.error('Got error for', url, ':', errResp);
+      throw errResp;
     }
 
     console.info('Got response', response);
@@ -47,3 +47,4 @@ export class HttpClient {
     return response;
   }
 }
+

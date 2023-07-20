@@ -3,7 +3,7 @@
     "source.fixAll.eslint": true,
     "source.organizeImports": true
   },
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true

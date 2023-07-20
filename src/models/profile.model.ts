@@ -13,7 +13,7 @@ export class Profile {
   @prop({ type: String })
   public profilePic?: string;
 
-  @prop({ type: String })
+  @prop({ type: String, unique: true, sparse: true })
   public greenie_id?: string;
 
   @prop({ type: String })
@@ -37,3 +37,5 @@ export class Profile {
 }
 
 export const ProfileModel = getModelForClass(Profile);
+ProfileModel.ensureIndexes();
+
