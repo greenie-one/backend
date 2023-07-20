@@ -15,13 +15,13 @@ class WorkExperienceService {
     } catch (e) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
-    if (workExperienceData.companyEndDate) {
-      if (workExperienceData.companyEndDate && workExperienceData.companyStartDate < workExperienceData.companyEndDate) {
+    if (workExperienceData.dateOfLeaving) {
+      if (workExperienceData.dateOfLeaving && workExperienceData.dateOfJoining < workExperienceData.dateOfLeaving) {
         const workExperience = await WorkExperienceModel.create({
           ...workExperienceData,
           user: userId,
-          companyStartDate: new Date(workExperienceData.companyStartDate),
-          companyEndDate: new Date(workExperienceData.companyEndDate),
+          dateOfJoining: new Date(workExperienceData.dateOfJoining),
+          dateOfLeaving: new Date(workExperienceData.dateOfLeaving),
         });
         const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
         return res;
@@ -32,8 +32,8 @@ class WorkExperienceService {
       const workExperience = await WorkExperienceModel.create({
         ...workExperienceData,
         user: userId,
-        companyStartDate: new Date(workExperienceData.companyStartDate),
-        companyEndDate: new Date(workExperienceData.companyEndDate),
+        dateOfJoining: new Date(workExperienceData.dateOfJoining),
+        dateOfLeaving: new Date(workExperienceData.dateOfLeaving),
       });
       const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
       return res;
@@ -62,9 +62,9 @@ class WorkExperienceService {
         companyId: workExp.companyId,
         salary: workExp.salary,
         reason_for_leaving: workExp.reason_for_leaving,
-        companyStartDate: workExp.companyStartDate.toString(),
+        dateOfJoining: workExp.dateOfJoining.toString(),
         linkedInUrl: workExp.linkedInUrl,
-        companyEndDate: workExp.companyEndDate.toString(),
+        dateOfLeaving: workExp.dateOfLeaving.toString(),
       });
     }
     return res;

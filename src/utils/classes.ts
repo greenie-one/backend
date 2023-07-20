@@ -21,7 +21,7 @@ export function copyFieldsFromInstance<T>(source: T, destination: T) {
   }
 }
 
-export function copyDataFromInstance<T, K>(source: T, dataFrom: K, dataInto: object) {
+export function copyDataFromInstance<T, K, R>(source: T, dataFrom: K, dataInto: R) {
   const sourceFields = Object.keys(source);
   const dataFromFields = Object.keys(dataFrom);
   for (const field of sourceFields) {

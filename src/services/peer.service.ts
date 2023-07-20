@@ -3,16 +3,18 @@ import {
   CreateWorkPeerResponse,
   GetPeerInformationResponse,
   GetUserWorkPeerResponse,
+  GetWorkExDataResponse,
   UpdatePeerWorkVerificationDto,
 } from '@/dtos/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
-import { ProfileModel } from '@/models/profile.model';
+import { Profile, ProfileModel } from '@/models/profile.model';
+import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.model';
 import { redisClient } from '@/redisClient';
 import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
-import { copyFieldsFromInstance, createClassInstanceWithFields } from '@/utils/classes';
+import { copyDataFromInstance, copyFieldsFromInstance, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
 import { randomUUID } from 'crypto';
 import { otpService } from './otp.service';
@@ -139,6 +141,17 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
 
+    const workExperience: WorkExperience = await WorkExperienceModel.findById(peer.ref);
+    const profile: Profile = await ProfileModel.findOne({ user: peer.user });
+
+    const data: GetWorkExDataResponse = {
+      name: profile.firstName + ' ' + profile.lastName,
+      profilePic: profile.profilePic,
+    };
+    const fieldsData = copyDataFromInstance(peer.optionalVerificationFields, workExperience, data);
+    fieldsData.dateOfJoining = JSON.stringify(workExperience.dateOfJoining);
+    fieldsData.dateOfLeaving = JSON.stringify(workExperience.dateOfLeaving);
+
     const res: GetPeerInformationResponse = {
       id: peer._id.toString(),
       name: peer.name,
@@ -151,6 +164,7 @@ class PeerService {
       mandatoryVerificationFields: peer.mandatoryVerificationFields,
       mandatoryQuestionFields: peer.mandatoryQuestionFields,
       otherQuestionFields: peer.otherQuestionFields,
+      data: fieldsData,
     };
 
     return res;

@@ -48,11 +48,11 @@ export class CreateWorkExperienceDto {
 
   @IsISO8601()
   @IsNotEmpty()
-  public companyStartDate!: string;
+  public dateOfJoining!: string;
 
   @IsOptional()
   @IsISO8601()
-  public companyEndDate?: string;
+  public dateOfLeaving?: string;
 }
 
 export class UpdateWorkExperienceDto {
@@ -126,9 +126,9 @@ export interface workExperienceResponseDto {
   workType: string;
   companyName: string;
   companyId: string;
-  companyStartDate: string;
+  dateOfJoining: string;
   linkedInUrl: string;
-  companyEndDate: string;
+  dateOfLeaving: string;
 }
 
 export interface GetWorkExperienceResponse {

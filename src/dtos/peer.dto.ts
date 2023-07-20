@@ -10,6 +10,7 @@ import {
 } from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { workExperienceResponseDto } from './workExperience.dto';
 
 class StatusField {
   @IsString()
@@ -151,6 +152,11 @@ export interface GetUserWorkPeerResponse {
   workExperience: string;
 }
 
+export interface GetWorkExDataResponse extends Partial<workExperienceResponseDto> {
+  name: string;
+  profilePic: string;
+}
+
 export interface GetPeerInformationResponse {
   id: string;
   name: string;
@@ -163,4 +169,5 @@ export interface GetPeerInformationResponse {
   mandatoryVerificationFields?: MandatoryWorkExFields;
   mandatoryQuestionFields?: MandatoryQuestionFields;
   otherQuestionFields: HRQuestionFields | ExceptHRQuestionFields;
+  data: GetWorkExDataResponse;
 }
