@@ -50,7 +50,6 @@ class IDsService {
     await this.otp_rate_limit_check(userId, IDTypeEnum.AADHAR);
 
     const otpResponse = await AadhaarVerification.requestOtp(id_number, taskId.toString()).catch((err) => {
-      console.log(err);
       throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, JSON.parse(err)?.response_message);
     });
 
@@ -78,14 +77,26 @@ class IDsService {
     if (success && response_code === '100') {
       const aadhaar_number = result.user_aadhaar_number;
       const user_address = result.user_address;
-      await IDModel.create({
-        id_type: IDTypeEnum.AADHAR,
-        id_number: aadhaar_number,
-        user: userId,
-        address: user_address,
-      } as ID);
 
-      await profileService.modScore(userId, IDTypeEnum.AADHAR, true);
+      await IDModel.db.transaction(async (session) => {
+        await IDModel.create(
+          [
+            {
+              id_type: IDTypeEnum.AADHAR,
+              id_number: aadhaar_number,
+              user: userId,
+              address: user_address,
+            },
+          ],
+          {
+            session,
+          },
+        );
+
+        await profileService.modScore(userId, IDTypeEnum.AADHAR, true, session);
+        await profileService.generateGreenieId(userId, session);
+      });
+
       return { success, response_code, response_message };
     } else {
       throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `${verificationResponse.response_message}`);
@@ -105,7 +116,6 @@ class IDsService {
     }
 
     const response = await PanVerification.verifyPan(id_number, taskId).catch((err) => {
-      console.error(err);
       throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
@@ -138,7 +148,6 @@ class IDsService {
     }
 
     const response = await drivinLicenseVerification.verifyDrivingLicense(id_number, dob, taskId).catch((err) => {
-      console.error(err);
       throw new HttpException(ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
