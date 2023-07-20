@@ -1,6 +1,16 @@
-import { Rating, State, WorkVerificationBy } from '@models/peer.model';
+import {
+  ExceptHRQuestionFields,
+  HRQuestionFields,
+  MandatoryQuestionFields,
+  MandatoryWorkExFields,
+  OptionalWorkExFields,
+  Rating,
+  State,
+  WorkVerificationBy,
+} from '@models/peer.model';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { workExperienceResponseDto } from './workExperience.dto';
 
 class StatusField {
   @IsString()
@@ -129,7 +139,35 @@ export class UpdatePeerWorkVerificationDto {
   public verificationFields!: WorkExFieldsDTO;
 }
 
-export interface ResponseCreateWorkPeer {
+export interface CreateWorkPeerResponse {
   id: string;
   name: string;
+}
+
+export interface GetUserWorkPeerResponse {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  workExperience: string;
+}
+
+export interface GetWorkExDataResponse extends Partial<workExperienceResponseDto> {
+  name: string;
+  profilePic: string;
+}
+
+export interface GetPeerInformationResponse {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+  verificationBy: WorkVerificationBy;
+  optionalVerificationFields?: OptionalWorkExFields;
+  mandatoryVerificationFields?: MandatoryWorkExFields;
+  mandatoryQuestionFields?: MandatoryQuestionFields;
+  otherQuestionFields: HRQuestionFields | ExceptHRQuestionFields;
+  data: GetWorkExDataResponse;
 }

@@ -17,6 +17,7 @@ import { connect, set } from 'mongoose';
 import { env } from './config';
 import { registerControllers } from './controllers';
 import { redisClient, redisUtilClient } from './redisClient';
+import { registerPropertiesCheck } from './utils/customChecks';
 
 export class App {
   public app: ReturnType<typeof fastify>;
@@ -30,6 +31,7 @@ export class App {
     this.port = env('PORT', 8080);
 
     this.populateControllers(controllers);
+    registerPropertiesCheck();
   }
 
   public async listen() {

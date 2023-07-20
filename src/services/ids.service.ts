@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { profileService } from './profile.service';
 
 const OTP_LIMIT = 5;
-const VALIDATION_LIMIT = 10 * 60; // mins;
+const VALIDATION_LIMIT = 60 * 10; // mins;
 
 class IDsService {
   public async getUserIDs(userId: string): Promise<ID[]> {
