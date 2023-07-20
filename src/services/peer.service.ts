@@ -14,7 +14,7 @@ import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.mod
 import { redisClient } from '@/redisClient';
 import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
-import { copyDataFromInstance, createClassInstanceWithFields } from '@/utils/classes';
+import { copyDataFrom, copySourceDataWithKeysFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
 import { randomUUID } from 'crypto';
 import { otpService } from './otp.service';
@@ -146,11 +146,7 @@ class PeerService {
       profilePic: profile.profilePic,
     };
 
-    const fieldsData = copyDataFromInstance(
-      JSON.parse(JSON.stringify(peer.optionalVerificationFields)),
-      JSON.parse(JSON.stringify(workExperience)),
-      data,
-    );
+    const fieldsData = copyDataFrom(JSON.parse(JSON.stringify(peer.optionalVerificationFields)), JSON.parse(JSON.stringify(workExperience)), data);
     if (peer.verificationBy !== WorkVerificationBy.HR) {
       fieldsData.peerPost = peer.verificationBy;
       fieldsData.designation = workExperience.designation;
@@ -221,19 +217,19 @@ class PeerService {
       const mandatoryQuestionFields = {};
 
       if (peer.mandatoryVerificationFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), mandatoryVerificationFields);
+        copySourceDataWithKeysFrom(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), mandatoryVerificationFields);
         console.log(`mandatoryVerificationFields: ${JSON.stringify(mandatoryVerificationFields)}`);
       }
       if (peer.optionalVerificationFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), optionalVerificationFields);
+        copySourceDataWithKeysFrom(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), optionalVerificationFields);
         console.log(`optionalVerificationFields: ${JSON.stringify(optionalVerificationFields)}`);
       }
       if (peer.otherQuestionFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), otherQuestionFields);
+        copySourceDataWithKeysFrom(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), otherQuestionFields);
         console.log(`otherQuestionFields: ${JSON.stringify(otherQuestionFields)}`);
       }
       if (peer.mandatoryQuestionFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), mandatoryQuestionFields);
+        copySourceDataWithKeysFrom(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), mandatoryQuestionFields);
         console.log(`mandatoryQuestionFields: ${JSON.stringify(mandatoryQuestionFields)}`);
       }
 
