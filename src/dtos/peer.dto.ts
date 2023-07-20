@@ -29,7 +29,7 @@ class StatusField {
   public dispute_description?: string;
 }
 
-export class WorkExFieldsDTO {
+export class OptionalWorkExFieldsDTO {
   // From Work Ex Optional fields
   @ValidateNested()
   @Type(() => StatusField)
@@ -70,12 +70,16 @@ export class WorkExFieldsDTO {
   @Type(() => StatusField)
   @IsOptional()
   public salary?: StatusField;
+}
 
+export class MandatoryWorkExFieldsDTO {
   // From Work Ex Mandatory fields
   @IsString()
   @IsOptional()
   public review?: string;
+}
 
+export class MandatoryQuestionFieldsDTO {
   // From Work Ex Mandatory Questions
   @IsEnum(Rating)
   @IsOptional()
@@ -85,13 +89,17 @@ export class WorkExFieldsDTO {
   @Type(() => StatusField)
   @IsOptional()
   public eligibleForRehire?: StatusField;
+}
 
+export class HRQuestionFieldsDTO {
   // From Work Ex HR Questions
   @ValidateNested()
   @Type(() => StatusField)
   @IsOptional()
   public exitProcedure?: StatusField;
+}
 
+export class ExceptHRQuestionFieldsDTO {
   // From Work Ex Except HR Questions
   @ValidateNested()
   @Type(() => StatusField)
@@ -134,9 +142,29 @@ export class CreateWorkPeerDto {
 
 export class UpdatePeerWorkVerificationDto {
   @ValidateNested()
-  @Type(() => WorkExFieldsDTO)
-  @IsNotEmpty()
-  public verificationFields!: WorkExFieldsDTO;
+  @Type(() => OptionalWorkExFieldsDTO)
+  @IsOptional()
+  public optionalVerificationFields?: OptionalWorkExFieldsDTO;
+
+  @ValidateNested()
+  @Type(() => MandatoryWorkExFieldsDTO)
+  @IsOptional()
+  public mandatoryVerificationFields?: MandatoryWorkExFieldsDTO;
+
+  @ValidateNested()
+  @Type(() => MandatoryQuestionFieldsDTO)
+  @IsOptional()
+  public mandatoryQuestionFields?: MandatoryQuestionFieldsDTO;
+
+  @ValidateNested()
+  @Type(() => HRQuestionFieldsDTO)
+  @IsOptional()
+  public hrQuestionFields?: HRQuestionFieldsDTO;
+
+  @ValidateNested()
+  @Type(() => ExceptHRQuestionFieldsDTO)
+  @IsOptional()
+  public exceptHrQuestionFields?: ExceptHRQuestionFieldsDTO;
 }
 
 export interface CreateWorkPeerResponse {
