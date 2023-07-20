@@ -212,51 +212,43 @@ class PeerService {
     } else if (!peer.phoneVerified) {
       throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
-    const upadtedFieldsArr = Object.keys(JSON.parse(JSON.stringify(updatedData.verificationFields)));
-    console.info(`1 . Updated Fields: ${upadtedFieldsArr}`);
-    const mandatoryFieldsArr = peer.mandatoryVerificationFields ? Object.keys(JSON.parse(JSON.stringify(peer.mandatoryVerificationFields))) : [];
-    console.info(`2 . Mandatory Fields: ${mandatoryFieldsArr}`);
-    const optionalFieldsArr = peer.optionalVerificationFields ? Object.keys(JSON.parse(JSON.stringify(peer.optionalVerificationFields))) : [];
-    console.info(`3 . Optional Fields: ${optionalFieldsArr}`);
-    const otherQuestionFieldsArr = peer.otherQuestionFields ? Object.keys(JSON.parse(JSON.stringify(peer.otherQuestionFields))) : [];
-    console.info(`4 . Other Question Fields: ${otherQuestionFieldsArr}`);
-    const mandatoryQuestionFieldsArr = peer.mandatoryQuestionFields ? Object.keys(JSON.parse(JSON.stringify(peer.mandatoryQuestionFields))) : [];
-    console.info(`5 . Mandatory Question Fields: ${mandatoryQuestionFieldsArr}`);
-
-    const union = [...new Set([...mandatoryFieldsArr, ...optionalFieldsArr, ...otherQuestionFieldsArr, ...mandatoryQuestionFieldsArr])];
-    const invalid_fields: string[] = [];
-    if (
-      !upadtedFieldsArr.every((field) => {
-        const res = union.includes(field);
-        if (!res) {
-          invalid_fields.push(field);
-        }
-        return res;
-      })
-    ) {
-      console.error(`Invalid Fields: ${invalid_fields}`);
-      throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, JSON.stringify(invalid_fields));
-    }
 
     try {
       const source = JSON.parse(JSON.stringify(updatedData.verificationFields));
-      const destination = JSON.parse(JSON.stringify(updatedData.verificationFields));
+      const mandatoryVerificationFields = {};
+      const optionalVerificationFields = {};
+      const otherQuestionFields = {};
+      const mandatoryQuestionFields = {};
 
       if (peer.mandatoryVerificationFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), destination.mandatoryVerificationFields);
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), mandatoryVerificationFields);
+        console.log(`mandatoryVerificationFields: ${JSON.stringify(mandatoryVerificationFields)}`);
       }
       if (peer.optionalVerificationFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), destination.optionalVerificationFields);
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), optionalVerificationFields);
+        console.log(`optionalVerificationFields: ${JSON.stringify(optionalVerificationFields)}`);
       }
       if (peer.otherQuestionFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), destination.otherQuestionFields);
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), otherQuestionFields);
+        console.log(`otherQuestionFields: ${JSON.stringify(otherQuestionFields)}`);
       }
       if (peer.mandatoryQuestionFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), destination.mandatoryQuestionFields);
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), mandatoryQuestionFields);
+        console.log(`mandatoryQuestionFields: ${JSON.stringify(mandatoryQuestionFields)}`);
       }
-      console.info(`Updated Peer Verification Fields: ${JSON.stringify(destination)}`);
 
-      await WorkPeerModel.findByIdAndUpdate(peerId, { $set: destination }, { new: true });
+      await WorkPeerModel.findByIdAndUpdate(
+        peerId,
+        {
+          $set: {
+            mandatoryQuestionFields: mandatoryQuestionFields,
+            optionalVerificationFields: optionalVerificationFields,
+            mandatoryVerificationFields: mandatoryVerificationFields,
+            otherQuestionFields: otherQuestionFields,
+          },
+        },
+        { new: true },
+      );
     } catch (error) {
       throw new HttpException(ErrorEnum.Server_ERROR, error.message);
     }

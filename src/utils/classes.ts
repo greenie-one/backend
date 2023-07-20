@@ -19,11 +19,11 @@ export function copyFieldsFromInstance<T extends object>(source: T, destination:
   }
 }
 
-export function copyDataFromInstance<T, K, R>(source: T, dataFrom: K, dataInto: R) {
+export function copyDataFromInstance<T, K, R>(source: T, keysFrom: K, dataInto: R) {
   const sourceFields = Object.keys(source);
   for (const field of sourceFields) {
-    if (dataFrom.hasOwnProperty(field)) {
-      dataInto[field] = dataFrom[field];
+    if (keysFrom.hasOwnProperty(field)) {
+      dataInto[field] = source[field];
     }
   }
   return dataInto;
