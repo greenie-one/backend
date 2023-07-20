@@ -1,6 +1,6 @@
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
-import { Verification } from './verified.model';
 import { User } from './users.model';
+import { Verification } from './verified.model';
 
 export class ResidentialInfo {
   @prop({ required: true })

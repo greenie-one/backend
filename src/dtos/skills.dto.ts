@@ -14,3 +14,19 @@ export class createSkillDto {
   @IsNotEmpty()
   public expertise!: skillTypeEnum;
 }
+
+export interface AddSkillResponse {
+  id: string;
+  success: boolean;
+}
+
+export interface skillResponseDto {
+  id: string;
+  skillName: string;
+  workExperience?: string;
+  expertise: skillTypeEnum;
+}
+
+export interface GetSkillsResponse {
+  skills: skillResponseDto[];
+}

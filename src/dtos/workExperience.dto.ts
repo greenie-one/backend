@@ -1,18 +1,14 @@
-import { IsBoolean, IsEnum, IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { companyTypeEnum } from '../models/workExperience.model';
 
 export class CreateWorkExperienceDto {
-  @IsString()
-  @IsOptional()
-  public image?: string;
-
   @IsString()
   @IsNotEmpty()
   public designation!: string;
 
   @IsEnum(companyTypeEnum)
-  @IsOptional()
-  public companyType?: companyTypeEnum;
+  @IsNotEmpty()
+  public companyType!: companyTypeEnum;
 
   @IsString()
   @IsNotEmpty()
@@ -21,6 +17,10 @@ export class CreateWorkExperienceDto {
   @IsString()
   @IsOptional()
   public workMode?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  public department!: string;
 
   @IsString()
   @IsOptional()
@@ -34,43 +34,31 @@ export class CreateWorkExperienceDto {
   @IsNotEmpty()
   public companyId!: string;
 
-  @IsBoolean()
-  @IsOptional()
-  public isVerified?: boolean;
-
   @IsString()
-  @IsOptional()
-  public description?: string;
-
-  @IsString()
-  @IsOptional()
-  public verifiedBy?: string;
-
-  @IsISO8601()
-  @IsOptional()
-  public companyStartDate?: string;
-
-  @IsISO8601()
   @IsOptional()
   public linkedInUrl?: string;
 
-  @IsISO8601()
+  @IsString()
   @IsOptional()
-  public companyEndDate?: string;
+  public reason_for_leaving?: string;
+
+  @IsString()
+  @IsOptional()
+  public salary?: string;
+
+  @IsISO8601()
+  @IsNotEmpty()
+  public dateOfJoining!: string;
+
+  @IsOptional()
+  @IsISO8601()
+  public dateOfLeaving?: string;
 }
 
 export class UpdateWorkExperienceDto {
   @IsString()
   @IsOptional()
-  public image?: string;
-
-  @IsString()
-  @IsOptional()
   public designation?: string;
-
-  @IsString()
-  @IsOptional()
-  public email?: string;
 
   @IsEnum(companyTypeEnum)
   @IsOptional()
@@ -78,7 +66,15 @@ export class UpdateWorkExperienceDto {
 
   @IsString()
   @IsOptional()
+  public email?: string;
+
+  @IsString()
+  @IsOptional()
   public workMode?: string;
+
+  @IsString()
+  @IsOptional()
+  public department?: string;
 
   @IsString()
   @IsOptional()
@@ -92,23 +88,49 @@ export class UpdateWorkExperienceDto {
   @IsOptional()
   public companyId?: string;
 
-  @IsBoolean()
+  @IsString()
   @IsOptional()
-  public isVerified?: boolean;
+  public reason_for_leaving?: string;
 
   @IsString()
   @IsOptional()
-  public description?: string;
+  public salary?: string;
+
+  @IsISO8601()
+  @IsOptional()
+  public dateOfJoining?: string;
 
   @IsString()
   @IsOptional()
-  public verifiedBy?: string;
+  public linkedInUrl?: string;
 
   @IsISO8601()
   @IsOptional()
-  public companyStartDate?: string;
+  public dateOfLeaving?: string;
+}
 
-  @IsISO8601()
-  @IsOptional()
-  public companyEndDate?: string;
+export interface AddWorkExperienceResponse {
+  id: string;
+  success: boolean;
+}
+
+export interface workExperienceResponseDto {
+  id: string;
+  designation: string;
+  companyType: companyTypeEnum;
+  email: string;
+  workMode: string;
+  department: string;
+  reason_for_leaving: string;
+  salary: string;
+  workType: string;
+  companyName: string;
+  companyId: string;
+  dateOfJoining: string;
+  linkedInUrl: string;
+  dateOfLeaving: string;
+}
+
+export interface GetWorkExperienceResponse {
+  workExperiences: workExperienceResponseDto[];
 }

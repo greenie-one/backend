@@ -29,6 +29,7 @@ export enum ErrorEnum {
   DOCUMENT_EXPIRED,
   DOCUMENT_ALREADY_UPLOADED,
   INVALID_COORDINATES,
+  PEER_NOT_FOUND,
 
   //identity verification
   NUMBER_NOT_LINKED,
@@ -43,6 +44,18 @@ export enum ErrorEnum {
   AADHAR_ALREADY_EXIST,
   PAN_ALREADY_EXIST,
   DRIVING_LICENSE_ALREADY_EXIST,
+
+  // Peer
+  SHARING_FAILED,
+  SHARING_NOT_FOUND,
+  INVALID_PEER_UUID,
+  INVALID_PEER_ID,
+  PEER_EMAIL_NOT_VERIFIED,
+  INVALID_OTP,
+  INVALID_VERIFICATION_FIELDS,
+  CALL_API_FAILED,
+  PEER_PHONE_NOT_VERIFIED,
+  PEER_ALREADY_EXISTS,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -225,5 +238,60 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0044',
     message: 'Internal Server Error',
     status: 500,
+  },
+  [ErrorEnum.PEER_NOT_FOUND]: {
+    code: 'GR0045',
+    message: 'Peer not found',
+    status: 404,
+  },
+  [ErrorEnum.SHARING_FAILED]: {
+    code: 'GR0046',
+    message: 'Sharing failed',
+    status: 500,
+  },
+  [ErrorEnum.SHARING_NOT_FOUND]: {
+    code: 'GR0047',
+    message: 'Sharing not found',
+    status: 404,
+  },
+  [ErrorEnum.INVALID_PEER_UUID]: {
+    code: 'GR0048',
+    message: 'Invalid peer uuid',
+    status: 400,
+  },
+  [ErrorEnum.INVALID_PEER_ID]: {
+    code: 'GR0049',
+    message: 'Invalid peer id',
+    status: 400,
+  },
+  [ErrorEnum.PEER_EMAIL_NOT_VERIFIED]: {
+    code: 'GR0050',
+    message: 'Peer Email not verified',
+    status: 400,
+  },
+  [ErrorEnum.PEER_PHONE_NOT_VERIFIED]: {
+    code: 'GR0051',
+    message: 'Peer Phone not verified',
+    status: 400,
+  },
+  [ErrorEnum.INVALID_OTP]: {
+    code: 'GRA0014',
+    message: 'Invalid OTP',
+    status: 400,
+  },
+  [ErrorEnum.INVALID_VERIFICATION_FIELDS]: {
+    code: 'GR0052',
+    message: 'Invalid verification fields %s',
+    status: 400,
+  },
+  [ErrorEnum.CALL_API_FAILED]: {
+    code: 'GR0053',
+    message: 'Call API failed - %s',
+    status: 500,
+  },
+  [ErrorEnum.PEER_ALREADY_EXISTS]: {
+    code: 'GR0054',
+    message: 'Peer already exists',
+    status: 400,
   },
 };

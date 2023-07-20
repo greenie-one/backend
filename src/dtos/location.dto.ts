@@ -9,3 +9,9 @@ export class GPScompare {
   @IsNotEmpty()
   public GPS: string;
 }
+
+export interface GetLocationResponse {
+  id: string;
+  coordinates: string;
+  user: string;
+}

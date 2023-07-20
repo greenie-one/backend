@@ -3,23 +3,24 @@ import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class CreateProfileDto {
   @IsString()
   @IsNotEmpty()
-  public firstName: string;
+  public firstName!: string;
 
   @IsString()
   @IsNotEmpty()
-  public lastName: string;
+  public lastName!: string;
 
   @IsString()
   @IsOptional()
-  public bio: string;
+  public bio?: string;
 
   @IsString()
   @IsOptional()
-  public profilePic: string;
+  public profilePic?: string;
 
   @IsArray()
+  @IsOptional()
   @IsString({ each: true })
-  public descriptionTags: string[];
+  public descriptionTags?: string[];
 }
 
 export class UpdateProfileDto {
@@ -33,7 +34,7 @@ export class UpdateProfileDto {
 
   @IsString()
   @IsOptional()
-  public profilePic: string;
+  public profilePic?: string;
 
   @IsString()
   @IsOptional()
@@ -43,4 +44,26 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString({ each: true })
   public descriptionTags?: string[];
+}
+
+export interface AddProfileResponse {
+  id: string;
+  success: boolean;
+}
+
+export interface profileResponseDto {
+  id: string;
+  firstName: string;
+  lastName: string;
+  bio: string;
+  profilePic: string;
+  descriptionTags: string[];
+}
+
+export interface GetProfileResponse {
+  profile: profileResponseDto;
+}
+
+export interface SearchProfilesResponse {
+  profiles: profileResponseDto[];
 }

@@ -36,7 +36,7 @@ class UserService {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
-    return updatedUser;
+    return { success: true, message: 'Updated Successfully' };
   }
 }
 

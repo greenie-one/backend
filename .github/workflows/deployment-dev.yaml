@@ -70,3 +70,13 @@ jobs:
       - name: Deploy chart
         run: |
           helm upgrade --install --namespace backend -f deployment/values-dev.yaml greenie-mvp-backend-dev ./deployment --set image.name=${{ steps.meta.outputs.tags }} --wait
+
+      - name: Push DTO files to Destination Repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+        with:
+          source-directory: 'src/dtos'
+          destination-github-username: greenie-one
+          destination-repository-name: global-dtos
+          commit-message: Update DTO files   

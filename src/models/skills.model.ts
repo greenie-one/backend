@@ -5,6 +5,10 @@ import { WorkExperience } from './workExperience.model';
 export enum skillTypeEnum {
   AMATEUR = 'AMATEUR',
   EXPERT = 'EXPERT',
+  BEGINNER = 'BEGINNER',
+  SUPER_SPECIALIST = 'SUPER_SPECIALIST',
+  MASTER = 'MASTER',
+  HIGHLY_COMPETENT = 'HIGHLY_COMPETENT',
 }
 
 @modelOptions({ schemaOptions: { collection: 'skills', timestamps: true } })
@@ -18,8 +22,8 @@ export class Skills {
   @prop({ required: true, enum: skillTypeEnum, type: String })
   public expertise!: skillTypeEnum;
 
-  @prop({ ref: 'WorkExperience' })
-  public workExperience?: Ref<WorkExperience>;
+  @prop({ ref: 'WorkExperience', type: String })
+  public workExperience?: Ref<WorkExperience, string>;
 
   public createdAt?: Date;
 
