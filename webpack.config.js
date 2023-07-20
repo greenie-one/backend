@@ -49,7 +49,6 @@ module.exports = {
     "saslprep": "require('saslprep')",
   },
   optimization: {
-    minimize: false,
     minimizer: [
       new TerserPlugin({
         terserOptions: {
