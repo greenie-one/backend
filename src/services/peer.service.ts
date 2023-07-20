@@ -86,10 +86,16 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     const { email, phone } = peer;
-    if (otp_type === 'EMAIL') {
-      return await otpService.verifyOTP(email, otp_type, otp);
+    if (otp_type === 'EMAIL' && (await otpService.verifyOTP(email, otp_type, otp))) {
+      peer.emailVerified = true;
+      await peer.save();
+      return { success: true, message: 'Verified' };
+    } else if (otp_type === 'MOBILE' && (await otpService.verifyOTP(phone, otp_type, otp))) {
+      peer.phoneVerified = true;
+      await peer.save();
+      return { success: true, message: 'Verified' };
     } else {
-      return await otpService.verifyOTP(phone, otp_type, otp);
+      return { success: false, message: 'Invalid OTP' };
     }
   }
 
@@ -122,6 +128,9 @@ class PeerService {
       peer.emailVerified = true;
       await peer.save();
     }
+
+    console.log(`Peer mobile verified: ${peer.phoneVerified}`);
+    console.log(`Peer email verified: ${peer.emailVerified}`);
 
     if (!peer.emailVerified) {
       throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
