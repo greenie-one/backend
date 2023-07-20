@@ -32,6 +32,9 @@ export class WorkExperience {
   public companyId!: string;
 
   @prop({ type: String })
+  public candidateId!: string;
+
+  @prop({ type: String })
   public linkedInUrl?: string;
 
   @prop({ type: String })

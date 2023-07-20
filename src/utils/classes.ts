@@ -26,7 +26,8 @@ export function copyDataFromInstance<T, K, R>(source: T, dataFrom: K, dataInto: 
   const dataFromFields = Object.keys(dataFrom);
   for (const field of sourceFields) {
     if (dataFromFields.includes(field)) {
-      dataInto[field] = source[field];
+      console.log(`Copying ${field} from ${dataFrom} to ${dataInto}`);
+      dataInto[field] = dataFrom[field];
     }
   }
   return dataInto;
