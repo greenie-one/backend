@@ -134,12 +134,12 @@ class PeerService {
 
     if (!peer.emailVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
-      console.log(err);
+      console.error(err);
       reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name });
     }
     if (!peer.phoneVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
-      console.log(err);
+      console.error(err);
       reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name });
     }
 
