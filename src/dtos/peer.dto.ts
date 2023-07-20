@@ -155,6 +155,7 @@ export interface GetUserWorkPeerResponse {
 export interface GetWorkExDataResponse extends Partial<workExperienceResponseDto> {
   name: string;
   profilePic: string;
+  peerPost?: string;
 }
 
 export interface GetPeerInformationResponse {

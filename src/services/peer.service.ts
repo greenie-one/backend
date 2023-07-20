@@ -151,6 +151,10 @@ class PeerService {
       JSON.parse(JSON.stringify(workExperience)),
       data,
     );
+    if (peer.verificationBy !== WorkVerificationBy.HR) {
+      fieldsData.peerPost = peer.verificationBy;
+      fieldsData.designation = workExperience.designation;
+    }
     fieldsData.dateOfJoining = workExperience.dateOfJoining.toISOString();
     fieldsData.dateOfLeaving = workExperience.dateOfLeaving.toISOString();
 
@@ -258,7 +262,7 @@ class PeerService {
         copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), mandatoryQuestionFields);
         destination['mandatoryQuestionFields'] = mandatoryQuestionFields;
       }
-      console.info(`Updated Peer Verification Fields: ${destination}`);
+      console.info(`Updated Peer Verification Fields: ${JSON.stringify(destination)}`);
 
       await WorkPeerModel.findByIdAndUpdate(peerId, { $set: destination }, { new: true });
     } catch (error) {
