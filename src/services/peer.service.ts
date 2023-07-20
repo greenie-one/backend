@@ -14,7 +14,7 @@ import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.mod
 import { redisClient } from '@/redisClient';
 import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
-import { copyDataFromInstance, copyFieldsFromInstance, createClassInstanceWithFields } from '@/utils/classes';
+import { copyDataFromInstance, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
 import { randomUUID } from 'crypto';
 import { otpService } from './otp.service';
@@ -231,14 +231,18 @@ class PeerService {
     }
 
     try {
-      console.info(`Before Updating Peer Verification Fields: ${peer as WorkPeer}`);
       const source = JSON.parse(JSON.stringify(updatedData.verificationFields));
-      const destination = JSON.parse(JSON.stringify(peer));
-      copyFieldsFromInstance(source, destination);
-      copyFieldsFromInstance(source, destination);
-      copyFieldsFromInstance(source, destination);
-      copyFieldsFromInstance(source, destination);
-      console.info(`Updated Peer Verification Fields: ${peer as WorkPeer}`);
+      const destination = {
+        mandatoryVerificationFields: {},
+        optionalVerificationFields: {},
+        otherQuestionFields: {},
+        mandatoryQuestionFields: {},
+      };
+      copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), destination);
+      copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), destination);
+      copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), destination);
+      copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), destination);
+      console.info(`Updated Peer Verification Fields: ${destination}`);
 
       await WorkPeerModel.findByIdAndUpdate(peerId, { $set: destination }, { new: true });
     } catch (error) {
