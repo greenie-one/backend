@@ -20,3 +20,14 @@ export function copyFieldsFromInstance<T>(source: T, destination: T) {
     }
   }
 }
+
+export function copyDataFromInstance<T, K>(source: T, dataFrom: K, dataInto: object) {
+  const sourceFields = Object.keys(source);
+  const dataFromFields = Object.keys(dataFrom);
+  for (const field of sourceFields) {
+    if (dataFromFields.includes(field)) {
+      dataInto[field] = source[field];
+    }
+  }
+  return dataInto;
+}
