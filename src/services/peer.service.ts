@@ -6,7 +6,7 @@ import {
   GetWorkExDataResponse,
   UpdatePeerWorkVerificationDto,
 } from '@/dtos/peer.dto';
-import { ErrorEnum } from '@/exceptions/errorCodes';
+import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
@@ -14,9 +14,10 @@ import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.mod
 import { redisClient } from '@/redisClient';
 import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
-import { copyDataFromInstance, copyFieldsFromInstance, createClassInstanceWithFields } from '@/utils/classes';
+import { copyDataFrom, copySourceDataWithKeysFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
 import { randomUUID } from 'crypto';
+import { FastifyReply } from 'fastify';
 import { otpService } from './otp.service';
 
 class PeerService {
@@ -116,7 +117,7 @@ class PeerService {
     return res;
   }
 
-  public async getPeerInformation(peerUUID: string) {
+  public async getPeerInformation(peerUUID: string, reply: FastifyReply) {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -132,10 +133,14 @@ class PeerService {
     }
 
     if (!peer.emailVerified) {
-      throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
+      const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
+      console.error(err);
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name });
     }
     if (!peer.phoneVerified) {
-      throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
+      const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
+      console.error(err);
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name });
     }
 
     const workExperience: WorkExperience = await WorkExperienceModel.findById(peer.ref);
@@ -146,11 +151,11 @@ class PeerService {
       profilePic: profile.profilePic,
     };
 
-    const fieldsData = copyDataFromInstance(
-      JSON.parse(JSON.stringify(peer.optionalVerificationFields)),
-      JSON.parse(JSON.stringify(workExperience)),
-      data,
-    );
+    const fieldsData = copyDataFrom(JSON.parse(JSON.stringify(peer.optionalVerificationFields)), JSON.parse(JSON.stringify(workExperience)), data);
+    if (peer.verificationBy !== WorkVerificationBy.HR) {
+      fieldsData.peerPost = peer.verificationBy;
+      fieldsData.designation = workExperience.designation;
+    }
     fieldsData.dateOfJoining = workExperience.dateOfJoining.toISOString();
     fieldsData.dateOfLeaving = workExperience.dateOfLeaving.toISOString();
 
@@ -209,42 +214,48 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
 
-    const upadtedFieldsArr = Object.keys(updatedData.verificationFields);
-    const mandatoryFieldsArr = Object.keys(peer.mandatoryVerificationFields);
-    const optionalFieldsArr = Object.keys(peer.optionalVerificationFields);
-    const otherQuestionFieldsArr = Object.keys(peer.otherQuestionFields);
-    const mandatoryQuestionFieldsArr = Object.keys(peer.mandatoryQuestionFields);
-
-    const union = [...new Set([...mandatoryFieldsArr, ...optionalFieldsArr, ...otherQuestionFieldsArr, ...mandatoryQuestionFieldsArr])];
-    const invalid_fields: string[] = [];
-    if (
-      !upadtedFieldsArr.every((field) => {
-        const res = union.includes(field);
-        if (!res) {
-          invalid_fields.push(field);
-        }
-        return res;
-      })
-    ) {
-      console.error(`Invalid Fields: ${invalid_fields}`);
-      throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, JSON.stringify(invalid_fields));
-    }
-
     try {
-      console.info(`Before Updating Peer Verification Fields: ${peer as WorkPeer}`);
       const source = JSON.parse(JSON.stringify(updatedData.verificationFields));
-      const destination = JSON.parse(JSON.stringify(peer));
-      copyFieldsFromInstance(source, destination);
-      copyFieldsFromInstance(source, destination);
-      copyFieldsFromInstance(source, destination);
-      copyFieldsFromInstance(source, destination);
-      console.info(`Updated Peer Verification Fields: ${peer as WorkPeer}`);
+      const mandatoryVerificationFields = {};
+      const optionalVerificationFields = {};
+      const otherQuestionFields = {};
+      const mandatoryQuestionFields = {};
 
-      await WorkPeerModel.findByIdAndUpdate(peerId, { $set: destination }, { new: true });
+      if (peer.mandatoryVerificationFields) {
+        copySourceDataWithKeysFrom(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), mandatoryVerificationFields);
+        console.log(`mandatoryVerificationFields: ${JSON.stringify(mandatoryVerificationFields)}`);
+      }
+      if (peer.optionalVerificationFields) {
+        copySourceDataWithKeysFrom(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), optionalVerificationFields);
+        console.log(`optionalVerificationFields: ${JSON.stringify(optionalVerificationFields)}`);
+      }
+      if (peer.otherQuestionFields) {
+        copySourceDataWithKeysFrom(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), otherQuestionFields);
+        console.log(`otherQuestionFields: ${JSON.stringify(otherQuestionFields)}`);
+      }
+      if (peer.mandatoryQuestionFields) {
+        copySourceDataWithKeysFrom(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), mandatoryQuestionFields);
+        console.log(`mandatoryQuestionFields: ${JSON.stringify(mandatoryQuestionFields)}`);
+      }
+
+      await WorkPeerModel.findByIdAndUpdate(
+        peerId,
+        {
+          $set: {
+            mandatoryQuestionFields: mandatoryQuestionFields,
+            optionalVerificationFields: optionalVerificationFields,
+            mandatoryVerificationFields: mandatoryVerificationFields,
+            otherQuestionFields: otherQuestionFields,
+          },
+        },
+        { new: true },
+      );
     } catch (error) {
-      throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
+      throw new HttpException(ErrorEnum.Server_ERROR, error.message);
     }
 
+    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { verified: true } });
+    await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
     return { success: true, message: 'Updated Successfully' };
   }
 
