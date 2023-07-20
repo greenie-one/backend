@@ -5,7 +5,8 @@ import { peerService } from '@/services/peer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
-import { Body, Params } from '@/utils/decorators/request';
+import { Body, Params, Reply } from '@/utils/decorators/request';
+import { FastifyReply } from 'fastify';
 
 @Controller('/peer')
 export default class PeerController {
@@ -35,8 +36,8 @@ export default class PeerController {
   }
 
   @Get('/work/:peerUUID')
-  async getPeerInformation(@Params('peerUUID') peerUUID: string) {
-    return peerService.getPeerInformation(peerUUID);
+  async getPeerInformation(@Params('peerUUID') peerUUID: string, @Reply() reply: FastifyReply) {
+    return peerService.getPeerInformation(peerUUID, reply);
   }
 
   @Post('/work/:peerUUID/send-otp')

@@ -50,9 +50,9 @@ class WorkExperienceService {
         companyId: workExp.companyId,
         salary: workExp.salary,
         reason_for_leaving: workExp.reason_for_leaving,
-        dateOfJoining: workExp.dateOfJoining.toString(),
+        dateOfJoining: workExp.dateOfJoining ? workExp.dateOfJoining.toString() : null,
         linkedInUrl: workExp.linkedInUrl,
-        dateOfLeaving: workExp.dateOfLeaving.toString(),
+        dateOfLeaving: workExp.dateOfLeaving ? workExp.dateOfLeaving.toString() : null,
       });
     }
     return res;
