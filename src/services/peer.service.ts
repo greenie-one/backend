@@ -208,12 +208,16 @@ class PeerService {
     } else if (!peer.phoneVerified) {
       throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
-
-    const upadtedFieldsArr = Object.keys(updatedData.verificationFields);
-    const mandatoryFieldsArr = Object.keys(peer.mandatoryVerificationFields);
-    const optionalFieldsArr = Object.keys(peer.optionalVerificationFields);
-    const otherQuestionFieldsArr = Object.keys(peer.otherQuestionFields);
-    const mandatoryQuestionFieldsArr = Object.keys(peer.mandatoryQuestionFields);
+    const upadtedFieldsArr = Object.keys(JSON.parse(JSON.stringify(updatedData.verificationFields)));
+    console.info(`1 . Updated Fields: ${upadtedFieldsArr}`);
+    const mandatoryFieldsArr = peer.mandatoryVerificationFields ? Object.keys(JSON.parse(JSON.stringify(peer.mandatoryVerificationFields))) : [];
+    console.info(`2 . Mandatory Fields: ${mandatoryFieldsArr}`);
+    const optionalFieldsArr = peer.optionalVerificationFields ? Object.keys(JSON.parse(JSON.stringify(peer.optionalVerificationFields))) : [];
+    console.info(`3 . Optional Fields: ${optionalFieldsArr}`);
+    const otherQuestionFieldsArr = peer.otherQuestionFields ? Object.keys(JSON.parse(JSON.stringify(peer.otherQuestionFields))) : [];
+    console.info(`4 . Other Question Fields: ${otherQuestionFieldsArr}`);
+    const mandatoryQuestionFieldsArr = peer.mandatoryQuestionFields ? Object.keys(JSON.parse(JSON.stringify(peer.mandatoryQuestionFields))) : [];
+    console.info(`5 . Mandatory Question Fields: ${mandatoryQuestionFieldsArr}`);
 
     const union = [...new Set([...mandatoryFieldsArr, ...optionalFieldsArr, ...otherQuestionFieldsArr, ...mandatoryQuestionFieldsArr])];
     const invalid_fields: string[] = [];
@@ -238,10 +242,18 @@ class PeerService {
         otherQuestionFields: {},
         mandatoryQuestionFields: {},
       };
-      copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), destination);
-      copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), destination);
-      copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), destination);
-      copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), destination);
+      if (peer.mandatoryVerificationFields) {
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), destination);
+      }
+      if (peer.optionalVerificationFields) {
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), destination);
+      }
+      if (peer.otherQuestionFields) {
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), destination);
+      }
+      if (peer.mandatoryQuestionFields) {
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), destination);
+      }
       console.info(`Updated Peer Verification Fields: ${destination}`);
 
       await WorkPeerModel.findByIdAndUpdate(peerId, { $set: destination }, { new: true });
