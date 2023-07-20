@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export interface locationResponse {
+export interface LocationResponse {
   code?: string;
 }
 

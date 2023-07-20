@@ -1,7 +1,7 @@
 import { State } from '@/models/peer.model';
 import { SharedThing, SharedWith } from '@/models/sharing.model';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { getDocumentResponseDto } from './document.dto';
+import { GetDocumentResponseDto } from './document.dto';
 import { skillResponseDto } from './skills.dto';
 
 export class sharingDTO {
@@ -34,5 +34,5 @@ export interface getSharedResponseDTO {
 
   state: State;
 
-  data: skillResponseDto | getDocumentResponseDto;
+  data: skillResponseDto | GetDocumentResponseDto;
 }
