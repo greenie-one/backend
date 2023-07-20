@@ -98,7 +98,7 @@ export class UpdateWorkExperienceDto {
 
   @IsISO8601()
   @IsOptional()
-  public companyStartDate?: string;
+  public dateOfJoining?: string;
 
   @IsString()
   @IsOptional()
@@ -106,7 +106,7 @@ export class UpdateWorkExperienceDto {
 
   @IsISO8601()
   @IsOptional()
-  public companyEndDate?: string;
+  public dateOfLeaving?: string;
 }
 
 export interface AddWorkExperienceResponse {

@@ -94,7 +94,7 @@ class WorkExperienceService {
     if (workExperience.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    if (!(updatedData.companyEndDate && updatedData.companyStartDate < updatedData.companyEndDate)) {
+    if (!(updatedData.dateOfLeaving && updatedData.dateOfJoining < updatedData.dateOfLeaving)) {
       throw new HttpException(ErrorEnum.INVALID_DATE);
     }
     const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
