@@ -1,13 +1,12 @@
 import { OptionalWorkExFields } from '@/models/peer.model';
 import { WorkExperience } from '@/models/workExperience.model';
 
-export function checkPropertiesExist(check, from) {
+export function checkPropertiesExist(check: object, from: object) {
   const checkClassProperties = Object.keys(check);
-  const fromClassProperties = Object.keys(from);
 
   const missingProperties = [];
   for (const property of checkClassProperties) {
-    if (!fromClassProperties.includes(property)) {
+    if (!from.hasOwnProperty(property)) {
       missingProperties.push(property);
     }
   }

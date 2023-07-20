@@ -10,27 +10,31 @@ export function createClassInstanceWithFields<T extends object>(fieldNames: stri
   return instance as T;
 }
 
-export function copyFieldsFromInstance<T>(source: T, destination: T) {
+export function copyFieldsFromInstance<T extends object>(source: T, destination: T) {
   const sourceFields = Object.keys(source);
-  const destinationFields = Object.keys(destination);
   for (const field of sourceFields) {
-    if (destinationFields.includes(field)) {
+    if (destination.hasOwnProperty(field)) {
       destination[field] = source[field];
-      // instance[field] = source[field];
     }
   }
 }
 
-export function copyDataFromInstance<T, K, R>(source: T, dataFrom: K, dataInto: R) {
-  const sourceFields = Object.keys(source);
-  console.log(`Source fields: ${sourceFields}`);
-  const dataFromFields = Object.keys(dataFrom);
-  console.log(`Data from fields: ${dataFromFields}`);
+export function copyDataFrom<T, K, R>(keysFrom: T, dataFrom: K, destination: R) {
+  const sourceFields = Object.keys(keysFrom);
   for (const field of sourceFields) {
-    if (dataFromFields.includes(field)) {
-      console.log(`Copying ${field} from ${dataFrom} to ${dataInto}`);
-      dataInto[field] = dataFrom[field];
+    if (dataFrom.hasOwnProperty(field)) {
+      destination[field] = dataFrom[field];
     }
   }
-  return dataInto;
+  return destination;
+}
+
+export function copySourceDataWithKeysFrom<T, K, R>(source: T, keysFrom: K, destination: R) {
+  const sourceFields = Object.keys(source);
+  for (const field of sourceFields) {
+    if (keysFrom.hasOwnProperty(field)) {
+      destination[field] = source[field];
+    }
+  }
+  return destination;
 }
