@@ -261,7 +261,7 @@ class PeerService {
       throw new HttpException(ErrorEnum.Server_ERROR, error.message);
     }
 
-    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { verified: true } });
+    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } });
     await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
     return { success: true, message: 'Updated Successfully' };
   }
