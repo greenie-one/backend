@@ -240,33 +240,25 @@ class PeerService {
 
     try {
       const source = JSON.parse(JSON.stringify(updatedData.verificationFields));
-      const mandatoryVerificationFields = {};
-      const optionalVerificationFields = {};
-      const otherQuestionFields = {};
-      const mandatoryQuestionFields = {};
+      const destination = JSON.parse(JSON.stringify(updatedData.verificationFields));
 
-      const destination = {};
       if (peer.mandatoryVerificationFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), mandatoryVerificationFields);
-        destination['mandatoryVerificationFields'] = mandatoryVerificationFields;
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)), destination.mandatoryVerificationFields);
       }
       if (peer.optionalVerificationFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), optionalVerificationFields);
-        destination['optionalVerificationFields'] = optionalVerificationFields;
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.optionalVerificationFields)), destination.optionalVerificationFields);
       }
       if (peer.otherQuestionFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), otherQuestionFields);
-        destination['otherQuestionFields'] = otherQuestionFields;
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.otherQuestionFields)), destination.otherQuestionFields);
       }
       if (peer.mandatoryQuestionFields) {
-        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), mandatoryQuestionFields);
-        destination['mandatoryQuestionFields'] = mandatoryQuestionFields;
+        copyDataFromInstance(source, JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)), destination.mandatoryQuestionFields);
       }
       console.info(`Updated Peer Verification Fields: ${JSON.stringify(destination)}`);
 
       await WorkPeerModel.findByIdAndUpdate(peerId, { $set: destination }, { new: true });
     } catch (error) {
-      throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
+      throw new HttpException(ErrorEnum.Server_ERROR, error.message);
     }
 
     return { success: true, message: 'Updated Successfully' };
