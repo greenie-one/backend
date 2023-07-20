@@ -112,7 +112,7 @@ class PeerService {
         email: peer.email,
         phone: peer.phone,
         workExperience: peer.ref.toString(),
-        completedVerification: peer.completedVerification,
+        isVerificationCompleted: peer.isVerificationCompleted,
       });
     }
     return res;
@@ -124,7 +124,7 @@ class PeerService {
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
-    if (peer.completedVerification) {
+    if (peer.isVerificationCompleted) {
       throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
 
@@ -217,7 +217,7 @@ class PeerService {
     } else if (!peer.phoneVerified) {
       throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
-    if (peer.completedVerification) {
+    if (peer.isVerificationCompleted) {
       throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
 

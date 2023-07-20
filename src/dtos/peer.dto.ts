@@ -165,7 +165,7 @@ export interface GetUserWorkPeerResponse {
   email: string;
   phone: string;
   workExperience: string;
-  completedVerification: boolean;
+  isVerificationCompleted: boolean;
 }
 
 export interface GetWorkExDataResponse extends Partial<workExperienceResponseDto> {
