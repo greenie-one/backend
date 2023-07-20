@@ -129,6 +129,7 @@ export interface workExperienceResponseDto {
   dateOfJoining: string;
   linkedInUrl: string;
   dateOfLeaving: string;
+  noOfVerifications: number;
 }
 
 export interface GetWorkExperienceResponse {

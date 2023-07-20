@@ -53,6 +53,7 @@ class WorkExperienceService {
         dateOfJoining: workExp.dateOfJoining ? workExp.dateOfJoining.toString() : null,
         linkedInUrl: workExp.linkedInUrl,
         dateOfLeaving: workExp.dateOfLeaving ? workExp.dateOfLeaving.toString() : null,
+        noOfVerifications: workExp.noOfVerifications,
       });
     }
     return res;

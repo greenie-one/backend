@@ -1,4 +1,4 @@
-import { AddProfileResponse, CreateProfileDto, GetProfileResponse, SearchProfilesResponse, UpdateProfileDto } from '@/dtos/profile.dto';
+import { AddProfileResponse, CreateProfileDto, ProfileResponseDto as GetProfileResponse, SearchProfilesResponse, UpdateProfileDto } from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentType } from '@/models/document.model';
@@ -61,14 +61,13 @@ class ProfileService {
     }
 
     const res: GetProfileResponse = {
-      profile: {
         id: profile._id.toString(),
         firstName: profile.firstName,
         lastName: profile.lastName,
         profilePic: profile.profilePic,
         bio: profile.bio,
         descriptionTags: profile.descriptionTags,
-      },
+        greenieId: profile.greenie_id,
     };
     return res;
   }
@@ -142,6 +141,7 @@ class ProfileService {
           profilePic: profile.profilePic,
           bio: profile.bio,
           descriptionTags: profile.descriptionTags,
+          greenieId: profile.greenie_id,
         });
       }
     }

@@ -16,8 +16,8 @@ import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
 import { copyDataFrom, copySourceDataWithKeysFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
-import { randomUUID } from 'crypto';
 import { FastifyReply } from 'fastify';
+import { customAlphabet } from 'nanoid/async';
 import { otpService } from './otp.service';
 
 class PeerService {
@@ -34,10 +34,10 @@ class PeerService {
     const profile = await ProfileModel.findOne({ user: peer.user });
     const base_url = `${env('FRONTEND_URL')}/verification/${peer.verificationBy}`;
 
-    const mobileUUID = randomUUID().toString();
+    const mobileUUID = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
     const mobileLink = `${base_url}/${mobileUUID}`;
 
-    const emailUUID = randomUUID().toString();
+    const emailUUID = await customAlphabet('0123476789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
     const emailLink = `${base_url}/${emailUUID}`;
 
     await redisClient.setEx(mobileUUID, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'mobile' }));
@@ -112,6 +112,7 @@ class PeerService {
         email: peer.email,
         phone: peer.phone,
         workExperience: peer.ref.toString(),
+        isVerificationCompleted: peer.isVerificationCompleted,
       });
     }
     return res;
@@ -122,6 +123,9 @@ class PeerService {
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+    if (peer.isVerificationCompleted) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
 
     if (type === 'mobile' && !peer.phoneVerified) {
@@ -213,6 +217,9 @@ class PeerService {
     } else if (!peer.phoneVerified) {
       throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
     }
+    if (peer.isVerificationCompleted) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
+    }
 
     try {
       const source = JSON.parse(JSON.stringify(updatedData.verificationFields));
@@ -254,7 +261,7 @@ class PeerService {
       throw new HttpException(ErrorEnum.Server_ERROR, error.message);
     }
 
-    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { verified: true } });
+    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } });
     await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
     return { success: true, message: 'Updated Successfully' };
   }

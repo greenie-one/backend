@@ -1,7 +1,7 @@
 import { DocumentType } from '@/models/document.model';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 
-export class createDocumentDto {
+export class CreateDocumentDto {
   @IsNotEmpty()
   @IsString()
   public name: string;
@@ -20,7 +20,7 @@ export class createDocumentDto {
   public workExperience?: string;
 }
 
-export class updateDocumentDto {
+export class UpdateDocumentDto {
   @IsString()
   @IsOptional()
   public name: string;
@@ -39,7 +39,7 @@ export class updateDocumentDto {
   public workExperience?: string;
 }
 
-export interface getDocumentResponseDto {
+export interface GetDocumentResponseDto {
   id: string;
   name: string;
   type: DocumentType;
