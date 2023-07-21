@@ -50,10 +50,10 @@ export interface MandatoryQuestionFieldsResponse {
 }
 
 export interface HRQuestionFieldsResponse {
-  exitProcedure: StatusResponse;
+  exitProcedure?: StatusResponse;
 }
 
-interface ExceptHRQuestionFieldsResponse {
+export interface ExceptHRQuestionFieldsResponse {
   designation: StatusResponse;
   peerPost: StatusResponse;
 }

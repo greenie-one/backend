@@ -1,16 +1,6 @@
-import {
-  ExceptHRQuestionFields,
-  HRQuestionFields,
-  MandatoryQuestionFields,
-  MandatoryWorkExFields,
-  OptionalWorkExperienceFields,
-} from '@/models/peer.model';
 import { sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
-import { GetDocumentResponse } from '../response/document.response';
-import { SkillResponse } from '../response/skills.response';
-import { WorkExperienceResponse } from '../response/workExperience.response';
 
 export enum State {
   PENDING = 'PENDING',
@@ -35,12 +25,12 @@ export enum WorkVerificationBy {
   CXO = 'CXO',
 }
 
-enum UpdateSate {
+export enum UpdateState {
   REJECTED = 'REJECTED',
   APPROVED = 'APPROVED',
 }
 
-enum UpdateRating {
+export enum UpdateRating {
   NON_COLLABORATIVE = 'non-collaborative',
   RARELY_COLLABORATIVE = 'rarely-collaborative',
   OCCASIONALLY_COLLABORATIVE = 'occasionally-collaborative',
@@ -51,17 +41,17 @@ enum UpdateRating {
 export class StatusField {
   @IsString()
   @IsNotEmpty()
-  @IsEnum(State)
-  public state!: UpdateSate;
+  @IsEnum(UpdateState)
+  public state!: UpdateState;
 
   @IsString()
   @IsOptional()
-  @ValidateIf((o) => o.state === State.REJECTED)
+  @ValidateIf((o) => o.state === UpdateState.REJECTED)
   public dispute_type?: string;
 
   @IsString()
   @IsOptional()
-  @ValidateIf((o) => o.state === State.REJECTED)
+  @ValidateIf((o) => o.state === UpdateState.REJECTED)
   public dispute_description?: string;
 }
 
@@ -190,7 +180,7 @@ class UpdateSkillsVerification {
   public status!: StatusField;
 }
 
-class UpdateDocumentsVerification {
+export class UpdateDocumentsVerification {
   @IsString()
   @IsNotEmpty()
   public id!: string;
@@ -216,42 +206,5 @@ export class UpdatePeerWorkVerificationDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateDocumentsVerification)
   public documents?: UpdateDocumentsVerification[];
-}
-
-export interface CreateWorkPeerResponse {
-  id: string;
-  name: string;
-}
-
-export interface GetUserWorkPeerResponse {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  workExperience: string;
-  isVerificationCompleted: boolean;
-}
-
-export interface GetWorkExDataResponse extends Partial<WorkExperienceResponse> {
-  name: string;
-  profilePic: string;
-  peerPost?: string;
-  skills?: SkillResponse[];
-  documents?: GetDocumentResponse[];
-}
-
-export interface GetPeerInformationResponse {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  emailVerified?: boolean;
-  phoneVerified?: boolean;
-  verificationBy: WorkVerificationBy;
-  optionalVerificationFields?: OptionalWorkExperienceFields;
-  mandatoryVerificationFields?: MandatoryWorkExFields;
-  mandatoryQuestionFields?: MandatoryQuestionFields;
-  otherQuestionFields: HRQuestionFields | ExceptHRQuestionFields;
-  data: GetWorkExDataResponse;
 }
 
