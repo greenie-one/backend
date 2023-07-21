@@ -5,7 +5,7 @@ export interface AddWorkExperienceResponse {
   success: boolean;
 }
 
-export interface WorkExperienceResponseDto {
+export interface WorkExperienceResponse {
   id: string;
   designation: string;
   companyType: CompanyTypeEnum;
@@ -24,6 +24,6 @@ export interface WorkExperienceResponseDto {
 }
 
 export interface GetWorkExperienceResponse {
-  workExperiences: WorkExperienceResponseDto[];
+  workExperiences: WorkExperienceResponse[];
 }
 

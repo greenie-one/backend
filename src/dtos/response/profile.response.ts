@@ -3,7 +3,7 @@ export interface AddProfileResponse {
   success: boolean;
 }
 
-export interface ProfileResponseDto {
+export interface ProfileResponse {
   id: string;
   firstName: string;
   lastName: string;
@@ -14,6 +14,6 @@ export interface ProfileResponseDto {
 }
 
 export interface SearchProfilesResponse {
-  profiles: ProfileResponseDto[];
+  profiles: ProfileResponse[];
 }
 

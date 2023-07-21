@@ -1,7 +1,7 @@
 import { DocumentType } from '@/dtos/request/document.dto';
 import { IDTypeEnum } from '@/dtos/request/ids.dto';
 import { CreateProfileDto, UpdateProfileDto } from '@/dtos/request/profile.dto';
-import { AddProfileResponse, ProfileResponseDto, SearchProfilesResponse } from '@/dtos/response/profile.response';
+import { AddProfileResponse, ProfileResponse, SearchProfilesResponse } from '@/dtos/response/profile.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
@@ -55,13 +55,13 @@ class ProfileService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async getProfile(userId: string): Promise<ProfileResponseDto> {
+  public async getProfile(userId: string): Promise<ProfileResponse> {
     const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    const res: ProfileResponseDto = {
+    const res: ProfileResponse = {
       id: profile._id.toString(),
       firstName: profile.firstName,
       lastName: profile.lastName,

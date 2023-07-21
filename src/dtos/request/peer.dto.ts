@@ -1,6 +1,10 @@
+import { ExceptHRQuestionFields, HRQuestionFields, MandatoryQuestionFields, MandatoryWorkExFields, OptionalWorkExFields } from '@/models/peer.model';
 import { sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { GetDocumentResponse } from '../response/document.response';
+import { SkillResponse } from '../response/skills.response';
+import { WorkExperienceResponse } from '../response/workExperience.response';
 
 export enum State {
   PENDING = 'PENDING',
@@ -39,7 +43,7 @@ enum UpdateRating {
   HIGHLY_COLLABORATIVE = 'highly-collaborative',
 }
 
-class StatusField {
+export class StatusField {
   @IsString()
   @IsNotEmpty()
   @IsEnum(State)
@@ -158,6 +162,38 @@ export class CreateWorkPeerDto {
   @IsNotEmpty()
   @IsString({ each: true })
   public optionalVerificationFields!: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  public skills?: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  public documents?: string[];
+}
+
+class UpdateSkillsVerification {
+  @IsString()
+  @IsNotEmpty()
+  public id!: string;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsNotEmpty()
+  public status!: StatusField;
+}
+
+class UpdateDocumentsVerification {
+  @IsString()
+  @IsNotEmpty()
+  public id!: string;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsNotEmpty()
+  public status!: StatusField;
 }
 
 export class UpdatePeerWorkVerificationDto {
@@ -165,5 +201,51 @@ export class UpdatePeerWorkVerificationDto {
   @Type(() => WorkExperienceFieldsDto)
   @IsNotEmpty()
   public verificationFields!: WorkExperienceFieldsDto;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateSkillsVerification)
+  public skills?: UpdateSkillsVerification[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateDocumentsVerification)
+  public documents?: UpdateDocumentsVerification[];
 }
 
+export interface CreateWorkPeerResponse {
+  id: string;
+  name: string;
+}
+
+export interface GetUserWorkPeerResponse {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  workExperience: string;
+  isVerificationCompleted: boolean;
+}
+
+export interface GetWorkExDataResponse extends Partial<WorkExperienceResponse> {
+  name: string;
+  profilePic: string;
+  peerPost?: string;
+  skills?: SkillResponse[];
+  documents?: GetDocumentResponse[];
+}
+
+export interface GetPeerInformationResponse {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+  verificationBy: WorkVerificationBy;
+  optionalVerificationFields?: OptionalWorkExFields;
+  mandatoryVerificationFields?: MandatoryWorkExFields;
+  mandatoryQuestionFields?: MandatoryQuestionFields;
+  otherQuestionFields: HRQuestionFields | ExceptHRQuestionFields;
+  data: GetWorkExDataResponse;
+}

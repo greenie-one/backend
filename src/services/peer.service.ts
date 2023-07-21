@@ -8,8 +8,10 @@ import {
 } from '@/dtos/response/peer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel } from '@/models/peer.model';
+import { DocumentModel } from '@/models/document.model';
+import { DocumentVerification, ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, SkillsVerification, WorkPeer, WorkPeerModel } from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
+import { SkillModel } from '@/models/skills.model';
 import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.model';
 import { redisClient } from '@/redisClient';
 import { verification } from '@/remote/peer/verification';
@@ -149,18 +151,32 @@ class PeerService {
     const workExperience: WorkExperience = await WorkExperienceModel.findById(peer.ref);
     const profile: Profile = await ProfileModel.findOne({ user: peer.user });
 
-    const data: GetWorkExperienceDataResponse = {
+    let data: GetWorkExperienceDataResponse = {
       name: profile.firstName + ' ' + profile.lastName,
       profilePic: profile.profilePic,
     };
-
-    const fieldsData = copyDataFrom(JSON.parse(JSON.stringify(peer.optionalVerificationFields)), JSON.parse(JSON.stringify(workExperience)), data);
+    data = copyDataFrom(JSON.parse(JSON.stringify(peer.optionalVerificationFields)), JSON.parse(JSON.stringify(workExperience)), data);
     if (peer.verificationBy !== WorkVerificationBy.HR) {
-      fieldsData.peerPost = peer.verificationBy;
-      fieldsData.designation = workExperience.designation;
+      data.peerPost = peer.verificationBy;
+      data.designation = workExperience.designation;
     }
-    fieldsData.dateOfJoining = workExperience.dateOfJoining.toISOString();
-    fieldsData.dateOfLeaving = workExperience.dateOfLeaving.toISOString();
+    data.dateOfJoining = workExperience.dateOfJoining.toISOString();
+    data.dateOfLeaving = workExperience.dateOfLeaving.toISOString();
+
+    const skillIds = peer.skills.map((skill) => skill.id);
+    const skills = await SkillModel.find({ _id: { $in: skillIds } });
+
+    const documentIds = peer.documents.map((document) => document.id);
+    const documents = await DocumentModel.find({ _id: { $in: documentIds } });
+
+    for (const skill of skills) {
+      data.skills = [];
+      data.skills.push({ id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise });
+    }
+    for (const document of documents) {
+      data.documents = [];
+      data.documents.push({ id: document._id.toString(), type: document.type, name: document.name, privateUrl: document.privateUrl });
+    }
 
     const res: GetPeerInformationResponse = {
       id: peer._id.toString(),
@@ -174,7 +190,7 @@ class PeerService {
       mandatoryVerificationFields: peer.mandatoryVerificationFields,
       mandatoryQuestionFields: peer.mandatoryQuestionFields,
       otherQuestionFields: peer.otherQuestionFields,
-      data: fieldsData,
+      data: data,
     };
 
     return res;
@@ -185,6 +201,29 @@ class PeerService {
     if (find) {
       throw new HttpException(ErrorEnum.PEER_ALREADY_EXISTS);
     }
+
+    const skillsObj: SkillsVerification[] = [];
+    if (peerData.skills.length > 0) {
+      const skills = await SkillModel.find({ _id: { $in: peerData.skills } });
+      if (skills.length !== peerData.skills.length) {
+        throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, 'Invalid Skill ids');
+      }
+      for (const skillId of peerData.skills) {
+        skillsObj.push(new SkillsVerification(skillId));
+      }
+    }
+
+    const documentsObj: DocumentVerification[] = [];
+    if (peerData.documents.length > 0) {
+      const documents = await DocumentModel.find({ _id: { $in: peerData.documents } });
+      if (documents.length !== peerData.documents.length) {
+        throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, 'Invalid Document ids');
+      }
+      for (const documentId of peerData.documents) {
+        documentsObj.push(new DocumentVerification(documentId));
+      }
+    }
+
     let obj: OptionalWorkExFields;
     try {
       obj = createClassInstanceWithFields(peerData.optionalVerificationFields, new OptionalWorkExFields(), OptionalWorkExFields.defaultFields());
@@ -198,6 +237,8 @@ class PeerService {
       ...peerData,
       optionalVerificationFields: obj,
       otherQuestionFields: optionalQuestions,
+      skills: skillsObj.length > 0 ? skillsObj : undefined,
+      documents: documentsObj.length > 0 ? documentsObj : undefined,
       user: userId,
     };
     const peer = await WorkPeerModel.create(peerDataObj);
@@ -205,7 +246,7 @@ class PeerService {
     return { id: peer._id.toString(), name: peer.name } as CreateWorkPeerResponse;
   }
 
-  public async UpdatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
+  public async updatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -219,6 +260,24 @@ class PeerService {
     if (peer.isVerificationCompleted) {
       throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
+
+    if (updatedData.skills) {
+      const skillIds = updatedData.skills.map((skill) => skill.id);
+      const skills = await SkillModel.find({ _id: { $in: skillIds } });
+      if (skills.length !== updatedData.skills.length) {
+        throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, 'Invalid Skill ids');
+      }
+    }
+    const updatedSkills = JSON.parse(JSON.stringify(updatedData.skills));
+
+    if (updatedData.documents) {
+      const documentIds = updatedData.documents.map((document) => document.id);
+      const documents = await DocumentModel.find({ _id: { $in: documentIds } });
+      if (documents.length !== updatedData.documents.length) {
+        throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, 'Invalid Document ids');
+      }
+    }
+    const updatedDocuments = JSON.parse(JSON.stringify(updatedData.documents));
 
     try {
       const source = JSON.parse(JSON.stringify(updatedData.verificationFields));
@@ -252,12 +311,14 @@ class PeerService {
             optionalVerificationFields: optionalVerificationFields,
             mandatoryVerificationFields: mandatoryVerificationFields,
             otherQuestionFields: otherQuestionFields,
+            skills: updatedData.skills ? updatedSkills : undefined,
+            documents: updatedData.documents ? updatedDocuments : undefined,
           },
         },
         { new: true },
       );
     } catch (error) {
-      throw new HttpException(ErrorEnum.Server_ERROR, error.message);
+      throw new HttpException(ErrorEnum.SERVER_ERROR, error.message);
     }
 
     await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } }, { new: true });

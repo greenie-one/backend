@@ -33,7 +33,7 @@ export enum ErrorEnum {
 
   //identity verification
   NUMBER_NOT_LINKED,
-  Server_ERROR,
+  SERVER_ERROR,
   AADHAR_NOT_FOUND,
   PAN_VERIFICATION_FAIL,
   DRIVING_LICENSE_VERIFICATION_FAIL,
@@ -52,11 +52,12 @@ export enum ErrorEnum {
   INVALID_PEER_ID,
   PEER_EMAIL_NOT_VERIFIED,
   INVALID_OTP,
-  INVALID_VERIFICATION_FIELDS,
   CALL_API_FAILED,
+  INVALID_VERIFICATION_FIELDS,
   PEER_PHONE_NOT_VERIFIED,
   PEER_ALREADY_EXISTS,
   PEER_ALREADY_VERIFIED,
+  INCOMPLETE_VERIFICATION,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -235,7 +236,7 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'User location not found',
     status: 500,
   },
-  [ErrorEnum.Server_ERROR]: {
+  [ErrorEnum.SERVER_ERROR]: {
     code: 'GR0044',
     message: 'Internal Server Error',
     status: 500,
@@ -298,6 +299,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.PEER_ALREADY_VERIFIED]: {
     code: 'GR0055',
     message: 'Peer already verified',
+    status: 400,
+  },
+  [ErrorEnum.INCOMPLETE_VERIFICATION]: {
+    code: 'GR0056',
+    message: 'Give all fields for verification - %s',
     status: 400,
   },
 };

@@ -16,14 +16,14 @@ class OTPService {
     redisClient.setEx(`${contact}-${type.valueOf()}`, 60 * 5, otp.toString());
     await Otp.sendOtp({ contact, type, otp: otp.toString() }).catch((err) => {
       console.error(err);
-      throw new HttpException(ErrorEnum.Server_ERROR);
+      throw new HttpException(ErrorEnum.SERVER_ERROR);
     });
   }
 
   public async verifyOTP(contact: string, type: OtpType, otp: string) {
     const otpFromRedis = await redisClient.get(`${contact}-${type.valueOf()}`).catch((err) => {
       console.error(err);
-      throw new HttpException(ErrorEnum.Server_ERROR);
+      throw new HttpException(ErrorEnum.SERVER_ERROR);
     });
     if (otpFromRedis === otp) {
       return true;

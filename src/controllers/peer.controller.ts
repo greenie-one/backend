@@ -32,7 +32,7 @@ export default class PeerController {
 
   @Patch('/work/:peerUUID')
   async updatePeer(@Params('peerUUID') peerUUID: string, @Body() data: UpdatePeerWorkVerificationDto) {
-    return peerService.UpdatePeerWorkVerification(peerUUID, data);
+    return peerService.updatePeerWorkVerification(peerUUID, data);
   }
 
   @Get('/work/:peerUUID')

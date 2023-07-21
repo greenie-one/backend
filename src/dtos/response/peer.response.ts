@@ -6,7 +6,9 @@ import {
   OptionalWorkExFields,
 } from '@/models/peer.model';
 import { WorkVerificationBy } from '../request/peer.dto';
-import { WorkExperienceResponseDto } from './workExperience.response';
+import { GetDocumentResponse } from './document.response';
+import { SkillResponse } from './skills.response';
+import { WorkExperienceResponse } from './workExperience.response';
 
 export interface CreateWorkPeerResponse {
   id: string;
@@ -22,10 +24,12 @@ export interface GetUserWorkPeerResponse {
   isVerificationCompleted: boolean;
 }
 
-export interface GetWorkExperienceDataResponse extends Partial<WorkExperienceResponseDto> {
+export interface GetWorkExperienceDataResponse extends Partial<WorkExperienceResponse> {
   name: string;
   profilePic: string;
   peerPost?: string;
+  skills?: SkillResponse[];
+  documents?: GetDocumentResponse[];
 }
 
 export interface GetPeerInformationResponse {

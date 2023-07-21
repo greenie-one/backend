@@ -46,4 +46,3 @@ export class UpdateDocumentDto {
   @IsString()
   public workExperience?: string;
 }
-

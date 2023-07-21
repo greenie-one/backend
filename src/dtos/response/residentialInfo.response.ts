@@ -3,7 +3,7 @@ export interface AddResidentialInfoResponse {
   success: boolean;
 }
 
-export interface ResidentialInfoResponseDto {
+export interface ResidentialInfoResponse {
   id: string;
   address_line_1: string;
   address_line_2: string;
@@ -17,6 +17,6 @@ export interface ResidentialInfoResponseDto {
 }
 
 export interface GetResidentialInfoResponse {
-  residentialInfos: ResidentialInfoResponseDto[];
+  residentialInfos: ResidentialInfoResponse[];
 }
 

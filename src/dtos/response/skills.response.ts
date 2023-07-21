@@ -5,7 +5,7 @@ export interface AddSkillResponse {
   success: boolean;
 }
 
-export interface SkillResponseDto {
+export interface SkillResponse {
   id: string;
   skillName: string;
   workExperience?: string;
@@ -13,6 +13,6 @@ export interface SkillResponseDto {
 }
 
 export interface GetSkillsResponse {
-  skills: SkillResponseDto[];
+  skills: SkillResponse[];
 }
 
