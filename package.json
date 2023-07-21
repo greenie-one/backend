@@ -35,6 +35,7 @@
     "@opentelemetry/sdk-trace-base": "^1.15.0",
     "@opentelemetry/sdk-trace-node": "^1.15.0",
     "@opentelemetry/semantic-conventions": "^1.15.0",
+    "@opentelemetry/sql-common": "^0.40.0",
     "@swc/helpers": "^0.5.1",
     "@typegoose/typegoose": "^11.4.0",
     "@types/bcryptjs": "^2.4.2",
