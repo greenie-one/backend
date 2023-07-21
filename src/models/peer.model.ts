@@ -34,7 +34,7 @@ export class Status {
 }
 
 @modelOptions({ schemaOptions: { _id: false } })
-export class OptionalWorkExFields {
+export class OptionalWorkExperienceFields {
   @prop()
   public candidateId?: Status;
 
@@ -60,7 +60,7 @@ export class OptionalWorkExFields {
   public salary?: Status;
 
   static defaultFields() {
-    const defaultOptionalWorkExFields = new OptionalWorkExFields();
+    const defaultOptionalWorkExFields = new OptionalWorkExperienceFields();
     defaultOptionalWorkExFields.candidateId = Status.defaultStatus();
     defaultOptionalWorkExFields.department = Status.defaultStatus();
     defaultOptionalWorkExFields.dateOfJoining = Status.defaultStatus();
@@ -186,7 +186,7 @@ export class WorkPeer {
   public verificationBy!: WorkVerificationBy;
 
   @prop()
-  public optionalVerificationFields?: OptionalWorkExFields;
+  public optionalVerificationFields?: OptionalWorkExperienceFields;
 
   @prop({ default: MandatoryWorkExFields.defaultFields() })
   public mandatoryVerificationFields?: MandatoryWorkExFields;
@@ -212,3 +212,4 @@ export class WorkPeer {
 }
 
 export const WorkPeerModel = getModelForClass(WorkPeer);
+

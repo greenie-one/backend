@@ -9,7 +9,15 @@ import {
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
-import { DocumentVerification, ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, SkillsVerification, WorkPeer, WorkPeerModel } from '@/models/peer.model';
+import {
+  DocumentVerification,
+  ExceptHRQuestionFields,
+  HRQuestionFields,
+  OptionalWorkExperienceFields,
+  SkillsVerification,
+  WorkPeer,
+  WorkPeerModel,
+} from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
 import { SkillModel } from '@/models/skills.model';
 import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.model';
@@ -224,9 +232,13 @@ class PeerService {
       }
     }
 
-    let obj: OptionalWorkExFields;
+    let obj: OptionalWorkExperienceFields;
     try {
-      obj = createClassInstanceWithFields(peerData.optionalVerificationFields, new OptionalWorkExFields(), OptionalWorkExFields.defaultFields());
+      obj = createClassInstanceWithFields(
+        peerData.optionalVerificationFields,
+        new OptionalWorkExperienceFields(),
+        OptionalWorkExperienceFields.defaultFields(),
+      );
       console.info(`created work peer with fields ${JSON.stringify(obj)}`);
       console.info(`created work peer with fields and default questions ${JSON.stringify(obj)}`);
     } catch (e) {

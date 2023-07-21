@@ -1,4 +1,10 @@
-import { ExceptHRQuestionFields, HRQuestionFields, MandatoryQuestionFields, MandatoryWorkExFields, OptionalWorkExFields } from '@/models/peer.model';
+import {
+  ExceptHRQuestionFields,
+  HRQuestionFields,
+  MandatoryQuestionFields,
+  MandatoryWorkExFields,
+  OptionalWorkExperienceFields,
+} from '@/models/peer.model';
 import { sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
@@ -28,7 +34,6 @@ export enum WorkVerificationBy {
   HR = 'HR',
   CXO = 'CXO',
 }
-
 
 enum UpdateSate {
   REJECTED = 'REJECTED',
@@ -243,9 +248,10 @@ export interface GetPeerInformationResponse {
   emailVerified?: boolean;
   phoneVerified?: boolean;
   verificationBy: WorkVerificationBy;
-  optionalVerificationFields?: OptionalWorkExFields;
+  optionalVerificationFields?: OptionalWorkExperienceFields;
   mandatoryVerificationFields?: MandatoryWorkExFields;
   mandatoryQuestionFields?: MandatoryQuestionFields;
   otherQuestionFields: HRQuestionFields | ExceptHRQuestionFields;
   data: GetWorkExDataResponse;
 }
+
