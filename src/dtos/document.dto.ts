@@ -39,7 +39,7 @@ export class UpdateDocumentDto {
   public workExperience?: string;
 }
 
-export interface GetDocumentResponseDto {
+export interface GetDocumentResponse {
   id: string;
   name: string;
   type: DocumentType;

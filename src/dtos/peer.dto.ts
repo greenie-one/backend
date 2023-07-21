@@ -11,7 +11,9 @@ import {
 } from '@models/peer.model';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
-import { workExperienceResponseDto } from './workExperience.dto';
+import { GetDocumentResponse } from './document.dto';
+import { SkillResponse } from './skills.dto';
+import { workExperienceResponseDto as WorkExperienceResponse } from './workExperience.dto';
 
 enum UpdateSate {
   REJECTED = 'REJECTED',
@@ -145,6 +147,38 @@ export class CreateWorkPeerDto {
   @IsNotEmpty()
   @IsString({ each: true })
   public optionalVerificationFields!: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  public skills?: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  public documents?: string[];
+}
+
+class UpdateSkillsVerification {
+  @IsString()
+  @IsNotEmpty()
+  public id!: string;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsNotEmpty()
+  public status!: StatusField;
+}
+
+class UpdateDocumentsVerification {
+  @IsString()
+  @IsNotEmpty()
+  public id!: string;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsNotEmpty()
+  public status!: StatusField;
 }
 
 export class UpdatePeerWorkVerificationDto {
@@ -152,6 +186,16 @@ export class UpdatePeerWorkVerificationDto {
   @Type(() => WorkExFieldsDTO)
   @IsNotEmpty()
   public verificationFields!: WorkExFieldsDTO;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateSkillsVerification)
+  public skills?: UpdateSkillsVerification[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateDocumentsVerification)
+  public documents?: UpdateDocumentsVerification[];
 }
 
 export interface CreateWorkPeerResponse {
@@ -168,10 +212,12 @@ export interface GetUserWorkPeerResponse {
   isVerificationCompleted: boolean;
 }
 
-export interface GetWorkExDataResponse extends Partial<workExperienceResponseDto> {
+export interface GetWorkExDataResponse extends Partial<WorkExperienceResponse> {
   name: string;
   profilePic: string;
   peerPost?: string;
+  skills?: SkillResponse[];
+  documents?: GetDocumentResponse[];
 }
 
 export interface GetPeerInformationResponse {

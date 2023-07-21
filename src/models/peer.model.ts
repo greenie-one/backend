@@ -1,4 +1,6 @@
 import { getModelForClass, index, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { Document } from './document.model';
+import { Skills } from './skills.model';
 import { User } from './users.model';
 
 export enum State {
@@ -149,6 +151,34 @@ export enum WorkVerificationBy {
   CXO = 'CXO',
 }
 
+@modelOptions({ schemaOptions: { _id: false } })
+export class SkillsVerification {
+  @prop({ type: String, ref: 'Skills', required: true })
+  public id!: Ref<Skills, string>;
+
+  @prop({ default: Status.defaultStatus() })
+  public status?: Status;
+
+  constructor(skill: Ref<Skills, string>) {
+    this.id = skill;
+    this.status = Status.defaultStatus();
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class DocumentVerification {
+  @prop({ type: String, ref: 'Document', required: true })
+  public id!: Ref<Document, string>;
+
+  @prop({ default: Status.defaultStatus() })
+  public status?: Status;
+
+  constructor(document: Ref<Document, string>) {
+    this.id = document;
+    this.status = Status.defaultStatus();
+  }
+}
+
 // Index for unique peer, scoped to user, email and workExperience ref
 @modelOptions({ schemaOptions: { timestamps: true } })
 @index({ user: 1, email: 1, ref: 1 }, { unique: true })
@@ -188,6 +218,12 @@ export class WorkPeer {
 
   @prop()
   public otherQuestionFields!: HRQuestionFields | ExceptHRQuestionFields;
+
+  @prop({})
+  public skills: SkillsVerification[];
+
+  @prop({})
+  public documents: DocumentVerification[];
 
   public createdAt?: Date;
 
