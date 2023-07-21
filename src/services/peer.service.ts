@@ -182,7 +182,7 @@ class PeerService {
   }
 
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto): Promise<CreateWorkPeerResponse> {
-    const find = await WorkPeerModel.findOne({ user: userId, email: peerData.email });
+    const find = await WorkPeerModel.findOne({ user: userId, email: peerData.email, ref: peerData.ref });
     if (find) {
       throw new HttpException(ErrorEnum.PEER_ALREADY_EXISTS);
     }
@@ -261,7 +261,7 @@ class PeerService {
       throw new HttpException(ErrorEnum.Server_ERROR, error.message);
     }
 
-    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } });
+    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } }, { new: true });
     await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
     return { success: true, message: 'Updated Successfully' };
   }
