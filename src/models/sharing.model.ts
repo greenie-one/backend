@@ -1,6 +1,6 @@
 import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Document } from 'mongoose';
-import { State, WorkPeer } from './peer.model';
+import { Status, WorkPeer } from './peer.model';
 import { Skills } from './skills.model';
 import { User } from './users.model';
 
@@ -31,8 +31,8 @@ class Sharing {
   @prop({ refPath: 'sharedThings', required: true })
   public sharedThingRef!: Ref<Skills | Document>;
 
-  @prop({ enum: State, type: String, default: State.PENDING })
-  public state?: State;
+  @prop({ default: Status.defaultStatus() })
+  public status?: Status;
 
   public createdAt?: Date;
 

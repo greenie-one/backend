@@ -1,7 +1,9 @@
-import { State } from '@/models/peer.model';
+import { Status } from '@/models/peer.model';
 import { SharedThing, SharedWith } from '@/models/sharing.model';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { GetDocumentResponseDto } from './document.dto';
+import { StatusField } from './peer.dto';
 import { skillResponseDto } from './skills.dto';
 
 export class sharingDTO {
@@ -19,20 +21,28 @@ export class sharingDTO {
   public sharedWith!: SharedWith;
 }
 
-export class sharingUpdateStateDTO {
+class updateSharingPeerStates {
   @IsString()
   @IsNotEmpty()
   public sharingId: string;
 
-  @IsEnum(State)
   @IsNotEmpty()
-  public state: State;
+  @ValidateNested()
+  @Type(() => StatusField)
+  public status: StatusField;
+}
+
+export class updateSharingPeerStatesList {
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => updateSharingPeerStates)
+  public data: updateSharingPeerStates[];
 }
 
 export interface getSharedResponseDTO {
   id: string;
 
-  state: State;
+  status: Status;
 
   data: skillResponseDto | GetDocumentResponseDto;
 }

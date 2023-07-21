@@ -26,7 +26,7 @@ enum UpdateRating {
   HIGHLY_COLLABORATIVE = 'highly-collaborative',
 }
 
-class StatusField {
+export class StatusField {
   @IsString()
   @IsNotEmpty()
   @IsEnum(State)

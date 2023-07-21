@@ -1,4 +1,4 @@
-import { getSharedResponseDTO, sharingDTO, sharingUpdateStateDTO } from '@/dtos/sharing.dto';
+import { getSharedResponseDTO, sharingDTO, updateSharingPeerStatesList } from '@/dtos/sharing.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
@@ -48,19 +48,18 @@ class SharingService {
     }
   }
 
-  public async getSharedWithData(userOrPeerId: string) {
-    const data = await SharingModel.find({ sharedWithRef: userOrPeerId });
+  public async getSharedWithPeerData(peerId: string) {
+    const data = await SharingModel.find({ aharedWithRef: peerId, sharedWith: 'Peer' });
     const sharedThingsData: getSharedResponseDTO[] = [];
     for (const item of data) {
       if (item.sharedThing == SharedThing.SKILLS) {
         const fetched = await SkillModel.findById(item.sharedThingRef);
         sharedThingsData.push({
           id: item._id.toString(),
-          state: item.state,
+          status: item.status,
           data: {
             id: fetched._id.toString(),
             skillName: fetched.skillName,
-            workExperience: fetched.workExperience.toString(),
             expertise: fetched.expertise,
           },
         });
@@ -68,7 +67,7 @@ class SharingService {
         const fetched = await DocumentModel.findById(item.sharedThingRef);
         sharedThingsData.push({
           id: item._id.toString(),
-          state: item.state,
+          status: item.status,
           data: {
             id: fetched._id.toString(),
             name: fetched.name,
@@ -81,13 +80,23 @@ class SharingService {
     return { sharedThingsData };
   }
 
-  public async updateShared(userOrPeerId: string, stateUpadte: sharingUpdateStateDTO) {
-    const data = await SharingModel.findOne({ id: stateUpadte.sharingId, sharedWithRef: userOrPeerId });
-    if (!data) {
+  public async updateShared(peerId: string, stateUpadte: updateSharingPeerStatesList) {
+    const data = await SharingModel.find({ sharedWithRef: peerId });
+    if (data.length === 0) {
       throw new HttpException(ErrorEnum.SHARING_NOT_FOUND);
     }
-    const updated = await SharingModel.findByIdAndUpdate(stateUpadte.sharingId, { $set: { state: stateUpadte.state } }, { new: true });
-    return { success: true, message: 'Updated Successfully', data: updated };
+    if (data.length !== stateUpadte.data.length) {
+      console.error('Length of data and stateUpdate is not same');
+      throw new HttpException(ErrorEnum.SHARING_FAILED);
+    }
+    for (const item of stateUpadte.data) {
+      const updated = await SharingModel.findByIdAndUpdate(item.sharingId, { $set: { status: item.status } }, { new: true });
+      if (!updated) {
+        console.error('Error in updating');
+        throw new HttpException(ErrorEnum.SHARING_FAILED);
+      }
+    }
+    return { success: true, message: 'Updated Successfully' };
   }
 }
 
