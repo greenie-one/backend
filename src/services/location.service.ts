@@ -1,4 +1,4 @@
-import { GPScompareDto } from '@/dtos/request/location.dto';
+import { GPScompare } from '@/dtos/request/location.dto';
 import { GetLocationResponse } from '@/dtos/response/location.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
@@ -30,7 +30,7 @@ class LocationService {
     }
   }
 
-  public async compare(gpsLocation: GPScompareDto, IPlocation: string) {
+  public async compare(gpsLocation: GPScompare, IPlocation: string) {
     try {
       const ipLocation = IPlocation.split(',');
       const ipLat = (parseFloat(ipLocation[0]) * Math.PI) / 180;
