@@ -30,14 +30,15 @@ strip() {
 
 export_all() {
   DIR_STRING=$(find "${BASE_DIR}/global-dtos/src/dtos" -type f -exec realpath --relative-to "${BASE_DIR}/global-dtos/src/" {} \;)
-  read -a DIRS <<< "$DIR_STRING"
+  DIRS=($(echo $DIR_STRING | tr " " "\n"))
   for i in "${DIRS[@]}"
   do
     NO_EXT=${i::-3}
-    echo "export * from './${NO_EXT}'" >> "${BASE_DIR}/global-dtos/src/index.ts"
+    echo -e "export * from './${NO_EXT}'" >> "${BASE_DIR}/global-dtos/src/index.ts"
+    echo $i
   done
 }
 
-# copy_dtos
-# strip
+copy_dtos
+strip
 export_all
