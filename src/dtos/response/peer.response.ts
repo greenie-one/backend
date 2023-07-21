@@ -4,8 +4,8 @@ import {
   MandatoryQuestionFields,
   MandatoryWorkExFields,
   OptionalWorkExFields,
-  WorkVerificationBy,
 } from '@/models/peer.model';
+import { WorkVerificationBy } from '../request/peer.dto';
 import { WorkExperienceResponseDto } from './workExperience.response';
 
 export interface CreateWorkPeerResponse {

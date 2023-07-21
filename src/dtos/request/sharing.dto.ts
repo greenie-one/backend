@@ -1,6 +1,6 @@
-import { State } from '@/models/peer.model';
 import { SharedThing, SharedWith } from '@/models/sharing.model';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { State } from './peer.dto';
 
 export class SharingDTO {
   @IsEnum(SharedThing)

@@ -1,7 +1,7 @@
-import { CreateDocumentDto, UpdateDocumentDto } from '@/dtos/request/document.dto';
+import { CreateDocumentDto, DocumentType, UpdateDocumentDto } from '@/dtos/request/document.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { Document, DocumentModel, DocumentType } from '@/models/document.model';
+import { Document, DocumentModel } from '@/models/document.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisUtilClient } from '@/redisClient';
 import { RedisPUBSUB } from '@/redisClient/deleteService';

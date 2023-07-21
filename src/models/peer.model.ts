@@ -1,11 +1,6 @@
-import { getModelForClass, index, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { Rating, State, WorkVerificationBy } from '@/dtos/request/peer.dto';
+import { Ref, getModelForClass, index, modelOptions, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
-
-export enum State {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-}
 
 @modelOptions({ schemaOptions: { _id: false } })
 export class Status {
@@ -34,15 +29,6 @@ export class Status {
     defaultStatus.state = State.PENDING;
     return defaultStatus;
   }
-}
-
-export enum Rating {
-  NON_COLLABORATIVE = 'non-collaborative',
-  RARELY_COLLABORATIVE = 'rarely-collaborative',
-  OCCASIONALLY_COLLABORATIVE = 'occasionally-collaborative',
-  MODERATELY_COLLABORATIVE = 'moderately-collaborative',
-  HIGHLY_COLLABORATIVE = 'highly-collaborative',
-  NOT_GIVEN = 'not-given',
 }
 
 @modelOptions({ schemaOptions: { _id: false } })
@@ -139,14 +125,6 @@ export class ExceptHRQuestionFields {
     defaultExceptHRQuestionFields.peerPost = Status.defaultStatus();
     return defaultExceptHRQuestionFields;
   }
-}
-
-export enum WorkVerificationBy {
-  COLLEAGUE = 'COLLEAGUE',
-  REPORTING_MANAGER = 'REPORTING_MANAGER',
-  LINE_MANAGER = 'LINE_MANAGER',
-  HR = 'HR',
-  CXO = 'CXO',
 }
 
 // Index for unique peer, scoped to user, email and workExperience ref

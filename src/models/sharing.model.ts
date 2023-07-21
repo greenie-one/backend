@@ -1,6 +1,7 @@
+import { State } from '@/dtos/request/peer.dto';
 import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Document } from 'mongoose';
-import { State, WorkPeer } from './peer.model';
+import { WorkPeer } from './peer.model';
 import { Skills } from './skills.model';
 import { User } from './users.model';
 

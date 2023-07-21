@@ -1,4 +1,4 @@
-import { CompanyTypeEnum } from '@/models/workExperience.model';
+import { CompanyTypeEnum } from "../request/workExperience.dto";
 
 export interface AddWorkExperienceResponse {
   id: string;

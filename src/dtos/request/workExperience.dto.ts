@@ -1,5 +1,14 @@
-import { CompanyTypeEnum } from '@/models/workExperience.model';
 import { IsEnum, IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+
+export enum CompanyTypeEnum {
+  Startup = 'Start-up (Funded)',
+  EarlyStageStartup = 'Early Stage Startup',
+  ProfitableStartup = 'Startup (Profitable)',
+  FamilyOwnedBusiness = 'Family Owned Business',
+  PrivateLimitedIndia = 'Private Limited (India)',
+  PartnershipLLP = 'Partnership (LLP/LLC)',
+  PublicLimitedCompany = 'Public Limited Company',
+}
 
 export class CreateWorkExperienceDto {
   @IsString()

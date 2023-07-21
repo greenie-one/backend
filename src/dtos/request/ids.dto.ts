@@ -1,5 +1,10 @@
-import { IDTypeEnum } from '@/models/id.model';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+
+export enum IDTypeEnum {
+  AADHAR = 'AADHAR',
+  PAN = 'PAN',
+  DRIVING_LICENSE = 'DRIVING_LICENSE',
+}
 
 export class AddIDDto {
   @IsEnum(IDTypeEnum)

@@ -1,4 +1,4 @@
-import { skillTypeEnum } from '@/models/skills.model';
+import { SkillTypeEnum } from "../request/skills.dto";
 
 export interface AddSkillResponse {
   id: string;
@@ -9,7 +9,7 @@ export interface SkillResponseDto {
   id: string;
   skillName: string;
   workExperience?: string;
-  expertise: skillTypeEnum;
+  expertise: SkillTypeEnum;
 }
 
 export interface GetSkillsResponse {

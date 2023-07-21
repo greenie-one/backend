@@ -1,7 +1,30 @@
 import { sanitizeMobileNumber } from '@/utils/validation';
-import { Rating, State, WorkVerificationBy } from '@models/peer.model';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+
+export enum State {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+}
+
+export enum Rating {
+  NON_COLLABORATIVE = 'non-collaborative',
+  RARELY_COLLABORATIVE = 'rarely-collaborative',
+  OCCASIONALLY_COLLABORATIVE = 'occasionally-collaborative',
+  MODERATELY_COLLABORATIVE = 'moderately-collaborative',
+  HIGHLY_COLLABORATIVE = 'highly-collaborative',
+  NOT_GIVEN = 'not-given',
+}
+
+export enum WorkVerificationBy {
+  COLLEAGUE = 'COLLEAGUE',
+  REPORTING_MANAGER = 'REPORTING_MANAGER',
+  LINE_MANAGER = 'LINE_MANAGER',
+  HR = 'HR',
+  CXO = 'CXO',
+}
+
 
 enum UpdateSate {
   REJECTED = 'REJECTED',

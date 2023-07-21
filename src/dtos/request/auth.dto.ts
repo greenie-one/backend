@@ -1,5 +1,9 @@
-import { UserRoles } from '@/models/users.model';
 import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+
+export enum UserRoles {
+  DEFAULT = 'default',
+  INTERNAL = 'internal',
+}
 
 export class TokenClaims {
   @IsEmail()

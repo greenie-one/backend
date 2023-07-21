@@ -1,7 +1,8 @@
+import { OtpType } from '@/dtos/request/otp.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { redisClient } from '@/redisClient';
-import { Otp, OtpType } from '@/remote/otp/otp';
+import { Otp } from '@/remote/otp/otp';
 
 class OTPService {
   generateRandomNumber() {

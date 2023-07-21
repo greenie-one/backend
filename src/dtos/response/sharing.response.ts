@@ -1,4 +1,4 @@
-import { State } from '@/models/peer.model';
+import { State } from '../request/peer.dto';
 import { GetDocumentResponseDto } from './document.response';
 import { SkillResponseDto } from './skills.response';
 

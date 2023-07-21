@@ -7,7 +7,7 @@
   "scripts": {
     "start": "yarn build && node --require ./dist/instrumentation.js dist/server.js",
     "dev": "cross-env APP_ENV=local nodemon",
-    "build": "webpack build && node ./patch-build.js",
+    "build": "webpack build && node ./scripts/patch-build.js",
     "build:tsc": "tsc",
     "test": "jest --forceExit --detectOpenHandles",
     "lint": "eslint --ignore-path .gitignore --ext .ts src/",

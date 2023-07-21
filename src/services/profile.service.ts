@@ -1,9 +1,9 @@
+import { DocumentType } from '@/dtos/request/document.dto';
+import { IDTypeEnum } from '@/dtos/request/ids.dto';
 import { CreateProfileDto, UpdateProfileDto } from '@/dtos/request/profile.dto';
 import { AddProfileResponse, ProfileResponseDto, SearchProfilesResponse } from '@/dtos/response/profile.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { DocumentType } from '@/models/document.model';
-import { IDTypeEnum } from '@/models/id.model';
 import { ProfileModel } from '@/models/profile.model';
 import { documentWeights, scoreConstant } from '@/utils/documentWeight';
 import { getRandomGreenieId } from '@/utils/string';

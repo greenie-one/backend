@@ -1,5 +1,9 @@
-import { OtpType } from '@/remote/otp/otp';
 import { IsEnum, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+
+export enum OtpType {
+  EMAIL = 'EMAIL',
+  MOBILE = 'MOBILE',
+}
 
 export class VerifyOtpDTO {
   @IsString()

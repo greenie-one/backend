@@ -1,4 +1,5 @@
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/request/peer.dto';
+import { OtpType } from '@/dtos/request/otp.dto';
+import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto, WorkVerificationBy } from '@/dtos/request/peer.dto';
 import {
   CreateWorkPeerResponse,
   GetPeerInformationResponse,
@@ -7,11 +8,10 @@ import {
 } from '@/dtos/response/peer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
+import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel } from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
 import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.model';
 import { redisClient } from '@/redisClient';
-import { OtpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
 import { copyDataFrom, copySourceDataWithKeysFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
