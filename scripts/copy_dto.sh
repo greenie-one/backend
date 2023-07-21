@@ -1,5 +1,6 @@
-BASE_DIR=$GITHUB_WORKSPACE
+#!/bin/sh 
 
+BASE_DIR=$GITHUB_WORKSPACE
 
 copy_dtos() {
   rm -rf "${BASE_DIR}/global-dtos/src"
@@ -29,7 +30,6 @@ strip() {
 
 export_all() {
   DIR_STRING=$(find "${BASE_DIR}/global-dtos/src/dtos" -type f -exec realpath --relative-to "${BASE_DIR}/global-dtos/src/" {} \;)
-  echo $DIR_STRING
   DIRS=$(echo $DIR_STRING | tr " " "\n")
   echo $DIRS
   for i in "${DIRS[@]}"
