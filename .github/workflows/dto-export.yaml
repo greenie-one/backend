@@ -26,7 +26,6 @@ jobs:
         with:
           repository: greenie-one/global-dtos
           path: global-dtos
-          # ref: ${{ steps.extract_branch.outputs.branch }}
           ssh-key: ${{ secrets.SSH_DEPLOY_KEY }}
 
       - name: Copy files and push
@@ -34,7 +33,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "Greenie"
 
-          sh $GITHUB_WORKSPACE/backend/scripts/copy_dto.sh
+          bash $GITHUB_WORKSPACE/backend/scripts/copy_dto.sh
 
           cd $GITHUB_WORKSPACE/global-dtos
           git checkout -B ${GITHUB_REF##*/}
