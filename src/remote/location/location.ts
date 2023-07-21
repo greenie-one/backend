@@ -1,5 +1,5 @@
 import { env } from '@/config';
-import { LocationResponse } from '@/dtos/location.dto';
+import { LocationResponse } from '@/dtos/response/location.response';
 import { HttpClient } from '../generic/httpClient';
 
 export class Geolocation {
@@ -13,3 +13,4 @@ export class Geolocation {
     });
   }
 }
+

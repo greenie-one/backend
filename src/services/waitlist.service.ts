@@ -1,4 +1,4 @@
-import { AddToWaitlistDto } from '@/dtos/waitlist.dto';
+import { AddToWaitlistDto } from '@/dtos/request/waitlist.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { WaitlistMailer } from '@/remote/waitlist/email';
 import { HttpException } from '@exceptions/httpException';

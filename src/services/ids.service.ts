@@ -1,4 +1,4 @@
-import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
+import { AddIDDto, VerifyIDDto } from '@/dtos/request/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel, IDTypeEnum } from '@/models/id.model';

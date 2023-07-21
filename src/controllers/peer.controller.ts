@@ -1,6 +1,6 @@
-import { TokenClaims } from '@/dtos/auth.dto';
-import { SendPeerOtpDTO, VerifyOtpDTO } from '@/dtos/otp.dto';
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/peer.dto';
+import { TokenClaims } from '@/dtos/request/auth.dto';
+import { SendPeerOtpDTO, VerifyOtpDTO } from '@/dtos/request/otp.dto';
+import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/request/peer.dto';
 import { peerService } from '@/services/peer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -51,3 +51,4 @@ export default class PeerController {
     return { success: status, message: 'Verified' };
   }
 }
+

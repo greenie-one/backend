@@ -1,5 +1,5 @@
-import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateDocumentDto, UpdateDocumentDto } from '@/dtos/document.dto';
+import { TokenClaims } from '@/dtos/request/auth.dto';
+import { CreateDocumentDto, UpdateDocumentDto } from '@/dtos/request/document.dto';
 import { DocumentType } from '@/models/document.model';
 import { documentService } from '@/services/document.service';
 import { UserDetails } from '@/utils/decorators/auth';
@@ -34,3 +34,4 @@ export default class DocumentController {
     return documentService.getDocumentByType(userDetails.sub, DocumentType);
   }
 }
+

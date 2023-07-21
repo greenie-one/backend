@@ -1,5 +1,5 @@
-import { TokenClaims } from '@/dtos/auth.dto';
-import { sharingDTO, sharingUpdateStateDTO } from '@/dtos/sharing.dto';
+import { TokenClaims } from '@/dtos/request/auth.dto';
+import { SharingDTO, SharingUpdateStateDTO } from '@/dtos/request/sharing.dto';
 import { sharingService } from '@/services/sharing.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -9,7 +9,7 @@ import { Body, Params } from '@/utils/decorators/request';
 @Controller('/share')
 export default class SharingController {
   @Post('')
-  async shareThing(@UserDetails() userDetails: TokenClaims, @Body() data: sharingDTO) {
+  async shareThing(@UserDetails() userDetails: TokenClaims, @Body() data: SharingDTO) {
     return sharingService.share(userDetails.sub, data);
   }
 
@@ -19,7 +19,8 @@ export default class SharingController {
   }
 
   @Patch('/updateState/:id')
-  async updateState(@Params('id') peerId: string, @Body() data: sharingUpdateStateDTO) {
+  async updateState(@Params('id') peerId: string, @Body() data: SharingUpdateStateDTO) {
     return sharingService.updateShared(peerId, data);
   }
 }
+

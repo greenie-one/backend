@@ -1,7 +1,7 @@
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { redisClient } from '@/redisClient';
-import { Otp, otpType } from '@/remote/otp/otp';
+import { Otp, OtpType } from '@/remote/otp/otp';
 
 class OTPService {
   generateRandomNumber() {
@@ -10,7 +10,7 @@ class OTPService {
     return Math.floor(Math.random() * (maxm - minm + 1)) + minm;
   }
 
-  public async sendOTP(contact: string, type: otpType) {
+  public async sendOTP(contact: string, type: OtpType) {
     const otp = this.generateRandomNumber();
     redisClient.setEx(`${contact}-${type.valueOf()}`, 60 * 5, otp.toString());
     await Otp.sendOtp({ contact, type, otp: otp.toString() }).catch((err) => {
@@ -19,7 +19,7 @@ class OTPService {
     });
   }
 
-  public async verifyOTP(contact: string, type: otpType, otp: string) {
+  public async verifyOTP(contact: string, type: OtpType, otp: string) {
     const otpFromRedis = await redisClient.get(`${contact}-${type.valueOf()}`).catch((err) => {
       console.error(err);
       throw new HttpException(ErrorEnum.Server_ERROR);
@@ -32,3 +32,4 @@ class OTPService {
 }
 
 export const otpService = new OTPService();
+

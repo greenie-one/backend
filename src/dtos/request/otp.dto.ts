@@ -1,4 +1,4 @@
-import { otpType } from '@/remote/otp/otp';
+import { OtpType } from '@/remote/otp/otp';
 import { IsEnum, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class VerifyOtpDTO {
@@ -8,13 +8,14 @@ export class VerifyOtpDTO {
   @MaxLength(6)
   otp: string;
 
-  @IsEnum(otpType)
+  @IsEnum(OtpType)
   @IsNotEmpty()
-  otpType: otpType;
+  otpType: OtpType;
 }
 
 export class SendPeerOtpDTO {
-  @IsEnum(otpType)
+  @IsEnum(OtpType)
   @IsNotEmpty()
-  otpType: otpType;
+  otpType: OtpType;
 }
+

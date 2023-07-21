@@ -1,4 +1,5 @@
-import { getSharedResponseDTO, sharingDTO, sharingUpdateStateDTO } from '@/dtos/sharing.dto';
+import { SharingDTO, SharingUpdateStateDTO } from '@/dtos/request/sharing.dto';
+import { GetSharedResponseDTO } from '@/dtos/response/sharing.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
@@ -7,7 +8,7 @@ import { SharedThing, SharingModel } from '@/models/sharing.model';
 import { SkillModel } from '@/models/skills.model';
 
 class SharingService {
-  public async share(userId: string, data: sharingDTO) {
+  public async share(userId: string, data: SharingDTO) {
     const sharingType = data.thing;
     try {
       if (sharingType == SharedThing.SKILLS) {
@@ -50,7 +51,7 @@ class SharingService {
 
   public async getSharedWithData(userOrPeerId: string) {
     const data = await SharingModel.find({ sharedWithRef: userOrPeerId });
-    const sharedThingsData: getSharedResponseDTO[] = [];
+    const sharedThingsData: GetSharedResponseDTO[] = [];
     for (const item of data) {
       if (item.sharedThing == SharedThing.SKILLS) {
         const fetched = await SkillModel.findById(item.sharedThingRef);
@@ -81,7 +82,7 @@ class SharingService {
     return { sharedThingsData };
   }
 
-  public async updateShared(userOrPeerId: string, stateUpadte: sharingUpdateStateDTO) {
+  public async updateShared(userOrPeerId: string, stateUpadte: SharingUpdateStateDTO) {
     const data = await SharingModel.findOne({ id: stateUpadte.sharingId, sharedWithRef: userOrPeerId });
     if (!data) {
       throw new HttpException(ErrorEnum.SHARING_NOT_FOUND);
@@ -92,3 +93,4 @@ class SharingService {
 }
 
 export const sharingService = new SharingService();
+

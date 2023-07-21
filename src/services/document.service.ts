@@ -1,4 +1,4 @@
-import { CreateDocumentDto, UpdateDocumentDto } from '@/dtos/document.dto';
+import { CreateDocumentDto, UpdateDocumentDto } from '@/dtos/request/document.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel, DocumentType } from '@/models/document.model';
@@ -147,3 +147,4 @@ class DocumentService {
 }
 
 export const documentService = new DocumentService();
+

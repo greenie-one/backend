@@ -1,18 +1,17 @@
+import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/request/peer.dto';
 import {
-  CreateWorkPeerDto,
   CreateWorkPeerResponse,
   GetPeerInformationResponse,
   GetUserWorkPeerResponse,
-  GetWorkExDataResponse,
-  UpdatePeerWorkVerificationDto,
-} from '@/dtos/peer.dto';
+  GetWorkExperienceDataResponse,
+} from '@/dtos/response/peer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ExceptHRQuestionFields, HRQuestionFields, OptionalWorkExFields, WorkPeer, WorkPeerModel, WorkVerificationBy } from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
 import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.model';
 import { redisClient } from '@/redisClient';
-import { otpType } from '@/remote/otp/otp';
+import { OtpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
 import { copyDataFrom, copySourceDataWithKeysFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
@@ -68,7 +67,7 @@ class PeerService {
     return { success: true, message: 'Link Sent' };
   }
 
-  public async peerSendOTP(peerUUID: string, otp_type: otpType) {
+  public async peerSendOTP(peerUUID: string, otp_type: OtpType) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -82,7 +81,7 @@ class PeerService {
     }
   }
 
-  public async verifyPeerConatct(peerUUID: string, otp_type: otpType, otp: string) {
+  public async verifyPeerConatct(peerUUID: string, otp_type: OtpType, otp: string) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -150,7 +149,7 @@ class PeerService {
     const workExperience: WorkExperience = await WorkExperienceModel.findById(peer.ref);
     const profile: Profile = await ProfileModel.findOne({ user: peer.user });
 
-    const data: GetWorkExDataResponse = {
+    const data: GetWorkExperienceDataResponse = {
       name: profile.firstName + ' ' + profile.lastName,
       profilePic: profile.profilePic,
     };
@@ -276,3 +275,4 @@ class PeerService {
 }
 
 export const peerService = new PeerService();
+

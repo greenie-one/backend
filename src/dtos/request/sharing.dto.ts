@@ -1,10 +1,8 @@
 import { State } from '@/models/peer.model';
 import { SharedThing, SharedWith } from '@/models/sharing.model';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { GetDocumentResponseDto } from './document.dto';
-import { skillResponseDto } from './skills.dto';
 
-export class sharingDTO {
+export class SharingDTO {
   @IsEnum(SharedThing)
   @IsNotEmpty()
   public thing!: SharedThing;
@@ -19,7 +17,7 @@ export class sharingDTO {
   public sharedWith!: SharedWith;
 }
 
-export class sharingUpdateStateDTO {
+export class SharingUpdateStateDTO {
   @IsString()
   @IsNotEmpty()
   public sharingId: string;
@@ -29,10 +27,3 @@ export class sharingUpdateStateDTO {
   public state: State;
 }
 
-export interface getSharedResponseDTO {
-  id: string;
-
-  state: State;
-
-  data: skillResponseDto | GetDocumentResponseDto;
-}

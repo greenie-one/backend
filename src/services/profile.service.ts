@@ -1,4 +1,5 @@
-import { AddProfileResponse, CreateProfileDto, ProfileResponseDto as GetProfileResponse, SearchProfilesResponse, UpdateProfileDto } from '@/dtos/profile.dto';
+import { CreateProfileDto, UpdateProfileDto } from '@/dtos/request/profile.dto';
+import { AddProfileResponse, ProfileResponseDto, SearchProfilesResponse } from '@/dtos/response/profile.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentType } from '@/models/document.model';
@@ -54,20 +55,20 @@ class ProfileService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async getProfile(userId: string): Promise<GetProfileResponse> {
+  public async getProfile(userId: string): Promise<ProfileResponseDto> {
     const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    const res: GetProfileResponse = {
-        id: profile._id.toString(),
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        profilePic: profile.profilePic,
-        bio: profile.bio,
-        descriptionTags: profile.descriptionTags,
-        greenieId: profile.greenie_id,
+    const res: ProfileResponseDto = {
+      id: profile._id.toString(),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      profilePic: profile.profilePic,
+      bio: profile.bio,
+      descriptionTags: profile.descriptionTags,
+      greenieId: profile.greenie_id,
     };
     return res;
   }

@@ -39,9 +39,3 @@ export class UpdateDocumentDto {
   public workExperience?: string;
 }
 
-export interface GetDocumentResponseDto {
-  id: string;
-  name: string;
-  type: DocumentType;
-  privateUrl: string;
-}

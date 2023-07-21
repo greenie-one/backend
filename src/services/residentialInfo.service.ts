@@ -1,7 +1,8 @@
+import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
+import { AddResidentialInfoResponse, GetResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
-import { AddResidentialInfoDto, AddResidentialInfoResponse, GetResidentialInfoResponse, UpdateResidentialInfoDto } from '@/dtos/residentialInfo.dto';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 
 class ResidentialInfoService {
@@ -84,3 +85,4 @@ class ResidentialInfoService {
 }
 
 export const residentialInfoService = new ResidentialInfoService();
+
