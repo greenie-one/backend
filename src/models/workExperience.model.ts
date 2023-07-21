@@ -32,6 +32,9 @@ export class WorkExperience {
   public companyId!: string;
 
   @prop({ type: String })
+  public candidateId!: string;
+
+  @prop({ type: String })
   public linkedInUrl?: string;
 
   @prop({ type: String })
@@ -41,10 +44,10 @@ export class WorkExperience {
   public workMode?: string;
 
   @prop({ type: Date, required: true })
-  public companyStartDate!: Date;
+  public dateOfJoining!: Date;
 
   @prop({ type: Date })
-  public companyEndDate?: Date;
+  public dateOfLeaving?: Date;
 
   @prop({ type: String })
   public reason_for_leaving?: string;
@@ -58,6 +61,9 @@ export class WorkExperience {
   public createdAt?: Date;
 
   public updatedAt?: Date;
+
+  @prop({ type: Number, default: 0 })
+  public noOfVerifications?: number;
 }
 
 export const WorkExperienceModel = getModelForClass(WorkExperience);

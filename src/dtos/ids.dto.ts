@@ -61,6 +61,17 @@ export interface AadharVerifyOtpResponse {
   response_message?: string;
 }
 
+export interface AadharData{
+  result:{
+    user_full_name:string, 
+    user_dob:string,
+    user_parent_name:string,
+    user_parent_name:{
+      
+    }
+  }
+}
+
 export interface PanVerifyResponse {
   success?: boolean;
   response_code?: string;

@@ -1,4 +1,4 @@
-import { createDocumentDto, getDocumentResponseDto, updateDocumentDto } from '@/dtos/document.dto';
+import { CreateDocumentDto, GetDocumentResponseDto, UpdateDocumentDto } from '@/dtos/document.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel, DocumentType } from '@/models/document.model';
@@ -9,7 +9,7 @@ import { SAStokenService } from './blobStorage.service';
 import { profileService } from './profile.service';
 
 class DocumentService {
-  public async createDocument(userID: string, documentData: createDocumentDto): Promise<Document> {
+  public async createDocument(userID: string, documentData: CreateDocumentDto): Promise<Document> {
     const data = await redisUtilClient.get(documentData.privateUrl);
     if (!data) {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
@@ -47,7 +47,7 @@ class DocumentService {
     }
   }
 
-  public async updateDocument(userID: string, documentId: string, documentData: updateDocumentDto): Promise<Document> {
+  public async updateDocument(userID: string, documentId: string, documentData: UpdateDocumentDto): Promise<Document> {
     const document = await DocumentModel.findById(documentId);
     if (!document) {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
@@ -145,7 +145,7 @@ class DocumentService {
     return documents;
   }
 
-  public async getDocumentById(userId: string, id: string): Promise<getDocumentResponseDto> {
+  public async getDocumentById(userId: string, id: string): Promise<GetDocumentResponseDto> {
     const document = await DocumentModel.findById(id);
 
     if (!document) {
@@ -156,7 +156,7 @@ class DocumentService {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    const resp: getDocumentResponseDto = {
+    const resp: GetDocumentResponseDto = {
       id: document._id.toString(),
       name: document.name,
       type: document.type,

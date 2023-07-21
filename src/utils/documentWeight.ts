@@ -2,7 +2,7 @@ import { DocumentType } from '@/models/document.model';
 import { IDTypeEnum } from '@/models/id.model';
 
 export const documentWeights: Record<DocumentType | IDTypeEnum, number> = {
-  [DocumentType.CERIFICATE]: 1,
+  [DocumentType.CERTIFICATE]: 1,
   [DocumentType.EDUCATION]: 1,
   [DocumentType.MARKSHEET]: 1,
   [DocumentType.OTHER]: 1,

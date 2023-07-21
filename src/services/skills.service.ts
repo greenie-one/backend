@@ -40,7 +40,6 @@ class SkillService {
       });
     }
 
-    console.info(resp);
     return resp;
   }
 

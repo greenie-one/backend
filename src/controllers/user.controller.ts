@@ -7,9 +7,9 @@ import { Patch } from '@/utils/decorators/methods';
 import { Body } from '@/utils/decorators/request';
 
 @Controller('/user')
-export default class userController {
+export default class UserController {
   @Patch('/update')
-  async updateSkill(@UserDetails() userDetails: TokenClaims, @Body() data: UpdateUserDto) {
+  async updateUser(@UserDetails() userDetails: TokenClaims, @Body() data: UpdateUserDto) {
     return userService.updateUser(userDetails.sub, data);
   }
 }
