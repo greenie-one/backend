@@ -1,19 +1,10 @@
 import { sanitizeMobileNumber } from '@/utils/validation';
-import {
-  ExceptHRQuestionFields,
-  HRQuestionFields,
-  MandatoryQuestionFields,
-  MandatoryWorkExFields,
-  OptionalWorkExFields,
-  Rating,
-  State,
-  WorkVerificationBy,
-} from '@models/peer.model';
+import { Rating, State, WorkVerificationBy } from '@models/peer.model';
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 import { GetDocumentResponse } from './document.dto';
 import { SkillResponse } from './skills.dto';
-import { workExperienceResponseDto as WorkExperienceResponse } from './workExperience.dto';
+import { workExperienceResponseDto } from './workExperience.dto';
 
 enum UpdateSate {
   REJECTED = 'REJECTED',
@@ -151,12 +142,12 @@ export class CreateWorkPeerDto {
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()
-  public skills?: string[];
+  public skills!: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()
-  public documents?: string[];
+  public documents!: string[];
 }
 
 class UpdateSkillsVerification {
@@ -190,12 +181,14 @@ export class UpdatePeerWorkVerificationDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateSkillsVerification)
-  public skills?: UpdateSkillsVerification[];
+  @IsNotEmpty()
+  public skills!: UpdateSkillsVerification[];
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateDocumentsVerification)
-  public documents?: UpdateDocumentsVerification[];
+  @IsNotEmpty()
+  public documents!: UpdateDocumentsVerification[];
 }
 
 export interface CreateWorkPeerResponse {
@@ -212,10 +205,12 @@ export interface GetUserWorkPeerResponse {
   isVerificationCompleted: boolean;
 }
 
-export interface GetWorkExDataResponse extends Partial<WorkExperienceResponse> {
+export interface GetWorkExDataResponse {
   name: string;
   profilePic: string;
   peerPost?: string;
+  designation?: string;
+  optionalVerificationFields?: Partial<workExperienceResponseDto>;
   skills?: SkillResponse[];
   documents?: GetDocumentResponse[];
 }
@@ -228,9 +223,7 @@ export interface GetPeerInformationResponse {
   emailVerified?: boolean;
   phoneVerified?: boolean;
   verificationBy: WorkVerificationBy;
-  optionalVerificationFields?: OptionalWorkExFields;
-  mandatoryVerificationFields?: MandatoryWorkExFields;
-  mandatoryQuestionFields?: MandatoryQuestionFields;
-  otherQuestionFields: HRQuestionFields | ExceptHRQuestionFields;
   data: GetWorkExDataResponse;
+  dateOfJoining: string;
+  dateOfLeaving?: string;
 }

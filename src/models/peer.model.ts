@@ -219,11 +219,11 @@ export class WorkPeer {
   @prop()
   public otherQuestionFields!: HRQuestionFields | ExceptHRQuestionFields;
 
-  @prop({})
-  public skills: SkillsVerification[];
+  @prop({ required: true })
+  public skills!: SkillsVerification[];
 
-  @prop({})
-  public documents: DocumentVerification[];
+  @prop({ required: true })
+  public documents!: DocumentVerification[];
 
   public createdAt?: Date;
 
