@@ -1,11 +1,19 @@
-import { AddProfileResponse, CreateProfileDto, UpdateProfileDto, profileResponseDto } from '@/dtos/profile.dto';
+import {
+  AddProfileResponse,
+  CreateProfileDto,
+  ProfileResponseDto as GetProfileResponse,
+  SearchProfilesResponse,
+  UpdateProfileDto,
+} from '@/dtos/profile.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentType } from '@/models/document.model';
 import { IDTypeEnum } from '@/models/id.model';
 import { ProfileModel } from '@/models/profile.model';
 import { documentWeights, scoreConstant } from '@/utils/documentWeight';
+import { getRandomGreenieId } from '@/utils/string';
 import { UserModel } from '@models/users.model';
+import { ClientSession } from 'mongoose';
 
 class ProfileService {
   public async createProfile(userId: string, profileData: CreateProfileDto): Promise<AddProfileResponse> {
@@ -58,13 +66,14 @@ class ProfileService {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    const res: profileResponseDto = {
+    const res: GetProfileResponse = {
       id: profile._id.toString(),
       firstName: profile.firstName,
       lastName: profile.lastName,
       profilePic: profile.profilePic,
       bio: profile.bio,
       descriptionTags: profile.descriptionTags,
+      greenieId: profile.greenie_id,
     };
     return res;
   }
@@ -136,6 +145,7 @@ class ProfileService {
           profilePic: profile.profilePic,
           bio: profile.bio,
           descriptionTags: profile.descriptionTags,
+          greenieId: profile.greenie_id,
         });
       }
     }
@@ -143,7 +153,7 @@ class ProfileService {
     return res;
   }
 
-  public async modScore(userId: string, documentType: DocumentType | IDTypeEnum, hasUploaded: boolean) {
+  public async modScore(userId: string, documentType: DocumentType | IDTypeEnum, hasUploaded: boolean, session?: ClientSession) {
     let changeInScore = documentWeights[documentType];
 
     if (typeof changeInScore === 'undefined' || changeInScore === null) {
@@ -153,7 +163,33 @@ class ProfileService {
 
     changeInScore *= scoreConstant;
 
-    await ProfileModel.findOneAndUpdate({ user: userId }, { $inc: { score: hasUploaded ? changeInScore : -changeInScore } });
+    await ProfileModel.findOneAndUpdate({ user: userId }, { $inc: { score: hasUploaded ? changeInScore : -changeInScore } }, { session });
+  }
+
+  public async generateGreenieId(userId: string, session?: ClientSession) {
+    const greenieId = await getRandomGreenieId();
+
+    try {
+      await ProfileModel.findOneAndUpdate(
+        {
+          user: userId,
+          greenie_id: null,
+        },
+        {
+          $set: {
+            greenie_id: greenieId,
+          },
+        },
+        {
+          session,
+        },
+      );
+    } catch (e) {
+      if (e.code === 11000 && e.codeName === 'DuplicateKey') {
+        return this.generateGreenieId(userId, session);
+      }
+      throw e;
+    }
   }
 }
 

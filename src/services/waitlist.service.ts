@@ -12,7 +12,8 @@ export class WaitlistService {
     }
     const waitlist = await WaitlistModel.create(waitlistData);
 
-    WaitlistMailer.sendWaitlistMail(waitlistData.name, waitlistData.email);
+    await WaitlistMailer.sendWaitlistMail(waitlistData.name, waitlistData.email);
     return waitlist;
   }
 }
+

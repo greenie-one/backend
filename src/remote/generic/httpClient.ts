@@ -30,10 +30,16 @@ export class HttpClient {
     });
 
     let response: T;
-    if (request.toJSON !== false) {
-      response = (await resp.json()) as T;
+    if (resp.ok) {
+      if (request.toJSON !== false) {
+        response = (await resp.json()) as T;
+      } else {
+        response = (await resp.text()) as T;
+      }
     } else {
-      response = (await resp.text()) as T;
+      const errResp = await resp.text();
+      console.error('Got error for', url, ':', errResp);
+      throw errResp;
     }
 
     console.info('Got response', response);
@@ -41,3 +47,4 @@ export class HttpClient {
     return response;
   }
 }
+

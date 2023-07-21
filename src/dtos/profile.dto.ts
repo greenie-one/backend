@@ -51,15 +51,16 @@ export interface AddProfileResponse {
   success: boolean;
 }
 
-export interface profileResponseDto {
+export interface ProfileResponseDto {
   id: string;
   firstName: string;
   lastName: string;
   bio: string;
   profilePic: string;
   descriptionTags: string[];
+  greenieId: string;
 }
 
 export interface SearchProfilesResponse {
-  profiles: profileResponseDto[];
+  profiles: ProfileResponseDto[];
 }
