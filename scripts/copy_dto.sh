@@ -29,7 +29,9 @@ strip() {
 
 export_all() {
   DIR_STRING=$(find "${BASE_DIR}/global-dtos/src/dtos" -type f -exec realpath --relative-to "${BASE_DIR}/global-dtos/src/" {} \;)
+  echo $DIR_STRING
   DIRS=$(echo $DIR_STRING | tr " " "\n")
+  echo $DIRS
   for i in "${DIRS[@]}"
   do
     NO_EXT=${i::-3}
