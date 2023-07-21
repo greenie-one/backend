@@ -34,7 +34,7 @@ export default class DocumentController {
     return documentService.getDocumentByType(userDetails.sub, DocumentType);
   }
 
-  @Get('/get/:id')
+  @Get('/:id')
   async getDocumentById(@UserDetails() userDetails: TokenClaims, @Params('id') documentId: string) {
     return documentService.getDocumentById(userDetails.sub, documentId);
   }

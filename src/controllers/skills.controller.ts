@@ -18,7 +18,7 @@ export default class skillController {
     return skillService.getSkills(userDetails.sub);
   }
 
-  @Get('/get/:id')
+  @Get('/:id')
   async getSkillById(@UserDetails() userDetails: TokenClaims, @Params('id') skillId: string) {
     return skillService.getSkillById(userDetails.sub, skillId);
   }
