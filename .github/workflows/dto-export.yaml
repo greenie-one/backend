@@ -27,6 +27,7 @@ jobs:
           repository: greenie-one/global-dtos
           path: global-dtos
           ref: ${{ steps.extract_branch.outputs.branch }}
+          ssh-key: ${{ secrets.SSH_DEPLOY_KEY }}
 
       - name: Copy files and push
         run: |
