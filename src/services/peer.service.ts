@@ -34,6 +34,8 @@ import { otpService } from './otp.service';
 class PeerService {
   public async peerUUIDtoPeerId(uuid: string) {
     const data = await redisClient.get(uuid);
+    console.log(data);
+    console.log(typeof data);
     if (!data) {
       throw new HttpException(ErrorEnum.INVALID_PEER_UUID);
     }
@@ -131,6 +133,7 @@ class PeerService {
 
   public async getPeerInformation(peerUUID: string, reply: FastifyReply) {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
+    console.log(peerId);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
@@ -165,13 +168,20 @@ class PeerService {
       name: profile.firstName + ' ' + profile.lastName,
       profilePic: profile.profilePic,
     };
-    data = copyDataFrom(JSON.parse(JSON.stringify(peer.optionalVerificationFields)), JSON.parse(JSON.stringify(workExperience)), data);
+
+    if (peer.optionalVerificationFields) {
+      const optinalObj = JSON.parse(JSON.stringify(peer.optionalVerificationFields));
+      console.log(optinalObj);
+      const workExObj = JSON.parse(JSON.stringify(workExperience));
+      console.log(workExObj);
+      data = copyDataFrom(optinalObj, workExObj, data);
+    }
     if (peer.verificationBy !== WorkVerificationBy.HR) {
       data.peerPost = peer.verificationBy;
       data.designation = workExperience.designation;
     }
     data.dateOfJoining = workExperience.dateOfJoining.toISOString();
-    data.dateOfLeaving = workExperience.dateOfLeaving.toISOString();
+    data.dateOfLeaving = workExperience.dateOfLeaving ? workExperience.dateOfLeaving.toISOString() : undefined;
 
     const skillIds = peer.skills.map((skill) => skill.id);
     const skills = await SkillModel.find({ _id: { $in: skillIds } });

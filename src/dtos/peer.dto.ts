@@ -150,12 +150,12 @@ export class CreateWorkPeerDto {
 
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
+  @IsNotEmpty()
   public skills?: string[];
 
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
+  @IsNotEmpty()
   public documents?: string[];
 }
 
