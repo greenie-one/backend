@@ -15,6 +15,8 @@ export interface GetUserWorkPeerResponse {
   phone: string;
   workExperience: string;
   isVerificationCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GetPeerWorkExDataResponse {

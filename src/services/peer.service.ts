@@ -114,6 +114,8 @@ class PeerService {
         phone: peer.phone,
         workExperience: peer.ref.toString(),
         isVerificationCompleted: peer.isVerificationCompleted,
+        createdAt: peer.createdAt.toISOString(),
+        updatedAt: peer.updatedAt.toISOString(),
       });
     }
     return res;
