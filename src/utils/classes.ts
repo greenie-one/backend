@@ -22,6 +22,14 @@ export function pickFields<T extends object, K>(fieldNames: string[], fromObj: T
   return toObj as K;
 }
 
+export function checkFields<T extends object>(fieldNames: string[], fromObj: T) {
+  for (const fieldName of fieldNames) {
+    if (!fromObj.hasOwnProperty(fieldName)) {
+      throw new Error(`Field "${fieldName}" not found`);
+    }
+  }
+}
+
 export function copyFieldsFromInstance<T extends object>(source: T, destination: T) {
   const sourceFields = Object.keys(source);
   for (const field of sourceFields) {

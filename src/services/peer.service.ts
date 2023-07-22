@@ -25,7 +25,7 @@ import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.mod
 import { redisClient } from '@/redisClient';
 import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
-import { copyDataFrom, createClassInstanceWithFields, pickFields } from '@/utils/classes';
+import { checkFields, copyDataFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
@@ -269,64 +269,41 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
 
-    let updatedSkills = [];
     if (updatedData.skills.length > 0) {
       const skillIds = updatedData.skills.map((skill) => skill.id);
       const skills = await SkillModel.find({ _id: { $in: skillIds } });
       if (skills.length !== updatedData.skills.length) {
         throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, 'Invalid Skill ids');
       }
-      updatedSkills = JSON.parse(JSON.stringify(updatedData.skills));
+      // updatedSkills = JSON.parse(JSON.stringify(updatedData.skills));
+      peer.skills = updatedData.skills;
     }
 
-    let updatedDocuments = [];
     if (updatedData.documents.length > 0) {
       const documentIds = updatedData.documents.map((document) => document.id);
       const documents = await DocumentModel.find({ _id: { $in: documentIds } });
       if (documents.length !== updatedData.documents.length) {
         throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, 'Invalid Document ids');
       }
-      updatedDocuments = JSON.parse(JSON.stringify(updatedData.documents));
+      peer.documents = updatedData.documents;
     }
 
-    const updatedFields = JSON.parse(JSON.stringify(updatedData.verificationFields));
-    const optionalVerificationKeys = peer.optionalVerificationFields
-      ? Object.keys(JSON.parse(JSON.stringify(peer.optionalVerificationFields)))
-      : undefined;
-    const mandatoryVerificationKeys = Object.keys(JSON.parse(JSON.stringify(peer.mandatoryVerificationFields)));
-    const otherQuestionKeys = Object.keys(JSON.parse(JSON.stringify(peer.otherQuestionFields)));
-    const mandatoryQuestionKeys = Object.keys(JSON.parse(JSON.stringify(peer.mandatoryQuestionFields)));
-
-    const optionalVerificationFieldsUpdated = {};
-    const mandatoryVerificationFieldsUpdated = {};
-    const otherQuestionFieldsUpdated = {};
-    const mandatoryQuestionFieldsUpdated = {};
+    const toObj = peer.toObject().optionalVerificationFields;
+    const optionalVerificationKeys = toObj ? Object.keys(toObj) : undefined;
     try {
       if (optionalVerificationKeys) {
-        pickFields(optionalVerificationKeys, updatedFields, optionalVerificationFieldsUpdated);
+        checkFields(optionalVerificationKeys, updatedData.optionalVerificationFields);
       }
-      pickFields(mandatoryVerificationKeys, updatedFields, mandatoryVerificationFieldsUpdated);
-      pickFields(otherQuestionKeys, updatedFields, otherQuestionFieldsUpdated);
-      pickFields(mandatoryQuestionKeys, updatedFields, mandatoryQuestionFieldsUpdated);
+      peer.optionalVerificationFields = updatedData.optionalVerificationFields;
     } catch (error) {
       console.error(error);
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
-
-    await WorkPeerModel.findByIdAndUpdate(
-      peerId,
-      {
-        $set: {
-          mandatoryQuestionFields: mandatoryQuestionFieldsUpdated,
-          optionalVerificationFields: optionalVerificationFieldsUpdated,
-          mandatoryVerificationFields: mandatoryVerificationFieldsUpdated,
-          otherQuestionFields: otherQuestionFieldsUpdated,
-          skills: updatedSkills,
-          documents: updatedDocuments,
-        },
-      },
-      { new: true },
-    );
+    peer.mandatoryQuestionFields = updatedData.mandatoryQuestions;
+    peer.otherQuestionFields = updatedData.otherQuestions;
+    peer.mandatoryVerificationFields = updatedData.mandatoryVerificationFields;
+    peer.isVerificationCompleted = true;
+    peer.save();
 
     await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } }, { new: true });
     await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
