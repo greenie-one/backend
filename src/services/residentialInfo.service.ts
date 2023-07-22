@@ -34,8 +34,10 @@ class ResidentialInfoService {
   }
 
   public async addResidentialInfo(userId: string, residentialInfoData: AddResidentialInfoDto): Promise<AddResidentialInfoResponse> {
-    if (!(residentialInfoData.end_date && residentialInfoData.end_date > residentialInfoData.start_date)) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+    if (residentialInfoData.end_date) {
+      if (!(residentialInfoData.end_date > residentialInfoData.start_date)) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
@@ -62,9 +64,12 @@ class ResidentialInfoService {
   }
 
   public async updateResidentialInfo(userId: string, residentialInfoId: string, updatedData: UpdateResidentialInfoDto) {
-    if (!(updatedData.end_date && updatedData.end_date > updatedData.start_date)) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+    if (updatedData.end_date) {
+      if (updatedData.start_date > updatedData.end_date) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
+
     const residentialInfo = await ResidentialInfoModel.findById(residentialInfoId);
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
