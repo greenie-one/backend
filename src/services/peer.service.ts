@@ -228,12 +228,10 @@ class PeerService {
         new OptionalWorkExperienceFields(),
         OptionalWorkExperienceFields.defaultFields(),
       );
-      console.info(`created work peer with fields ${JSON.stringify(obj)}`);
-      console.info(`created work peer with fields and default questions ${JSON.stringify(obj)}`);
     } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, e.message);
     }
-    let optionalQuestions;
+    let optionalQuestions: HRQuestionFields | ExceptHRQuestionFields;
     if (peerData.verificationBy === WorkVerificationBy.HR) {
       optionalQuestions = HRQuestionFields.defaultFields();
     } else {
