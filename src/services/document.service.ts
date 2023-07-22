@@ -1,7 +1,8 @@
-import { CreateDocumentDto, GetDocumentResponseDto, UpdateDocumentDto } from '@/dtos/document.dto';
+import { CreateDocumentDto, DocumentType, UpdateDocumentDto } from '@/dtos/request/document.dto';
+import { GetDocumentResponse } from '@/dtos/response/document.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { Document, DocumentModel, DocumentType } from '@/models/document.model';
+import { Document, DocumentModel } from '@/models/document.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisUtilClient } from '@/redisClient';
 import { RedisPUBSUB } from '@/redisClient/deleteService';
@@ -145,7 +146,7 @@ class DocumentService {
     return documents;
   }
 
-  public async getDocumentById(userId: string, id: string): Promise<GetDocumentResponseDto> {
+  public async getDocumentById(userId: string, id: string): Promise<GetDocumentResponse> {
     const document = await DocumentModel.findById(id);
 
     if (!document) {
@@ -156,7 +157,7 @@ class DocumentService {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    const resp: GetDocumentResponseDto = {
+    const resp: GetDocumentResponse = {
       id: document._id.toString(),
       name: document.name,
       type: document.type,
@@ -168,3 +169,4 @@ class DocumentService {
 }
 
 export const documentService = new DocumentService();
+

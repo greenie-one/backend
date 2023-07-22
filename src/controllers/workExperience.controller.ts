@@ -1,5 +1,5 @@
-import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import { TokenClaims } from '@/dtos/request/auth.dto';
+import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request/workExperience.dto';
 import { workExperienceService } from '@/services/workExperience.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -37,3 +37,4 @@ export default class WorkExperienceController {
     return workExperienceService.getWorkExperienceById(userDetails.sub, workExpId);
   }
 }
+

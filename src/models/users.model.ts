@@ -1,9 +1,5 @@
+import { UserRoles } from '@/dtos/request/auth.dto';
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-
-export enum UserRoles {
-  DEFAULT = 'default',
-  INTERNAL = 'internal',
-}
 
 @modelOptions({ schemaOptions: { collection: 'users', timestamps: true } })
 export class User {

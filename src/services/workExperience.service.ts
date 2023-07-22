@@ -1,4 +1,5 @@
-import { AddWorkExperienceResponse, CreateWorkExperienceDto, UpdateWorkExperienceDto, workExperienceResponseDto } from '@/dtos/workExperience.dto';
+import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request/workExperience.dto';
+import { AddWorkExperienceResponse, WorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -27,17 +28,17 @@ class WorkExperienceService {
     const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
     return res;
   }
-  public async getWorkExperience(userId: string): Promise<workExperienceResponseDto[]> {
+  public async getWorkExperience(userId: string): Promise<WorkExperienceResponse[]> {
     const workExperiences = await WorkExperienceModel.find({ user: userId });
 
     if (!workExperiences) {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    const res: workExperienceResponseDto[] = [];
+    const res: WorkExperienceResponse[] = [];
     for (const workExp of workExperiences) {
       res.push({
-        id: workExp._id.toString(),
+         id: workExp._id.toString(),
         designation: workExp.designation,
         companyType: workExp.companyType,
         email: workExp.email,
@@ -93,7 +94,7 @@ class WorkExperienceService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async getWorkExperienceById(userId: string, id: string): Promise<workExperienceResponseDto> {
+  public async getWorkExperienceById(userId: string, id: string): Promise<WorkExperienceResponse> {
     const workExperience = await WorkExperienceModel.findById(id);
 
     if (!workExperience) {
@@ -103,7 +104,7 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
-    const resp: workExperienceResponseDto = {
+    const resp: WorkExperienceResponse = {
       id: workExperience._id.toString(),
       designation: workExperience.designation,
       companyType: workExperience.companyType,
@@ -114,10 +115,11 @@ class WorkExperienceService {
       companyName: workExperience.companyName,
       companyId: workExperience.companyId,
       salary: workExperience.salary,
+      noOfVerifications:workExperience.noOfVerifications,
       reason_for_leaving: workExperience.reason_for_leaving,
-      companyStartDate: workExperience.companyStartDate.toString(),
+      dateOfJoining: workExperience.dateOfJoining.toString(),
       linkedInUrl: workExperience.linkedInUrl,
-      companyEndDate: workExperience.companyEndDate.toString(),
+      dateOfLeaving: workExperience.dateOfLeaving.toString(),
     };
 
     return resp;
@@ -125,3 +127,4 @@ class WorkExperienceService {
 }
 
 export const workExperienceService = new WorkExperienceService();
+

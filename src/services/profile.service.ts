@@ -1,8 +1,9 @@
-import { AddProfileResponse, CreateProfileDto, ProfileResponseDto as GetProfileResponse, ProfileResponseDto, UpdateProfileDto } from '@/dtos/profile.dto';
+import { DocumentType } from '@/dtos/request/document.dto';
+import { IDTypeEnum } from '@/dtos/request/ids.dto';
+import { CreateProfileDto, UpdateProfileDto } from '@/dtos/request/profile.dto';
+import { AddProfileResponse, ProfileResponse } from '@/dtos/response/profile.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { DocumentType } from '@/models/document.model';
-import { IDTypeEnum } from '@/models/id.model';
 import { ProfileModel } from '@/models/profile.model';
 import { documentWeights, scoreConstant } from '@/utils/documentWeight';
 import { getRandomGreenieId } from '@/utils/string';
@@ -54,20 +55,20 @@ class ProfileService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async getProfile(userId: string): Promise<ProfileResponseDto> {
+  public async getProfile(userId: string): Promise<ProfileResponse> {
     const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    const res: GetProfileResponse = {
-        id: profile._id.toString(),
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        profilePic: profile.profilePic,
-        bio: profile.bio,
-        descriptionTags: profile.descriptionTags,
-        greenie_id: profile.greenie_id,
+    const res: ProfileResponse = {
+      id: profile._id.toString(),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      profilePic: profile.profilePic,
+      bio: profile.bio,
+      descriptionTags: profile.descriptionTags,
+      greenieId: profile.greenie_id,
     };
     return res;
   }
@@ -121,14 +122,14 @@ class ProfileService {
     return profiles;
   }
 
-  public async searchByUsername(firstName: string, lastName: string): Promise<ProfileResponseDto[]> {
+  public async searchByUsername(firstName: string, lastName: string): Promise<ProfileResponse[]> {
     const regexFirstName = new RegExp(firstName, 'i');
     const regexLastName = new RegExp(lastName, 'i');
     const profiles = await ProfileModel.find({
       $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
     });
 
-    const res: ProfileResponseDto[] = [];
+    const res: ProfileResponse[] = [];
 
     if (profiles) {
       for (const profile of profiles) {

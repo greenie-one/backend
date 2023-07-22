@@ -1,20 +1,12 @@
+import { CompanyTypeEnum } from '@/dtos/request/workExperience.dto';
 import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { User } from './users.model';
 
-export enum companyTypeEnum {
-  Startup = 'Start-up (Funded)',
-  EarlyStageStartup = 'Early Stage Startup',
-  ProfitableStartup = 'Startup (Profitable)',
-  FamilyOwnedBusiness = 'Family Owned Business',
-  PrivateLimitedIndia = 'Private Limited (India)',
-  PartnershipLLP = 'Partnership (LLP/LLC)',
-  PublicLimitedCompany = 'Public Limited Company',
-}
 
 @modelOptions({ schemaOptions: { collection: 'work_experiences', timestamps: true } })
 export class WorkExperience {
-  @prop({ enum: companyTypeEnum, type: String, required: true })
-  public companyType!: companyTypeEnum;
+  @prop({ enum: CompanyTypeEnum, type: String, required: true })
+  public companyType!: CompanyTypeEnum;
 
   @prop({ type: String, required: true })
   public designation!: string;
@@ -67,3 +59,4 @@ export class WorkExperience {
 }
 
 export const WorkExperienceModel = getModelForClass(WorkExperience);
+

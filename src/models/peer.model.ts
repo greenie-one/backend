@@ -1,11 +1,8 @@
-import { getModelForClass, index, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { Rating, State, WorkVerificationBy } from '@/dtos/request/peer.dto';
+import { Ref, getModelForClass, index, modelOptions, prop } from '@typegoose/typegoose';
+import { Document } from 'mongoose';
+import { Skills } from './skills.model';
 import { User } from './users.model';
-
-export enum State {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
-}
 
 @modelOptions({ schemaOptions: { _id: false } })
 export class Status {
@@ -36,17 +33,8 @@ export class Status {
   }
 }
 
-export enum Rating {
-  NON_COLLABORATIVE = 'non-collaborative',
-  RARELY_COLLABORATIVE = 'rarely-collaborative',
-  OCCASIONALLY_COLLABORATIVE = 'occasionally-collaborative',
-  MODERATELY_COLLABORATIVE = 'moderately-collaborative',
-  HIGHLY_COLLABORATIVE = 'highly-collaborative',
-  NOT_GIVEN = 'not-given',
-}
-
 @modelOptions({ schemaOptions: { _id: false } })
-export class OptionalWorkExFields {
+export class OptionalWorkExperienceFields {
   @prop()
   public candidateId?: Status;
 
@@ -72,7 +60,7 @@ export class OptionalWorkExFields {
   public salary?: Status;
 
   static defaultFields() {
-    const defaultOptionalWorkExFields = new OptionalWorkExFields();
+    const defaultOptionalWorkExFields = new OptionalWorkExperienceFields();
     defaultOptionalWorkExFields.candidateId = Status.defaultStatus();
     defaultOptionalWorkExFields.department = Status.defaultStatus();
     defaultOptionalWorkExFields.dateOfJoining = Status.defaultStatus();
@@ -141,12 +129,32 @@ export class ExceptHRQuestionFields {
   }
 }
 
-export enum WorkVerificationBy {
-  COLLEAGUE = 'COLLEAGUE',
-  REPORTING_MANAGER = 'REPORTING_MANAGER',
-  LINE_MANAGER = 'LINE_MANAGER',
-  HR = 'HR',
-  CXO = 'CXO',
+@modelOptions({ schemaOptions: { _id: false } })
+export class SkillsVerification {
+  @prop({ type: String, ref: 'Skills', required: true })
+  public id!: Ref<Skills, string>;
+
+  @prop({ default: Status.defaultStatus() })
+  public status?: Status;
+
+  constructor(skill: Ref<Skills, string>) {
+    this.id = skill;
+    this.status = Status.defaultStatus();
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class DocumentVerification {
+  @prop({ type: String, ref: 'Document', required: true })
+  public id!: Ref<Document, string>;
+
+  @prop({ default: Status.defaultStatus() })
+  public status?: Status;
+
+  constructor(document: Ref<Document, string>) {
+    this.id = document;
+    this.status = Status.defaultStatus();
+  }
 }
 
 // Index for unique peer, scoped to user, email and workExperience ref
@@ -178,7 +186,7 @@ export class WorkPeer {
   public verificationBy!: WorkVerificationBy;
 
   @prop()
-  public optionalVerificationFields?: OptionalWorkExFields;
+  public optionalVerificationFields?: OptionalWorkExperienceFields;
 
   @prop({ default: MandatoryWorkExFields.defaultFields() })
   public mandatoryVerificationFields?: MandatoryWorkExFields;
@@ -189,6 +197,12 @@ export class WorkPeer {
   @prop()
   public otherQuestionFields!: HRQuestionFields | ExceptHRQuestionFields;
 
+  @prop({ required: true })
+  public skills!: SkillsVerification[];
+
+  @prop({ required: true })
+  public documents!: DocumentVerification[];
+
   public createdAt?: Date;
 
   public updatedAt?: Date;
@@ -198,3 +212,4 @@ export class WorkPeer {
 }
 
 export const WorkPeerModel = getModelForClass(WorkPeer);
+

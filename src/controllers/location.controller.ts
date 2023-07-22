@@ -1,4 +1,4 @@
-import { GPScompare } from '@/dtos/location.dto';
+import { GPScompare } from '@/dtos/request/location.dto';
 import { locationService } from '@/services/location.service';
 import { Controller } from '@/utils/decorators/controller';
 import { Post } from '@/utils/decorators/methods';
@@ -12,3 +12,4 @@ export default class LocationController {
     return locationService.compare(gpsLocation, ipLocation);
   }
 }
+

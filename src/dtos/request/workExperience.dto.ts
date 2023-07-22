@@ -1,14 +1,23 @@
 import { IsEnum, IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { companyTypeEnum } from '../models/workExperience.model';
+
+export enum CompanyTypeEnum {
+  Startup = 'Start-up (Funded)',
+  EarlyStageStartup = 'Early Stage Startup',
+  ProfitableStartup = 'Startup (Profitable)',
+  FamilyOwnedBusiness = 'Family Owned Business',
+  PrivateLimitedIndia = 'Private Limited (India)',
+  PartnershipLLP = 'Partnership (LLP/LLC)',
+  PublicLimitedCompany = 'Public Limited Company',
+}
 
 export class CreateWorkExperienceDto {
   @IsString()
   @IsNotEmpty()
   public designation!: string;
 
-  @IsEnum(companyTypeEnum)
+  @IsEnum(CompanyTypeEnum)
   @IsNotEmpty()
-  public companyType!: companyTypeEnum;
+  public companyType!: CompanyTypeEnum;
 
   @IsString()
   @IsNotEmpty()
@@ -60,9 +69,9 @@ export class UpdateWorkExperienceDto {
   @IsOptional()
   public designation?: string;
 
-  @IsEnum(companyTypeEnum)
+  @IsEnum(CompanyTypeEnum)
   @IsOptional()
-  public companyType?: companyTypeEnum;
+  public companyType?: CompanyTypeEnum;
 
   @IsString()
   @IsOptional()
@@ -109,25 +118,3 @@ export class UpdateWorkExperienceDto {
   public dateOfLeaving?: string;
 }
 
-export interface AddWorkExperienceResponse {
-  id: string;
-  success: boolean;
-}
-
-export interface workExperienceResponseDto {
-  id: string;
-  designation: string;
-  companyType: companyTypeEnum;
-  email: string;
-  workMode: string;
-  department: string;
-  reason_for_leaving: string;
-  salary: string;
-  workType: string;
-  companyName: string;
-  companyId: string;
-  dateOfJoining: string;
-  linkedInUrl: string;
-  dateOfLeaving: string;
-  noOfVerifications: number;
-}
