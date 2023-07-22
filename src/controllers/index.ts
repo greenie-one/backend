@@ -27,7 +27,7 @@ async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQ
     const dto = plainToClass(type, value);
 
     const validator = predefinedValidation(type.name);
-    await validator(dto as object);
+    await validator(dto as object, { whitelist: true, forbidNonWhitelisted: true });
 
     return dto;
   } catch (errors) {
