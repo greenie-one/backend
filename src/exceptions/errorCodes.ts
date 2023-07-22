@@ -52,7 +52,6 @@ export enum ErrorEnum {
   INVALID_PEER_ID,
   PEER_EMAIL_NOT_VERIFIED,
   INVALID_OTP,
-  CALL_API_FAILED,
   INVALID_VERIFICATION_FIELDS,
   PEER_PHONE_NOT_VERIFIED,
   PEER_ALREADY_EXISTS,
@@ -285,11 +284,6 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0052',
     message: 'Invalid verification fields %s',
     status: 400,
-  },
-  [ErrorEnum.CALL_API_FAILED]: {
-    code: 'GR0053',
-    message: 'Call API failed - %s',
-    status: 500,
   },
   [ErrorEnum.PEER_ALREADY_EXISTS]: {
     code: 'GR0054',
