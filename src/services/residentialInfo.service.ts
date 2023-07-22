@@ -26,7 +26,7 @@ class ResidentialInfoService {
         state: residentialInfo.state,
         country: residentialInfo.country,
         start_date: residentialInfo.start_date.toString(),
-        end_date: residentialInfo.end_date.toString() ? residentialInfo.end_date.toString() : Date.now().toString(),
+        end_date: residentialInfo.end_date ? residentialInfo.end_date.toString() : null,
       });
     }
 
