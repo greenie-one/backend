@@ -17,6 +17,9 @@ export class ID {
   @prop({ required: true })
   public id_number!: string;
 
+  @prop({ required: true, type: Schema.Types.Mixed })
+  public data!: object;
+
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 
