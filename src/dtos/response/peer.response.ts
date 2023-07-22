@@ -20,6 +20,7 @@ export interface GetUserWorkPeerResponse {
 export interface GetPeerWorkExDataResponse {
   name: string;
   profilePic: string;
+  companyName?: string;
   peerPost?: string;
   designation?: string;
   optionalVerificationFields?: Partial<WorkExperienceResponse>;

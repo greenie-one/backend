@@ -163,6 +163,7 @@ class PeerService {
     if (peer.verificationBy !== WorkVerificationBy.HR) {
       data.peerPost = peer.verificationBy;
       data.designation = workExperience.designation;
+      data.companyName = workExperience.companyName;
     }
 
     const skillIds = peer.skills.map((skill) => skill.id);
