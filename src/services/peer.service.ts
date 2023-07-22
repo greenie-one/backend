@@ -21,7 +21,7 @@ import {
 } from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
 import { SkillModel } from '@/models/skills.model';
-import { WorkExperience, WorkExperienceModel } from '@/models/workExperience.model';
+import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisClient } from '@/redisClient';
 import { otpType } from '@/remote/otp/otp';
 import { verification } from '@/remote/peer/verification';
@@ -150,7 +150,7 @@ class PeerService {
       reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name });
     }
 
-    const workExperience: WorkExperience = await WorkExperienceModel.findById(peer.ref);
+    const workExperience = await WorkExperienceModel.findById(peer.ref);
     const profile: Profile = await ProfileModel.findOne({ user: peer.user });
 
     let data: GetWorkExDataResponse = {
@@ -160,11 +160,7 @@ class PeerService {
 
     if (peer.optionalVerificationFields) {
       data.optionalVerificationFields = {};
-      copyDataFrom(
-        JSON.parse(JSON.stringify(peer.optionalVerificationFields)),
-        JSON.parse(JSON.stringify(workExperience)),
-        data.optionalVerificationFields,
-      );
+      copyDataFrom(peer.toObject().optionalVerificationFields, workExperience.toObject(), data.optionalVerificationFields);
     }
     if (peer.verificationBy !== WorkVerificationBy.HR) {
       data.peerPost = peer.verificationBy;
@@ -275,7 +271,6 @@ class PeerService {
       if (skills.length !== updatedData.skills.length) {
         throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, 'Invalid Skill ids');
       }
-      // updatedSkills = JSON.parse(JSON.stringify(updatedData.skills));
       peer.skills = updatedData.skills;
     }
 
