@@ -1,11 +1,12 @@
-import { AddSkillResponse, GetSkillsResponse, createSkillDto } from '@/dtos/skills.dto';
+import { CreateSkillDto } from '@/dtos/request/skills.dto';
+import { AddSkillResponse, GetSkillsResponse } from '@/dtos/response/skills.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { SkillModel, Skills } from '@/models/skills.model';
 import { UserModel } from '@models/users.model';
 
 class SkillService {
-  public async createSkill(userId: string, skillData: createSkillDto): Promise<AddSkillResponse> {
+  public async createSkill(userId: string, skillData: CreateSkillDto): Promise<AddSkillResponse> {
     try {
       const findUser = await UserModel.findById(userId);
       if (!findUser) {
@@ -47,3 +48,4 @@ class SkillService {
 }
 
 export const skillService = new SkillService();
+

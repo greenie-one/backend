@@ -1,15 +1,7 @@
+import { DocumentType } from '@/dtos/request/document.dto';
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
 import { WorkExperience } from './workExperience.model';
-
-export enum DocumentType {
-  WORK = 'work',
-  CERTIFICATE = 'certificate',
-  MARKSHEET = 'marksheet',
-  TAX = 'tax',
-  EDUCATION = 'education',
-  OTHER = 'other',
-}
 
 export class Document {
   @prop({ required: true })

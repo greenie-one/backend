@@ -1,11 +1,11 @@
-import { TokenClaims } from '@/dtos/auth.dto';
+import { TokenClaims } from '@/dtos/request/auth.dto';
 
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
 import { Body, Params } from '@/utils/decorators/request';
 
-import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/residentialInfo.dto';
+import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
 import { residentialInfoService } from '@/services/residentialInfo.service';
 
 @Controller('/residential_info')
@@ -38,3 +38,4 @@ export default class ResidentialInfoController {
     return residentialInfoService.updateResidentialInfo(userDetails.sub, residentialInfoId, data);
   }
 }
+

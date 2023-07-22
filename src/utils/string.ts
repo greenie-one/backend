@@ -1,3 +1,5 @@
-export function generateOTP(length = 6) {
-  return Math.random().toFixed(length).slice(-length);
+import { customAlphabet } from 'nanoid/async';
+
+export async function getRandomGreenieId() {
+  return `GRN${await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 5)()}`;
 }

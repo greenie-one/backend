@@ -1,5 +1,5 @@
-import { TokenClaims } from '@/dtos/auth.dto';
-import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
+import { TokenClaims } from '@/dtos/request/auth.dto';
+import { AddIDDto, VerifyIDDto } from '@/dtos/request/ids.dto';
 import { idsService } from '@/services/ids.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -35,3 +35,4 @@ export default class IDsController {
     return idsService.verifyDrivingLicense(userDetails.sub, addIDDto);
   }
 }
+

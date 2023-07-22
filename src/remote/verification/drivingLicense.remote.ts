@@ -1,5 +1,5 @@
 import { env } from '@/config';
-import { DrivingLicenseResponse } from '@/dtos/ids.dto';
+import { DrivingLicenseResponse } from '@/dtos/response/ids.response';
 import { HttpClient } from '../generic/httpClient';
 
 export class drivinLicenseVerification {
@@ -26,3 +26,4 @@ export class drivinLicenseVerification {
     });
   }
 }
+
