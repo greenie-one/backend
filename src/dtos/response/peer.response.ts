@@ -1,4 +1,4 @@
-import { Rating, State, WorkVerificationBy } from '../request/peer.dto';
+import { WorkVerificationBy } from '../request/peer.dto';
 import { GetDocumentResponse } from './document.response';
 import { SkillResponse } from './skills.response';
 import { WorkExperienceResponse } from './workExperience.response';
@@ -17,45 +17,14 @@ export interface GetUserWorkPeerResponse {
   isVerificationCompleted: boolean;
 }
 
-export interface GetWorkExperienceDataResponse extends Partial<WorkExperienceResponse> {
+export interface GetPeerWorkExDataResponse {
   name: string;
   profilePic: string;
   peerPost?: string;
+  designation?: string;
+  optionalVerificationFields?: Partial<WorkExperienceResponse>;
   skills?: SkillResponse[];
   documents?: GetDocumentResponse[];
-}
-
-export interface StatusResponse {
-  state: State;
-}
-
-export interface OptionalWorkExperienceFieldsResponse {
-  candidateId?: StatusResponse;
-  department?: StatusResponse;
-  dateOfJoining?: StatusResponse;
-  dateOfLeaving?: StatusResponse;
-  companyName?: StatusResponse;
-  workType?: StatusResponse;
-  workMode?: StatusResponse;
-  salary?: StatusResponse;
-}
-
-export interface MandatoryWorkExperienceFieldsResponse {
-  review?: string;
-}
-
-export interface MandatoryQuestionFieldsResponse {
-  attitudeRating?: Rating;
-  eligibleForRehire?: StatusResponse;
-}
-
-export interface HRQuestionFieldsResponse {
-  exitProcedure?: StatusResponse;
-}
-
-export interface ExceptHRQuestionFieldsResponse {
-  designation: StatusResponse;
-  peerPost: StatusResponse;
 }
 
 export interface GetPeerInformationResponse {
@@ -66,10 +35,7 @@ export interface GetPeerInformationResponse {
   emailVerified?: boolean;
   phoneVerified?: boolean;
   verificationBy: WorkVerificationBy;
-  optionalVerificationFields?: OptionalWorkExperienceFieldsResponse;
-  mandatoryVerificationFields?: MandatoryWorkExperienceFieldsResponse;
-  mandatoryQuestionFields?: MandatoryQuestionFieldsResponse;
-  otherQuestionFields: HRQuestionFieldsResponse | ExceptHRQuestionFieldsResponse;
-  data: GetWorkExperienceDataResponse;
+  data: GetPeerWorkExDataResponse;
+  dateOfJoining: string;
+  dateOfLeaving?: string;
 }
-
