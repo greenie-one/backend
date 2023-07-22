@@ -1,3 +1,4 @@
+import { profileService } from './profile.service';
 import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
@@ -7,7 +8,6 @@ import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
 import { PanVerification } from '@/remote/verification/pan.remote';
 import { v4 as uuidv4 } from 'uuid';
-import { profileService } from './profile.service';
 
 const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 60 * 10; // mins;
@@ -171,4 +171,3 @@ class IDsService {
 }
 
 export const idsService = new IDsService();
-

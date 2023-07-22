@@ -207,4 +207,3 @@ export class UpdatePeerWorkVerificationDto {
   @Type(() => UpdateDocumentsVerification)
   public documents?: UpdateDocumentsVerification[];
 }
-

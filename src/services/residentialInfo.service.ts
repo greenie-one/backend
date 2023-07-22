@@ -85,4 +85,3 @@ class ResidentialInfoService {
 }
 
 export const residentialInfoService = new ResidentialInfoService();
-

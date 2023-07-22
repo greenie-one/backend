@@ -117,4 +117,3 @@ export class UpdateWorkExperienceDto {
   @IsOptional()
   public dateOfLeaving?: string;
 }
-

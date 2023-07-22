@@ -72,4 +72,3 @@ export interface GetPeerInformationResponse {
   otherQuestionFields: HRQuestionFieldsResponse | ExceptHRQuestionFieldsResponse;
   data: GetWorkExperienceDataResponse;
 }
-

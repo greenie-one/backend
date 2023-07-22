@@ -35,4 +35,3 @@ export default class IDsController {
     return idsService.verifyDrivingLicense(userDetails.sub, addIDDto);
   }
 }
-

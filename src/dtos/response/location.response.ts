@@ -7,4 +7,3 @@ export interface GetLocationResponse {
 export interface LocationResponse {
   code?: string;
 }
-

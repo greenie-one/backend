@@ -15,4 +15,3 @@ export default class WaitlistController {
     return { data: waitlist, message: 'added to waitlist' };
   }
 }
-

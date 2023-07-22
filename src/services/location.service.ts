@@ -12,7 +12,7 @@ class LocationService {
       console.log(coordinates);
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
     });
-    if (coordinates && coordinates.code != 'RM003') {
+    if (coordinates && coordinates.code !== 'RM003') {
       const location = await LocationModel.create({
         user: userId,
         coordinates: coordinates,
@@ -59,4 +59,3 @@ class LocationService {
 export const radius = 6371;
 
 export const locationService = new LocationService();
-

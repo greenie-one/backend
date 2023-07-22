@@ -51,4 +51,3 @@ export default class PeerController {
     return { success: status, message: 'Verified' };
   }
 }
-

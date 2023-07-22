@@ -1,3 +1,4 @@
+import { otpService } from './otp.service';
 import { OtpType } from '@/dtos/request/otp.dto';
 import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto, WorkVerificationBy } from '@/dtos/request/peer.dto';
 import {
@@ -27,7 +28,6 @@ import { copyDataFrom, copySourceDataWithKeysFrom, createClassInstanceWithFields
 import { env } from '@config';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
-import { otpService } from './otp.service';
 
 class PeerService {
   public async peerUUIDtoPeerId(uuid: string) {
@@ -160,7 +160,7 @@ class PeerService {
     const profile: Profile = await ProfileModel.findOne({ user: peer.user });
 
     let data: GetWorkExperienceDataResponse = {
-      name: profile.firstName + ' ' + profile.lastName,
+      name: `${profile.firstName} ${profile.lastName}`,
       profilePic: profile.profilePic,
     };
     data = copyDataFrom(JSON.parse(JSON.stringify(peer.optionalVerificationFields)), JSON.parse(JSON.stringify(workExperience)), data);
@@ -348,4 +348,3 @@ class PeerService {
 }
 
 export const peerService = new PeerService();
-

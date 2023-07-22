@@ -1,5 +1,3 @@
-import { App } from '@/app';
-import { ValidateEnv } from '@utils/validateEnv';
 import DocumentController from './controllers/document.controller';
 import IDsController from './controllers/ids.controller';
 import LocationController from './controllers/location.controller';
@@ -11,6 +9,8 @@ import SkillController from './controllers/skills.controller';
 import UserController from './controllers/user.controller';
 import WaitlistController from './controllers/waitlist.controller';
 import WorkExperienceController from './controllers/workExperience.controller';
+import { App } from '@/app';
+import { ValidateEnv } from '@utils/validateEnv';
 
 process.on('uncaughtException', (e) => {
   console.error(e);
