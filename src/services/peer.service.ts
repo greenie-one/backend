@@ -140,12 +140,12 @@ class PeerService {
     if (!peer.emailVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
       console.error(err);
-      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name });
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
     }
     if (!peer.phoneVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
       console.error(err);
-      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name });
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
     }
 
     const workExperience = await WorkExperienceModel.findById(peer.ref);
