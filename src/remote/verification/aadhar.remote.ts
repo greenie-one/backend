@@ -1,5 +1,5 @@
 import { env } from '@/config';
-import { AadharRequestOtpResponse, AadharVerifyOtpResponse } from '@dtos/ids.dto';
+import { AadharRequestOtpResponse, AadharVerifyOtpResponse } from '@/dtos/response/ids.response';
 import { HttpClient } from '../generic/httpClient';
 
 export class AadhaarVerification {
@@ -45,3 +45,4 @@ export class AadhaarVerification {
     });
   }
 }
+

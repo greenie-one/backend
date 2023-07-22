@@ -1,7 +1,7 @@
-import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
+import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { ID, IDModel, IDTypeEnum } from '@/models/id.model';
+import { ID, IDModel } from '@/models/id.model';
 import { redisClient } from '@/redisClient';
 import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';

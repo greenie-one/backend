@@ -1,5 +1,5 @@
-import { DocumentType } from '@/models/document.model';
-import { IDTypeEnum } from '@/models/id.model';
+import { DocumentType } from "@/dtos/request/document.dto";
+import { IDTypeEnum } from "@/dtos/request/ids.dto";
 
 export const documentWeights: Record<DocumentType | IDTypeEnum, number> = {
   [DocumentType.CERTIFICATE]: 1,

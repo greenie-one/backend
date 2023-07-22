@@ -1,4 +1,4 @@
-import { UpdateUserDto } from '@/dtos/users.dto';
+import { UpdateUserDto } from '@/dtos/request/users.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { User, UserModel } from '@models/users.model';
@@ -41,3 +41,4 @@ class UserService {
 }
 
 export const userService = new UserService();
+

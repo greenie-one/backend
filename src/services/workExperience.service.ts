@@ -1,4 +1,5 @@
-import { AddWorkExperienceResponse, CreateWorkExperienceDto, GetWorkExperienceResponse, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request/workExperience.dto';
+import { AddWorkExperienceResponse, GetWorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -97,3 +98,4 @@ class WorkExperienceService {
 }
 
 export const workExperienceService = new WorkExperienceService();
+

@@ -1,8 +1,9 @@
+import { GPScompare } from '@/dtos/request/location.dto';
+import { GetLocationResponse } from '@/dtos/response/location.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { LocationModel } from '@/models/location.model';
 import { Geolocation } from '@/remote/location/location';
-import { GPScompare, GetLocationResponse } from '../dtos/location.dto';
 
 class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
@@ -58,3 +59,4 @@ class LocationService {
 export const radius = 6371;
 
 export const locationService = new LocationService();
+

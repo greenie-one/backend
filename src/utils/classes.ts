@@ -10,6 +10,26 @@ export function createClassInstanceWithFields<T extends object>(fieldNames: stri
   return instance as T;
 }
 
+export function pickFields<T extends object, K>(fieldNames: string[], fromObj: T, toObj: K): K {
+  for (const fieldName of fieldNames) {
+    if (fieldName in fromObj) {
+      toObj[fieldName] = fromObj[fieldName];
+    } else {
+      throw new Error(`Field "${fieldName}" not found`);
+    }
+  }
+
+  return toObj as K;
+}
+
+export function checkFields<T extends object>(fieldNames: string[], fromObj: T) {
+  for (const fieldName of fieldNames) {
+    if (!fromObj.hasOwnProperty(fieldName)) {
+      throw new Error(`Field "${fieldName}" not found`);
+    }
+  }
+}
+
 export function copyFieldsFromInstance<T extends object>(source: T, destination: T) {
   const sourceFields = Object.keys(source);
   for (const field of sourceFields) {

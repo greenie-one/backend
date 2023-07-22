@@ -1,5 +1,5 @@
-import { TokenClaims } from '@/dtos/auth.dto';
-import { UpdateUserDto } from '@/dtos/users.dto';
+import { TokenClaims } from '@/dtos/request/auth.dto';
+import { UpdateUserDto } from '@/dtos/request/users.dto';
 import { userService } from '@/services/users.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -13,3 +13,4 @@ export default class UserController {
     return userService.updateUser(userDetails.sub, data);
   }
 }
+
