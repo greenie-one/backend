@@ -307,11 +307,15 @@ class PeerService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async deletePeer(peerid: string) {
-    const peer = await WorkPeerModel.findByIdAndDelete(peerid);
+  public async deletePeer(userId: string, peerid: string) {
+    const peer = await WorkPeerModel.findOne({ _id: peerid, user: userId });
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+    if (peer.isVerificationCompleted) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
+    }
+    await WorkPeerModel.findByIdAndDelete(peerid);
     return { success: true, message: 'Deleted Successfully' };
   }
 }
