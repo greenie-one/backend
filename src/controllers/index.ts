@@ -20,6 +20,18 @@ function predefinedValidation(name: string): typeof validateOrReject {
   return validateOrReject;
 }
 
+function flattenErrors(error: ValidationError[]) {
+  const ret: string[] = []
+  for (const e of error) {
+    if (e.constraints) {
+      ret.push(...Object.values(e.constraints))
+    } else {
+      ret.push(...flattenErrors(e.children))
+    }
+  }
+  return ret
+}
+
 async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query') {
   if (!value) throw new HttpException(ErrorEnum.VALIDATION_ERROR, `${bodyOrQuery} must be defined`);
 
@@ -29,8 +41,8 @@ async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQ
     await validator(dto as object, { whitelist: true });
     return dto;
   } catch (errors) {
-    const message = errors?.map((error: ValidationError) => Object.values(error.constraints));
-    throw new HttpException(ErrorEnum.VALIDATION_ERROR, message);
+    const message = flattenErrors(errors)
+    throw new HttpException(ErrorEnum.VALIDATION_ERROR, message.join(', '));
   }
 }
 
