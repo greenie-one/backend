@@ -2,6 +2,9 @@ import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request
 import { AddWorkExperienceResponse, GetWorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
+import { DocumentModel } from '@/models/document.model';
+import { WorkPeerModel } from '@/models/peer.model';
+import { SkillModel } from '@/models/skills.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { UserModel } from '@models/users.model';
 
@@ -74,8 +77,10 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
+    await WorkPeerModel.deleteMany({ user: userId, ref: workExperienceId });
+    await SkillModel.deleteMany({ user: userId, workExperience: workExperienceId });
+    await DocumentModel.deleteMany({ user: userId, workExperience: workExperienceId });
     await workExperience.deleteOne();
-
     return { success: true, message: 'Work experience deleted successfully' };
   }
 
@@ -105,4 +110,3 @@ class WorkExperienceService {
 }
 
 export const workExperienceService = new WorkExperienceService();
-
