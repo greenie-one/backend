@@ -2,12 +2,11 @@ import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request
 import { AddWorkExperienceResponse, GetWorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { WorkExperienceModel } from '@/models/workExperience.model';
-import { UserModel } from '@models/users.model';
-import { peerService } from './peer.service';
+import { DocumentModel } from '@/models/document.model';
 import { WorkPeerModel } from '@/models/peer.model';
 import { SkillModel } from '@/models/skills.model';
-import { Document, DocumentModel } from '@/models/document.model';
+import { WorkExperienceModel } from '@/models/workExperience.model';
+import { UserModel } from '@models/users.model';
 
 class WorkExperienceService {
   public async createWorkExperience(userId: string, workExperienceData: CreateWorkExperienceDto): Promise<AddWorkExperienceResponse> {
