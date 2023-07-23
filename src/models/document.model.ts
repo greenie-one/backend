@@ -16,7 +16,13 @@ export class Document {
   @prop({ required: true, ref: User, type: String })
   public user!: Ref<User, string>;
 
-  @prop({ ref: 'WorkExperience', type: String })
+  @prop({
+    ref: 'WorkExperience',
+    type: String,
+    required: function (this: Document) {
+      return this.type === DocumentType.WORK;
+    },
+  })
   public workExperience?: Ref<WorkExperience, string>;
 
   @prop({ type: Date, default: Date.now })
