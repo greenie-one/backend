@@ -22,9 +22,8 @@ export class CreateDocumentDto {
   @IsString()
   public privateUrl: string;
 
-  @ValidateIf((o) => o.type === DocumentType.WORK)
-  @IsNotEmpty()
   @IsString()
+  @IsOptional()
   public workExperience?: string;
 }
 
