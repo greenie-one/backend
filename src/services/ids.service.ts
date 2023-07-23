@@ -1,4 +1,3 @@
-import { profileService } from './profile.service';
 import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
@@ -8,6 +7,7 @@ import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
 import { PanVerification } from '@/remote/verification/pan.remote';
 import { v4 as uuidv4 } from 'uuid';
+import { profileService } from './profile.service';
 
 const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 60 * 10; // mins;
@@ -50,14 +50,14 @@ class IDsService {
     await this.otp_rate_limit_check(userId, IDTypeEnum.AADHAR);
 
     const otpResponse = await AadhaarVerification.requestOtp(id_number, taskId.toString()).catch((err) => {
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, JSON.parse(err)?.response_message);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
     if (otpResponse.success && otpResponse.response_code === '100') {
       const { request_id, success, response_code, response_message } = otpResponse;
       return { success, response_code, response_message, request_id, taskId };
     } else {
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `${otpResponse.response_message}`);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, `${otpResponse.response_message}`);
     }
   }
 
@@ -70,7 +70,7 @@ class IDsService {
 
     const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
       console.log(err);
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, JSON.parse(err)?.response_message);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
     const { success, response_code, response_message, result } = verificationResponse;
@@ -99,7 +99,7 @@ class IDsService {
 
       return { success, response_code, response_message };
     } else {
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `${verificationResponse.response_message}`);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, `${verificationResponse.response_message}`);
     }
   }
 

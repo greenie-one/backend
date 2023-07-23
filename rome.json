@@ -15,6 +15,9 @@
       "recommended": true,
       "suspicious": {
         "noPrototypeBuiltins": "warn"
+      },
+      "style": {
+        "useEnumInitializers": "off"
       }
     }
   },

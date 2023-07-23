@@ -1,11 +1,27 @@
 import { sanitizeMobileNumber } from '@/utils/validation';
-import { Transform, Type } from 'class-transformer';
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { Transform, Type, plainToInstance } from 'class-transformer';
+import {
+  IsArray,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Validate,
+  ValidateIf,
+  ValidateNested,
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+  validate,
+} from 'class-validator';
 
-export enum State {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
+export enum WorkVerificationBy {
+  COLLEAGUE = 'COLLEAGUE',
+  REPORTING_MANAGER = 'REPORTING_MANAGER',
+  LINE_MANAGER = 'LINE_MANAGER',
+  HR = 'HR',
+  CXO = 'CXO',
 }
 
 export enum Rating {
@@ -17,45 +33,30 @@ export enum Rating {
   NOT_GIVEN = 'not-given',
 }
 
-export enum WorkVerificationBy {
-  COLLEAGUE = 'COLLEAGUE',
-  REPORTING_MANAGER = 'REPORTING_MANAGER',
-  LINE_MANAGER = 'LINE_MANAGER',
-  HR = 'HR',
-  CXO = 'CXO',
-}
-
-export enum UpdateState {
+export enum State {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
-  APPROVED = 'APPROVED',
-}
-
-export enum UpdateRating {
-  NON_COLLABORATIVE = 'non-collaborative',
-  RARELY_COLLABORATIVE = 'rarely-collaborative',
-  OCCASIONALLY_COLLABORATIVE = 'occasionally-collaborative',
-  MODERATELY_COLLABORATIVE = 'moderately-collaborative',
-  HIGHLY_COLLABORATIVE = 'highly-collaborative',
 }
 
 export class StatusField {
   @IsString()
   @IsNotEmpty()
-  @IsEnum(UpdateState)
-  public state!: UpdateState;
+  @IsEnum(State)
+  public state!: State.ACCEPTED | State.REJECTED;
 
   @IsString()
-  @IsOptional()
-  @ValidateIf((o) => o.state === UpdateState.REJECTED)
+  @ValidateIf((o) => o.state === State.REJECTED)
+  @IsNotEmpty()
   public dispute_type?: string;
 
   @IsString()
-  @IsOptional()
-  @ValidateIf((o) => o.state === UpdateState.REJECTED)
-  public dispute_description?: string;
+  @ValidateIf((o) => o.state === State.REJECTED)
+  @IsNotEmpty()
+  public dispute_reason?: string;
 }
 
-export class WorkExperienceFieldsDto {
+export class OptionalWorkExFieldsDTO {
   // From Work Ex Optional fields
   @ValidateNested()
   @Type(() => StatusField)
@@ -96,37 +97,51 @@ export class WorkExperienceFieldsDto {
   @Type(() => StatusField)
   @IsOptional()
   public salary?: StatusField;
+}
 
+export class MandatoryWorkExFieldsDTO {
   // From Work Ex Mandatory fields
   @IsString()
-  public review: string;
+  @IsNotEmpty()
+  public review!: string;
+}
 
+export class MandatoryQuestionsDTO {
   // From Work Ex Mandatory Questions
   @IsEnum(Rating)
-  @IsOptional()
-  public attitudeRating?: UpdateRating;
+  @IsNotEmpty()
+  public attitudeRating!:
+    | Rating.HIGHLY_COLLABORATIVE
+    | Rating.MODERATELY_COLLABORATIVE
+    | Rating.NON_COLLABORATIVE
+    | Rating.OCCASIONALLY_COLLABORATIVE
+    | Rating.RARELY_COLLABORATIVE;
 
   @ValidateNested()
   @Type(() => StatusField)
-  @IsOptional()
-  public eligibleForRehire?: StatusField;
+  @IsNotEmpty()
+  public eligibleForRehire!: StatusField;
+}
 
+export class HRQuestionFieldsDTO {
   // From Work Ex HR Questions
   @ValidateNested()
   @Type(() => StatusField)
-  @IsOptional()
-  public exitProcedure?: StatusField;
+  @IsNotEmpty()
+  public exitProcedure!: StatusField;
+}
 
+export class ExceptHRQuestionFieldsDTO {
   // From Work Ex Except HR Questions
   @ValidateNested()
   @Type(() => StatusField)
-  @IsOptional()
-  public designation?: StatusField;
+  @IsNotEmpty()
+  public designation!: StatusField;
 
   @ValidateNested()
   @Type(() => StatusField)
-  @IsOptional()
-  public peerPost?: StatusField;
+  @IsNotEmpty()
+  public peerPost!: StatusField;
 }
 
 export class CreateWorkPeerDto {
@@ -160,13 +175,13 @@ export class CreateWorkPeerDto {
 
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
-  public skills?: string[];
+  @IsNotEmpty()
+  public skills!: string[];
 
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
-  public documents?: string[];
+  @IsNotEmpty()
+  public documents!: string[];
 }
 
 class UpdateSkillsVerification {
@@ -180,7 +195,7 @@ class UpdateSkillsVerification {
   public status!: StatusField;
 }
 
-export class UpdateDocumentsVerification {
+class UpdateDocumentsVerification {
   @IsString()
   @IsNotEmpty()
   public id!: string;
@@ -191,19 +206,57 @@ export class UpdateDocumentsVerification {
   public status!: StatusField;
 }
 
+@ValidatorConstraint({ name: 'isValidNestedQuestion', async: false })
+export class IsValidNestedQuestion implements ValidatorConstraintInterface {
+  async validate(otherQuestions: any, args: ValidationArguments) {
+    let valid = false;
+    let tryOne = plainToInstance<unknown, object>(HRQuestionFieldsDTO, otherQuestions);
+    await validate(tryOne, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
+      if (errors.length === 0) valid = true;
+    });
+    if (valid) return true;
+    let tryTwo = plainToInstance<unknown, object>(ExceptHRQuestionFieldsDTO, otherQuestions);
+    await validate(tryTwo, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
+      if (errors.length === 0) valid = true;
+    });
+    if (valid) return true;
+    return false;
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `'otherQuestions' must be either HRQuestionFieldsDTO or ExceptHRQuestionFieldsDTO`;
+  }
+}
+
 export class UpdatePeerWorkVerificationDto {
   @ValidateNested()
-  @Type(() => WorkExperienceFieldsDto)
+  @Type(() => OptionalWorkExFieldsDTO)
+  @IsOptional()
+  public optionalVerificationFields?: OptionalWorkExFieldsDTO;
+
+  @ValidateNested()
+  @Type(() => MandatoryWorkExFieldsDTO)
   @IsNotEmpty()
-  public verificationFields!: WorkExperienceFieldsDto;
+  public mandatoryVerificationFields!: MandatoryWorkExFieldsDTO;
+
+  @ValidateNested()
+  @Type(() => MandatoryQuestionsDTO)
+  @IsNotEmpty()
+  public mandatoryQuestions!: MandatoryQuestionsDTO;
+
+  @Validate(IsValidNestedQuestion)
+  @IsNotEmpty()
+  public otherQuestions!: HRQuestionFieldsDTO | ExceptHRQuestionFieldsDTO;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateSkillsVerification)
-  public skills?: UpdateSkillsVerification[];
+  @IsNotEmpty()
+  public skills!: UpdateSkillsVerification[];
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateDocumentsVerification)
-  public documents?: UpdateDocumentsVerification[];
+  @IsNotEmpty()
+  public documents!: UpdateDocumentsVerification[];
 }

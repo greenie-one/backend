@@ -2,6 +2,9 @@ import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request
 import { AddWorkExperienceResponse, GetWorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
+import { DocumentModel } from '@/models/document.model';
+import { WorkPeerModel } from '@/models/peer.model';
+import { SkillModel } from '@/models/skills.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { UserModel } from '@models/users.model';
 
@@ -16,9 +19,13 @@ class WorkExperienceService {
     } catch (e) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
-    if (workExperienceData.dateOfLeaving && workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+
+    if (workExperienceData.dateOfLeaving) {
+      if (workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
+
     const workExperience = await WorkExperienceModel.create({
       ...workExperienceData,
       user: userId,
@@ -70,8 +77,10 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
+    await WorkPeerModel.deleteMany({ user: userId, ref: workExperienceId });
+    await SkillModel.deleteMany({ user: userId, workExperience: workExperienceId });
+    await DocumentModel.deleteMany({ user: userId, workExperience: workExperienceId });
     await workExperience.deleteOne();
-
     return { success: true, message: 'Work experience deleted successfully' };
   }
 
@@ -84,8 +93,11 @@ class WorkExperienceService {
     if (workExperience.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    if (!(updatedData.dateOfLeaving && updatedData.dateOfJoining < updatedData.dateOfLeaving)) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+
+    if (updatedData.dateOfLeaving) {
+      if (updatedData.dateOfJoining > updatedData.dateOfLeaving) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
     const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
 
