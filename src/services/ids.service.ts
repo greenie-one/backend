@@ -83,7 +83,6 @@ class IDsService {
     }
 
     const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
-      console.log(err);
       throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 

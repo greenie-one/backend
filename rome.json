@@ -17,7 +17,12 @@
         "noPrototypeBuiltins": "warn"
       },
       "style": {
-        "useEnumInitializers": "off"
+        "useEnumInitializers": "off",
+        "useExponentiationOperator": "error",
+        "useShorthandArrayType": "error"
+      },
+      "nursery": {
+        "noConsoleLog": "error"
       }
     }
   },
