@@ -1,6 +1,10 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
-import { SendPeerOtpDTO, VerifyOtpDTO } from '@/dtos/request/otp.dto';
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/request/peer.dto';
+import {
+  CreateWorkPeerDto,
+  SendPeerOtpDTO as SendWorkPeerOtpDTO,
+  UpdatePeerWorkVerificationDto,
+  VerifyOtpDTO as VerifyWorkPeerOtpDTO,
+} from '@/dtos/request/peer.dto';
 import {
   CreateWorkPeerResponse,
   DeleteWorkPeerResponse,
@@ -51,12 +55,12 @@ export default class PeerController {
   }
 
   @Post('/work/:peerUUID/send-otp')
-  async peerSendOTP(@Params('peerUUID') peerUUID: string, @Body() otp_data: SendPeerOtpDTO): Promise<WorkPeerSendOtpResponse> {
+  async peerSendOTP(@Params('peerUUID') peerUUID: string, @Body() otp_data: SendWorkPeerOtpDTO): Promise<WorkPeerSendOtpResponse> {
     return await peerService.peerSendOTP(peerUUID, otp_data.otpType);
   }
 
   @Post('/work/:peerUUID/verify-otp')
-  async verifyPeerContact(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyOtpDTO): Promise<WorkPeerVerifyResponse> {
+  async verifyPeerContact(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyWorkPeerOtpDTO): Promise<WorkPeerVerifyResponse> {
     return peerService.verifyPeerConatct(peerUUID, otp_data.otpType, otp_data.otp);
   }
 }

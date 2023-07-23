@@ -1,5 +1,4 @@
-import { OtpType } from '@/dtos/request/otp.dto';
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto, WorkVerificationBy } from '@/dtos/request/peer.dto';
+import { CreateWorkPeerDto, OtpType, UpdatePeerWorkVerificationDto, WorkVerificationBy } from '@/dtos/request/peer.dto';
 import {
   CreateWorkPeerResponse,
   DeleteWorkPeerResponse,
