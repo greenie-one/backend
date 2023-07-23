@@ -37,6 +37,7 @@ export interface AadharData{
   name:string,
   address:{},
   dob:string,
+  aadharNumber:string,
   parentName:string,
 }
 

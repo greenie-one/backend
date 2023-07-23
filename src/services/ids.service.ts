@@ -41,6 +41,13 @@ class IDsService {
     }));
   }
 
+  private async maskString(str: string, numVisibleChars: number): Promise<string> {
+    const maskedPart = str.slice(0, -numVisibleChars).replace(/./g, '*');
+    const visiblePart = str.slice(-numVisibleChars);
+    return maskedPart + visiblePart;
+  }
+  
+
   public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
     if (await this.userHasId(userId, IDTypeEnum.AADHAR)) {
       throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
@@ -81,16 +88,11 @@ class IDsService {
 
       const data:AadharData={
         name:verificationResponse.result.user_full_name,
-        address: {
-          country: "**********",
-          dist: "**********",
-          state: "**********",
-          street: "**********",
-          house: "**********",
-          landmark: "**********",
-        },
-        dob :"**********" ,
-        parentName: "**********",
+        aadharNumber: await this.maskString(aadhaar_number || "", 4),
+        address: user_address,
+        dob: verificationResponse.result.user_dob,
+        parentName: verificationResponse.result.user_parent_name,
+
       }
       await IDModel.db.transaction(async (session) => {
         await IDModel.create(
