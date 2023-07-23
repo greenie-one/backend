@@ -21,8 +21,8 @@ export default class PeerController {
   }
 
   @Delete('/work/:peerId')
-  async deletePeer(@Params('peerId') peerId: string) {
-    return peerService.deletePeer(peerId);
+  async deletePeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string) {
+    return peerService.deletePeer(userDetails.sub, peerId);
   }
 
   @Get('/work/:id/resend')
@@ -51,4 +51,3 @@ export default class PeerController {
     return { success: status, message: 'Verified' };
   }
 }
-

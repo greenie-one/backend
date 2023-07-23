@@ -113,7 +113,6 @@ export class MandatoryQuestionsDTO {
   public attitudeRating!:
     | Rating.HIGHLY_COLLABORATIVE
     | Rating.MODERATELY_COLLABORATIVE
-    | Rating.NOT_GIVEN
     | Rating.NON_COLLABORATIVE
     | Rating.OCCASIONALLY_COLLABORATIVE
     | Rating.RARELY_COLLABORATIVE;
@@ -210,22 +209,16 @@ class UpdateDocumentsVerification {
 @ValidatorConstraint({ name: 'isValidNestedQuestion', async: false })
 export class IsValidNestedQuestion implements ValidatorConstraintInterface {
   async validate(otherQuestions: any, args: ValidationArguments) {
-    console.log(otherQuestions);
     let valid = false;
     let tryOne = plainToInstance<unknown, object>(HRQuestionFieldsDTO, otherQuestions);
-    await validate(tryOne).then((errors) => {
+    await validate(tryOne, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
       if (errors.length === 0) valid = true;
     });
-    console.log(valid);
-    console.log(tryOne);
     if (valid) return true;
     let tryTwo = plainToInstance<unknown, object>(ExceptHRQuestionFieldsDTO, otherQuestions);
-    await validate(tryTwo).then((errors) => {
+    await validate(tryTwo, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
       if (errors.length === 0) valid = true;
-    }),
-      console.log(valid);
-    console.log(tryTwo);
-    console.log(otherQuestions instanceof ExceptHRQuestionFieldsDTO);
+    });
     if (valid) return true;
     return false;
   }

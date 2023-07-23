@@ -15,11 +15,14 @@ export interface GetUserWorkPeerResponse {
   phone: string;
   workExperience: string;
   isVerificationCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GetPeerWorkExDataResponse {
   name: string;
   profilePic: string;
+  companyName?: string;
   peerPost?: string;
   designation?: string;
   optionalVerificationFields?: Partial<WorkExperienceResponse>;

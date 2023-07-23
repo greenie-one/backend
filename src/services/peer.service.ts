@@ -114,6 +114,8 @@ class PeerService {
         phone: peer.phone,
         workExperience: peer.ref.toString(),
         isVerificationCompleted: peer.isVerificationCompleted,
+        createdAt: peer.createdAt.toISOString(),
+        updatedAt: peer.updatedAt.toISOString(),
       });
     }
     return res;
@@ -140,12 +142,12 @@ class PeerService {
     if (!peer.emailVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
       console.error(err);
-      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name });
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
     }
     if (!peer.phoneVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
       console.error(err);
-      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name });
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
     }
 
     const workExperience = await WorkExperienceModel.findById(peer.ref);
@@ -163,6 +165,7 @@ class PeerService {
     if (peer.verificationBy !== WorkVerificationBy.HR) {
       data.peerPost = peer.verificationBy;
       data.designation = workExperience.designation;
+      data.companyName = workExperience.companyName;
     }
 
     const skillIds = peer.skills.map((skill) => skill.id);
@@ -228,12 +231,10 @@ class PeerService {
         new OptionalWorkExperienceFields(),
         OptionalWorkExperienceFields.defaultFields(),
       );
-      console.info(`created work peer with fields ${JSON.stringify(obj)}`);
-      console.info(`created work peer with fields and default questions ${JSON.stringify(obj)}`);
     } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, e.message);
     }
-    let optionalQuestions;
+    let optionalQuestions: HRQuestionFields | ExceptHRQuestionFields;
     if (peerData.verificationBy === WorkVerificationBy.HR) {
       optionalQuestions = HRQuestionFields.defaultFields();
     } else {
@@ -307,11 +308,15 @@ class PeerService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async deletePeer(peerid: string) {
-    const peer = await WorkPeerModel.findByIdAndDelete(peerid);
+  public async deletePeer(userId: string, peerid: string) {
+    const peer = await WorkPeerModel.findOne({ _id: peerid, user: userId });
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+    if (peer.isVerificationCompleted) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
+    }
+    await WorkPeerModel.findByIdAndDelete(peerid);
     return { success: true, message: 'Deleted Successfully' };
   }
 }
