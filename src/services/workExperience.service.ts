@@ -20,9 +20,13 @@ class WorkExperienceService {
     } catch (e) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
-    if (workExperienceData.dateOfLeaving && workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+
+    if (workExperienceData.dateOfLeaving) {
+      if (workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
+
     const workExperience = await WorkExperienceModel.create({
       ...workExperienceData,
       user: userId,
@@ -90,8 +94,11 @@ class WorkExperienceService {
     if (workExperience.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    if (!(updatedData.dateOfLeaving && updatedData.dateOfJoining < updatedData.dateOfLeaving)) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+
+    if (updatedData.dateOfLeaving) {
+      if (updatedData.dateOfJoining > updatedData.dateOfLeaving) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
     const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
 
