@@ -40,8 +40,8 @@ export class CreateWorkExperienceDto {
   public companyName!: string;
 
   @IsString()
-  @IsNotEmpty()
-  public companyId!: string;
+  @IsOptional()
+  public companyId?: string;
 
   @IsString()
   @IsOptional()
@@ -117,4 +117,3 @@ export class UpdateWorkExperienceDto {
   @IsOptional()
   public dateOfLeaving?: string;
 }
-
