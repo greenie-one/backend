@@ -65,4 +65,3 @@ export interface DrivingLicenseResponse {
   response_code?: string;
   response_message?: string;
 }
-

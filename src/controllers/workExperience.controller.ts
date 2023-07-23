@@ -32,4 +32,3 @@ export default class WorkExperienceController {
     return workExperienceService.updateWorkExperience(userDetails.sub, workExpereienceId, data);
   }
 }
-

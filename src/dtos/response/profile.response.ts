@@ -16,4 +16,3 @@ export interface ProfileResponse {
 export interface SearchProfilesResponse {
   profiles: ProfileResponse[];
 }
-

@@ -1,5 +1,5 @@
 import { CompanyTypeEnum } from '@/dtos/request/workExperience.dto';
-import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
 
 @modelOptions({ schemaOptions: { collection: 'work_experiences', timestamps: true } })

@@ -19,4 +19,3 @@ export function checkPropertiesExist(check: object, from: object) {
 export function registerPropertiesCheck() {
   checkPropertiesExist(new OptionalWorkExperienceFields(), new WorkExperience());
 }
-

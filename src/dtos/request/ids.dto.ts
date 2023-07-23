@@ -33,4 +33,3 @@ export class VerifyIDDto {
   @IsNotEmpty()
   public task_id!: string;
 }
-

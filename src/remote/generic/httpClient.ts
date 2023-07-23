@@ -47,4 +47,3 @@ export class HttpClient {
     return response;
   }
 }
-

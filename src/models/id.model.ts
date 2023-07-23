@@ -1,10 +1,9 @@
-import { IDTypeEnum } from '@/dtos/request/ids.dto';
-import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
-import { Schema } from 'mongoose';
 import { Location } from './location.model';
 import { User } from './users.model';
 import { Verification } from './verified.model';
-
+import { IDTypeEnum } from '@/dtos/request/ids.dto';
+import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { Schema } from 'mongoose';
 
 export class ID {
   @prop({ required: true, enum: IDTypeEnum, type: String })

@@ -16,4 +16,3 @@ export class WaitlistService {
     return waitlist;
   }
 }
-

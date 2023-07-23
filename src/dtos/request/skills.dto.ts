@@ -22,4 +22,3 @@ export class CreateSkillDto {
   @IsNotEmpty()
   public expertise!: SkillTypeEnum;
 }
-

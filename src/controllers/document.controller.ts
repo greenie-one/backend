@@ -33,4 +33,3 @@ export default class DocumentController {
     return documentService.getDocumentByType(userDetails.sub, DocumentType);
   }
 }
-

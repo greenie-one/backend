@@ -153,8 +153,8 @@ class PeerService {
     const workExperience = await WorkExperienceModel.findById(peer.ref);
     const profile: Profile = await ProfileModel.findOne({ user: peer.user });
 
-    let data: GetPeerWorkExDataResponse = {
-      name: profile.firstName + ' ' + profile.lastName,
+    const data: GetPeerWorkExDataResponse = {
+      name: `${profile.firstName} ${profile.lastName}`,
       profilePic: profile.profilePic,
     };
 

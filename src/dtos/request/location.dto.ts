@@ -5,4 +5,3 @@ export class GPScompare {
   @IsNotEmpty()
   public GPS: string;
 }
-

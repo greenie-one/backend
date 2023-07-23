@@ -33,4 +33,3 @@ class OTPService {
 }
 
 export const otpService = new OTPService();
-
