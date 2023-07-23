@@ -1,5 +1,6 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { CreateDocumentDto, DocumentType, UpdateDocumentDto } from '@/dtos/request/document.dto';
+import { CreateDocumentResponse, GetDocumentsResponse, UpdateDocumentResponse } from '@/dtos/response/document.response';
 import { documentService } from '@/services/document.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -9,12 +10,16 @@ import { Body, Params } from '@/utils/decorators/request';
 @Controller('/documents')
 export default class DocumentController {
   @Post('/create')
-  async createDocument(@UserDetails() userDetails: TokenClaims, @Body() data: CreateDocumentDto) {
+  async createDocument(@UserDetails() userDetails: TokenClaims, @Body() data: CreateDocumentDto): Promise<CreateDocumentResponse> {
     return documentService.createDocument(userDetails.sub, data);
   }
 
   @Patch('/:id')
-  async updateDocument(@UserDetails() userDetails: TokenClaims, @Params('id') documentId: string, @Body() data: UpdateDocumentDto) {
+  async updateDocument(
+    @UserDetails() userDetails: TokenClaims,
+    @Params('id') documentId: string,
+    @Body() data: UpdateDocumentDto,
+  ): Promise<UpdateDocumentResponse> {
     return documentService.updateDocument(userDetails.sub, documentId, data);
   }
 
@@ -24,12 +29,12 @@ export default class DocumentController {
   }
 
   @Get('/:id')
-  async getDocuments(@UserDetails() userDetails: TokenClaims) {
+  async getDocuments(@UserDetails() userDetails: TokenClaims): Promise<GetDocumentsResponse> {
     return documentService.getDocuments(userDetails.sub);
   }
 
   @Get('/me/:type')
-  async getDocument(@UserDetails() userDetails: TokenClaims, @Params('type') DocumentType: DocumentType) {
+  async getDocument(@UserDetails() userDetails: TokenClaims, @Params('type') DocumentType: DocumentType): Promise<GetDocumentsResponse> {
     return documentService.getDocumentByType(userDetails.sub, DocumentType);
   }
 }

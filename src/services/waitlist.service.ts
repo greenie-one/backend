@@ -1,11 +1,12 @@
-import { AddToWaitlistDto } from '@/dtos/request/waitlist.dto';
+import { CreateToWaitlistDto } from '@/dtos/request/waitlist.dto';
+import { CreateWaitlistResponse } from '@/dtos/response/waitlist.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { WaitlistMailer } from '@/remote/waitlist/email';
 import { HttpException } from '@exceptions/httpException';
-import { Waitlist, WaitlistModel } from '@models/waitlist.model';
+import { WaitlistModel } from '@models/waitlist.model';
 
 export class WaitlistService {
-  public async addEmailToWaitlist(waitlistData: AddToWaitlistDto): Promise<Waitlist> {
+  public async addEmailToWaitlist(waitlistData: CreateToWaitlistDto): Promise<CreateWaitlistResponse> {
     const existingWaitlist = await WaitlistModel.findOne({ email: waitlistData.email });
     if (existingWaitlist) {
       throw new HttpException(ErrorEnum.ALREADY_IN_WAITLIST);
@@ -13,6 +14,10 @@ export class WaitlistService {
     const waitlist = await WaitlistModel.create(waitlistData);
 
     await WaitlistMailer.sendWaitlistMail(waitlistData.name, waitlistData.email);
-    return waitlist;
+    return {
+      email: waitlist.email,
+      name: waitlist.name,
+      phoneNumber: waitlist.phone_number,
+    };
   }
 }

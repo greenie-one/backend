@@ -1,7 +1,8 @@
+import { ExceptHRQuestionFieldsDTO, HRQuestionFieldsDTO } from '@/dtos/request/peer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { ValidationError, validateOrReject } from 'class-validator';
+import { ValidationArguments, ValidationError, ValidatorConstraint, ValidatorConstraintInterface, validate, validateOrReject } from 'class-validator';
 
 /**
  * @name ValidationMiddleware
@@ -51,4 +52,26 @@ export function sanitizeMobileNumber(mobileNumber: string) {
   }
 
   return mobNo.slice(-13);
+}
+
+@ValidatorConstraint({ name: 'isValidNestedQuestion', async: false })
+export class IsValidNestedQuestion implements ValidatorConstraintInterface {
+  async validate(otherQuestions: unknown, args: ValidationArguments) {
+    let valid = false;
+    const tryOne = plainToInstance<unknown, unknown>(HRQuestionFieldsDTO, otherQuestions);
+    await validate(tryOne as object, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
+      if (errors.length === 0) valid = true;
+    });
+    if (valid) return true;
+    const tryTwo = plainToInstance<unknown, unknown>(ExceptHRQuestionFieldsDTO, otherQuestions);
+    await validate(tryTwo as object, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
+      if (errors.length === 0) valid = true;
+    });
+    if (valid) return true;
+    return false;
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `'otherQuestions' must be either HRQuestionFieldsDTO or ExceptHRQuestionFieldsDTO`;
+  }
 }

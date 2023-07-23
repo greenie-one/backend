@@ -1,9 +1,4 @@
-export interface AddProfileResponse {
-  id: string;
-  success: boolean;
-}
-
-export interface ProfileResponse {
+export interface GetProfileResponse {
   id: string;
   firstName: string;
   lastName: string;
@@ -13,6 +8,11 @@ export interface ProfileResponse {
   greenieId: string;
 }
 
-export interface SearchProfilesResponse {
-  profiles: ProfileResponse[];
+export type SearchProfilesResponse = GetProfileResponse[];
+
+export type CreateProfileResponse = GetProfileResponse;
+export type UpdateProfileResponse = GetProfileResponse;
+
+export interface GetProfileRankingResponse {
+  percentile: number;
 }

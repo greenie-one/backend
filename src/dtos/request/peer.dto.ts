@@ -1,20 +1,6 @@
-import { sanitizeMobileNumber } from '@/utils/validation';
-import { Transform, Type, plainToInstance } from 'class-transformer';
-import {
-  IsArray,
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Validate,
-  ValidateIf,
-  ValidateNested,
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-  validate,
-} from 'class-validator';
+import { IsValidNestedQuestion, sanitizeMobileNumber } from '@/utils/validation';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Validate, ValidateIf, ValidateNested } from 'class-validator';
 
 export enum WorkVerificationBy {
   COLLEAGUE = 'COLLEAGUE',
@@ -204,28 +190,6 @@ class UpdateDocumentsVerification {
   @Type(() => StatusField)
   @IsNotEmpty()
   public status!: StatusField;
-}
-
-@ValidatorConstraint({ name: 'isValidNestedQuestion', async: false })
-export class IsValidNestedQuestion implements ValidatorConstraintInterface {
-  async validate(otherQuestions: any, args: ValidationArguments) {
-    let valid = false;
-    let tryOne = plainToInstance<unknown, object>(HRQuestionFieldsDTO, otherQuestions);
-    await validate(tryOne, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
-      if (errors.length === 0) valid = true;
-    });
-    if (valid) return true;
-    let tryTwo = plainToInstance<unknown, object>(ExceptHRQuestionFieldsDTO, otherQuestions);
-    await validate(tryTwo, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
-      if (errors.length === 0) valid = true;
-    });
-    if (valid) return true;
-    return false;
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return `'otherQuestions' must be either HRQuestionFieldsDTO or ExceptHRQuestionFieldsDTO`;
-  }
 }
 
 export class UpdatePeerWorkVerificationDto {
