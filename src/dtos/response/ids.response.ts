@@ -1,24 +1,3 @@
-import { IDTypeEnum } from '../request/ids.dto';
-
-export interface IDVerification {
-  isVerified: boolean;
-  lastUpdated: Date;
-}
-
-export interface SingleID {
-  id: string;
-  idType: IDTypeEnum;
-  idNumber: string;
-  user: string;
-  address: Record<string, string>;
-  location: string;
-  verification: IDVerification;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export type GetIDsResponse = SingleID[];
-
 export interface AadharRequestOtpResponse {
   result?: {
     is_number_linked?: boolean;
@@ -68,7 +47,7 @@ export interface PanVerifyResponse {
   };
 }
 
-export interface DrivingLicenseVerifyResponse {
+export interface DrivingLicenseResponse {
   success?: boolean;
   result?: {
     user_address?: [

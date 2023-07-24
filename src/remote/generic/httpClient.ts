@@ -31,7 +31,7 @@ export class HttpClient {
 
     let response: T;
     if (resp.ok) {
-      if (request.toJson !== false) {
+      if (request.toJSON !== false) {
         response = (await resp.json()) as T;
       } else {
         response = (await resp.text()) as T;

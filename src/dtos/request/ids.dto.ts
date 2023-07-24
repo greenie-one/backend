@@ -6,7 +6,7 @@ export enum IDTypeEnum {
   DRIVING_LICENSE = 'DRIVING_LICENSE',
 }
 
-export class CreateIDDto {
+export class AddIDDto {
   @IsEnum(IDTypeEnum)
   @IsOptional()
   public id_type?: IDTypeEnum;
