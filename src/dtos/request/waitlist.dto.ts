@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class AddToWaitlistDto {
+export class CreateToWaitlistDto {
   @IsString()
   @IsNotEmpty()
   public email: string;

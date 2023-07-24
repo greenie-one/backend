@@ -1,20 +1,31 @@
-import { sanitizeMobileNumber } from '@/utils/validation';
-import { Transform, Type, plainToInstance } from 'class-transformer';
-import {
-  IsArray,
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Validate,
-  ValidateIf,
-  ValidateNested,
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-  validate,
-} from 'class-validator';
+import { IsValidNestedQuestion, sanitizeMobileNumber } from '@/utils/validation';
+import { Transform, Type } from 'class-transformer';
+
+// rome-ignore format: Imports need to be remove and i'm too lazy to write a multi-line import removal regex
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, Validate, ValidateIf, ValidateNested } from 'class-validator';
+
+export enum OtpType {
+  EMAIL = 'EMAIL',
+  MOBILE = 'MOBILE',
+}
+
+export class VerifyOtpDTO {
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(6)
+  @MaxLength(6)
+  otp: string;
+
+  @IsEnum(OtpType)
+  @IsNotEmpty()
+  otpType: OtpType;
+}
+
+export class SendPeerOtpDTO {
+  @IsEnum(OtpType)
+  @IsNotEmpty()
+  otpType: OtpType;
+}
 
 export enum WorkVerificationBy {
   COLLEAGUE = 'COLLEAGUE',
@@ -204,28 +215,6 @@ class UpdateDocumentsVerification {
   @Type(() => StatusField)
   @IsNotEmpty()
   public status!: StatusField;
-}
-
-@ValidatorConstraint({ name: 'isValidNestedQuestion', async: false })
-export class IsValidNestedQuestion implements ValidatorConstraintInterface {
-  async validate(otherQuestions: any, args: ValidationArguments) {
-    let valid = false;
-    let tryOne = plainToInstance<unknown, object>(HRQuestionFieldsDTO, otherQuestions);
-    await validate(tryOne, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
-      if (errors.length === 0) valid = true;
-    });
-    if (valid) return true;
-    let tryTwo = plainToInstance<unknown, object>(ExceptHRQuestionFieldsDTO, otherQuestions);
-    await validate(tryTwo, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
-      if (errors.length === 0) valid = true;
-    });
-    if (valid) return true;
-    return false;
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return `'otherQuestions' must be either HRQuestionFieldsDTO or ExceptHRQuestionFieldsDTO`;
-  }
 }
 
 export class UpdatePeerWorkVerificationDto {
