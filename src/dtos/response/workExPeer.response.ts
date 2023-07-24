@@ -1,4 +1,4 @@
-import { WorkVerificationBy } from '../request/peer.dto';
+import { WorkVerificationBy } from '../request/workExPeer.dto';
 import { GetDocumentResponse } from './document.response';
 import { SkillResponse } from './skills.response';
 import { WorkExperienceResponse } from './workExperience.response';

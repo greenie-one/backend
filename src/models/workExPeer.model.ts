@@ -1,4 +1,4 @@
-import { Rating, State, WorkVerificationBy } from '@/dtos/request/peer.dto';
+import { Rating, State, WorkVerificationBy } from '@/dtos/request/workExPeer.dto';
 import { Ref, getModelForClass, index, modelOptions, prop } from '@typegoose/typegoose';
 import { Document } from 'mongoose';
 import { Skills } from './skills.model';

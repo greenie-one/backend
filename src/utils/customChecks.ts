@@ -1,4 +1,4 @@
-import { SelectedFields } from '@/models/peer.model';
+import { SelectedFields } from '@/models/workExPeer.model';
 import { WorkExperience } from '@/models/workExperience.model';
 
 export function checkPropertiesExist(check: object, from: object) {

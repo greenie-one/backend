@@ -1,7 +1,7 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { SendPeerOtpDTO, VerifyOtpDTO } from '@/dtos/request/otp.dto';
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/request/peer.dto';
-import { peerService } from '@/services/peer.service';
+import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto } from '@/dtos/request/workExPeer.dto';
+import { peerService } from '@/services/workExPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
@@ -9,7 +9,7 @@ import { Body, Params, Reply } from '@/utils/decorators/request';
 import { FastifyReply } from 'fastify';
 
 @Controller('/peer')
-export default class PeerController {
+export default class WorkExPeerController {
   @Get('/work/me')
   async getMyPeers(@UserDetails() userDetails: TokenClaims) {
     return peerService.getUserWorkPeers(userDetails.sub);

@@ -1,17 +1,17 @@
 import { OtpType } from '@/dtos/request/otp.dto';
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto, WorkVerificationBy } from '@/dtos/request/peer.dto';
+import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto, WorkVerificationBy } from '@/dtos/request/workExPeer.dto';
 import {
   CreateWorkPeerResponse,
   GetPeerInformationResponse,
   GetPeerWorkExDataResponse,
   GetUserWorkPeerResponse,
-} from '@/dtos/response/peer.response';
+} from '@/dtos/response/workExPeer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
-import { DocumentVerification, HRQuestions, SelectedFields, SkillsVerification, Status, WorkPeer, WorkPeerModel } from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
 import { SkillModel } from '@/models/skills.model';
+import { DocumentVerification, HRQuestions, SelectedFields, SkillsVerification, Status, WorkPeer, WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisClient } from '@/redisClient';
 import { verification } from '@/remote/peer/verification';
@@ -22,7 +22,7 @@ import { customAlphabet } from 'nanoid/async';
 import { SAStokenService } from './blobStorage.service';
 import { otpService } from './otp.service';
 
-class PeerService {
+class WorkExPeerService {
   public async peerUUIDtoPeerId(uuid: string) {
     const data = await redisClient.get(uuid);
     if (!data) {
@@ -149,6 +149,8 @@ class PeerService {
     const data: GetPeerWorkExDataResponse = {
       name: `${profile.firstName} ${profile.lastName}`,
       profilePic: profile.profilePic,
+      skills: [],
+      documents: [],
     };
 
     if (peer.selectedFields) {
@@ -162,24 +164,19 @@ class PeerService {
     }
 
     const skillIds = peer.skills.map((skill) => skill.id);
-    const skills = await SkillModel.find({ _id: { $in: skillIds } });
+    (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
+      return { id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise };
+    });
     const documentIds = peer.documents.map((document) => document.id);
-    const documents = await DocumentModel.find({ _id: { $in: documentIds } });
-    for (const skill of skills) {
-      data.skills = [];
-      data.skills.push({ id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise });
-    }
-    for (const document of documents) {
-      data.documents = [];
+    (await DocumentModel.find({ _id: { $in: documentIds } })).map(async (document) => {
       const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
-
-      data.documents.push({
+      return {
         id: document._id.toString(),
         type: document.type,
         name: document.name,
         privateUrl: `${document.privateUrl}?${sasToken}`,
-      });
-    }
+      };
+    });
 
     const res: GetPeerInformationResponse = {
       id: peer._id.toString(),
@@ -325,4 +322,4 @@ class PeerService {
   }
 }
 
-export const peerService = new PeerService();
+export const peerService = new WorkExPeerService();
