@@ -23,7 +23,7 @@ export default class DocumentController {
     return documentService.deleteDocument(userDetails.sub, documentId);
   }
 
-  @Get('/:id')
+  @Get('/me')
   async getDocuments(@UserDetails() userDetails: TokenClaims) {
     return documentService.getDocuments(userDetails.sub);
   }
@@ -33,4 +33,3 @@ export default class DocumentController {
     return documentService.getDocumentByType(userDetails.sub, DocumentType);
   }
 }
-

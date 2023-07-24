@@ -34,7 +34,7 @@ export class Status {
 }
 
 @modelOptions({ schemaOptions: { _id: false } })
-export class OptionalWorkExperienceFields {
+export class SelectedFields {
   @prop()
   public candidateId?: Status;
 
@@ -60,7 +60,7 @@ export class OptionalWorkExperienceFields {
   public salary?: Status;
 
   static defaultFields() {
-    const defaultOptionalWorkExFields = new OptionalWorkExperienceFields();
+    const defaultOptionalWorkExFields = new SelectedFields();
     defaultOptionalWorkExFields.candidateId = Status.defaultStatus();
     defaultOptionalWorkExFields.department = Status.defaultStatus();
     defaultOptionalWorkExFields.dateOfJoining = Status.defaultStatus();
@@ -74,58 +74,42 @@ export class OptionalWorkExperienceFields {
 }
 
 @modelOptions({ schemaOptions: { _id: false } })
-export class MandatoryWorkExFields {
-  @prop({ type: String, default: 'No Review' })
-  public review?: string;
+export class AllQuestions {
+  @prop({ type: String, enum: Rating })
+  public attitudeRating!: Rating;
 
-  static defaultFields() {
-    const defaultMandatoryWorkExFields = new MandatoryWorkExFields();
-    defaultMandatoryWorkExFields.review = 'No Review';
-    return defaultMandatoryWorkExFields;
-  }
-}
-
-@modelOptions({ schemaOptions: { _id: false } })
-export class MandatoryQuestionFields {
-  @prop({ enum: Rating, type: String, default: Rating.NOT_GIVEN })
-  public attitudeRating?: Rating;
-
-  @prop({ default: Status.defaultStatus() })
-  public eligibleForRehire?: Status;
-
-  static defaultFields() {
-    const defaultMandatoryQuestionFields = new MandatoryQuestionFields();
-    defaultMandatoryQuestionFields.attitudeRating = Rating.NOT_GIVEN;
-    defaultMandatoryQuestionFields.eligibleForRehire = Status.defaultStatus();
-    return defaultMandatoryQuestionFields;
-  }
-}
-
-@modelOptions({ schemaOptions: { _id: false } })
-export class HRQuestionFields {
-  @prop({ default: Status.defaultStatus() })
-  public exitProcedure?: Status;
-
-  static defaultFields() {
-    const defaultHRQuestionFields = new HRQuestionFields();
-    defaultHRQuestionFields.exitProcedure = Status.defaultStatus();
-    return defaultHRQuestionFields;
-  }
-}
-
-@modelOptions({ schemaOptions: { _id: false } })
-export class ExceptHRQuestionFields {
-  @prop({ default: Status.defaultStatus() })
+  @prop()
   public designation!: Status;
 
-  @prop({ default: Status.defaultStatus() })
+  @prop()
   public peerPost!: Status;
 
+  @prop({ type: String })
+  public review!: string;
+
   static defaultFields() {
-    const defaultExceptHRQuestionFields = new ExceptHRQuestionFields();
-    defaultExceptHRQuestionFields.designation = Status.defaultStatus();
-    defaultExceptHRQuestionFields.peerPost = Status.defaultStatus();
-    return defaultExceptHRQuestionFields;
+    const defaultFields = new AllQuestions();
+    defaultFields.peerPost = Status.defaultStatus();
+    defaultFields.attitudeRating = Rating.NOT_GIVEN;
+    defaultFields.designation = Status.defaultStatus();
+    defaultFields.review = 'No Review';
+    return defaultFields;
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class HRQuestions {
+  @prop()
+  public exitProcedure!: Status;
+
+  @prop()
+  public eligibleForRehire!: Status;
+
+  static defaultFields() {
+    const defaultHRQuestionFields = new HRQuestions();
+    defaultHRQuestionFields.exitProcedure = Status.defaultStatus();
+    defaultHRQuestionFields.eligibleForRehire = Status.defaultStatus();
+    return defaultHRQuestionFields;
   }
 }
 
@@ -186,16 +170,13 @@ export class WorkPeer {
   public verificationBy!: WorkVerificationBy;
 
   @prop()
-  public optionalVerificationFields?: OptionalWorkExperienceFields;
+  public selectedFields?: SelectedFields;
 
-  @prop({ default: MandatoryWorkExFields.defaultFields() })
-  public mandatoryVerificationFields?: MandatoryWorkExFields;
-
-  @prop({ default: MandatoryQuestionFields.defaultFields() })
-  public mandatoryQuestionFields?: MandatoryQuestionFields;
+  @prop({ default: AllQuestions.defaultFields() })
+  public allQuestions?: AllQuestions;
 
   @prop()
-  public otherQuestionFields!: HRQuestionFields | ExceptHRQuestionFields;
+  public otherQuestions!: HRQuestions;
 
   @prop({ required: true })
   public skills!: SkillsVerification[];
@@ -212,4 +193,3 @@ export class WorkPeer {
 }
 
 export const WorkPeerModel = getModelForClass(WorkPeer);
-

@@ -1,7 +1,6 @@
 import { CompanyTypeEnum } from '@/dtos/request/workExperience.dto';
-import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
-
 
 @modelOptions({ schemaOptions: { collection: 'work_experiences', timestamps: true } })
 export class WorkExperience {
@@ -21,7 +20,7 @@ export class WorkExperience {
   public companyName!: string;
 
   @prop({ type: String, required: true })
-  public companyId!: string;
+  public companyId?: string;
 
   @prop({ type: String })
   public candidateId!: string;
@@ -59,4 +58,3 @@ export class WorkExperience {
 }
 
 export const WorkExperienceModel = getModelForClass(WorkExperience);
-

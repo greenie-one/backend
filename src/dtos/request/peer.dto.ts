@@ -10,7 +10,6 @@ import {
   Validate,
   ValidateIf,
   ValidateNested,
-  ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
   validate,
@@ -56,7 +55,7 @@ export class StatusField {
   public dispute_reason?: string;
 }
 
-export class OptionalWorkExFieldsDTO {
+export class SelectedFieldsDTO {
   // From Work Ex Optional fields
   @ValidateNested()
   @Type(() => StatusField)
@@ -99,14 +98,7 @@ export class OptionalWorkExFieldsDTO {
   public salary?: StatusField;
 }
 
-export class MandatoryWorkExFieldsDTO {
-  // From Work Ex Mandatory fields
-  @IsString()
-  @IsNotEmpty()
-  public review!: string;
-}
-
-export class MandatoryQuestionsDTO {
+export class AllQuestionsDTO {
   // From Work Ex Mandatory Questions
   @IsEnum(Rating)
   @IsNotEmpty()
@@ -120,28 +112,29 @@ export class MandatoryQuestionsDTO {
   @ValidateNested()
   @Type(() => StatusField)
   @IsNotEmpty()
-  public eligibleForRehire!: StatusField;
+  public peerPost!: StatusField;
+
+  @IsString()
+  @IsNotEmpty()
+  public review!: string;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsNotEmpty()
+  public designation!: StatusField;
 }
 
-export class HRQuestionFieldsDTO {
+export class HRQuestionsDTO {
   // From Work Ex HR Questions
   @ValidateNested()
   @Type(() => StatusField)
   @IsNotEmpty()
   public exitProcedure!: StatusField;
-}
-
-export class ExceptHRQuestionFieldsDTO {
-  // From Work Ex Except HR Questions
-  @ValidateNested()
-  @Type(() => StatusField)
-  @IsNotEmpty()
-  public designation!: StatusField;
 
   @ValidateNested()
   @Type(() => StatusField)
   @IsNotEmpty()
-  public peerPost!: StatusField;
+  public eligibleForRehire!: StatusField;
 }
 
 export class CreateWorkPeerDto {
@@ -171,7 +164,7 @@ export class CreateWorkPeerDto {
   @IsArray()
   @IsNotEmpty()
   @IsString({ each: true })
-  public optionalVerificationFields!: string[];
+  public selectedFields!: string[];
 
   @IsArray()
   @IsString({ each: true })
@@ -208,45 +201,34 @@ class UpdateDocumentsVerification {
 
 @ValidatorConstraint({ name: 'isValidNestedQuestion', async: false })
 export class IsValidNestedQuestion implements ValidatorConstraintInterface {
-  async validate(otherQuestions: any, args: ValidationArguments) {
+  async validate(otherQuestions) {
     let valid = false;
-    let tryOne = plainToInstance<unknown, object>(HRQuestionFieldsDTO, otherQuestions);
+    const tryOne = plainToInstance<unknown, object>(HRQuestionsDTO, otherQuestions);
     await validate(tryOne, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
       if (errors.length === 0) valid = true;
     });
-    if (valid) return true;
-    let tryTwo = plainToInstance<unknown, object>(ExceptHRQuestionFieldsDTO, otherQuestions);
-    await validate(tryTwo, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
-      if (errors.length === 0) valid = true;
-    });
-    if (valid) return true;
-    return false;
+    return valid;
   }
 
-  defaultMessage(args: ValidationArguments) {
+  defaultMessage() {
     return `'otherQuestions' must be either HRQuestionFieldsDTO or ExceptHRQuestionFieldsDTO`;
   }
 }
 
 export class UpdatePeerWorkVerificationDto {
   @ValidateNested()
-  @Type(() => OptionalWorkExFieldsDTO)
+  @Type(() => SelectedFieldsDTO)
   @IsOptional()
-  public optionalVerificationFields?: OptionalWorkExFieldsDTO;
+  public selectedFields?: SelectedFieldsDTO;
 
   @ValidateNested()
-  @Type(() => MandatoryWorkExFieldsDTO)
+  @Type(() => AllQuestionsDTO)
   @IsNotEmpty()
-  public mandatoryVerificationFields!: MandatoryWorkExFieldsDTO;
-
-  @ValidateNested()
-  @Type(() => MandatoryQuestionsDTO)
-  @IsNotEmpty()
-  public mandatoryQuestions!: MandatoryQuestionsDTO;
+  public allQuestions!: AllQuestionsDTO;
 
   @Validate(IsValidNestedQuestion)
-  @IsNotEmpty()
-  public otherQuestions!: HRQuestionFieldsDTO | ExceptHRQuestionFieldsDTO;
+  @IsOptional()
+  public otherQuestions?: HRQuestionsDTO;
 
   @IsArray()
   @ValidateNested({ each: true })

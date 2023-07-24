@@ -13,4 +13,3 @@ export default class UserController {
     return userService.updateUser(userDetails.sub, data);
   }
 }
-

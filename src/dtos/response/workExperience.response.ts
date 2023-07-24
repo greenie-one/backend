@@ -1,4 +1,4 @@
-import { CompanyTypeEnum } from "../request/workExperience.dto";
+import { CompanyTypeEnum } from '../request/workExperience.dto';
 
 export interface AddWorkExperienceResponse {
   id: string;
@@ -26,4 +26,3 @@ export interface WorkExperienceResponse {
 export interface GetWorkExperienceResponse {
   workExperiences: WorkExperienceResponse[];
 }
-

@@ -9,15 +9,7 @@ import {
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
-import {
-  DocumentVerification,
-  ExceptHRQuestionFields,
-  HRQuestionFields,
-  OptionalWorkExperienceFields,
-  SkillsVerification,
-  WorkPeer,
-  WorkPeerModel,
-} from '@/models/peer.model';
+import { DocumentVerification, HRQuestions, SelectedFields, SkillsVerification, Status, WorkPeer, WorkPeerModel } from '@/models/peer.model';
 import { Profile, ProfileModel } from '@/models/profile.model';
 import { SkillModel } from '@/models/skills.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -27,6 +19,7 @@ import { checkFields, copyDataFrom, createClassInstanceWithFields } from '@/util
 import { env } from '@config';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
+import { SAStokenService } from './blobStorage.service';
 import { otpService } from './otp.service';
 
 class PeerService {
@@ -114,6 +107,8 @@ class PeerService {
         phone: peer.phone,
         workExperience: peer.ref.toString(),
         isVerificationCompleted: peer.isVerificationCompleted,
+        createdAt: peer.createdAt.toISOString(),
+        updatedAt: peer.updatedAt.toISOString(),
       });
     }
     return res;
@@ -151,14 +146,14 @@ class PeerService {
     const workExperience = await WorkExperienceModel.findById(peer.ref);
     const profile: Profile = await ProfileModel.findOne({ user: peer.user });
 
-    let data: GetPeerWorkExDataResponse = {
-      name: profile.firstName + ' ' + profile.lastName,
+    const data: GetPeerWorkExDataResponse = {
+      name: `${profile.firstName} ${profile.lastName}`,
       profilePic: profile.profilePic,
     };
 
-    if (peer.optionalVerificationFields) {
-      data.optionalVerificationFields = {};
-      copyDataFrom(peer.toObject().optionalVerificationFields, workExperience.toObject(), data.optionalVerificationFields);
+    if (peer.selectedFields) {
+      data.selectedFields = {};
+      copyDataFrom(peer.toObject().selectedFields, workExperience.toObject(), data.selectedFields);
     }
     if (peer.verificationBy !== WorkVerificationBy.HR) {
       data.peerPost = peer.verificationBy;
@@ -176,7 +171,14 @@ class PeerService {
     }
     for (const document of documents) {
       data.documents = [];
-      data.documents.push({ id: document._id.toString(), type: document.type, name: document.name, privateUrl: document.privateUrl });
+      const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
+
+      data.documents.push({
+        id: document._id.toString(),
+        type: document.type,
+        name: document.name,
+        privateUrl: `${document.privateUrl}?${sasToken}`,
+      });
     }
 
     const res: GetPeerInformationResponse = {
@@ -222,26 +224,27 @@ class PeerService {
       }
     }
 
-    let obj: OptionalWorkExperienceFields;
+    const workExperience = await WorkExperienceModel.findById(peerData.ref);
+
+    let obj: SelectedFields;
     try {
-      obj = createClassInstanceWithFields(
-        peerData.optionalVerificationFields,
-        new OptionalWorkExperienceFields(),
-        OptionalWorkExperienceFields.defaultFields(),
-      );
+      checkFields(peerData.selectedFields, workExperience.toObject());
+      obj = createClassInstanceWithFields(peerData.selectedFields, new SelectedFields(), SelectedFields.defaultFields());
     } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, e.message);
     }
-    let optionalQuestions: HRQuestionFields | ExceptHRQuestionFields;
+
+    // Type specific fields
+    let otherQuestions: HRQuestions;
     if (peerData.verificationBy === WorkVerificationBy.HR) {
-      optionalQuestions = HRQuestionFields.defaultFields();
-    } else {
-      optionalQuestions = ExceptHRQuestionFields.defaultFields();
+      otherQuestions = HRQuestions.defaultFields();
+      obj.salary = Status.defaultStatus();
     }
+
     const peerDataObj: WorkPeer = {
       ...peerData,
-      optionalVerificationFields: obj,
-      otherQuestionFields: optionalQuestions,
+      selectedFields: obj,
+      otherQuestions: otherQuestions,
       skills: skillsArr,
       documents: documentsArr,
       user: userId,
@@ -266,6 +269,10 @@ class PeerService {
       throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
 
+    if (peer.verificationBy === WorkVerificationBy.HR && !peer.otherQuestions) {
+      throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, 'Invalid HR Questions, cannot be null or undefined');
+    }
+
     if (updatedData.skills.length > 0) {
       const skillIds = updatedData.skills.map((skill) => skill.id);
       const skills = await SkillModel.find({ _id: { $in: skillIds } });
@@ -284,20 +291,19 @@ class PeerService {
       peer.documents = updatedData.documents;
     }
 
-    const toObj = peer.toObject().optionalVerificationFields;
-    const optionalVerificationKeys = toObj ? Object.keys(toObj) : undefined;
+    const toObj = peer.toObject().selectedFields;
+    const selectedFieldKeys = toObj ? Object.keys(toObj) : undefined;
     try {
-      if (optionalVerificationKeys) {
-        checkFields(optionalVerificationKeys, updatedData.optionalVerificationFields);
+      if (selectedFieldKeys) {
+        checkFields(selectedFieldKeys, updatedData.selectedFields);
       }
-      peer.optionalVerificationFields = updatedData.optionalVerificationFields;
+      peer.selectedFields = updatedData.selectedFields;
     } catch (error) {
       console.error(error);
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
-    peer.mandatoryQuestionFields = updatedData.mandatoryQuestions;
-    peer.otherQuestionFields = updatedData.otherQuestions;
-    peer.mandatoryVerificationFields = updatedData.mandatoryVerificationFields;
+    peer.allQuestions = updatedData.allQuestions;
+    peer.otherQuestions = updatedData.otherQuestions;
     peer.isVerificationCompleted = true;
     peer.save();
 

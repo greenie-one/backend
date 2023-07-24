@@ -39,4 +39,3 @@ export default class ProfileController {
     return profileService.getPercentileRanking(userDetails.sub);
   }
 }
-

@@ -38,4 +38,3 @@ export default class ResidentialInfoController {
     return residentialInfoService.updateResidentialInfo(userDetails.sub, residentialInfoId, data);
   }
 }
-

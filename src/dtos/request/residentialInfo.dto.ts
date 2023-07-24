@@ -77,4 +77,3 @@ export class UpdateResidentialInfoDto {
   @IsOptional()
   public end_date?: Date;
 }
-

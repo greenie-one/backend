@@ -1,4 +1,4 @@
-import { SkillTypeEnum } from "../request/skills.dto";
+import { SkillTypeEnum } from '../request/skills.dto';
 
 export interface AddSkillResponse {
   id: string;
@@ -15,4 +15,3 @@ export interface SkillResponse {
 export interface GetSkillsResponse {
   skills: SkillResponse[];
 }
-
