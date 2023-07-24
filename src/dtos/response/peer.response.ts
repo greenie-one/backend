@@ -1,5 +1,5 @@
 import { WorkVerificationBy } from '../request/peer.dto';
-import { GetDocumentsResponse } from './document.response';
+import { GetDocumentResponse } from './document.response';
 import { SkillResponse } from './skills.response';
 import { WorkExperienceResponse } from './workExperience.response';
 
@@ -8,17 +8,7 @@ export interface CreateWorkPeerResponse {
   name: string;
 }
 
-export type DeleteWorkPeerResponse = Record<string, never>;
-
-export type ResendPeerLinkResponse = Record<string, never>;
-
-export type UpdateWorkPeerResponse = CreateWorkPeerResponse;
-
-export type WorkPeerSendOtpResponse = Record<string, never>;
-
-export type WorkPeerVerifyResponse = Record<string, never>;
-
-export interface SingleWorkPeer {
+export interface GetUserWorkPeerResponse {
   id: string;
   name: string;
   email: string;
@@ -29,8 +19,6 @@ export interface SingleWorkPeer {
   updatedAt: string;
 }
 
-export type GetUserWorkPeersResponse = SingleWorkPeer[];
-
 export interface GetPeerWorkExDataResponse {
   name: string;
   profilePic: string;
@@ -39,7 +27,7 @@ export interface GetPeerWorkExDataResponse {
   designation?: string;
   optionalVerificationFields?: Partial<WorkExperienceResponse>;
   skills?: SkillResponse[];
-  documents?: GetDocumentsResponse;
+  documents?: GetDocumentResponse[];
 }
 
 export interface GetPeerInformationResponse {
@@ -51,6 +39,6 @@ export interface GetPeerInformationResponse {
   phoneVerified?: boolean;
   verificationBy: WorkVerificationBy;
   data: GetPeerWorkExDataResponse;
-  dateOfJoining: Date;
-  dateOfLeaving?: Date;
+  dateOfJoining: string;
+  dateOfLeaving?: string;
 }

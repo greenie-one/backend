@@ -6,7 +6,7 @@ type HttpRequest = {
     | {
         'Content-Type'?: 'application/json' | 'application/x-www-form-urlencoded';
       } & Record<string, string>;
-  toJson?: boolean;
+  toJSON?: boolean;
 } & (
   | {
       body?: Record<string, PostBody>;

@@ -1,9 +1,9 @@
-import { env } from '@/config';
-import { DrivingLicenseVerifyResponse } from '@/dtos/response/ids.response';
 import { HttpClient } from '../generic/httpClient';
+import { env } from '@/config';
+import { DrivingLicenseResponse } from '@/dtos/response/ids.response';
 
 export class drivinLicenseVerification {
-  static async verifyDrivingLicense(dlNumber: string, dob: string, taskId: string): Promise<DrivingLicenseVerifyResponse> {
+  static async verifyDrivingLicense(dlNumber: string, dob: string, taskId: string): Promise<DrivingLicenseResponse> {
     return HttpClient.callApi({
       url: 'https://test.zoop.one/api/v1/in/identity/dl/advance',
       method: 'POST',

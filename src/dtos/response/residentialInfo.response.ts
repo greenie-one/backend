@@ -3,7 +3,7 @@ export interface AddResidentialInfoResponse {
   success: boolean;
 }
 
-export interface SingleResidentialInfo {
+export interface ResidentialInfoResponse {
   id: string;
   address_line_1: string;
   address_line_2: string;
@@ -12,12 +12,10 @@ export interface SingleResidentialInfo {
   city: string;
   state: string;
   country: string;
-  start_date?: Date;
-  end_date?: Date;
+  start_date: string;
+  end_date: string;
 }
 
-export type GetResidentialInfoResponse = SingleResidentialInfo[];
-export type CreateResidentialInfoResponse = SingleResidentialInfo;
-export type UpdateResidentialInfoResponse = SingleResidentialInfo;
-
-export type DeleteResidentialInfoResponse = Record<string, never>;
+export interface GetResidentialInfoResponse {
+  residentialInfos: ResidentialInfoResponse[];
+}

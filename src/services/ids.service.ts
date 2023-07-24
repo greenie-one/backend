@@ -1,5 +1,4 @@
-import { CreateIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
-import { GetIDsResponse } from '@/dtos/response/ids.response';
+import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel } from '@/models/id.model';
@@ -14,25 +13,12 @@ const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 60 * 10; // mins;
 
 class IDsService {
-  public async getUserIDs(userId: string): Promise<GetIDsResponse> {
-    const id_document = await IDModel.find({ user: userId });
+  public async getUserIDs(userId: string): Promise<ID[]> {
+    const id_document: ID[] = await IDModel.find({ user: userId });
     if (!id_document) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
-    return id_document.map((val) => ({
-      id: val._id.toString(),
-      idType: val.id_type,
-      idNumber: val.id_number,
-      user: val.user.toString(),
-      address: val.address,
-      location: val.location.toString(),
-      verification: {
-        isVerified: val.verification?.is_verified,
-        lastUpdated: val.verification?.last_updated,
-      },
-      createdAt: val.createdAt,
-      updatedAt: val.updatedAt,
-    }));
+    return id_document;
   }
 
   public async otp_rate_limit_check(userId: string, id_type: IDTypeEnum) {
@@ -54,7 +40,7 @@ class IDsService {
     }));
   }
 
-  public async requestAadharOtp(userId: string, addIDDto: CreateIDDto) {
+  public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
     if (await this.userHasId(userId, IDTypeEnum.AADHAR)) {
       throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
     }
@@ -83,6 +69,7 @@ class IDsService {
     }
 
     const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
+      console.log(err);
       throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
@@ -116,7 +103,7 @@ class IDsService {
     }
   }
 
-  public async verifyPan(userId: string, addIDDto: CreateIDDto) {
+  public async verifyPan(userId: string, addIDDto: AddIDDto) {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
@@ -148,7 +135,7 @@ class IDsService {
     }
   }
 
-  public async verifyDrivingLicense(userId: string, addIDDto: CreateIDDto) {
+  public async verifyDrivingLicense(userId: string, addIDDto: AddIDDto) {
     const { id_number, dob } = addIDDto;
     const taskId = uuidv4();
 

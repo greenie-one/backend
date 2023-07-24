@@ -1,12 +1,5 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { CreateProfileDto, UpdateProfileDto } from '@/dtos/request/profile.dto';
-import {
-  CreateProfileResponse,
-  GetProfileRankingResponse,
-  GetProfileResponse,
-  SearchProfilesResponse,
-  UpdateProfileResponse,
-} from '@/dtos/response/profile.response';
 import { profileService } from '@/services/profile.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -16,22 +9,22 @@ import { Body, Query } from '@/utils/decorators/request';
 @Controller('/profiles')
 export default class ProfileController {
   @Post('/create')
-  async createProfile(@UserDetails() userDetails: TokenClaims, @Body() data: CreateProfileDto): Promise<CreateProfileResponse> {
+  async createProfile(@UserDetails() userDetails: TokenClaims, @Body() data: CreateProfileDto) {
     return profileService.createProfile(userDetails.sub, data);
   }
 
   @Patch('/update')
-  async updateProfile(@UserDetails() userDetails: TokenClaims, @Body() data: UpdateProfileDto): Promise<UpdateProfileResponse> {
+  async updateProfile(@UserDetails() userDetails: TokenClaims, @Body() data: UpdateProfileDto) {
     return profileService.updateProfile(userDetails.sub, data);
   }
 
   @Get('/me')
-  async getProfile(@UserDetails() userDetails: TokenClaims): Promise<GetProfileResponse> {
+  async getProfile(@UserDetails() userDetails: TokenClaims) {
     return profileService.getProfile(userDetails.sub);
   }
 
   @Get('')
-  async searchProfile(@Query('search') searchValue: string): Promise<SearchProfilesResponse> {
+  async searchProfile(@Query('search') searchValue: string) {
     if (searchValue.startsWith('GRN')) {
       const greenieId = searchValue;
       return profileService.searchById(greenieId);
@@ -42,7 +35,7 @@ export default class ProfileController {
   }
 
   @Get('/me/ranking')
-  async getRanking(@UserDetails() userDetails: TokenClaims): Promise<GetProfileRankingResponse> {
+  async getRanking(@UserDetails() userDetails: TokenClaims) {
     return profileService.getPercentileRanking(userDetails.sub);
   }
 }

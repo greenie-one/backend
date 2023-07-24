@@ -1,6 +1,6 @@
-import { env } from '@/config';
-import { OtpType } from '@/dtos/request/peer.dto';
 import { HttpClient } from '../generic/httpClient';
+import { env } from '@/config';
+import { OtpType } from '@/dtos/request/otp.dto';
 
 type SendOtp = {
   contact: string;
