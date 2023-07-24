@@ -25,7 +25,7 @@ export interface GetPeerWorkExDataResponse {
   companyName?: string;
   peerPost?: string;
   designation?: string;
-  optionalVerificationFields?: Partial<WorkExperienceResponse>;
+  selectedFields?: Partial<WorkExperienceResponse>;
   skills?: SkillResponse[];
   documents?: GetDocumentResponse[];
 }
