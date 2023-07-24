@@ -1,8 +1,8 @@
+import { Skills } from './skills.model';
+import { User } from './users.model';
 import { Rating, State, WorkVerificationBy } from '@/dtos/request/peer.dto';
 import { Ref, getModelForClass, index, modelOptions, prop } from '@typegoose/typegoose';
 import { Document } from 'mongoose';
-import { Skills } from './skills.model';
-import { User } from './users.model';
 
 @modelOptions({ schemaOptions: { _id: false } })
 export class Status {
@@ -212,4 +212,3 @@ export class WorkPeer {
 }
 
 export const WorkPeerModel = getModelForClass(WorkPeer);
-

@@ -37,7 +37,7 @@ export enum ErrorEnum {
   AADHAR_NOT_FOUND,
   PAN_VERIFICATION_FAIL,
   DRIVING_LICENSE_VERIFICATION_FAIL,
-  Aadhaar_Verification_FAIL,
+  AADHAR_VERIFICATION_FAIL,
   RATE_LIMIT_EXCEEDED,
   USER_LOCATION_NOT_FOUND,
   AADHAR_VERIFICATION_REQUIRED,
@@ -180,7 +180,7 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: '%s',
     status: 400,
   },
-  [ErrorEnum.Aadhaar_Verification_FAIL]: {
+  [ErrorEnum.AADHAR_VERIFICATION_FAIL]: {
     code: 'GR0033',
     message: '%s',
     status: 400,

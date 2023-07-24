@@ -23,4 +23,3 @@ export default class skillController {
     return skillService.getSkillById(userDetails.sub, skillId);
   }
 }
-

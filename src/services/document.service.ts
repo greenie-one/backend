@@ -1,3 +1,5 @@
+import { SAStokenService } from './blobStorage.service';
+import { profileService } from './profile.service';
 import { CreateDocumentDto, DocumentType, UpdateDocumentDto } from '@/dtos/request/document.dto';
 import { GetDocumentResponse } from '@/dtos/response/document.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
@@ -6,8 +8,6 @@ import { Document, DocumentModel } from '@/models/document.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisUtilClient } from '@/redisClient';
 import { RedisPUBSUB } from '@/redisClient/deleteService';
-import { SAStokenService } from './blobStorage.service';
-import { profileService } from './profile.service';
 
 class DocumentService {
   public async createDocument(userID: string, documentData: CreateDocumentDto): Promise<Document> {
@@ -80,7 +80,7 @@ class DocumentService {
         throw new HttpException(ErrorEnum.DOCUMENT_EXPIRED);
       }
 
-      const fileName = documentData.privateUrl.split(userID + '/');
+      const fileName = documentData.privateUrl.split(`${userID}/`);
       await RedisPUBSUB.docDelete(fileName[1], userID);
     }
     const updatedDocument = await DocumentModel.findByIdAndUpdate(documentId, { $set: documentData }, { new: true });
@@ -110,7 +110,7 @@ class DocumentService {
     }
 
     await documentToDelete.deleteOne();
-    const fileName = documentToDelete.privateUrl.split(userID + '/');
+    const fileName = documentToDelete.privateUrl.split(`${userID}/`);
     await RedisPUBSUB.docDelete(fileName[1], userID);
 
     // Update score based on document deleted
@@ -128,7 +128,7 @@ class DocumentService {
     }
 
     for (let index = 0; index < documents.length; index++) {
-      documents[index].privateUrl = documents[index].privateUrl + '?' + sasToken;
+      documents[index].privateUrl = `${documents[index].privateUrl}?${sasToken}`;
     }
 
     return documents;
@@ -141,7 +141,7 @@ class DocumentService {
       throw new HttpException(ErrorEnum.DOCUMENT_NOT_FOUND);
     }
     for (let index = 0; index < documents.length; index++) {
-      documents[index].privateUrl = documents[index].privateUrl + '?' + sasToken;
+      documents[index].privateUrl = `${documents[index].privateUrl}?${sasToken}`;
     }
     return documents;
   }
@@ -169,4 +169,3 @@ class DocumentService {
 }
 
 export const documentService = new DocumentService();
-

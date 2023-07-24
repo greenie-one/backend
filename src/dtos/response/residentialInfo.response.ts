@@ -19,4 +19,3 @@ export interface ResidentialInfoResponse {
 export interface GetResidentialInfoResponse {
   residentialInfos: ResidentialInfoResponse[];
 }
-

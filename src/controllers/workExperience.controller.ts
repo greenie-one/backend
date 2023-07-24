@@ -37,4 +37,3 @@ export default class WorkExperienceController {
     return workExperienceService.getWorkExperienceById(userDetails.sub, workExpId);
   }
 }
-

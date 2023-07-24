@@ -38,4 +38,3 @@ export default class DocumentController {
     return documentService.getDocumentById(userDetails.sub, documentId);
   }
 }
-

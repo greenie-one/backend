@@ -35,7 +35,14 @@ export interface AadharVerifyOtpResponse {
 
 export interface AadharData{
   name:string,
-  address:{},
+  address:{
+    country: string;
+    dist: string;
+    state: string;
+    street: string;
+    house: string;
+    landmark: string;
+  },
   dob:string,
   aadharNumber:string,
   parentName:string,
@@ -110,6 +117,6 @@ export interface DrivingLicenseData{
   bloodGroup :string,
   licenseNumber:string,
   DOB:string,
-  FaterName:string,
+  fatherName:string,
   vehicleType:[{}]
 }

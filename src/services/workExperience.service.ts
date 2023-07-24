@@ -131,7 +131,7 @@ class WorkExperienceService {
       reason_for_leaving: workExperience.reason_for_leaving,
       dateOfJoining: workExperience.dateOfJoining.toString(),
       linkedInUrl: workExperience.linkedInUrl,
-      dateOfLeaving: workExperience.dateOfLeaving.toString(),
+      dateOfLeaving: workExperience.dateOfLeaving ? workExperience.dateOfLeaving.toString() : null,
     };
 
     return resp;

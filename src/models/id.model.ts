@@ -5,7 +5,6 @@ import { Location } from './location.model';
 import { User } from './users.model';
 import { Verification } from './verified.model';
 
-
 export class ID {
   @prop({ required: true, enum: IDTypeEnum, type: String })
   public id_type!: IDTypeEnum;
@@ -13,6 +12,7 @@ export class ID {
   @prop({ required: true })
   public id_number!: string;
 
+  //todo
   @prop({ required: true, type: Schema.Types.Mixed })
   public data!: object;
 

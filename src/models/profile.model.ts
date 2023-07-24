@@ -1,6 +1,6 @@
-import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
 import { Verification } from './verified.model';
+import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
 @modelOptions({ schemaOptions: { collection: 'profiles', timestamps: true } })
 export class Profile {
@@ -38,4 +38,3 @@ export class Profile {
 
 export const ProfileModel = getModelForClass(Profile);
 ProfileModel.ensureIndexes();
-

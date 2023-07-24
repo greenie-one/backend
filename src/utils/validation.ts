@@ -41,13 +41,14 @@ export function validateRoute(route: string) {
 }
 
 export function sanitizeMobileNumber(mobileNumber: string) {
-  if (mobileNumber.startsWith('91') && mobileNumber.length === 12) {
-    mobileNumber = `+${mobileNumber}`;
+  let mobNo = mobileNumber;
+  if (mobNo.startsWith('91') && mobNo.length === 12) {
+    mobNo = `+${mobNo}`;
   }
 
   if (!mobileNumber.startsWith('+91')) {
-    mobileNumber = `+91${mobileNumber}`;
+    mobNo = `+91${mobNo}`;
   }
 
-  return mobileNumber.slice(-13);
+  return mobNo.slice(-13);
 }

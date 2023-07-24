@@ -42,9 +42,7 @@ class IDsService {
   }
 
   private async maskString(str: string, numVisibleChars: number): Promise<string> {
-    const maskedPart = str.slice(0, -numVisibleChars).replace(/./g, '*');
-    const visiblePart = str.slice(-numVisibleChars);
-    return maskedPart + visiblePart;
+    return `xxxx-xxxx-${str.slice(-numVisibleChars)}`;
   }
   
 
@@ -58,14 +56,14 @@ class IDsService {
     await this.otp_rate_limit_check(userId, IDTypeEnum.AADHAR);
 
     const otpResponse = await AadhaarVerification.requestOtp(id_number, taskId.toString()).catch((err) => {
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, JSON.parse(err)?.response_message);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
     if (otpResponse.success && otpResponse.response_code === '100') {
       const { request_id, success, response_code, response_message } = otpResponse;
       return { success, response_code, response_message, request_id, taskId };
     } else {
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `${otpResponse.response_message}`);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, `${otpResponse.response_message}`);
     }
   }
 
@@ -78,7 +76,7 @@ class IDsService {
 
     const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
       console.log(err);
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, JSON.parse(err)?.response_message);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
     const { success, response_code, response_message, result } = verificationResponse;
@@ -89,7 +87,14 @@ class IDsService {
       const data:AadharData={
         name:verificationResponse.result.user_full_name,
         aadharNumber: await this.maskString(aadhaar_number || "", 4),
-        address: user_address,
+        address: {
+          country: user_address.country,
+          dist: user_address.dist,
+          state: user_address.state,
+          street: user_address.street,
+          house: user_address.house,
+          landmark: user_address.landmark,
+        },
         dob: verificationResponse.result.user_dob,
         parentName: verificationResponse.result.user_parent_name,
 
@@ -116,7 +121,7 @@ class IDsService {
 
       return { success, response_code, response_message };
     } else {
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `${verificationResponse.response_message}`);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, `${verificationResponse.response_message}`);
     }
   }
 
@@ -188,7 +193,7 @@ class IDsService {
         licenseNumber:response.result.dl_number,
         DOB:response.result.user_dob,
         address:response.result.user_address,
-        FaterName:response.result.father_or_husband,
+        fatherName:response.result.father_or_husband,
         vehicleType:response.result.vehicle_category_details
       }
       await IDModel.create({
@@ -208,4 +213,3 @@ class IDsService {
 }
 
 export const idsService = new IDsService();
-

@@ -66,4 +66,3 @@ class SkillService {
 }
 
 export const skillService = new SkillService();
-

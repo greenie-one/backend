@@ -21,16 +21,16 @@ module.exports = {
         },
         {
           from: '.yarn/unplugged/saslprep*/**/node_modules/saslprep/**',
-          to: "saslprep",
+          to: 'saslprep',
         },
         {
           from: '.yarn/unplugged/sparse-bitfield*/**/node_modules/sparse-bitfield/**',
-          to: "sparse-bitfield",
+          to: 'sparse-bitfield',
         },
         {
           from: '.yarn/unplugged/memory-pager*/**/node_modules/memory-pager/**',
-          to: "memory-pager",
-        }
+          to: 'memory-pager',
+        },
       ],
     }),
   ],
@@ -46,7 +46,7 @@ module.exports = {
     ],
   },
   externals: {
-    "saslprep": "require('saslprep')",
+    saslprep: "require('saslprep')",
   },
   optimization: {
     minimizer: [
