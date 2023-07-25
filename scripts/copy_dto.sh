@@ -14,9 +14,11 @@ strip() {
 
   # Remove all class-validator imports
   find "${BASE_DIR}/global-dtos/src/" -type f -exec sed -i -E "s/^(.*)class-validator';$//" {} \;
+  find "${BASE_DIR}/global-dtos/src/" -type f -exec sed -i -E "s/^(.*)class-validator\";$//" {} \;
 
   # Remove all class-transformer imports
   find "${BASE_DIR}/global-dtos/src/" -type f -exec sed -i -E "s/^(.*)class-transformer';$//" {} \;
+  find "${BASE_DIR}/global-dtos/src/" -type f -exec sed -i -E "s/^(.*)class-transformer\";$//" {} \;
 
   # Remove all imports starting with @/
   find "${BASE_DIR}/global-dtos/src/" -type f -exec sed -i -E "s/^(.*)@\/(.*)$//" {} \;
