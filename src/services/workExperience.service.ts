@@ -3,8 +3,8 @@ import { AddWorkExperienceResponse, WorkExperienceResponse } from '@/dtos/respon
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
-import { WorkPeerModel } from '@/models/peer.model';
 import { SkillModel } from '@/models/skills.model';
+import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { UserModel } from '@models/users.model';
 
