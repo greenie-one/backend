@@ -1,8 +1,8 @@
-import { IsValidNestedQuestion, sanitizeMobileNumber } from '@/utils/validation';
+import { sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type } from 'class-transformer';
 
 // rome-ignore format: Imports need to be remove and i'm too lazy to write a multi-line import removal regex
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, Validate, ValidateIf, ValidateNested } from "class-validator";
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, ValidateIf, ValidateNested } from "class-validator";
 
 export enum OtpType {
   EMAIL = 'EMAIL',
@@ -222,8 +222,9 @@ export class UpdatePeerWorkVerificationDto {
   @IsNotEmpty()
   public allQuestions!: AllQuestionsDTO;
 
-  @Validate(IsValidNestedQuestion)
+  @ValidateNested()
   @IsOptional()
+  @Type(() => HRQuestionsDTO)
   public otherQuestions?: HRQuestionsDTO;
 
   @IsArray()

@@ -1,5 +1,5 @@
 import { env } from '@/config';
-import { OtpType } from '@/dtos/request/peer.dto';
+import { OtpType } from '@/dtos/request/workExPeer.dto';
 import { HttpClient } from '../generic/httpClient';
 
 type SendOtp = {
