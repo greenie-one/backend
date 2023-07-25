@@ -1,6 +1,7 @@
 import { SAStokenService } from './blobStorage.service';
 import { profileService } from './profile.service';
 import { CreateDocumentDto, DocumentType, UpdateDocumentDto } from '@/dtos/request/document.dto';
+import { GetDocumentResponse } from '@/dtos/response/document.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel } from '@/models/document.model';
@@ -143,6 +144,27 @@ class DocumentService {
       documents[index].privateUrl = `${documents[index].privateUrl}?${sasToken}`;
     }
     return documents;
+  }
+
+  public async getDocumentById(userId: string, id: string): Promise<GetDocumentResponse> {
+    const document = await DocumentModel.findById(id);
+
+    if (!document) {
+      throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
+    }
+
+    if (document.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    const resp: GetDocumentResponse = {
+      id: document._id.toString(),
+      name: document.name,
+      type: document.type,
+      privateUrl: document.privateUrl,
+    };
+
+    return resp;
   }
 }
 
