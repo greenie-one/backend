@@ -164,19 +164,23 @@ class WorkExPeerService {
     }
 
     const skillIds = peer.skills.map((skill) => skill.id);
-    (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
-      return { id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise };
-    });
+    Promise.all(
+      (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
+        data.skills.push({ id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise });
+      }),
+    );
     const documentIds = peer.documents.map((document) => document.id);
-    (await DocumentModel.find({ _id: { $in: documentIds } })).map(async (document) => {
-      const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
-      return {
-        id: document._id.toString(),
-        type: document.type,
-        name: document.name,
-        privateUrl: `${document.privateUrl}?${sasToken}`,
-      };
-    });
+    Promise.all(
+      (await DocumentModel.find({ _id: { $in: documentIds } })).map(async (document) => {
+        const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
+        data.documents.push({
+          id: document._id.toString(),
+          type: document.type,
+          name: document.name,
+          privateUrl: `${document.privateUrl}?${sasToken}`,
+        });
+      }),
+    );
 
     const res: GetPeerInformationResponse = {
       id: peer._id.toString(),
