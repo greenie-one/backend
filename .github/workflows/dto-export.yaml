@@ -5,7 +5,7 @@ on:
     branches:
       - 'dev'
       - 'main'
-      - 'sg/dto_sync'
+      - 'sg/dto_fix'
 
 jobs:
   release:
