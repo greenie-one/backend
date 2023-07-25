@@ -69,5 +69,5 @@ jobs:
 
       - name: Deploy chart
         run: |
-          helm upgrade --install --namespace backend -f deployment/values-dev.yaml greenie-mvp-backend-dev2 ./deployment --set image.name=${{ steps.meta.outputs.tags }} --set nameOverride=greenie-mvp-backend-dev2 --set fullnameOverride=greenie-mvp-backend-dev2 --set service.name=greenie-mvp-backend-dev2 --wait
+          helm upgrade --install --namespace backend -f deployment/values-dev.yaml greenie-mvp-backend-dev2 ./deployment --set image.name=${{ steps.meta.outputs.tags }} --set nameOverride=greenie-mvp-backend-dev2 --set fullnameOverride=greenie-mvp-backend-dev2 --set serviceAccount.name=greenie-mvp-backend-dev2 --wait
 
