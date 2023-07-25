@@ -1,9 +1,9 @@
-import { Location } from './location.model';
-import { User } from './users.model';
-import { Verification } from './verified.model';
 import { IDTypeEnum } from '@/dtos/request/ids.dto';
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 import { Schema } from 'mongoose';
+import { Location } from './location.model';
+import { User } from './users.model';
+import { Verification } from './verified.model';
 
 export class ID {
   @prop({ required: true, enum: IDTypeEnum, type: String })
@@ -11,6 +11,10 @@ export class ID {
 
   @prop({ required: true })
   public id_number!: string;
+
+  //todo
+  @prop({ required: true, type: Schema.Types.Mixed })
+  public data!: object;
 
   @prop({ ref: 'User' })
   public user!: Ref<User>;

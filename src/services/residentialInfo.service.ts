@@ -1,22 +1,20 @@
 import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
-import { AddResidentialInfoResponse, GetResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
+import { AddResidentialInfoResponse, ResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 
 class ResidentialInfoService {
-  public async getUserResidentialInfo(userId: string): Promise<GetResidentialInfoResponse> {
+  public async getUserResidentialInfo(userId: string): Promise<ResidentialInfoResponse[]> {
     const residentialInfos = await ResidentialInfoModel.find({ user: userId });
     if (!residentialInfos) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    const res: GetResidentialInfoResponse = {
-      residentialInfos: [],
-    };
+    const res: ResidentialInfoResponse[] = [];
     for (const residentialInfo of residentialInfos) {
-      res.residentialInfos.push({
+      res.push({
         id: residentialInfo._id.toString(),
         address_line_1: residentialInfo.address_line_1,
         address_line_2: residentialInfo.address_line_2,
