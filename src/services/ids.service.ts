@@ -1,5 +1,5 @@
-import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
-import { AadharData, DrivingLicenseData, PanData } from '@/dtos/response/ids.response';
+import { CreateIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
+import { AadharData, DrivingLicenseData, GetIDsResponse, PanData } from '@/dtos/response/ids.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel } from '@/models/id.model';
@@ -14,12 +14,25 @@ const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 60 * 10; // mins;
 
 class IDsService {
-  public async getUserIDs(userId: string): Promise<ID[]> {
-    const id_document: ID[] = await IDModel.find({ user: userId });
+  public async getUserIDs(userId: string): Promise<GetIDsResponse> {
+    const id_document = await IDModel.find({ user: userId });
     if (!id_document) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
-    return id_document;
+    return id_document.map((val) => ({
+      id: val._id.toString(),
+      idType: val.id_type,
+      idNumber: val.id_number,
+      user: val.user.toString(),
+      address: val.address,
+      location: val.location.toString(),
+      verification: {
+        isVerified: val.verification?.is_verified,
+        lastUpdated: val.verification?.last_updated,
+      },
+      createdAt: val.createdAt,
+      updatedAt: val.updatedAt,
+    }));
   }
 
   public async otp_rate_limit_check(userId: string, id_type: IDTypeEnum) {
@@ -44,9 +57,8 @@ class IDsService {
   private async maskString(str: string, numVisibleChars: number): Promise<string> {
     return `xxxx-xxxx-${str.slice(-numVisibleChars)}`;
   }
-  
 
-  public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
+  public async requestAadharOtp(userId: string, addIDDto: CreateIDDto) {
     if (await this.userHasId(userId, IDTypeEnum.AADHAR)) {
       throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
     }
@@ -75,7 +87,6 @@ class IDsService {
     }
 
     const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
-      console.log(err);
       throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
@@ -84,9 +95,9 @@ class IDsService {
       const aadhaar_number = result.user_aadhaar_number;
       const user_address = result.user_address;
 
-      const data:AadharData={
-        name:verificationResponse.result.user_full_name,
-        aadharNumber: await this.maskString(aadhaar_number || "", 4),
+      const data: AadharData = {
+        name: verificationResponse.result.user_full_name,
+        aadharNumber: await this.maskString(aadhaar_number || '', 4),
         address: {
           country: user_address.country,
           dist: user_address.dist,
@@ -97,8 +108,7 @@ class IDsService {
         },
         dob: verificationResponse.result.user_dob,
         parentName: verificationResponse.result.user_parent_name,
-
-      }
+      };
       await IDModel.db.transaction(async (session) => {
         await IDModel.create(
           [
@@ -106,7 +116,7 @@ class IDsService {
               id_type: IDTypeEnum.AADHAR,
               id_number: aadhaar_number,
               user: userId,
-              data:data,
+              data: data,
               address: user_address,
             },
           ],
@@ -125,7 +135,7 @@ class IDsService {
     }
   }
 
-  public async verifyPan(userId: string, addIDDto: AddIDDto) {
+  public async verifyPan(userId: string, addIDDto: CreateIDDto) {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
@@ -143,21 +153,21 @@ class IDsService {
 
     const { success, response_code, response_message } = response;
     if (success && response_code === '100') {
-      const data :PanData={
-        name:response.result.user_full_name,
-        aadharLinked:response.result.aadhaar_linked_status,
-        panType:response.result.pan_type,
-        email:response.result.user_email,
-        phoneNumber:response.result.user_phone_number,
-        gender:response.result.user_gender,
-        dob:response.result.user_dob,
-        aadharNumber:response.result.masked_aadhaar,
-      } 
+      const data: PanData = {
+        name: response.result.user_full_name,
+        aadharLinked: response.result.aadhaar_linked_status,
+        panType: response.result.pan_type,
+        email: response.result.user_email,
+        phoneNumber: response.result.user_phone_number,
+        gender: response.result.user_gender,
+        dob: response.result.user_dob,
+        aadharNumber: response.result.masked_aadhaar,
+      };
       await IDModel.create({
         id_type: IDTypeEnum.PAN,
         id_number: addIDDto.id_number,
         user: userId,
-        data:data,
+        data: data,
         address: response.result.user_address,
       } as ID);
 
@@ -168,7 +178,7 @@ class IDsService {
     }
   }
 
-  public async verifyDrivingLicense(userId: string, addIDDto: AddIDDto) {
+  public async verifyDrivingLicense(userId: string, addIDDto: CreateIDDto) {
     const { id_number, dob } = addIDDto;
     const taskId = uuidv4();
 
@@ -187,20 +197,20 @@ class IDsService {
     const { success, response_code, response_message } = response;
     if (success && response_code === '100') {
       const user_address = response.result.user_address[0];
-      const data:DrivingLicenseData = {
-        name:response.result.user_full_name,
-        bloodGroup :response.result.user_blood_group,
-        licenseNumber:response.result.dl_number,
-        DOB:response.result.user_dob,
-        address:response.result.user_address,
-        fatherName:response.result.father_or_husband,
-        vehicleType:response.result.vehicle_category_details
-      }
+      const data: DrivingLicenseData = {
+        name: response.result.user_full_name,
+        bloodGroup: response.result.user_blood_group,
+        licenseNumber: response.result.dl_number,
+        DOB: response.result.user_dob,
+        address: response.result.user_address,
+        fatherName: response.result.father_or_husband,
+        vehicleType: response.result.vehicle_category_details,
+      };
       await IDModel.create({
         id_type: IDTypeEnum.DRIVING_LICENSE,
         id_number: addIDDto.id_number,
         user: userId,
-        data:data,
+        data: data,
         address: user_address,
       } as ID);
 

@@ -160,6 +160,7 @@ export class WorkPeer {
   @prop({ required: true })
   public phone!: string;
 
+  // TODO: Make an enum with verified type [phone / email]
   @prop({ type: Boolean, default: false })
   public emailVerified?: boolean;
 

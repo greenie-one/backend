@@ -1,7 +1,8 @@
+import { HRQuestionsDTO } from '@/dtos/request/workExPeer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { ValidationError, validateOrReject } from 'class-validator';
+import { ValidationError, ValidatorConstraint, ValidatorConstraintInterface, validate, validateOrReject } from 'class-validator';
 
 /**
  * @name ValidationMiddleware
@@ -51,4 +52,20 @@ export function sanitizeMobileNumber(mobileNumber: string) {
   }
 
   return mobNo.slice(-13);
+}
+
+@ValidatorConstraint({ name: 'isValidNestedQuestion', async: false })
+export class IsValidNestedQuestion implements ValidatorConstraintInterface {
+  async validate(otherQuestions) {
+    let valid = false;
+    const tryOne = plainToInstance<unknown, object>(HRQuestionsDTO, otherQuestions);
+    await validate(tryOne, { whitelist: true, forbidNonWhitelisted: true }).then((errors) => {
+      if (errors.length === 0) valid = true;
+    });
+    return valid;
+  }
+
+  defaultMessage() {
+    return `'otherQuestions' must be either HRQuestionFieldsDTO or ExceptHRQuestionFieldsDTO`;
+  }
 }

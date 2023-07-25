@@ -20,7 +20,7 @@ export class ID {
   public user!: Ref<User>;
 
   @prop({ required: true, type: Schema.Types.Mixed })
-  public address!: object;
+  public address!: Record<string, string>;
 
   @prop({ ref: 'Location', type: String })
   public location?: Ref<Location, string>;
