@@ -19,7 +19,7 @@ export class WorkExperience {
   @prop({ type: String, required: true })
   public companyName!: string;
 
-  @prop({ type: String, required: true })
+  @prop({ type: String })
   public companyId?: string;
 
   @prop({ type: String })
