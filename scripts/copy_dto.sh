@@ -31,7 +31,8 @@ strip() {
 }
 
 export_all() {
-  DIR_STRING=$(find "${BASE_DIR}/global-dtos/src/dtos" -type f -exec realpath --relative-to "${BASE_DIR}/global-dtos/src/" {} \;)
+  rm -f "${BASE_DIR}/global-dtos/src/index.ts"
+  DIR_STRING=$(find "${BASE_DIR}/global-dtos/src/" -type f -exec realpath --relative-to "${BASE_DIR}/global-dtos/src/" {} \;)
   DIRS=($(echo $DIR_STRING | tr " " "\n"))
   for i in "${DIRS[@]}"
   do
