@@ -1,5 +1,5 @@
 import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request/workExperience.dto';
-import { AddWorkExperienceResponse, GetWorkExperienceResponse } from '@/dtos/response/workExperience.response';
+import { AddWorkExperienceResponse, WorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
@@ -35,19 +35,17 @@ class WorkExperienceService {
     const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
     return res;
   }
-  public async getWorkExperience(userId: string): Promise<GetWorkExperienceResponse> {
+  public async getWorkExperience(userId: string): Promise<WorkExperienceResponse[]> {
     const workExperiences = await WorkExperienceModel.find({ user: userId });
 
     if (!workExperiences) {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    const res: GetWorkExperienceResponse = {
-      workExperiences: [],
-    };
+    const res: WorkExperienceResponse[] = [];
     for (const workExp of workExperiences) {
-      res.workExperiences.push({
-        id: workExp._id.toString(),
+      res.push({
+         id: workExp._id.toString(),
         designation: workExp.designation,
         companyType: workExp.companyType,
         email: workExp.email,
@@ -106,6 +104,37 @@ class WorkExperienceService {
     }
 
     return { success: true, message: 'Updated Successfully' };
+  }
+
+  public async getWorkExperienceById(userId: string, id: string): Promise<WorkExperienceResponse> {
+    const workExperience = await WorkExperienceModel.findById(id);
+
+    if (!workExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+    if (workExperience.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    const resp: WorkExperienceResponse = {
+      id: workExperience._id.toString(),
+      designation: workExperience.designation,
+      companyType: workExperience.companyType,
+      email: workExperience.email,
+      workMode: workExperience.workMode,
+      department: workExperience.department,
+      workType: workExperience.workType,
+      companyName: workExperience.companyName,
+      companyId: workExperience.companyId,
+      salary: workExperience.salary,
+      noOfVerifications:workExperience.noOfVerifications,
+      reason_for_leaving: workExperience.reason_for_leaving,
+      dateOfJoining: workExperience.dateOfJoining.toString(),
+      linkedInUrl: workExperience.linkedInUrl,
+      dateOfLeaving: workExperience.dateOfLeaving ? workExperience.dateOfLeaving.toString() : null,
+    };
+
+    return resp;
   }
 }
 

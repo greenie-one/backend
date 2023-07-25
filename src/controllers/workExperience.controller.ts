@@ -31,4 +31,9 @@ export default class WorkExperienceController {
   ) {
     return workExperienceService.updateWorkExperience(userDetails.sub, workExpereienceId, data);
   }
+
+  @Get('/:id')
+  async getWorkExperienceById(@UserDetails() userDetails: TokenClaims, @Params('id') workExpId: string) {
+    return workExperienceService.getWorkExperienceById(userDetails.sub, workExpId);
+  }
 }
