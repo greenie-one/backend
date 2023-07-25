@@ -3,9 +3,9 @@
 BASE_DIR=$GITHUB_WORKSPACE
 
 copy_dtos() {
-  rm -rf "${BASE_DIR}/global-dtos/src"
-  mkdir -p "${BASE_DIR}/global-dtos/src"
-  cp -r "${BASE_DIR}/backend/src/dtos" "${BASE_DIR}/global-dtos/src"
+  rm -rf "${BASE_DIR}/global-dtos/src/core"
+  mkdir -p "${BASE_DIR}/global-dtos/src/core"
+  cp -r "${BASE_DIR}/backend/src/dtos" "${BASE_DIR}/global-dtos/src/core"
 }
 
 strip() {
