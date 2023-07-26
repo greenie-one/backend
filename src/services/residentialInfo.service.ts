@@ -46,7 +46,7 @@ class ResidentialInfoService {
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
-      location: location,
+      location: (await location).id,
     });
 
     const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };
