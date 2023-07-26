@@ -1,16 +1,16 @@
-import { AddIDDto, VerifyIDDto } from '@/dtos/ids.dto';
+import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { ID, IDModel, IDTypeEnum } from '@/models/id.model';
+import { ID, IDModel } from '@/models/id.model';
 import { redisClient } from '@/redisClient';
 import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
 import { PanVerification } from '@/remote/verification/pan.remote';
 import { v4 as uuidv4 } from 'uuid';
-import { locationService } from './location.service';
+import { profileService } from './profile.service';
 
 const OTP_LIMIT = 5;
-const VALIDATION_LIMIT = 10 * 60; // mins;
+const VALIDATION_LIMIT = 60 * 10; // mins;
 
 class IDsService {
   public async getUserIDs(userId: string): Promise<ID[]> {
@@ -33,56 +33,73 @@ class IDsService {
     }
   }
 
+  private async userHasId(userId: string, idType: IDTypeEnum) {
+    return !!(await IDModel.findOne({
+      user: userId,
+      id_type: idType,
+    }));
+  }
+
   public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
+    if (await this.userHasId(userId, IDTypeEnum.AADHAR)) {
+      throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
+    }
+
     const { id_number } = addIDDto;
     const taskId = uuidv4();
-
     await this.otp_rate_limit_check(userId, IDTypeEnum.AADHAR);
 
     const otpResponse = await AadhaarVerification.requestOtp(id_number, taskId.toString()).catch((err) => {
-      console.log(err);
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `Internal API Error`);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
     if (otpResponse.success && otpResponse.response_code === '100') {
       const { request_id, success, response_code, response_message } = otpResponse;
       return { success, response_code, response_message, request_id, taskId };
     } else {
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `${otpResponse.response_message}`);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, `${otpResponse.response_message}`);
     }
   }
 
   public async verifyAadharOtp(userId: string, verifyIdDto: VerifyIDDto) {
     const { otp, request_id, task_id } = verifyIdDto;
 
-    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
-
-    if (newId) {
+    if (await this.userHasId(userId, IDTypeEnum.AADHAR)) {
       throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
     }
 
     const verificationResponse = await AadhaarVerification.verifyOtp(request_id, otp, task_id).catch((err) => {
       console.log(err);
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `Internal API Error`);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
-    if (verificationResponse.success && verificationResponse.response_code === '100') {
-      const aadhaar_number = verificationResponse.result.user_aadhaar_number;
-      const user_address = verificationResponse.result.user_address;
-      const address = { address: user_address, type: IDTypeEnum.AADHAR };
-      const location = await locationService.getCoordinates(userId, IDTypeEnum.AADHAR, address.toString());
-      await IDModel.create({
-        id_type: IDTypeEnum.AADHAR,
-        id_number: aadhaar_number,
-        user: userId,
-        location: location._id,
-        id_data: verificationResponse,
+    const { success, response_code, response_message, result } = verificationResponse;
+    if (success && response_code === '100') {
+      const aadhaar_number = result.user_aadhaar_number;
+      const user_address = result.user_address;
+
+      await IDModel.db.transaction(async (session) => {
+        await IDModel.create(
+          [
+            {
+              id_type: IDTypeEnum.AADHAR,
+              id_number: aadhaar_number,
+              user: userId,
+              address: user_address,
+            },
+          ],
+          {
+            session,
+          },
+        );
+
+        await profileService.modScore(userId, IDTypeEnum.AADHAR, true, session);
+        await profileService.generateGreenieId(userId, session);
       });
 
-      const { success, response_code, response_message } = verificationResponse;
       return { success, response_code, response_message };
     } else {
-      throw new HttpException(ErrorEnum.Aadhaar_Verification_FAIL, `${verificationResponse.response_message}`);
+      throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_FAIL, `${verificationResponse.response_message}`);
     }
   }
 
@@ -90,35 +107,28 @@ class IDsService {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
-    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.PAN });
-    if (newId) {
+    if (await this.userHasId(userId, IDTypeEnum.PAN)) {
       throw new HttpException(ErrorEnum.PAN_ALREADY_EXIST);
     }
 
-    const AadharId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
-
-    if (!AadharId) {
+    if (!(await this.userHasId(userId, IDTypeEnum.AADHAR))) {
       throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_REQUIRED);
     }
+
     const response = await PanVerification.verifyPan(id_number, taskId).catch((err) => {
-      console.error(err);
-      throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL, `Internal API Error`);
+      throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
-    if (response.success && response.response_code === '100') {
-      const user_address = response.result.user_address;
-      const address = { address: user_address, type: IDTypeEnum.PAN };
-
-      const location = await locationService.getCoordinates(userId, IDTypeEnum.PAN, address.toString());
+    const { success, response_code, response_message } = response;
+    if (success && response_code === '100') {
       await IDModel.create({
         id_type: IDTypeEnum.PAN,
         id_number: addIDDto.id_number,
         user: userId,
-        location: location._id,
-        id_data: response,
-      });
+        address: response.result.user_address,
+      } as ID);
 
-      const { success, response_code, response_message } = response;
+      await profileService.modScore(userId, IDTypeEnum.PAN, true);
       return { success, response_code, response_message };
     } else {
       throw new HttpException(ErrorEnum.PAN_VERIFICATION_FAIL, `${response.response_message}`);
@@ -129,36 +139,30 @@ class IDsService {
     const { id_number, dob } = addIDDto;
     const taskId = uuidv4();
 
-    const newId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.DRIVING_LICENSE });
-
-    if (newId) {
+    if (await this.userHasId(userId, IDTypeEnum.PAN)) {
       throw new HttpException(ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST);
     }
 
-    const AadharId = await IDModel.findOne({ user: userId, id_type: IDTypeEnum.AADHAR });
-
-    if (!AadharId) {
+    if (!(await this.userHasId(userId, IDTypeEnum.AADHAR))) {
       throw new HttpException(ErrorEnum.AADHAR_VERIFICATION_REQUIRED);
     }
 
     const response = await drivinLicenseVerification.verifyDrivingLicense(id_number, dob, taskId).catch((err) => {
-      console.error(err);
-      throw new HttpException(ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL, `Internal API Error`);
+      throw new HttpException(ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL, JSON.parse(err)?.response_message);
     });
 
-    if (response.success && response.response_code === '100') {
+    const { success, response_code, response_message } = response;
+    if (success && response_code === '100') {
       const user_address = response.result.user_address[0];
-      const address = { address: user_address, type: IDTypeEnum.DRIVING_LICENSE };
-      // console.log(address);
-      const location = await locationService.getCoordinates(userId, IDTypeEnum.DRIVING_LICENSE, address.toString());
+
       await IDModel.create({
         id_type: IDTypeEnum.DRIVING_LICENSE,
         id_number: addIDDto.id_number,
         user: userId,
-        location: location._id,
-        id_data: response,
-      });
-      const { success, response_code, response_message } = response;
+        address: user_address,
+      } as ID);
+
+      await profileService.modScore(userId, IDTypeEnum.DRIVING_LICENSE, true);
       return { success, response_code, response_message };
     } else {
       throw new HttpException(ErrorEnum.DRIVING_LICENSE_VERIFICATION_FAIL, `${response.response_message}`);

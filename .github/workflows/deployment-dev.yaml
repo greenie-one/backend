@@ -3,8 +3,8 @@ name: Deployment development
 on:
   workflow_dispatch:
   push:
-      branches:
-        - dev
+    branches:
+      - dev
 
 env:
   REGISTRY: ghcr.io
@@ -70,3 +70,4 @@ jobs:
       - name: Deploy chart
         run: |
           helm upgrade --install --namespace backend -f deployment/values-dev.yaml greenie-mvp-backend-dev ./deployment --set image.name=${{ steps.meta.outputs.tags }} --wait
+

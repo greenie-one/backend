@@ -1,6 +1,6 @@
-import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
 import { Verification } from './verified.model';
+import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
 @modelOptions({ schemaOptions: { collection: 'profiles', timestamps: true } })
 export class Profile {
@@ -11,9 +11,9 @@ export class Profile {
   public lastName!: string;
 
   @prop({ type: String })
-  public profilePic!: string;
+  public profilePic?: string;
 
-  @prop({ type: String })
+  @prop({ type: String, unique: true, sparse: true })
   public greenie_id?: string;
 
   @prop({ type: String })
@@ -22,14 +22,14 @@ export class Profile {
   @prop({ ref: 'User' })
   public user!: Ref<User>;
 
-  @prop({ type: String, required: false })
-  public profilePicture?: string;
-
   @prop({ type: Array<string>, default: [] })
   public descriptionTags!: string[];
 
   @prop({ type: () => Verification })
   public verification?: Verification;
+
+  @prop({ type: Number, default: 0, index: true })
+  public score: number;
 
   public createdAt?: Date;
 
@@ -37,3 +37,4 @@ export class Profile {
 }
 
 export const ProfileModel = getModelForClass(Profile);
+ProfileModel.ensureIndexes();

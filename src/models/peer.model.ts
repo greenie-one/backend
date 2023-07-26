@@ -1,0 +1,214 @@
+import { Skills } from './skills.model';
+import { User } from './users.model';
+import { Rating, State, WorkVerificationBy } from '@/dtos/request/peer.dto';
+import { Ref, getModelForClass, index, modelOptions, prop } from '@typegoose/typegoose';
+import { Document } from 'mongoose';
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class Status {
+  @prop({ enum: State, type: String })
+  public state: State;
+
+  @prop({
+    type: String,
+    required: function (this: Status) {
+      return this.state === State.REJECTED;
+    },
+  })
+  public dispute_type?: string;
+
+  @prop({ type: String })
+  @prop({
+    type: String,
+    required: function (this: Status) {
+      return this.state === State.REJECTED;
+    },
+  })
+  public dispute_reason?: string;
+
+  static defaultStatus() {
+    const defaultStatus = new Status();
+    defaultStatus.state = State.PENDING;
+    return defaultStatus;
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class OptionalWorkExperienceFields {
+  @prop()
+  public candidateId?: Status;
+
+  @prop()
+  public department?: Status;
+
+  @prop()
+  public dateOfJoining?: Status;
+
+  @prop()
+  public dateOfLeaving?: Status;
+
+  @prop()
+  public companyName?: Status;
+
+  @prop()
+  public workType?: Status;
+
+  @prop()
+  public workMode?: Status;
+
+  @prop()
+  public salary?: Status;
+
+  static defaultFields() {
+    const defaultOptionalWorkExFields = new OptionalWorkExperienceFields();
+    defaultOptionalWorkExFields.candidateId = Status.defaultStatus();
+    defaultOptionalWorkExFields.department = Status.defaultStatus();
+    defaultOptionalWorkExFields.dateOfJoining = Status.defaultStatus();
+    defaultOptionalWorkExFields.dateOfLeaving = Status.defaultStatus();
+    defaultOptionalWorkExFields.companyName = Status.defaultStatus();
+    defaultOptionalWorkExFields.workType = Status.defaultStatus();
+    defaultOptionalWorkExFields.workMode = Status.defaultStatus();
+    defaultOptionalWorkExFields.salary = Status.defaultStatus();
+    return defaultOptionalWorkExFields;
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class MandatoryWorkExFields {
+  @prop({ type: String, default: 'No Review' })
+  public review?: string;
+
+  static defaultFields() {
+    const defaultMandatoryWorkExFields = new MandatoryWorkExFields();
+    defaultMandatoryWorkExFields.review = 'No Review';
+    return defaultMandatoryWorkExFields;
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class MandatoryQuestionFields {
+  @prop({ enum: Rating, type: String, default: Rating.NOT_GIVEN })
+  public attitudeRating?: Rating;
+
+  @prop({ default: Status.defaultStatus() })
+  public eligibleForRehire?: Status;
+
+  static defaultFields() {
+    const defaultMandatoryQuestionFields = new MandatoryQuestionFields();
+    defaultMandatoryQuestionFields.attitudeRating = Rating.NOT_GIVEN;
+    defaultMandatoryQuestionFields.eligibleForRehire = Status.defaultStatus();
+    return defaultMandatoryQuestionFields;
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class HRQuestionFields {
+  @prop({ default: Status.defaultStatus() })
+  public exitProcedure?: Status;
+
+  static defaultFields() {
+    const defaultHRQuestionFields = new HRQuestionFields();
+    defaultHRQuestionFields.exitProcedure = Status.defaultStatus();
+    return defaultHRQuestionFields;
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class ExceptHRQuestionFields {
+  @prop({ default: Status.defaultStatus() })
+  public designation!: Status;
+
+  @prop({ default: Status.defaultStatus() })
+  public peerPost!: Status;
+
+  static defaultFields() {
+    const defaultExceptHRQuestionFields = new ExceptHRQuestionFields();
+    defaultExceptHRQuestionFields.designation = Status.defaultStatus();
+    defaultExceptHRQuestionFields.peerPost = Status.defaultStatus();
+    return defaultExceptHRQuestionFields;
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class SkillsVerification {
+  @prop({ type: String, ref: 'Skills', required: true })
+  public id!: Ref<Skills, string>;
+
+  @prop({ default: Status.defaultStatus() })
+  public status?: Status;
+
+  constructor(skill: Ref<Skills, string>) {
+    this.id = skill;
+    this.status = Status.defaultStatus();
+  }
+}
+
+@modelOptions({ schemaOptions: { _id: false } })
+export class DocumentVerification {
+  @prop({ type: String, ref: 'Document', required: true })
+  public id!: Ref<Document, string>;
+
+  @prop({ default: Status.defaultStatus() })
+  public status?: Status;
+
+  constructor(document: Ref<Document, string>) {
+    this.id = document;
+    this.status = Status.defaultStatus();
+  }
+}
+
+// Index for unique peer, scoped to user, email and workExperience ref
+@modelOptions({ schemaOptions: { timestamps: true } })
+@index({ user: 1, email: 1, ref: 1 }, { unique: true })
+export class WorkPeer {
+  @prop({ required: true, ref: 'User', type: String })
+  public user!: Ref<User, string>;
+
+  @prop({ required: true, ref: 'WorkExperience', type: String })
+  public ref!: Ref<User, string>;
+
+  @prop({ required: true })
+  public name!: string;
+
+  @prop({ required: true })
+  public email!: string;
+
+  @prop({ required: true })
+  public phone!: string;
+
+  @prop({ type: Boolean, default: false })
+  public emailVerified?: boolean;
+
+  @prop({ type: Boolean, default: false })
+  public phoneVerified?: boolean;
+
+  @prop({ required: true, enum: WorkVerificationBy, type: String })
+  public verificationBy!: WorkVerificationBy;
+
+  @prop()
+  public optionalVerificationFields?: OptionalWorkExperienceFields;
+
+  @prop({ default: MandatoryWorkExFields.defaultFields() })
+  public mandatoryVerificationFields?: MandatoryWorkExFields;
+
+  @prop({ default: MandatoryQuestionFields.defaultFields() })
+  public mandatoryQuestionFields?: MandatoryQuestionFields;
+
+  @prop()
+  public otherQuestionFields!: HRQuestionFields | ExceptHRQuestionFields;
+
+  @prop({ required: true })
+  public skills!: SkillsVerification[];
+
+  @prop({ required: true })
+  public documents!: DocumentVerification[];
+
+  public createdAt?: Date;
+
+  public updatedAt?: Date;
+
+  @prop({ type: Boolean, default: false })
+  public isVerificationCompleted?: boolean;
+}
+
+export const WorkPeerModel = getModelForClass(WorkPeer);

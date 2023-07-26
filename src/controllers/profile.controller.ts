@@ -1,5 +1,5 @@
-import { TokenClaims } from '@/dtos/auth.dto';
-import { CreateProfileDto, UpdateProfileDto } from '@/dtos/profile.dto';
+import { TokenClaims } from '@/dtos/request/auth.dto';
+import { CreateProfileDto, UpdateProfileDto } from '@/dtos/request/profile.dto';
 import { profileService } from '@/services/profile.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -32,5 +32,10 @@ export default class ProfileController {
       const [firstName, lastName] = searchValue.split(' ');
       return profileService.searchByUsername(firstName, lastName);
     }
+  }
+
+  @Get('/me/ranking')
+  async getRanking(@UserDetails() userDetails: TokenClaims) {
+    return profileService.getPercentileRanking(userDetails.sub);
   }
 }

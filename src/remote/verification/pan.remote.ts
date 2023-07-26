@@ -1,11 +1,11 @@
-import { env } from '@/config';
-import { PanVerifyResponse } from '@/dtos/ids.dto';
 import { HttpClient } from '../generic/httpClient';
+import { env } from '@/config';
+import { PanVerifyResponse } from '@/dtos/response/ids.response';
 
 export class PanVerification {
   static async verifyPan(panNumber: string, taskId: string): Promise<PanVerifyResponse> {
     return HttpClient.callApi({
-      url: `https://test.zoop.one/api/v1/in/identity/pan/pro`,
+      url: 'https://test.zoop.one/api/v1/in/identity/pan/pro',
       method: 'POST',
       headers: {
         'app-id': env('ZOOP_ID'),

@@ -1,6 +1,6 @@
-import { AddToWaitlistDto } from '@/dtos/waitlist.dto';
+import { AddToWaitlistDto } from '@/dtos/request/waitlist.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
-import { WaitlistMailer } from '@/remote/email/waitlist';
+import { WaitlistMailer } from '@/remote/waitlist/email';
 import { HttpException } from '@exceptions/httpException';
 import { Waitlist, WaitlistModel } from '@models/waitlist.model';
 
@@ -12,7 +12,7 @@ export class WaitlistService {
     }
     const waitlist = await WaitlistModel.create(waitlistData);
 
-    WaitlistMailer.sendWaitlistMail(waitlistData.name, waitlistData.email);
+    await WaitlistMailer.sendWaitlistMail(waitlistData.name, waitlistData.email);
     return waitlist;
   }
 }

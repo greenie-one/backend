@@ -12,7 +12,7 @@ export class HttpClient {
     let body: string | undefined = undefined;
     if (request.method === 'POST' && request.body) {
       if (request.headers?.['Content-Type'] === 'application/x-www-form-urlencoded') {
-        body = querystring.encode(request.body);
+        body = querystring.encode(request.body as Record<string, string>);
       } else {
         body = JSON.stringify(request.body);
       }
@@ -30,10 +30,16 @@ export class HttpClient {
     });
 
     let response: T;
-    if (request.toJSON !== false) {
-      response = (await resp.json()) as T;
+    if (resp.ok) {
+      if (request.toJSON !== false) {
+        response = (await resp.json()) as T;
+      } else {
+        response = (await resp.text()) as T;
+      }
     } else {
-      response = (await resp.text()) as T;
+      const errResp = await resp.text();
+      console.error('Got error for', url, ':', errResp);
+      throw errResp;
     }
 
     console.info('Got response', response);

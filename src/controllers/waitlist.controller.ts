@@ -1,4 +1,4 @@
-import { AddToWaitlistDto } from '@/dtos/waitlist.dto';
+import { AddToWaitlistDto } from '@/dtos/request/waitlist.dto';
 import { Controller } from '@/utils/decorators/controller';
 import { Post } from '@/utils/decorators/methods';
 import { Body } from '@/utils/decorators/request';

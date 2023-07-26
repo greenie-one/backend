@@ -1,4 +1,4 @@
-import { UpdateUserDto } from '@/dtos/users.dto';
+import { UpdateUserDto } from '@/dtos/request/users.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { User, UserModel } from '@models/users.model';
@@ -36,7 +36,7 @@ class UserService {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
-    return updatedUser;
+    return { success: true, message: 'Updated Successfully' };
   }
 }
 
