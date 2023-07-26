@@ -45,5 +45,3 @@ export class UpdateProfileDto {
   @IsString({ each: true })
   public descriptionTags?: string[];
 }
-
-

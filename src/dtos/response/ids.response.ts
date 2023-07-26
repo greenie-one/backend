@@ -24,28 +24,28 @@ export interface AadharVerifyOtpResponse {
       house?: string;
       landmark?: string;
     };
-    user_full_name:string, 
-    user_dob:string,
-    user_parent_name:string,
+    user_full_name: string;
+    user_dob: string;
+    user_parent_name: string;
   };
   success?: boolean;
   response_code?: string;
   response_message?: string;
 }
 
-export interface AadharData{
-  name:string,
-  address:{
+export interface AadharData {
+  name: string;
+  address: {
     country: string;
     dist: string;
     state: string;
     street: string;
     house: string;
     landmark: string;
-  },
-  dob:string,
-  aadharNumber:string,
-  parentName:string,
+  };
+  dob: string;
+  aadharNumber: string;
+  parentName: string;
 }
 
 export interface PanVerifyResponse {
@@ -62,36 +62,36 @@ export interface PanVerifyResponse {
       country?: string;
       full?: string;
     };
-    user_full_name:string,
-    masked_aadhaar:string,
-    pan_type:string,
-    user_email:string,
-    user_phone_number:string,
-    user_gender:string,
-    user_dob:string,
-    aadhaar_linked_status:boolean
+    user_full_name: string;
+    masked_aadhaar: string;
+    pan_type: string;
+    user_email: string;
+    user_phone_number: string;
+    user_gender: string;
+    user_dob: string;
+    aadhaar_linked_status: boolean;
   };
 }
 
-export interface PanData{
-  name:string,
-  aadharLinked:boolean,
-  panType:string,
-  email:string,
-  phoneNumber:string,
-  gender:string,
-  dob:string,
-  aadharNumber:string,
+export interface PanData {
+  name: string;
+  aadharLinked: boolean;
+  panType: string;
+  email: string;
+  phoneNumber: string;
+  gender: string;
+  dob: string;
+  aadharNumber: string;
 }
 
 export interface DrivingLicenseResponse {
   success?: boolean;
   result?: {
-    user_full_name:string, 
-    user_dob:string,
-    dl_number:string,
-    user_blood_group:string,
-    father_or_husband:string,
+    user_full_name: string;
+    user_dob: string;
+    dl_number: string;
+    user_blood_group: string;
+    father_or_husband: string;
     user_address?: [
       {
         addressLine1?: string;
@@ -103,20 +103,22 @@ export interface DrivingLicenseResponse {
         type?: string;
       },
     ];
-    vehicle_category_details:[{
-      cov:string,
-    }]
+    vehicle_category_details: [
+      {
+        cov: string;
+      },
+    ];
   };
   response_code?: string;
   response_message?: string;
 }
 
-export interface DrivingLicenseData{
-  name:string,
-  address:[{}],
-  bloodGroup :string,
-  licenseNumber:string,
-  DOB:string,
-  fatherName:string,
-  vehicleType:[{}]
+export interface DrivingLicenseData {
+  name: string;
+  address: [{}];
+  bloodGroup: string;
+  licenseNumber: string;
+  DOB: string;
+  fatherName: string;
+  vehicleType: [{}];
 }

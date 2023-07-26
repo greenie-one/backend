@@ -27,7 +27,7 @@ export default class skillController {
   async updateSkill(
     @UserDetails() userDetails: TokenClaims,
     @Params('id') id: string,
-    @Body() data:UpdateSkillDto,
+    @Body() data: UpdateSkillDto,
   ) {
     return skillService.updateSkill(userDetails.sub, id, data);
   }

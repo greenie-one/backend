@@ -44,7 +44,6 @@ class IDsService {
   private async maskString(str: string, numVisibleChars: number): Promise<string> {
     return `xxxx-xxxx-${str.slice(-numVisibleChars)}`;
   }
-  
 
   public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
     if (await this.userHasId(userId, IDTypeEnum.AADHAR)) {
@@ -84,9 +83,9 @@ class IDsService {
       const aadhaar_number = result.user_aadhaar_number;
       const user_address = result.user_address;
 
-      const data:AadharData={
-        name:verificationResponse.result.user_full_name,
-        aadharNumber: await this.maskString(aadhaar_number || "", 4),
+      const data: AadharData = {
+        name: verificationResponse.result.user_full_name,
+        aadharNumber: await this.maskString(aadhaar_number || '', 4),
         address: {
           country: user_address.country,
           dist: user_address.dist,
@@ -97,8 +96,7 @@ class IDsService {
         },
         dob: verificationResponse.result.user_dob,
         parentName: verificationResponse.result.user_parent_name,
-
-      }
+      };
       await IDModel.db.transaction(async (session) => {
         await IDModel.create(
           [
@@ -106,7 +104,7 @@ class IDsService {
               id_type: IDTypeEnum.AADHAR,
               id_number: aadhaar_number,
               user: userId,
-              data:data,
+              data: data,
               address: user_address,
             },
           ],
@@ -143,21 +141,21 @@ class IDsService {
 
     const { success, response_code, response_message } = response;
     if (success && response_code === '100') {
-      const data :PanData={
-        name:response.result.user_full_name,
-        aadharLinked:response.result.aadhaar_linked_status,
-        panType:response.result.pan_type,
-        email:response.result.user_email,
-        phoneNumber:response.result.user_phone_number,
-        gender:response.result.user_gender,
-        dob:response.result.user_dob,
-        aadharNumber:response.result.masked_aadhaar,
-      } 
+      const data: PanData = {
+        name: response.result.user_full_name,
+        aadharLinked: response.result.aadhaar_linked_status,
+        panType: response.result.pan_type,
+        email: response.result.user_email,
+        phoneNumber: response.result.user_phone_number,
+        gender: response.result.user_gender,
+        dob: response.result.user_dob,
+        aadharNumber: response.result.masked_aadhaar,
+      };
       await IDModel.create({
         id_type: IDTypeEnum.PAN,
         id_number: addIDDto.id_number,
         user: userId,
-        data:data,
+        data: data,
         address: response.result.user_address,
       } as ID);
 
@@ -187,20 +185,20 @@ class IDsService {
     const { success, response_code, response_message } = response;
     if (success && response_code === '100') {
       const user_address = response.result.user_address[0];
-      const data:DrivingLicenseData = {
-        name:response.result.user_full_name,
-        bloodGroup :response.result.user_blood_group,
-        licenseNumber:response.result.dl_number,
-        DOB:response.result.user_dob,
-        address:response.result.user_address,
-        fatherName:response.result.father_or_husband,
-        vehicleType:response.result.vehicle_category_details
-      }
+      const data: DrivingLicenseData = {
+        name: response.result.user_full_name,
+        bloodGroup: response.result.user_blood_group,
+        licenseNumber: response.result.dl_number,
+        DOB: response.result.user_dob,
+        address: response.result.user_address,
+        fatherName: response.result.father_or_husband,
+        vehicleType: response.result.vehicle_category_details,
+      };
       await IDModel.create({
         id_type: IDTypeEnum.DRIVING_LICENSE,
         id_number: addIDDto.id_number,
         user: userId,
-        data:data,
+        data: data,
         address: user_address,
       } as ID);
 
