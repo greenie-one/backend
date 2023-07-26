@@ -9,22 +9,21 @@ class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
     try {
       const coordinates = await Geolocation.getLocation(address);
-      if (coordinates) {
-        const location = await LocationModel.create({
-          user: userId,
-          coordinates: coordinates,
-        });
-
-        const res: GetLocationResponse = {
-          id: location._id.toString(),
-          coordinates: location.coordinates?.toString(),
-          user: location.user?.toString(),
-        };
-        return res;
-      } else {
-        console.log(coordinates);
+      if (!coordinates) {
         throw new HttpException(ErrorEnum.INVALID_COORDINATES);
       }
+
+      const location = await LocationModel.create({
+        user: userId,
+        coordinates: coordinates,
+      });
+
+      const res: GetLocationResponse = {
+        id: location._id.toString(),
+        coordinates: location.coordinates?.toString(),
+        user: location.user?.toString(),
+      };
+      return res;
     } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
     }
