@@ -24,7 +24,7 @@ export function pickFields<T extends object, K>(fieldNames: string[], fromObj: T
 
 export function checkFields<T extends object>(fieldNames: string[], fromObj: T) {
   for (const fieldName of fieldNames) {
-    if (!fromObj.hasOwnProperty(fieldName)) {
+    if (!Object.hasOwn(fromObj, fieldName)) {
       throw new Error(`Field "${fieldName}" not found`);
     }
   }
@@ -33,26 +33,26 @@ export function checkFields<T extends object>(fieldNames: string[], fromObj: T) 
 export function copyFieldsFromInstance<T extends object>(source: T, destination: T) {
   const sourceFields = Object.keys(source);
   for (const field of sourceFields) {
-    if (destination.hasOwnProperty(field)) {
+    if (Object.hasOwn(destination, field)) {
       destination[field] = source[field];
     }
   }
 }
 
-export function copyDataFrom<T, K, R>(keysFrom: T, dataFrom: K, destination: R) {
+export function copyDataFrom<T, K extends object, R>(keysFrom: T, dataFrom: K, destination: R) {
   const sourceFields = Object.keys(keysFrom);
   for (const field of sourceFields) {
-    if (dataFrom.hasOwnProperty(field)) {
+    if (Object.hasOwn(dataFrom, field)) {
       destination[field] = dataFrom[field];
     }
   }
   return destination;
 }
 
-export function copySourceDataWithKeysFrom<T, K, R>(source: T, keysFrom: K, destination: R) {
+export function copySourceDataWithKeysFrom<T, K extends object, R>(source: T, keysFrom: K, destination: R) {
   const sourceFields = Object.keys(source);
   for (const field of sourceFields) {
-    if (keysFrom.hasOwnProperty(field)) {
+    if (Object.hasOwn(keysFrom, field)) {
       destination[field] = source[field];
     }
   }

@@ -1,7 +1,7 @@
-import { User } from './users.model';
-import { WorkExperience } from './workExperience.model';
 import { SkillTypeEnum } from '@/dtos/request/skills.dto';
 import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { User } from './users.model';
+import { WorkExperience } from './workExperience.model';
 
 @modelOptions({ schemaOptions: { collection: 'skills', timestamps: true } })
 export class Skills {

@@ -1,9 +1,11 @@
 import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
-import { AddResidentialInfoResponse, GetResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
+import { AddResidentialInfoResponse, GetResidentialInfoResponse, ResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
+import { GetLocationResponse } from '@/dtos/response/location.response';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
+import { locationService } from './location.service';
 
 class ResidentialInfoService {
   public async getUserResidentialInfo(userId: string): Promise<GetResidentialInfoResponse> {
@@ -12,11 +14,9 @@ class ResidentialInfoService {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    const res: GetResidentialInfoResponse = {
-      residentialInfos: [],
-    };
+    const res: ResidentialInfoResponse[] = [];
     for (const residentialInfo of residentialInfos) {
-      res.residentialInfos.push({
+      res.push({
         id: residentialInfo._id.toString(),
         address_line_1: residentialInfo.address_line_1,
         address_line_2: residentialInfo.address_line_2,
@@ -30,7 +30,9 @@ class ResidentialInfoService {
       });
     }
 
-    return res;
+    return {
+      residentialInfos: res,
+    };
   }
 
   public async addResidentialInfo(userId: string, residentialInfoData: AddResidentialInfoDto): Promise<AddResidentialInfoResponse> {
@@ -39,9 +41,13 @@ class ResidentialInfoService {
         throw new HttpException(ErrorEnum.INVALID_DATE);
       }
     }
+
+    const address = `${residentialInfoData.address_line_1}${residentialInfoData.address_line_2} ${residentialInfoData.landmark}${residentialInfoData.city}${residentialInfoData.state}${residentialInfoData.country}`
+    const location :GetLocationResponse=await locationService.createLocation(userId ,address);
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
+      location:location
     });
 
     const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };

@@ -1,6 +1,6 @@
-import { HttpClient } from '../generic/httpClient';
 import { env } from '@/config';
 import { DrivingLicenseResponse } from '@/dtos/response/ids.response';
+import { HttpClient } from '../generic/httpClient';
 
 export class drivinLicenseVerification {
   static async verifyDrivingLicense(dlNumber: string, dob: string, taskId: string): Promise<DrivingLicenseResponse> {

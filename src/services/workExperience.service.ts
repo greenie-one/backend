@@ -1,10 +1,10 @@
 import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request/workExperience.dto';
-import { AddWorkExperienceResponse, GetWorkExperienceResponse } from '@/dtos/response/workExperience.response';
+import { AddWorkExperienceResponse, GetWorkExperienceResponse, WorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
-import { WorkPeerModel } from '@/models/peer.model';
 import { SkillModel } from '@/models/skills.model';
+import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { UserModel } from '@models/users.model';
 
@@ -106,6 +106,37 @@ class WorkExperienceService {
     }
 
     return { success: true, message: 'Updated Successfully' };
+  }
+
+  public async getWorkExperienceById(userId: string, id: string): Promise<WorkExperienceResponse> {
+    const workExperience = await WorkExperienceModel.findById(id);
+
+    if (!workExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+    if (workExperience.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    const resp: WorkExperienceResponse = {
+      id: workExperience._id.toString(),
+      designation: workExperience.designation,
+      companyType: workExperience.companyType,
+      email: workExperience.email,
+      workMode: workExperience.workMode,
+      department: workExperience.department,
+      workType: workExperience.workType,
+      companyName: workExperience.companyName,
+      companyId: workExperience.companyId,
+      salary: workExperience.salary,
+      noOfVerifications: workExperience.noOfVerifications,
+      reason_for_leaving: workExperience.reason_for_leaving,
+      dateOfJoining: workExperience.dateOfJoining.toString(),
+      linkedInUrl: workExperience.linkedInUrl,
+      dateOfLeaving: workExperience.dateOfLeaving ? workExperience.dateOfLeaving.toString() : null,
+    };
+
+    return resp;
   }
 }
 

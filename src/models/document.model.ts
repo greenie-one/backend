@@ -1,7 +1,7 @@
-import { User } from './users.model';
-import { WorkExperience } from './workExperience.model';
 import { DocumentType } from '@/dtos/request/document.dto';
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { User } from './users.model';
+import { WorkExperience } from './workExperience.model';
 
 export class Document {
   @prop({ required: true })
