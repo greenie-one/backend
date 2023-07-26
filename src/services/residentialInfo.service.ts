@@ -4,6 +4,7 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
+import { locationService } from './location.service';
 
 class ResidentialInfoService {
   public async getUserResidentialInfo(userId: string): Promise<GetResidentialInfoResponse> {
@@ -39,9 +40,13 @@ class ResidentialInfoService {
         throw new HttpException(ErrorEnum.INVALID_DATE);
       }
     }
+
+    const address = `${residentialInfoData.address_line_1}, ${residentialInfoData.address_line_2}, ${residentialInfoData.landmark}, ${residentialInfoData.city}, ${residentialInfoData.state}, ${residentialInfoData.country}`;
+    const location = locationService.createLocation(userId, address);
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
+      location: location,
     });
 
     const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };

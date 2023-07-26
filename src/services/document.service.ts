@@ -1,5 +1,3 @@
-import { SAStokenService } from './blobStorage.service';
-import { profileService } from './profile.service';
 import { CreateDocumentDto, DocumentType, UpdateDocumentDto } from '@/dtos/request/document.dto';
 import { GetDocumentResponse } from '@/dtos/response/document.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
@@ -8,6 +6,8 @@ import { Document, DocumentModel } from '@/models/document.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisUtilClient } from '@/redisClient';
 import { RedisPUBSUB } from '@/redisClient/deleteService';
+import { SAStokenService } from './blobStorage.service';
+import { profileService } from './profile.service';
 
 class DocumentService {
   public async createDocument(userID: string, documentData: CreateDocumentDto): Promise<Document> {

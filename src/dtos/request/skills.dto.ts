@@ -22,3 +22,17 @@ export class CreateSkillDto {
   @IsNotEmpty()
   public expertise!: SkillTypeEnum;
 }
+
+export class UpdateSkillDto {
+  @IsString()
+  @IsOptional()
+  public skillName?: string;
+
+  @IsString()
+  @IsOptional()
+  public workExperience?: string;
+
+  @IsEnum(SkillTypeEnum)
+  @IsOptional()
+  public expertise?: SkillTypeEnum;
+}

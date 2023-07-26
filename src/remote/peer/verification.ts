@@ -1,5 +1,5 @@
-import { HttpClient } from '../generic/httpClient';
 import { env } from '@/config';
+import { HttpClient } from '../generic/httpClient';
 
 export class verification {
   static async GetPeerVerification(
