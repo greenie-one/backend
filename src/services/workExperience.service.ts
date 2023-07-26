@@ -1,10 +1,10 @@
 import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request/workExperience.dto';
-import { AddWorkExperienceResponse, WorkExperienceResponse } from '@/dtos/response/workExperience.response';
+import { AddWorkExperienceResponse, GetWorkExperienceResponse, WorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
-import { WorkPeerModel } from '@/models/peer.model';
 import { SkillModel } from '@/models/skills.model';
+import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { UserModel } from '@models/users.model';
 
@@ -35,17 +35,19 @@ class WorkExperienceService {
     const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
     return res;
   }
-  public async getWorkExperience(userId: string): Promise<WorkExperienceResponse[]> {
+  public async getWorkExperience(userId: string): Promise<GetWorkExperienceResponse> {
     const workExperiences = await WorkExperienceModel.find({ user: userId });
 
     if (!workExperiences) {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    const res: WorkExperienceResponse[] = [];
+    const res: GetWorkExperienceResponse = {
+      workExperiences: [],
+    };
     for (const workExp of workExperiences) {
-      res.push({
-         id: workExp._id.toString(),
+      res.workExperiences.push({
+        id: workExp._id.toString(),
         designation: workExp.designation,
         companyType: workExp.companyType,
         email: workExp.email,
@@ -127,7 +129,7 @@ class WorkExperienceService {
       companyName: workExperience.companyName,
       companyId: workExperience.companyId,
       salary: workExperience.salary,
-      noOfVerifications:workExperience.noOfVerifications,
+      noOfVerifications: workExperience.noOfVerifications,
       reason_for_leaving: workExperience.reason_for_leaving,
       dateOfJoining: workExperience.dateOfJoining.toString(),
       linkedInUrl: workExperience.linkedInUrl,

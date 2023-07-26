@@ -24,9 +24,9 @@ function flattenErrors(error: ValidationError[]) {
   const ret: string[] = [];
   for (const e of error) {
     if (e.constraints) {
-      ret.push(...Object.values(e.constraints));
+      ret.push(...Object.values(e.constraints ?? {}));
     } else {
-      ret.push(...flattenErrors(e.children));
+      ret.push(...flattenErrors(e.children ?? []));
     }
   }
   return ret;
@@ -41,7 +41,7 @@ async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQ
     await validator(dto as object, { whitelist: true });
     return dto;
   } catch (errors) {
-    const message = flattenErrors(errors);
+    const message = flattenErrors(Array.isArray(errors) ? errors : [errors]);
     throw new HttpException(ErrorEnum.VALIDATION_ERROR, message.join(', '));
   }
 }
