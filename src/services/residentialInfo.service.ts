@@ -1,4 +1,4 @@
-import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
+import { AddResidentialInfoDto, GetGpsCoordinatesDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
 import { AddResidentialInfoResponse, GetResidentialInfoResponse, ResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
@@ -92,6 +92,16 @@ class ResidentialInfoService {
     }
 
     return { success: true, message: 'Updated Successfully' };
+  }
+  
+  public async getGpsCoordinates(userId: string, data: GetGpsCoordinatesDto) {
+    const residentialInfo = await ResidentialInfoModel.findOne({user:userId});
+
+    if (!residentialInfo) {
+      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
+    }
+
+    
   }
 }
 

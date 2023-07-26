@@ -39,6 +39,9 @@ export class ResidentialInfo {
 
   @prop({ ref: 'Location' })
   public location!: Ref<Location>;
+
+  @prop({ ref: 'Location' })
+  public capturedLocation!: Ref<Location>;
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);

@@ -77,3 +77,10 @@ export class UpdateResidentialInfoDto {
   @IsOptional()
   public end_date?: Date;
 }
+
+export class GetGpsCoordinatesDto{
+  @IsString()
+  @IsNotEmpty()
+  public gps!: string;
+}
+
