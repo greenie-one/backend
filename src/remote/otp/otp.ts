@@ -1,6 +1,6 @@
-import { HttpClient } from '../generic/httpClient';
 import { env } from '@/config';
 import { OtpType } from '@/dtos/request/otp.dto';
+import { HttpClient } from '../generic/httpClient';
 
 type SendOtp = {
   contact: string;

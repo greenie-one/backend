@@ -36,5 +36,3 @@ export class UpdateSkillDto {
   @IsOptional()
   public expertise?: SkillTypeEnum;
 }
-
-
