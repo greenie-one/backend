@@ -3,14 +3,13 @@ import { ValidateEnv } from '@utils/validateEnv';
 import DocumentController from './controllers/document.controller';
 import IDsController from './controllers/ids.controller';
 import LocationController from './controllers/location.controller';
-import PeerController from './controllers/peer.controller';
 import ProfileController from './controllers/profile.controller';
 import ResidentialInfoController from './controllers/residentialInfo.controller';
 import RootController from './controllers/root.controller';
-import SharingController from './controllers/sharing.controller';
 import SkillController from './controllers/skills.controller';
 import UserController from './controllers/user.controller';
 import WaitlistController from './controllers/waitlist.controller';
+import WorkExPeerController from './controllers/workExPeer.controller';
 import WorkExperienceController from './controllers/workExperience.controller';
 
 process.on('uncaughtException', (e) => {
@@ -36,8 +35,7 @@ const controllers = [
   IDsController,
   UserController,
   LocationController,
-  PeerController,
-  SharingController,
+  WorkExPeerController,
 ];
 
 const app = new App(controllers);

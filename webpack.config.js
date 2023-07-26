@@ -19,6 +19,18 @@ module.exports = {
           from: '.yarn/unplugged/is-core-module*/**/core.json',
           to: './core.json',
         },
+        {
+          from: '.yarn/unplugged/saslprep*/**/node_modules/saslprep/**',
+          to: 'saslprep',
+        },
+        {
+          from: '.yarn/unplugged/sparse-bitfield*/**/node_modules/sparse-bitfield/**',
+          to: 'sparse-bitfield',
+        },
+        {
+          from: '.yarn/unplugged/memory-pager*/**/node_modules/memory-pager/**',
+          to: 'memory-pager',
+        },
       ],
     }),
   ],
@@ -33,11 +45,15 @@ module.exports = {
       },
     ],
   },
+  externals: {
+    saslprep: "require('saslprep')",
+  },
   optimization: {
     minimizer: [
       new TerserPlugin({
         terserOptions: {
           keep_classnames: true,
+          keep_fnames: true
         },
       }),
     ],

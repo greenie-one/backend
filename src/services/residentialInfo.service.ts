@@ -1,7 +1,8 @@
+import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
+import { AddResidentialInfoResponse, GetResidentialInfoResponse, ResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
-import { AddResidentialInfoDto, AddResidentialInfoResponse, GetResidentialInfoResponse, UpdateResidentialInfoDto } from '@/dtos/residentialInfo.dto';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 
 class ResidentialInfoService {
@@ -11,11 +12,9 @@ class ResidentialInfoService {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    const res: GetResidentialInfoResponse = {
-      residentialInfos: [],
-    };
+    const res: ResidentialInfoResponse[] = [];
     for (const residentialInfo of residentialInfos) {
-      res.residentialInfos.push({
+      res.push({
         id: residentialInfo._id.toString(),
         address_line_1: residentialInfo.address_line_1,
         address_line_2: residentialInfo.address_line_2,
@@ -25,16 +24,20 @@ class ResidentialInfoService {
         state: residentialInfo.state,
         country: residentialInfo.country,
         start_date: residentialInfo.start_date.toString(),
-        end_date: residentialInfo.end_date.toString() ? residentialInfo.end_date.toString() : Date.now().toString(),
+        end_date: residentialInfo.end_date ? residentialInfo.end_date.toString() : null,
       });
     }
 
-    return res;
+    return {
+      residentialInfos: res,
+    };
   }
 
   public async addResidentialInfo(userId: string, residentialInfoData: AddResidentialInfoDto): Promise<AddResidentialInfoResponse> {
-    if (!(residentialInfoData.end_date && residentialInfoData.end_date > residentialInfoData.start_date)) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+    if (residentialInfoData.end_date) {
+      if (!(residentialInfoData.end_date > residentialInfoData.start_date)) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
@@ -61,9 +64,12 @@ class ResidentialInfoService {
   }
 
   public async updateResidentialInfo(userId: string, residentialInfoId: string, updatedData: UpdateResidentialInfoDto) {
-    if (!(updatedData.end_date && updatedData.end_date > updatedData.start_date)) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+    if (updatedData.end_date) {
+      if (updatedData.start_date > updatedData.end_date) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
+
     const residentialInfo = await ResidentialInfoModel.findById(residentialInfoId);
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);

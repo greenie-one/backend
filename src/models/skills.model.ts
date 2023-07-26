@@ -1,15 +1,7 @@
-import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { User } from './users.model';
 import { WorkExperience } from './workExperience.model';
-
-export enum skillTypeEnum {
-  AMATEUR = 'AMATEUR',
-  EXPERT = 'EXPERT',
-  BEGINNER = 'BEGINNER',
-  SUPER_SPECIALIST = 'SUPER_SPECIALIST',
-  MASTER = 'MASTER',
-  HIGHLY_COMPETENT = 'HIGHLY_COMPETENT',
-}
+import { SkillTypeEnum } from '@/dtos/request/skills.dto';
+import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
 @modelOptions({ schemaOptions: { collection: 'skills', timestamps: true } })
 export class Skills {
@@ -19,8 +11,8 @@ export class Skills {
   @prop({ type: String, required: true })
   public skillName!: string;
 
-  @prop({ required: true, enum: skillTypeEnum, type: String })
-  public expertise!: skillTypeEnum;
+  @prop({ required: true, enum: SkillTypeEnum, type: String })
+  public expertise!: SkillTypeEnum;
 
   @prop({ ref: 'WorkExperience', type: String })
   public workExperience?: Ref<WorkExperience, string>;

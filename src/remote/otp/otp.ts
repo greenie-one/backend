@@ -1,14 +1,10 @@
-import { env } from '@/config';
 import { HttpClient } from '../generic/httpClient';
-
-export enum otpType {
-  EMAIL = 'EMAIL',
-  MOBILE = 'MOBILE',
-}
+import { env } from '@/config';
+import { OtpType } from '@/dtos/request/otp.dto';
 
 type SendOtp = {
   contact: string;
-  type: otpType;
+  type: OtpType;
   otp: string;
 };
 

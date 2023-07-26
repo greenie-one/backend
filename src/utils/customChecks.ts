@@ -1,4 +1,4 @@
-import { OptionalWorkExFields } from '@/models/peer.model';
+import { SelectedFields } from '@/models/workExPeer.model';
 import { WorkExperience } from '@/models/workExperience.model';
 
 export function checkPropertiesExist(check: object, from: object) {
@@ -17,5 +17,5 @@ export function checkPropertiesExist(check: object, from: object) {
 }
 
 export function registerPropertiesCheck() {
-  checkPropertiesExist(new OptionalWorkExFields(), new WorkExperience());
+  checkPropertiesExist(new SelectedFields(), new WorkExperience());
 }

@@ -1,6 +1,10 @@
-import { AddWorkExperienceResponse, CreateWorkExperienceDto, GetWorkExperienceResponse, UpdateWorkExperienceDto } from '@/dtos/workExperience.dto';
+import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request/workExperience.dto';
+import { AddWorkExperienceResponse, GetWorkExperienceResponse, WorkExperienceResponse } from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
+import { DocumentModel } from '@/models/document.model';
+import { SkillModel } from '@/models/skills.model';
+import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { UserModel } from '@models/users.model';
 
@@ -15,9 +19,13 @@ class WorkExperienceService {
     } catch (e) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
-    if (workExperienceData.dateOfLeaving && workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+
+    if (workExperienceData.dateOfLeaving) {
+      if (workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
+
     const workExperience = await WorkExperienceModel.create({
       ...workExperienceData,
       user: userId,
@@ -53,6 +61,7 @@ class WorkExperienceService {
         dateOfJoining: workExp.dateOfJoining ? workExp.dateOfJoining.toString() : null,
         linkedInUrl: workExp.linkedInUrl,
         dateOfLeaving: workExp.dateOfLeaving ? workExp.dateOfLeaving.toString() : null,
+        noOfVerifications: workExp.noOfVerifications,
       });
     }
     return res;
@@ -68,8 +77,10 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
 
+    await WorkPeerModel.deleteMany({ user: userId, ref: workExperienceId });
+    await SkillModel.deleteMany({ user: userId, workExperience: workExperienceId });
+    await DocumentModel.deleteMany({ user: userId, workExperience: workExperienceId });
     await workExperience.deleteOne();
-
     return { success: true, message: 'Work experience deleted successfully' };
   }
 
@@ -82,8 +93,11 @@ class WorkExperienceService {
     if (workExperience.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
-    if (!(updatedData.dateOfLeaving && updatedData.dateOfJoining < updatedData.dateOfLeaving)) {
-      throw new HttpException(ErrorEnum.INVALID_DATE);
+
+    if (updatedData.dateOfLeaving) {
+      if (updatedData.dateOfJoining > updatedData.dateOfLeaving) {
+        throw new HttpException(ErrorEnum.INVALID_DATE);
+      }
     }
     const updatedWorkExperience = await WorkExperienceModel.findByIdAndUpdate(workExperienceId, { $set: updatedData }, { new: true });
 
@@ -92,6 +106,37 @@ class WorkExperienceService {
     }
 
     return { success: true, message: 'Updated Successfully' };
+  }
+
+  public async getWorkExperienceById(userId: string, id: string): Promise<WorkExperienceResponse> {
+    const workExperience = await WorkExperienceModel.findById(id);
+
+    if (!workExperience) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+    if (workExperience.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.UNAUTHORIZED);
+    }
+
+    const resp: WorkExperienceResponse = {
+      id: workExperience._id.toString(),
+      designation: workExperience.designation,
+      companyType: workExperience.companyType,
+      email: workExperience.email,
+      workMode: workExperience.workMode,
+      department: workExperience.department,
+      workType: workExperience.workType,
+      companyName: workExperience.companyName,
+      companyId: workExperience.companyId,
+      salary: workExperience.salary,
+      noOfVerifications: workExperience.noOfVerifications,
+      reason_for_leaving: workExperience.reason_for_leaving,
+      dateOfJoining: workExperience.dateOfJoining.toString(),
+      linkedInUrl: workExperience.linkedInUrl,
+      dateOfLeaving: workExperience.dateOfLeaving ? workExperience.dateOfLeaving.toString() : null,
+    };
+
+    return resp;
   }
 }
 

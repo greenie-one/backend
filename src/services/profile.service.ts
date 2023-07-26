@@ -1,11 +1,14 @@
-import { AddProfileResponse, CreateProfileDto, GetProfileResponse, SearchProfilesResponse, UpdateProfileDto } from '@/dtos/profile.dto';
+import { DocumentType } from '@/dtos/request/document.dto';
+import { IDTypeEnum } from '@/dtos/request/ids.dto';
+import { CreateProfileDto, UpdateProfileDto } from '@/dtos/request/profile.dto';
+import { AddProfileResponse, ProfileResponse } from '@/dtos/response/profile.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { DocumentType } from '@/models/document.model';
-import { IDTypeEnum } from '@/models/id.model';
 import { ProfileModel } from '@/models/profile.model';
 import { documentWeights, scoreConstant } from '@/utils/documentWeight';
+import { getRandomGreenieId } from '@/utils/string';
 import { UserModel } from '@models/users.model';
+import { ClientSession } from 'mongoose';
 
 class ProfileService {
   public async createProfile(userId: string, profileData: CreateProfileDto): Promise<AddProfileResponse> {
@@ -52,21 +55,20 @@ class ProfileService {
     return { success: true, message: 'Updated Successfully' };
   }
 
-  public async getProfile(userId: string): Promise<GetProfileResponse> {
+  public async getProfile(userId: string): Promise<ProfileResponse> {
     const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    const res: GetProfileResponse = {
-      profile: {
-        id: profile._id.toString(),
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        profilePic: profile.profilePic,
-        bio: profile.bio,
-        descriptionTags: profile.descriptionTags,
-      },
+    const res: ProfileResponse = {
+      id: profile._id.toString(),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      profilePic: profile.profilePic,
+      bio: profile.bio,
+      descriptionTags: profile.descriptionTags,
+      greenieId: profile.greenie_id,
     };
     return res;
   }
@@ -120,26 +122,25 @@ class ProfileService {
     return profiles;
   }
 
-  public async searchByUsername(firstName: string, lastName: string): Promise<SearchProfilesResponse> {
+  public async searchByUsername(firstName: string, lastName: string): Promise<ProfileResponse[]> {
     const regexFirstName = new RegExp(firstName, 'i');
     const regexLastName = new RegExp(lastName, 'i');
     const profiles = await ProfileModel.find({
       $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
     });
 
-    const res: SearchProfilesResponse = {
-      profiles: [],
-    };
+    const res: ProfileResponse[] = [];
 
     if (profiles) {
       for (const profile of profiles) {
-        res.profiles.push({
+        res.push({
           id: profile._id.toString(),
           firstName: profile.firstName,
           lastName: profile.lastName,
           profilePic: profile.profilePic,
           bio: profile.bio,
           descriptionTags: profile.descriptionTags,
+          greenieId: profile.greenie_id,
         });
       }
     }
@@ -147,7 +148,7 @@ class ProfileService {
     return res;
   }
 
-  public async modScore(userId: string, documentType: DocumentType | IDTypeEnum, hasUploaded: boolean) {
+  public async modScore(userId: string, documentType: DocumentType | IDTypeEnum, hasUploaded: boolean, session?: ClientSession) {
     let changeInScore = documentWeights[documentType];
 
     if (typeof changeInScore === 'undefined' || changeInScore === null) {
@@ -157,7 +158,33 @@ class ProfileService {
 
     changeInScore *= scoreConstant;
 
-    await ProfileModel.findOneAndUpdate({ user: userId }, { $inc: { score: hasUploaded ? changeInScore : -changeInScore } });
+    await ProfileModel.findOneAndUpdate({ user: userId }, { $inc: { score: hasUploaded ? changeInScore : -changeInScore } }, { session });
+  }
+
+  public async generateGreenieId(userId: string, session?: ClientSession) {
+    const greenieId = await getRandomGreenieId();
+
+    try {
+      await ProfileModel.findOneAndUpdate(
+        {
+          user: userId,
+          greenie_id: null,
+        },
+        {
+          $set: {
+            greenie_id: greenieId,
+          },
+        },
+        {
+          session,
+        },
+      );
+    } catch (e) {
+      if (e.code === 11000 && e.codeName === 'DuplicateKey') {
+        return this.generateGreenieId(userId, session);
+      }
+      throw e;
+    }
   }
 }
 
