@@ -62,32 +62,32 @@ class WorkExPeerService {
     return { success: true, message: 'Link Sent' };
   }
 
-  public async peerSendOTP(peerUUID: string, otp_type: OtpType) {
+  public async peerSendOTP(peerUUID: string) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     const { email, phone } = peer;
-    if (otp_type === 'EMAIL') {
-      await otpService.sendOTP(email, otp_type);
+    if (!peer.emailVerified) {
+      await otpService.sendOTP(email, OtpType.EMAIL);
     } else {
-      await otpService.sendOTP(phone, otp_type);
+      await otpService.sendOTP(phone, OtpType.MOBILE);
     }
   }
 
-  public async verifyPeerConatct(peerUUID: string, otp_type: OtpType, otp: string) {
+  public async verifyPeerConatct(peerUUID: string, otp: string) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     const { email, phone } = peer;
-    if (otp_type === 'EMAIL' && (await otpService.verifyOTP(email, otp_type, otp))) {
+    if (!peer.emailVerified && (await otpService.verifyOTP(email, OtpType.EMAIL, otp))) {
       peer.emailVerified = true;
       await peer.save();
       return { success: true, message: 'Verified' };
-    } else if (otp_type === 'MOBILE' && (await otpService.verifyOTP(phone, otp_type, otp))) {
+    } else if (!peer.phoneVerified && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
       peer.phoneVerified = true;
       await peer.save();
       return { success: true, message: 'Verified' };
@@ -326,4 +326,4 @@ class WorkExPeerService {
   }
 }
 
-export const peerService = new WorkExPeerService();
+export const workPeerService = new WorkExPeerService();
