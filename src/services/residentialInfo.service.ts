@@ -39,14 +39,14 @@ class ResidentialInfoService {
       }
     }
 
-    const address = `${residentialInfoData.address_line_1}${residentialInfoData.address_line_2} ${residentialInfoData.landmark}${residentialInfoData.city}${residentialInfoData.state}${residentialInfoData.country}`
-    const location = locationService.createLocation(userId ,address);
+    const address = `${residentialInfoData.address_line_1}, ${residentialInfoData.address_line_2}, ${residentialInfoData.landmark}, ${residentialInfoData.city}, ${residentialInfoData.state}, ${residentialInfoData.country}`;
+    const location = locationService.createLocation(userId, address);
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
-      location:location
+      location: location,
     });
-    
+
     const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };
     return res;
   }
