@@ -149,6 +149,9 @@ class WorkExPeerService {
     const data: GetPeerWorkExDataResponse = {
       name: `${profile.firstName} ${profile.lastName}`,
       profilePic: profile.profilePic,
+      companyName: workExperience.companyName,
+      peerPost: peer.verificationBy,
+      designation: workExperience.designation,
       skills: [],
       documents: [],
     };
@@ -156,11 +159,6 @@ class WorkExPeerService {
     if (peer.selectedFields) {
       data.selectedFields = {};
       copyDataFrom(peer.toObject().selectedFields, workExperience.toObject(), data.selectedFields);
-    }
-    if (peer.verificationBy !== WorkVerificationBy.HR) {
-      data.peerPost = peer.verificationBy;
-      data.designation = workExperience.designation;
-      data.companyName = workExperience.companyName;
     }
 
     const skillIds = peer.skills.map((skill) => skill.id);
