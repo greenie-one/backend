@@ -1,9 +1,12 @@
 export interface GetLocationResponse {
   id: string;
-  coordinates: string;
+  longitude: Number;
+  latitude:Number;
   user: string;
 }
 
 export interface LocationResponse {
-  code?: string;
+  code:string,
+  longitude:Number,
+  latitude:Number
 }

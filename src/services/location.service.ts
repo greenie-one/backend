@@ -15,12 +15,14 @@ class LocationService {
     if (coordinates && coordinates.code !== 'RM003') {
       const location = await LocationModel.create({
         user: userId,
-        coordinates: coordinates,
+        latitude: coordinates.latitude,
+        longitude:coordinates.longitude
       });
 
       const res: GetLocationResponse = {
         id: location._id.toString(),
-        coordinates: location.coordinates.toString(),
+        longitude:location.longitude,
+        latitude:location.latitude,
         user: location.user.toString(),
       };
       return res;

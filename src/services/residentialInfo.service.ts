@@ -4,6 +4,7 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 
 import { GetLocationResponse } from '@/dtos/response/location.response';
+import { LocationModel } from '@/models/location.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { locationService } from './location.service';
 
@@ -47,7 +48,7 @@ class ResidentialInfoService {
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
-      location:location
+      location:location.id
     });
 
     const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };
@@ -101,7 +102,16 @@ class ResidentialInfoService {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    
+    const location =await LocationModel.create({
+      user:userId ,
+      latitude:data.latitude,
+      longitude:data.longitude,
+    });
+
+    residentialInfo.capturedLocation =location._id ;
+    residentialInfo.save() ;
+
+    return residentialInfo;
   }
 }
 
