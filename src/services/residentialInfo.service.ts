@@ -26,6 +26,7 @@ class ResidentialInfoService {
         country: residentialInfo.country,
         start_date: residentialInfo.start_date.toString(),
         end_date: residentialInfo.end_date ? residentialInfo.end_date.toString() : null,
+        addressType: residentialInfo.addressType
       });
     }
 

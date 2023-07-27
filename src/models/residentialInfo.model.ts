@@ -39,6 +39,9 @@ export class ResidentialInfo {
 
   @prop({ ref: 'Location' })
   public location!: Ref<Location>;
+
+  @prop({ required: true })
+  public addressType!: string
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);
