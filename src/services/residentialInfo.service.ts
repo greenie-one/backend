@@ -48,7 +48,7 @@ class ResidentialInfoService {
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
-      location:location.id
+      location: location.id,
     });
 
     const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };
@@ -95,7 +95,7 @@ class ResidentialInfoService {
     return { success: true, message: 'Updated Successfully' };
   }
   
-  public async getGpsCoordinates(userId: string, data: GetGpsCoordinatesDto) {
+  public async saveCaptureLocation(userId: string, data: GetGpsCoordinatesDto) {
     const residentialInfo = await ResidentialInfoModel.findOne({user:userId});
 
     if (!residentialInfo) {

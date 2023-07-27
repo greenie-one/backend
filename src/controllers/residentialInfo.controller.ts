@@ -38,9 +38,9 @@ export default class ResidentialInfoController {
     return residentialInfoService.updateResidentialInfo(userDetails.sub, residentialInfoId, data);
   }
 
-  @Get('/')
-  public async getGpsCoordinates(@UserDetails() userDetails: TokenClaims,@Body() data: GetGpsCoordinatesDto,) {
+  @Post('/')
+  public async saveCaptureLocation(@UserDetails() userDetails: TokenClaims,@Body() data: GetGpsCoordinatesDto,) {
     const userId = userDetails.sub;
-    return residentialInfoService.getGpsCoordinates(userId ,data);
+    return residentialInfoService.saveCaptureLocation(userId ,data);
   }
 }
