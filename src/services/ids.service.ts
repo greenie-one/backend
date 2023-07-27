@@ -1,5 +1,4 @@
 import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
-import { AadharData, DrivingLicenseData, PanData } from '@/dtos/response/ids.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel } from '@/models/id.model';
@@ -41,7 +40,7 @@ class IDsService {
     }));
   }
 
-  private async maskString(str: string, numVisibleChars: number): Promise<string> {
+  private maskString(str: string, numVisibleChars: number): string {
     return `xxxx-xxxx-${str.slice(-numVisibleChars)}`;
   }
 
@@ -89,20 +88,8 @@ class IDsService {
       const aadhaar_number = result.user_aadhaar_number;
       const user_address = result.user_address;
 
-      const data: AadharData = {
-        name: result.user_full_name,
-        aadharNumber: await this.maskString(aadhaar_number || '', 4),
-        address: {
-          country: user_address.country,
-          dist: user_address.dist,
-          state: user_address.state,
-          street: user_address.street,
-          house: user_address.house,
-          landmark: user_address.landmark,
-        },
-        dob: result.user_dob,
-        parentName: result.user_parent_name,
-      };
+      result.user_aadhaar_number = this.maskString(result.user_aadhaar_number, 4);
+
       await IDModel.db.transaction(async (session) => {
         await IDModel.create(
           [
@@ -110,8 +97,17 @@ class IDsService {
               id_type: IDTypeEnum.AADHAR,
               id_number: aadhaar_number,
               user: userId,
-              data: data,
+              data: result,
               address: user_address,
+              normalizedAddress: {
+                address_line_1: `${result.user_address.house}, ${result.user_address.po}`,
+                address_line_2: `${result.user_address.landmark}, ${result.user_address.subdist}, ${result.user_address.loc}`,
+                city: result.user_address.dist,
+                street: result.user_address.street,
+                country: result.user_address.country,
+                state: result.user_address.state,
+                pincode: result.address_zip,
+              },
             },
           ],
           {
@@ -153,23 +149,21 @@ class IDsService {
 
     const { success, response_code, response_message, result } = await this.remoteVerifyPan(addIDDto);
     if (success && response_code === '100') {
-      const data: PanData = {
-        name: result.user_full_name,
-        aadharLinked: result.aadhaar_linked_status,
-        panType: result.pan_type,
-        email: result.user_email,
-        phoneNumber: result.user_phone_number,
-        gender: result.user_gender,
-        dob: result.user_dob,
-        aadharNumber: result.masked_aadhaar,
-      };
-
       await IDModel.create({
         id_type: IDTypeEnum.PAN,
         id_number: addIDDto.id_number,
         user: userId,
-        data: data,
+        data: result,
         address: result.user_address,
+        normalizedAddress: {
+          address_line_1: result.user_address.line_1,
+          address_line_2: result.user_address.line_2,
+          city: result.user_address.city,
+          street: result.user_address.street_name,
+          country: result.user_address.country,
+          state: result.user_address.state,
+          pincode: result.user_address.zip,
+        },
       } as ID);
 
       await profileService.modScore(userId, IDTypeEnum.PAN, true);
@@ -203,21 +197,19 @@ class IDsService {
     const { success, response_code, response_message, result } = await this.remoteVerifyDrivingLicense(addIDDto);
     if (success && response_code === '100') {
       const user_address = result.user_address[0];
-      const data: DrivingLicenseData = {
-        name: result.user_full_name,
-        bloodGroup: result.user_blood_group,
-        licenseNumber: result.dl_number,
-        DOB: result.user_dob,
-        address: result.user_address,
-        fatherName: result.father_or_husband,
-        vehicleType: result.vehicle_category_details,
-      };
       await IDModel.create({
         id_type: IDTypeEnum.DRIVING_LICENSE,
         id_number: addIDDto.id_number,
         user: userId,
-        data: data,
+        data: result,
         address: user_address,
+        normalizedAddress: {
+          address_line_1: user_address.completeAddress,
+          city: user_address.district,
+          country: user_address.country,
+          state: user_address.state,
+          pincode: user_address.pin,
+        },
       } as ID);
 
       await profileService.modScore(userId, IDTypeEnum.DRIVING_LICENSE, true);

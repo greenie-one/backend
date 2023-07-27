@@ -1,5 +1,5 @@
 import { env } from '@/config';
-import { PanVerifyResponse } from '@/dtos/response/ids.response';
+import { PanVerifyResponse } from '../dtos/pan.response';
 import { HttpClient } from '../generic/httpClient';
 
 export class PanVerification {
