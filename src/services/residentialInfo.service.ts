@@ -43,12 +43,12 @@ class ResidentialInfoService {
       }
     }
 
-    const address = `${residentialInfoData.address_line_1}${residentialInfoData.address_line_2} ${residentialInfoData.landmark}${residentialInfoData.city}${residentialInfoData.state}${residentialInfoData.country}`
-    const location :GetLocationResponse=await locationService.createLocation(userId ,address);
+    const address = `${residentialInfoData.address_line_1}${residentialInfoData.address_line_2} ${residentialInfoData.landmark}${residentialInfoData.city}${residentialInfoData.state}${residentialInfoData.country}`;
+    const location: GetLocationResponse = await locationService.createLocation(userId, address);
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
-      location:location.id
+      location: location.id,
     });
 
     const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };
@@ -94,22 +94,22 @@ class ResidentialInfoService {
 
     return { success: true, message: 'Updated Successfully' };
   }
-  
+
   public async getGpsCoordinates(userId: string, data: GetGpsCoordinatesDto) {
-    const residentialInfo = await ResidentialInfoModel.findOne({user:userId});
+    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
 
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    const location =await LocationModel.create({
-      user:userId ,
-      latitude:data.latitude,
-      longitude:data.longitude,
+    const location = await LocationModel.create({
+      user: userId,
+      latitude: data.latitude,
+      longitude: data.longitude,
     });
 
-    residentialInfo.capturedLocation =location._id ;
-    residentialInfo.save() ;
+    residentialInfo.capturedLocation = location._id;
+    residentialInfo.save();
 
     return residentialInfo;
   }
