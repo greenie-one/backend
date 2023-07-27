@@ -2,9 +2,7 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-vali
 
 export enum DocumentType {
   WORK = 'work',
-  CERTIFICATE = 'certificate',
-  MARKSHEET = 'marksheet',
-  TAX = 'tax',
+  ID = 'id',
   EDUCATION = 'education',
   OTHER = 'other',
 }
