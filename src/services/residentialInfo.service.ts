@@ -43,8 +43,8 @@ class ResidentialInfoService {
       }
     }
 
-    const address = `${residentialInfoData.address_line_1}${residentialInfoData.address_line_2} ${residentialInfoData.landmark}${residentialInfoData.city}${residentialInfoData.state}${residentialInfoData.country}`
-    const location :GetLocationResponse=await locationService.createLocation(userId ,address);
+    const address = `${residentialInfoData.address_line_1}${residentialInfoData.address_line_2} ${residentialInfoData.landmark}${residentialInfoData.city}${residentialInfoData.state}${residentialInfoData.country}`;
+    const location: GetLocationResponse = await locationService.createLocation(userId, address);
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
@@ -102,14 +102,14 @@ class ResidentialInfoService {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    const location =await LocationModel.create({
-      user:userId ,
-      latitude:data.latitude,
-      longitude:data.longitude,
+    const location = await LocationModel.create({
+      user: userId,
+      latitude: data.latitude,
+      longitude: data.longitude,
     });
 
-    residentialInfo.capturedLocation =location._id ;
-    residentialInfo.save() ;
+    residentialInfo.capturedLocation = location._id;
+    residentialInfo.save();
 
     return residentialInfo;
   }
