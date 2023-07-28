@@ -26,11 +26,6 @@ class UserService {
   }
 
   public async updateUser(userId: string, updatedData: UpdateUserDto): Promise<UpdateUserResponse> {
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    }
-
     const updatedUser = await UserModel.findByIdAndUpdate(userId, { $set: updatedData }, { new: true });
 
     if (!updatedUser) {

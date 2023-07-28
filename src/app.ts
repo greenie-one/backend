@@ -1,10 +1,6 @@
-import './utils/logger';
 import 'reflect-metadata';
+import './utils/logger';
 
-import { env } from './config';
-import { registerControllers } from './controllers';
-import { redisClient, redisUtilClient } from './redisClient';
-import { registerPropertiesCheck } from './utils/customChecks';
 import fastifyOpenTelemetry from '@autotelic/fastify-opentelemetry';
 import { dbConnection } from '@database';
 import fastifyCookie from '@fastify/cookie';
@@ -18,6 +14,10 @@ import fastify from 'fastify';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import { connect, set } from 'mongoose';
+import { env } from './config';
+import { registerControllers } from './controllers';
+import { redisClient, redisUtilClient } from './redisClient';
+import { registerPropertiesCheck } from './utils/customChecks';
 
 export class App {
   public app: ReturnType<typeof fastify>;

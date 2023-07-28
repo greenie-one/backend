@@ -1,16 +1,7 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { CreateWorkPeerDto, SendPeerOtpDTO, UpdatePeerWorkVerificationDto, VerifyOtpDTO } from '@/dtos/request/workExPeer.dto';
-import {
-  CreateWorkPeerResponse,
-  DeleteWorkPeerResponse,
-  GetPeerInformationResponse,
-  GetUserWorkPeersResponse,
-  ResendPeerLinkResponse,
-  UpdateWorkPeerResponse,
-  WorkPeerSendOtpResponse,
-  WorkPeerVerifyResponse,
-} from '@/dtos/response/workExPeer.response';
-import { peerService } from '@/services/workExPeer.service';
+import { CreateWorkPeerResponse, DeleteWorkPeerResponse, GetPeerInformationResponse, GetUserWorkPeersResponse, ResendPeerLinkResponse, UpdateWorkPeerResponse, WorkPeerSendOtpResponse, WorkPeerVerifyResponse } from '@/dtos/response/workExPeer.response';
+import { workPeerService } from '@/services/workExPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
@@ -21,41 +12,41 @@ import { FastifyReply } from 'fastify';
 export default class WorkExPeerController {
   @Get('/work/me')
   async getMyPeers(@UserDetails() userDetails: TokenClaims): Promise<GetUserWorkPeersResponse> {
-    return peerService.getUserWorkPeers(userDetails.sub);
+    return workPeerService.getUserWorkPeers(userDetails.sub);
   }
 
   @Post('/work')
   async createWorkPeer(@UserDetails() userDetails: TokenClaims, @Body() data: CreateWorkPeerDto): Promise<CreateWorkPeerResponse> {
-    return peerService.createWorkPeer(userDetails.sub, data);
+    return workPeerService.createWorkPeer(userDetails.sub, data);
   }
 
   @Delete('/work/:peerId')
   async deletePeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string): Promise<DeleteWorkPeerResponse> {
-    return peerService.deletePeer(userDetails.sub, peerId);
+    return workPeerService.deletePeer(userDetails.sub, peerId);
   }
 
   @Get('/work/:id/resend')
   async resendLinksToPeers(@UserDetails() userDetails: TokenClaims, @Params('id') peerId: string): Promise<ResendPeerLinkResponse> {
-    return peerService.resendLinksToPeers(userDetails.sub, peerId);
+    return workPeerService.resendLinksToPeers(userDetails.sub, peerId);
   }
 
   @Patch('/work/:peerUUID')
   async updatePeer(@Params('peerUUID') peerUUID: string, @Body() data: UpdatePeerWorkVerificationDto): Promise<UpdateWorkPeerResponse> {
-    return peerService.updatePeerWorkVerification(peerUUID, data);
+    return workPeerService.updatePeerWorkVerification(peerUUID, data);
   }
 
   @Get('/work/:peerUUID')
   async getPeerInformation(@Params('peerUUID') peerUUID: string, @Reply() reply: FastifyReply): Promise<GetPeerInformationResponse> {
-    return peerService.getPeerInformation(peerUUID, reply);
+    return workPeerService.getPeerInformation(peerUUID, reply);
   }
 
   @Post('/work/:peerUUID/send-otp')
   async peerSendOTP(@Params('peerUUID') peerUUID: string, @Body() otp_data: SendPeerOtpDTO): Promise<WorkPeerSendOtpResponse> {
-    return await peerService.peerSendOTP(peerUUID, otp_data.otpType);
+    return await workPeerService.peerSendOTP(peerUUID, otp_data.otpType);
   }
 
   @Post('/work/:peerUUID/verify-otp')
   async verifyPeerContact(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyOtpDTO): Promise<WorkPeerVerifyResponse> {
-    return peerService.verifyPeerConatct(peerUUID, otp_data.otpType, otp_data.otp);
+    return workPeerService.verifyPeerContact(peerUUID, otp_data.otp);
   }
 }

@@ -24,9 +24,10 @@ export interface SingleWorkPeer {
   email: string;
   phone: string;
   workExperience: string;
+  peerPost: string;
   isVerificationCompleted: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type GetUserWorkPeersResponse = SingleWorkPeer[];
@@ -34,9 +35,9 @@ export type GetUserWorkPeersResponse = SingleWorkPeer[];
 export interface GetPeerWorkExDataResponse {
   name: string;
   profilePic: string;
-  companyName?: string;
-  peerPost?: string;
-  designation?: string;
+  companyName: string;
+  peerPost: string;
+  designation: string;
   selectedFields?: Partial<WorkExperienceResponse>;
   skills?: SkillResponse[];
   documents?: GetDocumentsResponse;

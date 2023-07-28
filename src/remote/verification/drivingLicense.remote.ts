@@ -1,5 +1,5 @@
 import { env } from '@/config';
-import { DrivingLicenseVerifyResponse } from '@/dtos/response/ids.response';
+import { DrivingLicenseVerifyResponse } from '../dtos/driving.response';
 import { HttpClient } from '../generic/httpClient';
 
 export class drivinLicenseVerification {

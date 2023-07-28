@@ -1,3 +1,5 @@
+import '@/utils/mongoose';
+
 import { App } from '@/app';
 import { ValidateEnv } from '@utils/validateEnv';
 import DocumentController from './controllers/document.controller';

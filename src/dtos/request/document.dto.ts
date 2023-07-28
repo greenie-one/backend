@@ -1,10 +1,9 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
+import { IsObjectId } from '@/utils/validation';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, Validate, ValidateIf } from 'class-validator';
 
 export enum DocumentType {
   WORK = 'work',
-  CERTIFICATE = 'certificate',
-  MARKSHEET = 'marksheet',
-  TAX = 'tax',
+  ID = 'id',
   EDUCATION = 'education',
   OTHER = 'other',
 }
@@ -25,6 +24,7 @@ export class CreateDocumentDto {
   @ValidateIf((o) => o.type === DocumentType.WORK)
   @IsNotEmpty()
   @IsString()
+  @Validate(IsObjectId)
   public workExperience?: string;
 }
 
@@ -44,5 +44,6 @@ export class UpdateDocumentDto {
   @ValidateIf((o) => o.type === DocumentType.WORK)
   @IsNotEmpty()
   @IsString()
+  @Validate(IsObjectId)
   public workExperience?: string;
 }

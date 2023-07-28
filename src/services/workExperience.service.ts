@@ -11,20 +11,9 @@ import { DocumentModel } from '@/models/document.model';
 import { SkillModel } from '@/models/skills.model';
 import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
-import { UserModel } from '@models/users.model';
 
 class WorkExperienceService {
   public async createWorkExperience(userId: string, workExperienceData: CreateWorkExperienceDto): Promise<CreateWorkExperienceResponse> {
-    try {
-      // Check if user exists
-      const findUser = await UserModel.findById(userId);
-      if (!findUser) {
-        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-      }
-    } catch (e) {
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    }
-
     if (workExperienceData.dateOfLeaving) {
       if (workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
         throw new HttpException(ErrorEnum.INVALID_DATE);

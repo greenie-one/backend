@@ -15,4 +15,5 @@ export type UpdateProfileResponse = GetProfileResponse;
 
 export interface GetProfileRankingResponse {
   percentile: number;
+  score: number
 }

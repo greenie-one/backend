@@ -1,6 +1,7 @@
+import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { Location } from './location.model';
 import { User } from './users.model';
 import { Verification } from './verified.model';
-import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 
 export class ResidentialInfo {
   @prop({ required: true })
@@ -33,8 +34,17 @@ export class ResidentialInfo {
   @prop({ type: () => Verification })
   public verification?: Verification;
 
-  @prop({ ref: 'User' })
+  @prop({ ref: () => User })
   public user!: Ref<User>;
+
+  @prop({ ref: () => Location })
+  public location!: Ref<Location>;
+
+  @prop({ required: true })
+  public addressType!: string
+
+  @prop({ ref: () => Location })
+  public capturedLocation!: Ref<Location>;
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);

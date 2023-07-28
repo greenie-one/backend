@@ -1,31 +1,35 @@
-import { GPScompare } from '@/dtos/request/location.dto';
+import { GPScompare, GetCoordinatesDto } from '@/dtos/request/location.dto';
 import { GetLocationResponse } from '@/dtos/response/location.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { LocationModel } from '@/models/location.model';
+import { ResidentialInfoModel } from '@/models/residentialInfo.model';
+import { ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { Geolocation } from '@/remote/location/location';
+import { residentialPeerService } from './residentialPeer.service';
 
 class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
-    const coordinates = await Geolocation.getLocation(address).catch((err) => {
-      console.log(err);
-      console.log(coordinates);
-      throw new HttpException(ErrorEnum.INVALID_COORDINATES);
-    });
-    if (coordinates && coordinates.code !== 'RM003') {
+    try {
+      const coordinates = await Geolocation.getLocation(address);
+      if (!coordinates) {
+        throw new HttpException(ErrorEnum.INVALID_COORDINATES);
+      }
+
       const location = await LocationModel.create({
         user: userId,
-        coordinates: coordinates,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
       });
 
       const res: GetLocationResponse = {
         id: location._id.toString(),
-        coordinates: location.coordinates.toString(),
+        longitude: location.longitude,
+        latitude: location.latitude,
         user: location.user.toString(),
       };
       return res;
-    } else {
-      console.log(coordinates);
+    } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
     }
   }
@@ -53,6 +57,41 @@ class LocationService {
     } catch (err) {
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
     }
+  }
+
+  public async capturePeerLocation(peerUUID: string, data: GetCoordinatesDto) {
+    const { peerId } = await residentialPeerService.peerUUIDtoPeerId(peerUUID);
+    const peer = await ResidentialPeerModel.findById(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+    const residentialInfo = await ResidentialInfoModel.findById(peer.ref);
+    if (!residentialInfo) {
+      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
+    }
+    const location = await LocationModel.create({
+      user: peer.user,
+      latitude: data.latitude,
+      longitude: data.longitude,
+    });
+    residentialInfo.capturedLocation = location._id;
+    residentialInfo.save();
+    return { success: true, message: 'Location Captured' };
+  }
+
+  public async captureUserLocation(userId: string, data: GetCoordinatesDto) {
+    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
+    if (!residentialInfo) {
+      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
+    }
+    const location = await LocationModel.create({
+      user: userId,
+      latitude: data.latitude,
+      longitude: data.longitude,
+    });
+    residentialInfo.capturedLocation = location._id;
+    residentialInfo.save();
+    return residentialInfo;
   }
 }
 

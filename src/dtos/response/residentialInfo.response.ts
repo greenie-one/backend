@@ -14,6 +14,7 @@ export interface SingleResidentialInfo {
   country: string;
   start_date?: Date;
   end_date?: Date;
+  addressType: string
 }
 
 export type GetResidentialInfoResponse = SingleResidentialInfo[];

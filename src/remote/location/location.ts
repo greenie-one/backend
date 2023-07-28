@@ -1,6 +1,6 @@
-import { HttpClient } from '../generic/httpClient';
 import { env } from '@/config';
 import { LocationResponse } from '@/dtos/response/location.response';
+import { HttpClient } from '../generic/httpClient';
 
 export class Geolocation {
   static async getLocation(address: string): Promise<LocationResponse> {

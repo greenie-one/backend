@@ -59,30 +59,33 @@ class WorkExPeerService {
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
     if (peer.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.INVALID_PEER_ID);
     }
+
     await this.sendLinksToPeers(peerId, peer);
     return {};
   }
 
-  public async peerSendOTP(peerUUID: string, otp_type: OtpType): Promise<WorkPeerSendOtpResponse> {
+  public async peerSendOTP(peerUUID: string): Promise<WorkPeerSendOtpResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
     const { email, phone } = peer;
-    if (otp_type === 'EMAIL') {
-      await otpService.sendOTP(email, otp_type);
+    if (!peer.emailVerified) {
+      await otpService.sendOTP(email, OtpType.EMAIL);
     } else {
-      await otpService.sendOTP(phone, otp_type);
+      await otpService.sendOTP(phone, OtpType.MOBILE);
     }
 
     return {};
   }
 
-  public async verifyPeerConatct(peerUUID: string, otp_type: OtpType, otp: string): Promise<WorkPeerVerifyResponse> {
+  public async verifyPeerContact(peerUUID: string, otp: string): Promise<WorkPeerVerifyResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -90,12 +93,13 @@ class WorkExPeerService {
     }
     const { email, phone } = peer;
 
-    peer.emailVerified = otp_type === OtpType.EMAIL;
-    peer.phoneVerified = otp_type === OtpType.MOBILE;
+    peer.emailVerified = !!email;
+    peer.phoneVerified = !!phone;
 
-    const contact = otp_type === OtpType.EMAIL ? email : phone;
+    const contact = peer.emailVerified ? email : phone;
+    const otpType = peer.emailVerified ? OtpType.EMAIL : OtpType.MOBILE
 
-    if (await otpService.verifyOTP(contact, otp_type, otp)) {
+    if (await otpService.verifyOTP(contact, otpType, otp)) {
       await peer.save();
       return {};
     } else {
@@ -112,8 +116,9 @@ class WorkExPeerService {
       phone: peer.phone,
       workExperience: peer.ref.toString(),
       isVerificationCompleted: peer.isVerificationCompleted,
-      createdAt: peer.createdAt.toISOString(),
-      updatedAt: peer.updatedAt.toISOString(),
+      peerPost: peer.verificationBy,
+      createdAt: peer.createdAt,
+      updatedAt: peer.updatedAt,
     }));
   }
 
@@ -152,6 +157,9 @@ class WorkExPeerService {
     const data: GetPeerWorkExDataResponse = {
       name: `${profile.firstName} ${profile.lastName}`,
       profilePic: profile.profilePic,
+      companyName: workExperience.companyName,
+      peerPost: peer.verificationBy,
+      designation: workExperience.designation,
       skills: [],
       documents: [],
     };
@@ -160,31 +168,27 @@ class WorkExPeerService {
       data.selectedFields = {};
       copyDataFrom(peer.toObject().selectedFields, workExperience.toObject(), data.selectedFields);
     }
-    if (peer.verificationBy !== WorkVerificationBy.HR) {
-      data.peerPost = peer.verificationBy;
-      data.designation = workExperience.designation;
-      data.companyName = workExperience.companyName;
-    }
 
     const skillIds = peer.skills.map((skill) => skill.id);
-    (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
-      return { id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise };
-    });
-    const documentIds = peer.documents.map((document) => document.id);
-    const documents = await DocumentModel.find({ _id: { $in: documentIds } });
+    await Promise.all(
+      (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
+        data.skills.push({ id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise });
+      }),
+    );
 
-    data.documents = await Promise.all(
-      documents.map(async (document) => {
+    const documentIds = peer.documents.map((document) => document.id);
+    await Promise.all(
+      (await DocumentModel.find({ _id: { $in: documentIds } })).map(async (document) => {
         const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
-        return {
+        data.documents.push({
           id: document._id.toString(),
-          name: document.name,
           type: document.type,
-          user: document.user.toString(),
-          createdAt: document.createdAt,
-          updatedAt: document.updatedAt,
+          name: document.name,
           privateUrl: `${document.privateUrl}?${sasToken}`,
-        };
+          user: document.user?.toString(),
+          createdAt: document.createdAt,
+          updatedAt: document.updatedAt
+        });
       }),
     );
 
@@ -331,4 +335,4 @@ class WorkExPeerService {
   }
 }
 
-export const peerService = new WorkExPeerService();
+export const workPeerService = new WorkExPeerService();
