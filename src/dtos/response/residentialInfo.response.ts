@@ -14,6 +14,7 @@ export interface ResidentialInfoResponse {
   country: string;
   start_date: string;
   end_date: string;
+  addressType: string
 }
 
 export interface GetResidentialInfoResponse {

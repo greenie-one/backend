@@ -7,21 +7,10 @@ import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { documentWeights, scoreConstant } from '@/utils/documentWeight';
 import { getRandomGreenieId } from '@/utils/string';
-import { UserModel } from '@models/users.model';
 import { ClientSession } from 'mongoose';
 
 class ProfileService {
   public async createProfile(userId: string, profileData: CreateProfileDto): Promise<AddProfileResponse> {
-    try {
-      // Check if user exists
-      const findUser = await UserModel.findById(userId);
-      if (!findUser) {
-        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-      }
-    } catch (e) {
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    }
-
     const findProfile = await ProfileModel.findOne({
       user: userId,
     });

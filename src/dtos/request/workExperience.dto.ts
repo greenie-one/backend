@@ -1,4 +1,4 @@
-import { IsEnum, IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsISO8601, IsNotEmpty, IsNumberString, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export enum CompanyTypeEnum {
   Startup = 'Start-up (Funded)',
@@ -21,6 +21,7 @@ export class CreateWorkExperienceDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsEmail()
   public email!: string;
 
   @IsString()
@@ -45,14 +46,17 @@ export class CreateWorkExperienceDto {
 
   @IsString()
   @IsOptional()
+  @IsUrl({
+    host_whitelist: ["linkedin.com", "www.linkedin.com"],
+  })
   public linkedInUrl?: string;
 
   @IsString()
   @IsOptional()
   public reason_for_leaving?: string;
 
-  @IsString()
   @IsOptional()
+  @IsNumberString()
   public salary?: string;
 
   @IsISO8601()

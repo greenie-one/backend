@@ -107,6 +107,7 @@ class IDsService {
                 country: result.user_address.country,
                 state: result.user_address.state,
                 pincode: result.address_zip,
+                type: 'permanent'
               },
             },
           ],
@@ -163,6 +164,7 @@ class IDsService {
           country: result.user_address.country,
           state: result.user_address.state,
           pincode: result.user_address.zip,
+          type: 'permanent'
         },
       } as ID);
 
@@ -209,6 +211,7 @@ class IDsService {
           country: user_address.country,
           state: user_address.state,
           pincode: user_address.pin,
+          type: user_address.type
         },
       } as ID);
 

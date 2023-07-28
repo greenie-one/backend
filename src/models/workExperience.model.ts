@@ -46,7 +46,7 @@ export class WorkExperience {
   @prop({ type: String })
   public salary?: string;
 
-  @prop({ ref: 'User' })
+  @prop({ ref: () => User })
   public user!: Ref<User>;
 
   public createdAt?: Date;

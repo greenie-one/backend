@@ -36,6 +36,10 @@ export class AddResidentialInfoDto {
   @IsISO8601()
   @IsOptional()
   public end_date?: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  public addressType: string
 }
 
 export class UpdateResidentialInfoDto {

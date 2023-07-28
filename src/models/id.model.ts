@@ -17,7 +17,7 @@ export class ID {
   @prop({ required: true, type: Schema.Types.Mixed })
   public data!: object;
 
-  @prop({ ref: 'User' })
+  @prop({ ref: () => User })
   public user!: Ref<User>;
 
   @prop({ required: true, type: Schema.Types.Mixed })
@@ -26,7 +26,7 @@ export class ID {
   @prop({ required: true, type: () => NormalizedAddress })
   public normalizedAddress!: NormalizedAddress;
 
-  @prop({ ref: 'Location', type: String })
+  @prop({ ref: () => Location, type: String })
   public location?: Ref<Location, string>;
 
   @prop({ type: () => Verification })

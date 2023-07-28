@@ -120,7 +120,7 @@ export class HRQuestions {
 
 @modelOptions({ schemaOptions: { _id: false } })
 export class SkillsVerification {
-  @prop({ type: String, ref: 'Skills', required: true })
+  @prop({ type: String, ref: () => Skills, required: true })
   public id!: Ref<Skills, string>;
 
   @prop({ default: Status.defaultStatus() })
@@ -134,7 +134,7 @@ export class SkillsVerification {
 
 @modelOptions({ schemaOptions: { _id: false } })
 export class DocumentVerification {
-  @prop({ type: String, ref: 'Document', required: true })
+  @prop({ type: String, ref: () => Document, required: true })
   public id!: Ref<Document, string>;
 
   @prop({ default: Status.defaultStatus() })
@@ -150,10 +150,10 @@ export class DocumentVerification {
 @modelOptions({ schemaOptions: { timestamps: true } })
 @index({ user: 1, email: 1, ref: 1 }, { unique: true })
 export class WorkPeer {
-  @prop({ required: true, ref: 'User', type: String })
+  @prop({ required: true, ref: () => User, type: String })
   public user!: Ref<User, string>;
 
-  @prop({ required: true, ref: 'WorkExperience', type: String })
+  @prop({ required: true, ref: () => WorkExperience, type: String })
   public ref!: Ref<WorkExperience, string>;
 
   @prop({ required: true })

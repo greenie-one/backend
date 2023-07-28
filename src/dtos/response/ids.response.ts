@@ -6,4 +6,5 @@ export class NormalizedAddress {
   state: string;
   country: string;
   pincode: string;
+  type: string
 }

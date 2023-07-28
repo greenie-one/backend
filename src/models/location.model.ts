@@ -8,7 +8,7 @@ export class Location {
   @prop({ required: true, type: Number })
   public latitude!: Number;
 
-  @prop({ required: true, ref: 'User' })
+  @prop({ required: true, ref: () => User })
   public user!: Ref<User>;
 
   @prop({ type: Date, default: Date.now })

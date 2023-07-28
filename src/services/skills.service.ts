@@ -3,19 +3,9 @@ import { AddSkillResponse, GetSkillsResponse, SkillResponse } from '@/dtos/respo
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { SkillModel, Skills } from '@/models/skills.model';
-import { UserModel } from '@models/users.model';
 
 class SkillService {
   public async createSkill(userId: string, skillData: CreateSkillDto): Promise<AddSkillResponse> {
-    try {
-      const findUser = await UserModel.findById(userId);
-      if (!findUser) {
-        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-      }
-    } catch (e) {
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    }
-
     const skill = await SkillModel.create({
       user: userId,
       ...skillData,
@@ -25,11 +15,7 @@ class SkillService {
   }
 
   public async getSkills(userId: string): Promise<GetSkillsResponse> {
-    const skills = await SkillModel.find({ user: userId });
-
-    if (!skills) {
-      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
-    }
+    const skills = await SkillModel.find({ user: userId }) ?? [];
 
     const resp: GetSkillsResponse = {
       skills: [],
@@ -89,6 +75,7 @@ class SkillService {
     if (skill.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
     }
+
     const resp: SkillResponse = {
       id: skill._id.toString(),
       skillName: skill.skillName,
