@@ -1,8 +1,8 @@
 import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
+import { GetLocationResponse } from '@/dtos/response/location.response';
 import { AddResidentialInfoResponse, GetResidentialInfoResponse, ResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { locationService } from './location.service';
 
@@ -41,12 +41,12 @@ class ResidentialInfoService {
       }
     }
 
-    const address = `${residentialInfoData.address_line_1}, ${residentialInfoData.address_line_2}, ${residentialInfoData.landmark}, ${residentialInfoData.city}, ${residentialInfoData.state}, ${residentialInfoData.country}`;
-    const location = locationService.createLocation(userId, address);
+    const address = `${residentialInfoData.address_line_1}${residentialInfoData.address_line_2} ${residentialInfoData.landmark}${residentialInfoData.city}${residentialInfoData.state}${residentialInfoData.country}`;
+    const location: GetLocationResponse = await locationService.createLocation(userId, address);
     const residentialInfo = await ResidentialInfoModel.create({
       ...residentialInfoData,
       user: userId,
-      location: (await location).id,
+      location: location.id,
     });
 
     const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };
