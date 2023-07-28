@@ -7,27 +7,26 @@ import { Geolocation } from '@/remote/location/location';
 
 class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
-    const coordinates = await Geolocation.getLocation(address).catch((err) => {
-      console.log(err);
-      console.log(coordinates);
-      throw new HttpException(ErrorEnum.INVALID_COORDINATES);
-    });
-    if (coordinates && coordinates.code !== 'RM003') {
+    try {
+      const coordinates = await Geolocation.getLocation(address);
+      if (!coordinates) {
+        throw new HttpException(ErrorEnum.INVALID_COORDINATES);
+      }
+
       const location = await LocationModel.create({
         user: userId,
         latitude: coordinates.latitude,
-        longitude:coordinates.longitude
+        longitude: coordinates.longitude,
       });
 
       const res: GetLocationResponse = {
         id: location._id.toString(),
-        longitude:location.longitude,
-        latitude:location.latitude,
+        longitude: location.longitude,
+        latitude: location.latitude,
         user: location.user.toString(),
       };
       return res;
-    } else {
-      console.log(coordinates);
+    } catch (e) {
       throw new HttpException(ErrorEnum.INVALID_COORDINATES);
     }
   }

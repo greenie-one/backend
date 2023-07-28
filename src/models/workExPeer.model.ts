@@ -58,6 +58,9 @@ export class SelectedFields {
   public workMode?: Status;
 
   @prop()
+  public companyId?: Status;
+
+  @prop()
   public salary?: Status;
 
   static defaultFields() {
@@ -70,6 +73,7 @@ export class SelectedFields {
     defaultOptionalWorkExFields.workType = Status.defaultStatus();
     defaultOptionalWorkExFields.workMode = Status.defaultStatus();
     defaultOptionalWorkExFields.salary = Status.defaultStatus();
+    defaultOptionalWorkExFields.companyId = Status.defaultStatus();
     return defaultOptionalWorkExFields;
   }
 }
