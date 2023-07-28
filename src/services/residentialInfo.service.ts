@@ -2,7 +2,6 @@ import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/
 import { AddResidentialInfoResponse, GetResidentialInfoResponse, ResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { locationService } from './location.service';
 

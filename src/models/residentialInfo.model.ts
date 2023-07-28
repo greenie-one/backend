@@ -42,6 +42,9 @@ export class ResidentialInfo {
 
   @prop({ required: true })
   public addressType!: string
+
+  @prop({ ref: () => Location })
+  public capturedLocation!: Ref<Location>;
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);
