@@ -46,9 +46,7 @@ export class CreateWorkExperienceDto {
 
   @IsString()
   @IsOptional()
-  @IsUrl({
-    host_whitelist: ["linkedin.com", "www.linkedin.com"],
-  })
+  @IsUrl({ host_whitelist: ["linkedin.com", "www.linkedin.com"] })
   public linkedInUrl?: string;
 
   @IsString()
