@@ -1,4 +1,5 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsObjectId } from '@/utils/validation';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, Validate } from 'class-validator';
 
 export enum SkillTypeEnum {
   AMATEUR = 'AMATEUR',
@@ -15,6 +16,7 @@ export class CreateSkillDto {
   public skillName!: string;
 
   @IsString()
+  @Validate(IsObjectId)
   @IsOptional()
   public workExperience?: string;
 
@@ -29,6 +31,7 @@ export class UpdateSkillDto {
   public skillName?: string;
 
   @IsString()
+  @Validate(IsObjectId)
   @IsOptional()
   public workExperience?: string;
 

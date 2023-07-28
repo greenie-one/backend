@@ -7,12 +7,8 @@ import { UserModel } from '@models/users.model';
 
 class SkillService {
   public async createSkill(userId: string, skillData: CreateSkillDto): Promise<AddSkillResponse> {
-    try {
-      const findUser = await UserModel.findById(userId);
-      if (!findUser) {
-        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-      }
-    } catch (e) {
+    const findUser = await UserModel.findById(userId);
+    if (!findUser) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
@@ -25,11 +21,7 @@ class SkillService {
   }
 
   public async getSkills(userId: string): Promise<GetSkillsResponse> {
-    const skills = await SkillModel.find({ user: userId });
-
-    if (!skills) {
-      throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
-    }
+    const skills = await SkillModel.find({ user: userId }) ?? [];
 
     const resp: GetSkillsResponse = {
       skills: [],

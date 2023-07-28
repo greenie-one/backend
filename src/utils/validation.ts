@@ -1,7 +1,8 @@
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { ValidationError, validateOrReject } from 'class-validator';
+import { ValidationArguments, ValidationError, ValidatorConstraint, ValidatorConstraintInterface, validateOrReject } from 'class-validator';
+import { isObjectIdOrHexString } from 'mongoose';
 
 /**
  * @name ValidationMiddleware
@@ -51,4 +52,15 @@ export function sanitizeMobileNumber(mobileNumber: string) {
   }
 
   return mobNo.slice(-13);
+}
+
+@ValidatorConstraint({ name: 'isValidNestedQuestion', async: false })
+export class IsObjectId implements ValidatorConstraintInterface {
+  validate(val: string) {
+    return isObjectIdOrHexString(val)
+  }
+
+  defaultMessage(args?: ValidationArguments) {
+    return `${args.property} must be a valid object id`;
+  }
 }

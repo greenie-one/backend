@@ -12,13 +12,8 @@ import { ClientSession } from 'mongoose';
 
 class ProfileService {
   public async createProfile(userId: string, profileData: CreateProfileDto): Promise<AddProfileResponse> {
-    try {
-      // Check if user exists
-      const findUser = await UserModel.findById(userId);
-      if (!findUser) {
-        throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-      }
-    } catch (e) {
+    const findUser = await UserModel.findById(userId);
+    if (!findUser) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 

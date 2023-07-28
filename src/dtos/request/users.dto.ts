@@ -51,21 +51,3 @@ export class UpdateUserDto {
   @Transform((params) => sanitizeMobileNumber(params.value))
   mobileNumber?: string;
 }
-
-export enum ValidationType {
-  LOGIN = 'LOGIN',
-  SINGUP = 'SIGNUP',
-}
-
-export class ValidateOtpDTO {
-  @IsString()
-  otp: string;
-
-  @IsString()
-  validationId: string;
-}
-
-export class ResendOtpDTO {
-  @IsString()
-  validationId: string;
-}
