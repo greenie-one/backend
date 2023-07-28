@@ -1,4 +1,4 @@
-import { IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AddResidentialInfoDto {
   @IsString()
@@ -77,14 +77,3 @@ export class UpdateResidentialInfoDto {
   @IsOptional()
   public end_date?: Date;
 }
-
-export class GetGpsCoordinatesDto{
-  @IsNumber()
-  @IsNotEmpty()
-  public latitude!: Number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  public longitude!: Number;
-}
-

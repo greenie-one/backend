@@ -1,6 +1,6 @@
 import { env } from '@/config';
+import { GetCoordinatesDto } from '@/dtos/request/location.dto';
 import { OtpType } from '@/dtos/request/otp.dto';
-import { GetCoordinatesDto } from '@/dtos/request/residentialPeer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { LocationModel } from '@/models/location.model';
