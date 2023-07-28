@@ -1,5 +1,6 @@
 import { env } from '@/config';
-import { OtpType } from '@/dtos/request/otp.dto';
+import { OtpType } from '@/dtos/request/workExPeer.dto';
+import { SendPeerOtpResponse, VerifyPeerResponse } from '@/dtos/response/residentialPeer.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
@@ -49,7 +50,7 @@ class ResidentialPeerService {
     return { success: true, message: 'Link Sent' };
   }
 
-  public async peerSendOTP(peerUUID: string) {
+  public async peerSendOTP(peerUUID: string): Promise<SendPeerOtpResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
@@ -61,25 +62,29 @@ class ResidentialPeerService {
     } else {
       await otpService.sendOTP(phone, OtpType.MOBILE);
     }
+
+    return {}
   }
 
-  public async verifyPeerConatct(peerUUID: string, otp: string) {
+  public async verifyPeerContact(peerUUID: string, otp: string): Promise<VerifyPeerResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     const { email, phone } = peer;
-    if (!peer.emailVerified && (await otpService.verifyOTP(email, OtpType.EMAIL, otp))) {
-      peer.emailVerified = true;
+
+    peer.emailVerified = !!email;
+    peer.phoneVerified = !!phone;
+
+    const contact = peer.emailVerified ? email : phone;
+    const otpType = peer.emailVerified ? OtpType.EMAIL : OtpType.MOBILE
+
+    if (await otpService.verifyOTP(contact, otpType, otp)) {
       await peer.save();
-      return { success: true, message: 'Verified' };
-    } else if (!peer.phoneVerified && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
-      peer.phoneVerified = true;
-      await peer.save();
-      return { success: true, message: 'Verified' };
+      return {};
     } else {
-      return { success: false, message: 'Invalid OTP' };
+      throw new HttpException(ErrorEnum.INVALID_OTP);
     }
   }
 }

@@ -1,5 +1,5 @@
 import { GPScompare, GetCoordinatesDto } from '@/dtos/request/location.dto';
-import { GetLocationResponse } from '@/dtos/response/location.response';
+import { CapturePeerLocationResponse, CaptureUserLocationResponse, GetLocationResponse } from '@/dtos/response/location.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { LocationModel } from '@/models/location.model';
@@ -59,7 +59,7 @@ class LocationService {
     }
   }
 
-  public async capturePeerLocation(peerUUID: string, data: GetCoordinatesDto) {
+  public async capturePeerLocation(peerUUID: string, data: GetCoordinatesDto): Promise<CapturePeerLocationResponse> {
     const { peerId } = await residentialPeerService.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
@@ -76,10 +76,10 @@ class LocationService {
     });
     residentialInfo.capturedLocation = location._id;
     residentialInfo.save();
-    return { success: true, message: 'Location Captured' };
+    return {};
   }
 
-  public async captureUserLocation(userId: string, data: GetCoordinatesDto) {
+  public async captureUserLocation(userId: string, data: GetCoordinatesDto): Promise<CaptureUserLocationResponse> {
     const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
@@ -91,7 +91,7 @@ class LocationService {
     });
     residentialInfo.capturedLocation = location._id;
     residentialInfo.save();
-    return residentialInfo;
+    return {};
   }
 }
 

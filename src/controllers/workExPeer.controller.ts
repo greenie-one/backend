@@ -1,5 +1,5 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
-import { CreateWorkPeerDto, SendPeerOtpDTO, UpdatePeerWorkVerificationDto, VerifyOtpDTO } from '@/dtos/request/workExPeer.dto';
+import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto, VerifyOtpDTO } from '@/dtos/request/workExPeer.dto';
 import { CreateWorkPeerResponse, DeleteWorkPeerResponse, GetPeerInformationResponse, GetUserWorkPeersResponse, ResendPeerLinkResponse, UpdateWorkPeerResponse, WorkPeerSendOtpResponse, WorkPeerVerifyResponse } from '@/dtos/response/workExPeer.response';
 import { workPeerService } from '@/services/workExPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
@@ -41,8 +41,8 @@ export default class WorkExPeerController {
   }
 
   @Post('/work/:peerUUID/send-otp')
-  async peerSendOTP(@Params('peerUUID') peerUUID: string, @Body() otp_data: SendPeerOtpDTO): Promise<WorkPeerSendOtpResponse> {
-    return await workPeerService.peerSendOTP(peerUUID, otp_data.otpType);
+  async peerSendOTP(@Params('peerUUID') peerUUID: string): Promise<WorkPeerSendOtpResponse> {
+    return await workPeerService.peerSendOTP(peerUUID);
   }
 
   @Post('/work/:peerUUID/verify-otp')
