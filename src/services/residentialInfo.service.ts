@@ -1,10 +1,8 @@
-import { GetCoordinatesDto } from '@/dtos/request/location.dto';
 import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
 import { GetLocationResponse } from '@/dtos/response/location.response';
 import { AddResidentialInfoResponse, GetResidentialInfoResponse, ResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { LocationModel } from '@/models/location.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { locationService } from './location.service';
 
@@ -93,25 +91,6 @@ class ResidentialInfoService {
     }
 
     return { success: true, message: 'Updated Successfully' };
-  }
-
-  public async captureUserLocation(userId: string, data: GetCoordinatesDto) {
-    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
-
-    if (!residentialInfo) {
-      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
-    }
-
-    const location = await LocationModel.create({
-      user: userId,
-      latitude: data.latitude,
-      longitude: data.longitude,
-    });
-
-    residentialInfo.capturedLocation = location._id;
-    residentialInfo.save();
-
-    return residentialInfo;
   }
 }
 

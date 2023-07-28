@@ -1,11 +1,8 @@
 import { env } from '@/config';
-import { GetCoordinatesDto } from '@/dtos/request/location.dto';
 import { OtpType } from '@/dtos/request/otp.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { LocationModel } from '@/models/location.model';
 import { ProfileModel } from '@/models/profile.model';
-import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeer, ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { redisClient } from '@/redisClient';
 import { verification } from '@/remote/peer/verification';
@@ -84,32 +81,6 @@ class ResidentialPeerService {
     } else {
       return { success: false, message: 'Invalid OTP' };
     }
-  }
-
-  public async capturePeerLocation(peerUUID: string, data: GetCoordinatesDto) {
-    const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
-    const peer = await ResidentialPeerModel.findById(peerId);
-
-    if (!peer) {
-      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
-    }
-
-    const residentialInfo = await ResidentialInfoModel.findById(peer.ref);
-
-    if (!residentialInfo) {
-      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
-    }
-
-    const location = await LocationModel.create({
-      user: peer.user,
-      latitude: data.latitude,
-      longitude: data.longitude,
-    });
-
-    residentialInfo.capturedLocation = location._id;
-    residentialInfo.save();
-
-    return { success: true, message: 'Location Captured' };
   }
 }
 

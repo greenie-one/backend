@@ -1,7 +1,6 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
-import { GetGpsCoordinatesDto } from '@/dtos/request/residentialInfo.dto';
-import { residentialInfoService } from '@/services/residentialInfo.service';
-import { residentialPeerService } from '@/services/residentialPeer.service';
+import { GetCoordinatesDto } from '@/dtos/request/location.dto';
+import { locationService } from '@/services/location.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Post } from '@/utils/decorators/methods';
@@ -10,13 +9,13 @@ import { Body, Params } from '@/utils/decorators/request';
 @Controller('/location')
 export default class LocationController {
   @Post('/capture/me')
-  public async captureLocationSelf(@UserDetails() userDetails: TokenClaims, @Body() data: GetGpsCoordinatesDto) {
+  public async captureLocationSelf(@UserDetails() userDetails: TokenClaims, @Body() data: GetCoordinatesDto) {
     const userId = userDetails.sub;
-    return residentialInfoService.captureUserLocation(userId, data);
+    return locationService.captureUserLocation(userId, data);
   }
 
   @Post('/capture/peer/:peerUUID')
-  public async captureLocationPeer(@Params('peerUUID') peerUUID: string, @Body() data: GetGpsCoordinatesDto) {
-    return residentialPeerService.capturePeerLocation(peerUUID, data);
+  public async captureLocationPeer(@Params('peerUUID') peerUUID: string, @Body() data: GetCoordinatesDto) {
+    return locationService.capturePeerLocation(peerUUID, data);
   }
 }
