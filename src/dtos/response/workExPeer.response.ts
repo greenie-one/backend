@@ -14,6 +14,7 @@ export interface GetUserWorkPeerResponse {
   email: string;
   phone: string;
   workExperience: string;
+  peerPost: string;
   isVerificationCompleted: boolean;
   createdAt: string;
   updatedAt: string;
