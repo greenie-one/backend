@@ -46,7 +46,7 @@ class LocationService {
 
       const deltaLong = gpsLog - ipLog;
       const deltaLat = gpsLat - ipLat;
-      const sinD = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(ipLat) * Math.cos(gpsLat) * Math.pow(Math.sin(deltaLong / 2), 2);
+      const sinD = Math.sin(deltaLat / 2) ** 2 + Math.cos(ipLat) * Math.cos(gpsLat) * Math.sin(deltaLong / 2) ** 2;
       const angluarDistance = 2 * Math.asin(Math.sqrt(sinD));
 
       const distance = angluarDistance * radius;
