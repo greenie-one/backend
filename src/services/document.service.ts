@@ -3,7 +3,6 @@ import { GetDocumentResponse } from '@/dtos/response/document.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel } from '@/models/document.model';
-import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisUtilClient } from '@/redisClient';
 import { RedisPUBSUB } from '@/redisClient/deleteService';
 import { SAStokenService } from './blobStorage.service';
@@ -19,18 +18,13 @@ class DocumentService {
     if (JSON.parse(data).commited) {
       throw new HttpException(ErrorEnum.DOCUMENT_ALREADY_UPLOADED);
     }
+
     const timeDifference = Date.now() - JSON.parse(data).upload_time;
     if (timeDifference > 400000) {
       throw new HttpException(ErrorEnum.DOCUMENT_EXPIRED);
     }
 
     if (data) {
-      if (documentData.workExperience) {
-        const workex = await WorkExperienceModel.findById(documentData.workExperience, { user: userID });
-        if (!workex) {
-          throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
-        }
-      }
       const newDocument = await DocumentModel.create({
         ...documentData,
         user: userID,
@@ -56,13 +50,6 @@ class DocumentService {
 
     if (document.user.toString() !== userID) {
       throw new HttpException(ErrorEnum.UNAUTHORIZED);
-    }
-
-    if (documentData.workExperience) {
-      const workex = await WorkExperienceModel.findById(documentData.workExperience, { user: userID });
-      if (!workex) {
-        throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
-      }
     }
 
     if (documentData.privateUrl) {

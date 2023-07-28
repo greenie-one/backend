@@ -17,7 +17,6 @@ function validateRefPlugin(schema: Schema) {
       if (value) {
         const model = getModelWithString(r.ref)
         const found = await model.exists({ _id: value })
-        console.log(found)
         if (!found) {
           next(new HttpException(ErrorEnum.DB_REF_VALIDATION_FAILED, `${r.ref} for path ${r.path} for value ${value}`))
         }

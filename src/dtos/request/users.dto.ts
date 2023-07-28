@@ -1,43 +1,6 @@
 import { sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, ValidateIf } from 'class-validator';
-
-export class CreateUserDto {
-  @IsEmail()
-  @ValidateIf((obj, val) => val || !obj.mobileNumber)
-  email: string;
-
-  @IsString()
-  @Matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/)
-  @ValidateIf((obj, val) => val || !obj.email)
-  @Type(() => String)
-  @Transform((params) => sanitizeMobileNumber(params.value))
-  mobileNumber?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(9)
-  @MaxLength(72)
-  @ValidateIf((obj, val) => val || obj.email)
-  password?: string;
-}
-
-export class LoginDto {
-  @IsEmail()
-  @ValidateIf((obj, val) => val || !obj.mobileNumber)
-  email: string;
-
-  @IsString()
-  @Matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/)
-  @ValidateIf((obj, val) => val || !obj.email)
-  @Type(() => String)
-  @Transform((params) => sanitizeMobileNumber(params.value))
-  mobileNumber: string;
-
-  @IsString()
-  @ValidateIf((obj, val) => val || obj.email)
-  password: string;
-}
+import { IsEmail, IsOptional, IsString, Matches } from 'class-validator';
 
 export class UpdateUserDto {
   @IsEmail()

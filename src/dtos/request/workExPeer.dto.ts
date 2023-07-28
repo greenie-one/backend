@@ -1,4 +1,4 @@
-import { sanitizeMobileNumber } from '@/utils/validation';
+import { IsObjectId, sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type, plainToInstance } from 'class-transformer';
 import {
   IsArray,
@@ -154,6 +154,7 @@ export class CreateWorkPeerDto {
 
   @IsString()
   @IsNotEmpty()
+  @Validate(IsObjectId)
   public ref!: string;
 
   @IsString()
@@ -169,11 +170,13 @@ export class CreateWorkPeerDto {
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()
+  @Validate(IsObjectId, { each: true })
   public skills!: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()
+  @Validate(IsObjectId, { each: true })
   public documents!: string[];
 }
 

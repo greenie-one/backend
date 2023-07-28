@@ -55,9 +55,11 @@ class WorkExPeerService {
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
     if (peer.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.INVALID_PEER_ID);
     }
+
     await this.sendLinksToPeers(peerId, peer);
     return { success: true, message: 'Link Sent' };
   }
@@ -68,6 +70,7 @@ class WorkExPeerService {
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
     const { email, phone } = peer;
     if (otp_type === 'EMAIL') {
       await otpService.sendOTP(email, otp_type);
@@ -76,7 +79,7 @@ class WorkExPeerService {
     }
   }
 
-  public async verifyPeerConatct(peerUUID: string, otp_type: OtpType, otp: string) {
+  public async verifyPeerContact(peerUUID: string, otp_type: OtpType, otp: string) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -162,13 +165,14 @@ class WorkExPeerService {
     }
 
     const skillIds = peer.skills.map((skill) => skill.id);
-    Promise.all(
+    await Promise.all(
       (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
         data.skills.push({ id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise });
       }),
     );
+
     const documentIds = peer.documents.map((document) => document.id);
-    Promise.all(
+    await Promise.all(
       (await DocumentModel.find({ _id: { $in: documentIds } })).map(async (document) => {
         const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
         data.documents.push({
