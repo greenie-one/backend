@@ -13,11 +13,11 @@ export class Document {
   @prop({ required: true })
   public privateUrl!: string;
 
-  @prop({ required: true, ref: User, type: String })
+  @prop({ required: true, ref: () => User, type: String })
   public user!: Ref<User, string>;
 
   @prop({
-    ref: 'WorkExperience',
+    ref: () => WorkExperience,
     type: String,
     required: function (this: Document) {
       return this.type === DocumentType.WORK;

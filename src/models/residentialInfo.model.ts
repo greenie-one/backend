@@ -34,10 +34,10 @@ export class ResidentialInfo {
   @prop({ type: () => Verification })
   public verification?: Verification;
 
-  @prop({ ref: 'User' })
+  @prop({ ref: () => User })
   public user!: Ref<User>;
 
-  @prop({ ref: 'Location' })
+  @prop({ ref: () => Location })
   public location!: Ref<Location>;
 
   @prop({ required: true })

@@ -1,7 +1,6 @@
 import { UserRoles } from '@/dtos/request/auth.dto';
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { getModelForClass, prop } from '@typegoose/typegoose';
 
-@modelOptions({ schemaOptions: { collection: 'users', timestamps: true } })
 export class User {
   public _id?: string;
 
