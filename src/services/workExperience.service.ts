@@ -86,7 +86,7 @@ class WorkExperienceService {
     await SkillModel.deleteMany({ user: userId, workExperience: workExperienceId });
     await DocumentModel.deleteMany({ user: userId, workExperience: workExperienceId });
     await workExperience.deleteOne();
-    return { success: true, message: 'Work experience deleted successfully' };
+    return {};
   }
 
   public async updateWorkExperience(

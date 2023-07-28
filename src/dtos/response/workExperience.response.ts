@@ -2,6 +2,7 @@ import { CompanyTypeEnum } from '../request/workExperience.dto';
 
 export type CreateWorkExperienceResponse = WorkExperienceResponse;
 export type UpdateWorkExperienceResponse = WorkExperienceResponse;
+export type DeleteWorkExperienceResponse = Record<string, never>;
 
 export interface WorkExperienceResponse {
   id: string;
