@@ -103,7 +103,7 @@ class ProfileService {
     ];
 
     const res = (await ProfileModel.collection.aggregate(pipelineStages).toArray())?.[0];
-    return { percentile: res?.percentage ?? 1 };
+    return { percentile: res?.percentage ?? 1, score: targetScore };
   }
 
   public async searchById(id: string) {
