@@ -96,6 +96,11 @@ export class SelectedFieldsDTO {
   @Type(() => StatusField)
   @IsOptional()
   public salary?: StatusField;
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public companyId?: StatusField;
 }
 
 export class AllQuestionsDTO {

@@ -3,6 +3,7 @@ import { Ref, getModelForClass, index, modelOptions, prop } from '@typegoose/typ
 import { Document } from 'mongoose';
 import { Skills } from './skills.model';
 import { User } from './users.model';
+import { WorkExperience } from './workExperience.model';
 
 @modelOptions({ schemaOptions: { _id: false } })
 export class Status {
@@ -57,6 +58,9 @@ export class SelectedFields {
   public workMode?: Status;
 
   @prop()
+  public companyId?: Status;
+
+  @prop()
   public salary?: Status;
 
   static defaultFields() {
@@ -69,6 +73,7 @@ export class SelectedFields {
     defaultOptionalWorkExFields.workType = Status.defaultStatus();
     defaultOptionalWorkExFields.workMode = Status.defaultStatus();
     defaultOptionalWorkExFields.salary = Status.defaultStatus();
+    defaultOptionalWorkExFields.companyId = Status.defaultStatus();
     return defaultOptionalWorkExFields;
   }
 }
@@ -149,7 +154,7 @@ export class WorkPeer {
   public user!: Ref<User, string>;
 
   @prop({ required: true, ref: 'WorkExperience', type: String })
-  public ref!: Ref<User, string>;
+  public ref!: Ref<WorkExperience, string>;
 
   @prop({ required: true })
   public name!: string;
