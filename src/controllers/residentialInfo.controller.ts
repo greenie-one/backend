@@ -1,12 +1,10 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
-
+import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
+import { residentialInfoService } from '@/services/residentialInfo.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
 import { Delete, Get, Patch, Post } from '@/utils/decorators/methods';
 import { Body, Params } from '@/utils/decorators/request';
-
-import { AddResidentialInfoDto, GetGpsCoordinatesDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
-import { residentialInfoService } from '@/services/residentialInfo.service';
 
 @Controller('/residential_info')
 export default class ResidentialInfoController {
@@ -36,11 +34,5 @@ export default class ResidentialInfoController {
     @Body() data: UpdateResidentialInfoDto,
   ) {
     return residentialInfoService.updateResidentialInfo(userDetails.sub, residentialInfoId, data);
-  }
-
-  @Post('/')
-  public async saveCaptureLocation(@UserDetails() userDetails: TokenClaims,@Body() data: GetGpsCoordinatesDto,) {
-    const userId = userDetails.sub;
-    return residentialInfoService.saveCaptureLocation(userId ,data);
   }
 }

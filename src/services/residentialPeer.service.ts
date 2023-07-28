@@ -86,7 +86,7 @@ class ResidentialPeerService {
     }
   }
 
-  public async savePeerCaptureLocation(peerUUID: string, data: GetCoordinatesDto) {
+  public async capturePeerLocation(peerUUID: string, data: GetCoordinatesDto) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
 
@@ -100,16 +100,16 @@ class ResidentialPeerService {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    const location =await LocationModel.create({
+    const location = await LocationModel.create({
       user: peer.user,
-      latitude:data.latitude,
-      longitude:data.longitude,
+      latitude: data.latitude,
+      longitude: data.longitude,
     });
 
-    residentialInfo.capturedLocation =location._id ;
-    residentialInfo.save() ;
+    residentialInfo.capturedLocation = location._id;
+    residentialInfo.save();
 
-    return residentialInfo;
+    return { success: true, message: 'Location Captured' };
   }
 }
 

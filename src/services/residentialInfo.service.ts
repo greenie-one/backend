@@ -94,9 +94,9 @@ class ResidentialInfoService {
 
     return { success: true, message: 'Updated Successfully' };
   }
-  
-  public async saveCaptureLocation(userId: string, data: GetGpsCoordinatesDto) {
-    const residentialInfo = await ResidentialInfoModel.findOne({user:userId});
+
+  public async captureUserLocation(userId: string, data: GetGpsCoordinatesDto) {
+    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
 
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
