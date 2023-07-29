@@ -24,7 +24,7 @@ class ResidentialPeerService {
 
   public async sendLinksToPeers(peerId: string, peer: ResidentialPeer) {
     const profile = await ProfileModel.findOne({ user: peer.user });
-    const base_url = `${env('FRONTEND_URL')}/location/${peer.verificationBy}`;
+    const base_url = `${env('FRONTEND_URL')}/location/verify`;
 
     const mobileUUID = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
     const mobileLink = `${base_url}/${mobileUUID}`;
@@ -37,7 +37,15 @@ class ResidentialPeerService {
 
     console.info(`Sending links to ${peer.name} with email ${peer.email} and phone ${peer.phone}`);
 
-    await verification.sendPeerVerificationLinks(peer.email, peer.phone, peer.name, `${profile.firstName} ${profile.lastName}`, 'his residence', mobileLink, emailLink);
+    await verification.sendPeerVerificationLinks(
+      peer.email,
+      peer.phone,
+      peer.name,
+      `${profile.firstName} ${profile.lastName}`,
+      'his residence',
+      mobileLink,
+      emailLink,
+    );
   }
 
   public async resendLinksToPeers(userId: string, peerId: string) {
