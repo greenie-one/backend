@@ -1,3 +1,5 @@
+import { ResidentialInfoResponse } from './residentialInfo.response';
+
 export interface GetResidentialPeerResponse {
   name: string;
   email: string;
@@ -7,6 +9,7 @@ export interface GetResidentialPeerResponse {
     name: string;
     profilePic: string;
   };
+  residentialInfo: ResidentialInfoResponse;
 }
 
 export interface CreateResidentialPeerResponse {

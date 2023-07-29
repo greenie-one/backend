@@ -23,8 +23,8 @@ class ResidentialInfoService {
         city: residentialInfo.city,
         state: residentialInfo.state,
         country: residentialInfo.country,
-        start_date: residentialInfo.start_date.toString(),
-        end_date: residentialInfo.end_date ? residentialInfo.end_date.toString() : null,
+        start_date: residentialInfo.start_date,
+        end_date: residentialInfo.end_date,
         addressType: residentialInfo.addressType,
       });
     }

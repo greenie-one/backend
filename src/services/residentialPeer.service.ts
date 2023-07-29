@@ -5,6 +5,7 @@ import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeers
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
+import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeer, ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { redisClient } from '@/redisClient';
 import { verification } from '@/remote/peer/verification';
@@ -127,7 +128,7 @@ class ResidentialPeerService {
         .status(err.status)
         .send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email, username });
     }
-
+    const residentialInfo = await ResidentialInfoModel.findById(peer.ref);
     return {
       name: peer.name,
       phone: peer.phone,
@@ -136,6 +137,19 @@ class ResidentialPeerService {
       user: {
         name: username,
         profilePic: profile.profilePic,
+      },
+      residentialInfo: {
+        id: residentialInfo._id.toString(),
+        address_line_1: residentialInfo.address_line_1,
+        address_line_2: residentialInfo.address_line_2,
+        city: residentialInfo.city,
+        state: residentialInfo.state,
+        country: residentialInfo.country,
+        start_date: residentialInfo.start_date,
+        end_date: residentialInfo.end_date,
+        pincode: residentialInfo.pincode,
+        addressType: residentialInfo.addressType,
+        landmark: residentialInfo.landmark,
       },
     };
   }
