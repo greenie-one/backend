@@ -10,7 +10,7 @@ import { Body, Params, Reply } from '@/utils/decorators/request';
 import { FastifyReply } from 'fastify';
 
 @Controller('/peer/residential')
-export default class WorkExPeerController {
+export default class ResidentialPeerController {
   @Post('/:peerUUID/send-otp')
   async peerSendOTP(@Params('peerUUID') peerUUID: string) {
     return residentialPeerService.peerSendOTP(peerUUID);
