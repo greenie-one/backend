@@ -111,18 +111,22 @@ class ResidentialPeerService {
       peer.emailVerified = true;
     }
     await peer.save();
+    const profile = await ProfileModel.findOne({ user: peer.user });
+    const username = `${profile.firstName} ${profile.lastName}`;
     if (!peer.emailVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
       console.error(err);
-      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
+      reply
+        .status(err.status)
+        .send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email, username });
     }
     if (!peer.phoneVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
       console.error(err);
-      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
+      reply
+        .status(err.status)
+        .send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email, username });
     }
-
-    const profile = await ProfileModel.findOne({ user: peer.user });
 
     return {
       name: peer.name,
@@ -130,7 +134,7 @@ class ResidentialPeerService {
       email: peer.email,
       verificationBy: peer.verificationBy,
       user: {
-        name: `${profile.firstName} ${profile.lastName}`,
+        name: username,
         profilePic: profile.profilePic,
       },
     };
