@@ -1,7 +1,7 @@
 import { env } from '@/config';
 import { OtpType } from '@/dtos/request/otp.dto';
 import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
-import { GetResidentialPeerResponse } from '@/dtos/response/residentialPeer.response';
+import { CreateResidentialPeerResponse, GetResidentialPeerResponse } from '@/dtos/response/residentialPeer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
@@ -46,6 +46,12 @@ class ResidentialPeerService {
       mobileLink,
       emailLink,
     );
+  }
+
+  public async getCopyLink(peerId: string) {
+    const uuid = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
+    await redisClient.setEx(uuid, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'copy' }));
+    return `${env('FRONTEND_URL')}/location/verify/${uuid}`;
   }
 
   public async resendLinksToPeers(userId: string, peerId: string) {
@@ -130,7 +136,7 @@ class ResidentialPeerService {
     };
   }
 
-  public async createPeer(userId: string, peer: CreateResidentialPeerDto) {
+  public async createPeer(userId: string, peer: CreateResidentialPeerDto): Promise<CreateResidentialPeerResponse> {
     const peerExists = await ResidentialPeerModel.findOne({ ref: peer.ref });
     if (peerExists) {
       throw new HttpException(ErrorEnum.PEER_ALREADY_EXISTS);
@@ -141,7 +147,8 @@ class ResidentialPeerService {
     };
     const peerModel = await ResidentialPeerModel.create(data);
     await this.sendLinksToPeers(peerModel._id.toString(), peerModel);
-    return { success: true, message: 'Peer Created' };
+    const copyLink = await this.getCopyLink(peerModel._id.toString());
+    return { link: copyLink };
   }
 }
 

@@ -1,7 +1,7 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { VerifyOtpDTO } from '@/dtos/request/otp.dto';
 import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
-import { GetResidentialPeerResponse } from '@/dtos/response/residentialPeer.response';
+import { CreateResidentialPeerResponse, GetResidentialPeerResponse } from '@/dtos/response/residentialPeer.response';
 import { residentialPeerService } from '@/services/residentialPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -27,7 +27,10 @@ export default class ResidentialPeerController {
   }
 
   @Post('')
-  async createResidentialPeer(@UserDetails() userDetails: TokenClaims, @Body() data: CreateResidentialPeerDto) {
+  async createResidentialPeer(
+    @UserDetails() userDetails: TokenClaims,
+    @Body() data: CreateResidentialPeerDto,
+  ): Promise<CreateResidentialPeerResponse> {
     return residentialPeerService.createPeer(userDetails.sub, data);
   }
 }

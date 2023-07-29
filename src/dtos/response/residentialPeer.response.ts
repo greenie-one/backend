@@ -8,3 +8,7 @@ export interface GetResidentialPeerResponse {
     profilePic: string;
   };
 }
+
+export interface CreateResidentialPeerResponse {
+  link: string;
+}
