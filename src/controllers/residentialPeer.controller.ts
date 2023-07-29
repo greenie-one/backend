@@ -11,7 +11,7 @@ import { FastifyReply } from 'fastify';
 
 @Controller('/peer/residential')
 export default class ResidentialPeerController {
-  @Post('/:peerUUID/send-otp')
+  @Get('/:peerUUID/send-otp')
   async peerSendOTP(@Params('peerUUID') peerUUID: string) {
     return residentialPeerService.peerSendOTP(peerUUID);
   }

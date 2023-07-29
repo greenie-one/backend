@@ -40,7 +40,7 @@ export default class WorkExPeerController {
     return workPeerService.getPeerInformation(peerUUID, reply);
   }
 
-  @Post('/work/:peerUUID/send-otp')
+  @Get('/work/:peerUUID/send-otp')
   async peerSendOTP(@Params('peerUUID') peerUUID: string) {
     return workPeerService.peerSendOTP(peerUUID);
   }
