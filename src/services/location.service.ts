@@ -2,7 +2,7 @@ import { GPScompare, GetCoordinatesDto } from '@/dtos/request/location.dto';
 import { GetLocationResponse } from '@/dtos/response/location.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { LocationModel } from '@/models/location.model';
+import { Location, LocationModel } from '@/models/location.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { Geolocation } from '@/remote/location/location';
@@ -12,15 +12,16 @@ class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
     try {
       const coordinates = await Geolocation.getLocation(address);
+      console.log(coordinates);
       if (!coordinates) {
         throw new HttpException(ErrorEnum.INVALID_COORDINATES);
       }
 
       const location = await LocationModel.create({
         user: userId,
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-      });
+        latitude: coordinates.lat,
+        longitude: coordinates.long,
+      } as Location);
 
       const res: GetLocationResponse = {
         id: location._id.toString(),
