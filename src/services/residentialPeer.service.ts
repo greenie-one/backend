@@ -99,20 +99,6 @@ class ResidentialPeerService {
     return { success: true, message: 'Contact Verified' };
   }
 
-  public async getUserPeers(userId: string): Promise<GetUserPeersResponse[]> {
-    const peers = await ResidentialPeerModel.find({ user: userId });
-    return peers.map((peer) => {
-      return {
-        ref: peer.ref.toString(),
-        name: peer.name,
-        email: peer.email,
-        phone: peer.phone,
-        verificationBy: peer.verificationBy,
-        isVerificationCompleted: peer.isVerificationCompleted,
-      };
-    });
-  }
-
   public async getPeer(peerUUID: string, reply: FastifyReply): Promise<GetResidentialPeerResponse> {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
@@ -150,6 +136,21 @@ class ResidentialPeerService {
     };
   }
 
+  public async getUserPeers(userId: string): Promise<GetUserPeersResponse[]> {
+    const peers = await ResidentialPeerModel.find({ user: userId });
+    return peers.map((peer) => {
+      return {
+        id: peer._id.toString(),
+        ref: peer.ref.toString(),
+        name: peer.name,
+        email: peer.email,
+        phone: peer.phone,
+        verificationBy: peer.verificationBy,
+        isVerificationCompleted: peer.isVerificationCompleted,
+      };
+    });
+  }
+
   public async createPeer(userId: string, peer: CreateResidentialPeerDto): Promise<CreateResidentialPeerResponse> {
     const peerExists = await ResidentialPeerModel.findOne({ ref: peer.ref });
     if (peerExists) {
@@ -163,6 +164,18 @@ class ResidentialPeerService {
     await this.sendLinksToPeers(peerModel._id.toString(), peerModel);
     const copyLink = await this.getCopyLink(peerModel._id.toString());
     return { link: copyLink };
+  }
+
+  public async deletePeer(userId: string, peerId: string) {
+    const peer = await ResidentialPeerModel.findById(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+    if (peer.user.toString() !== userId) {
+      throw new HttpException(ErrorEnum.INVALID_PEER_ID);
+    }
+    await peer.deleteOne();
+    return { success: true, message: 'Peer Deleted' };
   }
 }
 

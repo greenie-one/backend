@@ -14,6 +14,7 @@ export interface CreateResidentialPeerResponse {
 }
 
 export interface GetUserPeersResponse {
+  id: string;
   name: string;
   email: string;
   phone: string;

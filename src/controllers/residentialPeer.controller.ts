@@ -5,7 +5,7 @@ import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeers
 import { residentialPeerService } from '@/services/residentialPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
-import { Get, Post } from '@/utils/decorators/methods';
+import { Delete, Get, Post } from '@/utils/decorators/methods';
 import { Body, Params, Reply } from '@/utils/decorators/request';
 import { FastifyReply } from 'fastify';
 
@@ -37,5 +37,10 @@ export default class ResidentialPeerController {
     @Body() data: CreateResidentialPeerDto,
   ): Promise<CreateResidentialPeerResponse> {
     return residentialPeerService.createPeer(userDetails.sub, data);
+  }
+
+  @Delete('/:peerId')
+  async deleteResidentialPeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string) {
+    return residentialPeerService.deletePeer(userDetails.sub, peerId);
   }
 }
