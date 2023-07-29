@@ -21,4 +21,6 @@ export interface GetUserPeersResponse {
   verificationBy: string;
   ref: string;
   isVerificationCompleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -147,6 +147,8 @@ class ResidentialPeerService {
         phone: peer.phone,
         verificationBy: peer.verificationBy,
         isVerificationCompleted: peer.isVerificationCompleted,
+        createdAt: peer.createdAt,
+        updatedAt: peer.updatedAt,
       };
     });
   }
