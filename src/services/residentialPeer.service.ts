@@ -131,6 +131,10 @@ class ResidentialPeerService {
   }
 
   public async createPeer(userId: string, peer: CreateResidentialPeerDto) {
+    const peerExists = await ResidentialPeerModel.findOne({ ref: peer.ref });
+    if (peerExists) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_EXISTS);
+    }
     const data: ResidentialPeer = {
       ...peer,
       user: userId,
