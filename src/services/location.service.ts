@@ -70,6 +70,9 @@ class LocationService {
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
+    if (residentialInfo.capturedLocation) {
+      throw new HttpException(ErrorEnum.LOCATION_ALREADY_CAPTURED);
+    }
     const location = await LocationModel.create({
       user: peer.user,
       latitude: data.latitude,
@@ -84,6 +87,9 @@ class LocationService {
     const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
+    }
+    if (residentialInfo.capturedLocation) {
+      throw new HttpException(ErrorEnum.LOCATION_ALREADY_CAPTURED);
     }
     const location = await LocationModel.create({
       user: userId,

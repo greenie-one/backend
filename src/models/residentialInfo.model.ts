@@ -38,13 +38,13 @@ export class ResidentialInfo {
   public user!: Ref<User>;
 
   @prop({ ref: () => Location })
-  public location!: Ref<Location>;
+  public location!: Ref<Location, string>;
 
   @prop({ required: true })
-  public addressType!: string
+  public addressType!: string;
 
   @prop({ ref: () => Location })
-  public capturedLocation!: Ref<Location>;
+  public capturedLocation?: Ref<Location>;
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);

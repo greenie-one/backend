@@ -59,7 +59,8 @@ export enum ErrorEnum {
   INCOMPLETE_VERIFICATION,
 
   // Database
-  DB_REF_VALIDATION_FAILED
+  DB_REF_VALIDATION_FAILED,
+  LOCATION_ALREADY_CAPTURED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -306,6 +307,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.DB_REF_VALIDATION_FAILED]: {
     code: 'GR0057',
     message: 'Failed to validate ref: %s',
+    status: 400,
+  },
+  [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
+    code: 'GR0058',
+    message: 'Location already captured',
     status: 400,
   },
 };
