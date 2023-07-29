@@ -1,7 +1,7 @@
 import { env } from '@/config';
 import { OtpType } from '@/dtos/request/otp.dto';
 import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
-import { CreateResidentialPeerResponse, GetResidentialPeerResponse } from '@/dtos/response/residentialPeer.response';
+import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse } from '@/dtos/response/residentialPeer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
@@ -97,6 +97,20 @@ class ResidentialPeerService {
     }
     await peer.save();
     return { success: true, message: 'Contact Verified' };
+  }
+
+  public async getUserPeers(userId: string): Promise<GetUserPeersResponse[]> {
+    const peers = await ResidentialPeerModel.find({ user: userId });
+    return peers.map((peer) => {
+      return {
+        ref: peer.ref.toString(),
+        name: peer.name,
+        email: peer.email,
+        phone: peer.phone,
+        verificationBy: peer.verificationBy,
+        isVerificationCompleted: peer.isVerificationCompleted,
+      };
+    });
   }
 
   public async getPeer(peerUUID: string, reply: FastifyReply): Promise<GetResidentialPeerResponse> {

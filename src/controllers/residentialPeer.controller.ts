@@ -1,7 +1,7 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { VerifyOtpDTO } from '@/dtos/request/otp.dto';
 import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
-import { CreateResidentialPeerResponse, GetResidentialPeerResponse } from '@/dtos/response/residentialPeer.response';
+import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse } from '@/dtos/response/residentialPeer.response';
 import { residentialPeerService } from '@/services/residentialPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -24,6 +24,11 @@ export default class ResidentialPeerController {
   @Get('/:peerUUID')
   async getPeerInformation(@Params('peerUUID') peerUUID: string, @Reply() reply: FastifyReply): Promise<GetResidentialPeerResponse> {
     return residentialPeerService.getPeer(peerUUID, reply);
+  }
+
+  @Get('/me')
+  async getUserPeers(@UserDetails() userDetails: TokenClaims): Promise<GetUserPeersResponse[]> {
+    return residentialPeerService.getUserPeers(userDetails.sub);
   }
 
   @Post('')

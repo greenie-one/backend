@@ -1,6 +1,5 @@
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
-import { Verification } from './verified.model';
 
 export class Profile {
   @prop({ type: String, required: true })
@@ -23,9 +22,6 @@ export class Profile {
 
   @prop({ type: Array<string>, default: [] })
   public descriptionTags!: string[];
-
-  @prop({ type: () => Verification })
-  public verification?: Verification;
 
   @prop({ type: Number, default: 0, index: true })
   public score: number;

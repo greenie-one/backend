@@ -79,6 +79,7 @@ class LocationService {
       longitude: data.longitude,
     });
     residentialInfo.capturedLocation = location._id;
+    residentialInfo.verified = true;
     residentialInfo.save();
     return { success: true, message: 'Location Captured' };
   }
@@ -97,6 +98,7 @@ class LocationService {
       longitude: data.longitude,
     });
     residentialInfo.capturedLocation = location._id;
+    residentialInfo.verified = true;
     residentialInfo.save();
     return residentialInfo;
   }

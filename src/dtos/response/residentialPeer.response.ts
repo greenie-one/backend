@@ -12,3 +12,12 @@ export interface GetResidentialPeerResponse {
 export interface CreateResidentialPeerResponse {
   link: string;
 }
+
+export interface GetUserPeersResponse {
+  name: string;
+  email: string;
+  phone: string;
+  verificationBy: string;
+  ref: string;
+  isVerificationCompleted: boolean;
+}
