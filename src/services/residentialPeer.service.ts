@@ -1,11 +1,14 @@
 import { env } from '@/config';
 import { OtpType } from '@/dtos/request/otp.dto';
-import { ErrorEnum } from '@/exceptions/errorCodes';
+import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
+import { GetResidentialPeerResponse } from '@/dtos/response/residentialPeer.response';
+import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { ResidentialPeer, ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { redisClient } from '@/redisClient';
 import { verification } from '@/remote/peer/verification';
+import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
 import { otpService } from './otp.service';
 
@@ -58,29 +61,75 @@ class ResidentialPeerService {
     const { email, phone } = peer;
     if (!peer.emailVerified) {
       await otpService.sendOTP(email, OtpType.EMAIL);
-    } else {
+    }
+    if (!peer.phoneVerified) {
       await otpService.sendOTP(phone, OtpType.MOBILE);
     }
   }
 
-  public async verifyPeerConatct(peerUUID: string, otp: string) {
+  public async verifyPeerConatct(peerUUID: string, otp: string, otpType: OtpType) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     const { email, phone } = peer;
-    if (!peer.emailVerified && (await otpService.verifyOTP(email, OtpType.EMAIL, otp))) {
+    if (!peer.emailVerified && otpType === OtpType.EMAIL && (await otpService.verifyOTP(email, OtpType.EMAIL, otp))) {
       peer.emailVerified = true;
-      await peer.save();
-      return { success: true, message: 'Verified' };
-    } else if (!peer.phoneVerified && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
+    } else if (!peer.phoneVerified && otpType === OtpType.MOBILE && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
       peer.phoneVerified = true;
-      await peer.save();
-      return { success: true, message: 'Verified' };
     } else {
-      return { success: false, message: 'Invalid OTP' };
+      throw new HttpException(ErrorEnum.INVALID_OTP);
     }
+    await peer.save();
+    return { success: true, message: 'Contact Verified' };
+  }
+
+  public async getPeer(peerUUID: string, reply: FastifyReply): Promise<GetResidentialPeerResponse> {
+    const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
+    const peer = await ResidentialPeerModel.findById(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+    if (type === 'mobile') {
+      peer.phoneVerified = true;
+    } else if (type === 'email') {
+      peer.emailVerified = true;
+    }
+    await peer.save();
+    if (!peer.emailVerified) {
+      const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
+      console.error(err);
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
+    }
+    if (!peer.phoneVerified) {
+      const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
+      console.error(err);
+      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
+    }
+
+    const profile = await ProfileModel.findOne({ user: peer.user });
+
+    return {
+      name: peer.name,
+      phone: peer.phone,
+      email: peer.email,
+      verificationBy: peer.verificationBy,
+      user: {
+        name: `${profile.firstName} ${profile.lastName}`,
+        profilePic: profile.profilePic,
+      },
+    };
+  }
+
+  public async createPeer(userId: string, peer: CreateResidentialPeerDto) {
+    const data: ResidentialPeer = {
+      ...peer,
+      user: userId,
+    };
+    const peerModel = await ResidentialPeerModel.create(data);
+    await this.sendLinksToPeers(peerModel._id.toString(), peerModel);
+    return { success: true, message: 'Peer Created' };
   }
 }
 

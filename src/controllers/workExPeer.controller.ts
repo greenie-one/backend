@@ -42,12 +42,11 @@ export default class WorkExPeerController {
 
   @Post('/work/:peerUUID/send-otp')
   async peerSendOTP(@Params('peerUUID') peerUUID: string) {
-    return await workPeerService.peerSendOTP(peerUUID);
+    return workPeerService.peerSendOTP(peerUUID);
   }
 
   @Post('/work/:peerUUID/verify-otp')
   async verifyPeerConatct(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyOtpDTO) {
-    const status = await workPeerService.verifyPeerContact(peerUUID, otp_data.otp);
-    return { success: status, message: 'Verified' };
+    return workPeerService.verifyPeerContact(peerUUID, otp_data.otp, otp_data.otpType);
   }
 }
