@@ -128,6 +128,9 @@ class ResidentialPeerService {
         .status(err.status)
         .send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email, username });
     }
+    if (peer.isVerificationCompleted) {
+      throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
+    }
     const residentialInfo = await ResidentialInfoModel.findById(peer.ref);
     return {
       name: peer.name,
