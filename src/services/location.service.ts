@@ -1,11 +1,12 @@
 import { GPScompare, GetCoordinatesDto } from '@/dtos/request/location.dto';
-import { GetLocationResponse } from '@/dtos/response/location.response';
+import { GetAutocompleteResponse, GetLocationResponse } from '@/dtos/response/location.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Location, LocationModel } from '@/models/location.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { Geolocation } from '@/remote/location/location';
+import { createAddressString } from '@/utils/location';
 import { residentialPeerService } from './residentialPeer.service';
 
 class LocationService {
@@ -101,6 +102,29 @@ class LocationService {
     residentialInfo.verified = true;
     residentialInfo.save();
     return residentialInfo;
+  }
+
+  async getAutoCompleteResults(term: string): Promise<GetAutocompleteResponse> {
+    const resp = await Geolocation.autocomplete(term)
+    return resp.results.map(({ id, score, address, position }) => ({
+      id: id,
+      score: score,
+      address: {
+        address_line_1: createAddressString(address.streetNumber, address.municipalitySubdivision),
+        address_line_2: createAddressString(address.streetName, address.municipality),
+        city: address.countrySecondarySubdivision,
+        state: address.countrySubdivision,
+        country: address.country,
+        street: address.streetNumber,
+        pincode: address.postalCode,
+        type: 'permanent'
+      },
+      addressString: address.freeformAddress,
+      position: {
+        latitude: position.lat,
+        longitude: position.lon
+      }
+    }))
   }
 }
 
