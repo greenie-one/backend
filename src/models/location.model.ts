@@ -3,10 +3,10 @@ import { User } from './users.model';
 
 export class Location {
   @prop({ required: true, type: Number })
-  public longitude!: Number;
+  public longitude!: number;
 
   @prop({ required: true, type: Number })
-  public latitude!: Number;
+  public latitude!: number;
 
   @prop({ required: true, ref: () => User })
   public user!: Ref<User>;

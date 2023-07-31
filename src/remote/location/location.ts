@@ -1,5 +1,6 @@
 import { env } from '@/config';
-import { LocationResponse } from '@/dtos/response/location.response';
+import { AutocompleteResponse } from '../dtos/autocomplete.response';
+import { LocationResponse } from '../dtos/geolocation.response';
 import { HttpClient } from '../generic/httpClient';
 
 export class Geolocation {
@@ -10,6 +11,13 @@ export class Geolocation {
       body: {
         address,
       },
+    });
+  }
+
+  static async autocomplete(term: string): Promise<AutocompleteResponse> {
+    return HttpClient.callApi({
+      url: `${env('REMOTE_BASE_URL')}/location/suggestion?address=${term}`,
+      method: 'GET',
     });
   }
 }

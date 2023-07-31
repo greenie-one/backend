@@ -3,8 +3,8 @@ import { GetCoordinatesDto } from '@/dtos/request/location.dto';
 import { locationService } from '@/services/location.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
-import { Post } from '@/utils/decorators/methods';
-import { Body, Params } from '@/utils/decorators/request';
+import { Get, Post } from '@/utils/decorators/methods';
+import { Body, Params, Query } from '@/utils/decorators/request';
 
 @Controller('/location')
 export default class LocationController {
@@ -17,5 +17,10 @@ export default class LocationController {
   @Post('/capture/peer/:peerUUID')
   public async captureLocationPeer(@Params('peerUUID') peerUUID: string, @Body() data: GetCoordinatesDto) {
     return locationService.capturePeerLocation(peerUUID, data);
+  }
+
+  @Get('/autocomplete')
+  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string) {
+    return locationService.getAutoCompleteResults(term)
   }
 }
