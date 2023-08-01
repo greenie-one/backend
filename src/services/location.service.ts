@@ -105,12 +105,12 @@ class LocationService {
   }
 
   async getAutoCompleteResults(term: string): Promise<GetAutocompleteResponse> {
-    const resp = await Geolocation.autocomplete(term);
-    return resp.results.map(({ id, score, address, position }) => ({
+    const resp = await Geolocation.autocomplete(term)
+    return resp.results.map(({ id, score, address, position, type }) => ({
       id: id,
       score: score,
       address: {
-        address_line_1: createAddressString(address.streetNumber, address.municipalitySubdivision),
+        address_line_1: type === 'Geography' ? '' : createAddressString(address.streetNumber, address.municipalitySubdivision),
         address_line_2: createAddressString(address.streetName, address.municipality),
         city: address.countrySecondarySubdivision,
         state: address.countrySubdivision,
