@@ -117,7 +117,7 @@ class LocationService {
         country: address.country,
         street: address.streetNumber,
         pincode: address.postalCode,
-        type: 'permanent',
+        type: '',
       },
       addressString: address.freeformAddress,
       position: {
