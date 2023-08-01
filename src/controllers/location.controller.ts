@@ -1,6 +1,6 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { GetCoordinatesDto } from '@/dtos/request/location.dto';
-import { CapturePeerLocationResponse, CaptureUserLocationResponse } from '@/dtos/response/location.response';
+import { CapturePeerLocationResponse, CaptureUserLocationResponse, GetAutocompleteResponse } from '@/dtos/response/location.response';
 import { locationService } from '@/services/location.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -25,7 +25,7 @@ export default class LocationController {
   }
 
   @Get('/autocomplete')
-  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string) {
+  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string): Promise<GetAutocompleteResponse> {
     return locationService.getAutoCompleteResults(term);
   }
 }

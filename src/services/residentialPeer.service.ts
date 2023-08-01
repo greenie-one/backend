@@ -1,7 +1,7 @@
 import { env } from '@/config';
 import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
 import { OtpType } from '@/dtos/request/workExPeer.dto';
-import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse, SendPeerOtpResponse, VerifyPeerResponse } from '@/dtos/response/residentialPeer.response';
+import { CreateResidentialPeerResponse, DeleteResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse, SendPeerOtpResponse, VerifyPeerResponse } from '@/dtos/response/residentialPeer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
@@ -191,7 +191,7 @@ class ResidentialPeerService {
     return { link: copyLink };
   }
 
-  public async deletePeer(userId: string, peerId: string) {
+  public async deletePeer(userId: string, peerId: string): Promise<DeleteResidentialPeerResponse> {
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
@@ -200,7 +200,7 @@ class ResidentialPeerService {
       throw new HttpException(ErrorEnum.INVALID_PEER_ID);
     }
     await peer.deleteOne();
-    return { success: true, message: 'Peer Deleted' };
+    return {};
   }
 }
 

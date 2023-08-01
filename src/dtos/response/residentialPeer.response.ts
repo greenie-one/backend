@@ -15,6 +15,8 @@ export interface GetResidentialPeerResponse {
   residentialInfo: SingleResidentialInfo;
 }
 
+export type DeleteResidentialPeerResponse = Record<string, never>
+
 export interface CreateResidentialPeerResponse {
   link: string;
 }

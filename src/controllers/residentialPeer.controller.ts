@@ -1,7 +1,7 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
 import { VerifyOtpDTO } from '@/dtos/request/workExPeer.dto';
-import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse, SendPeerOtpResponse, VerifyPeerResponse } from '@/dtos/response/residentialPeer.response';
+import { CreateResidentialPeerResponse, DeleteResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse, SendPeerOtpResponse, VerifyPeerResponse } from '@/dtos/response/residentialPeer.response';
 import { residentialPeerService } from '@/services/residentialPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -40,7 +40,7 @@ export default class ResidentialPeerController {
   }
 
   @Delete('/:peerId')
-  async deleteResidentialPeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string) {
+  async deleteResidentialPeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string): Promise<DeleteResidentialPeerResponse> {
     return residentialPeerService.deletePeer(userDetails.sub, peerId);
   }
 }
