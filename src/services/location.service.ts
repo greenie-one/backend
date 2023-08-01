@@ -71,7 +71,7 @@ class LocationService {
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
-    if (residentialInfo.capturedLocation) {
+    if (residentialInfo.verified) {
       throw new HttpException(ErrorEnum.LOCATION_ALREADY_CAPTURED);
     }
     const location = await LocationModel.create({
@@ -85,12 +85,12 @@ class LocationService {
     return { success: true, message: 'Location Captured' };
   }
 
-  public async captureUserLocation(userId: string, data: GetCoordinatesDto) {
-    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
+  public async captureUserLocation(userId: string, residentialId: string, data: GetCoordinatesDto) {
+    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId, _id: residentialId });
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
-    if (residentialInfo.capturedLocation) {
+    if (residentialInfo.verified) {
       throw new HttpException(ErrorEnum.LOCATION_ALREADY_CAPTURED);
     }
     const location = await LocationModel.create({
@@ -117,14 +117,14 @@ class LocationService {
         country: address.country,
         street: address.streetNumber,
         pincode: address.postalCode,
-        type: 'permanent'
+        type: '',
       },
       addressString: address.freeformAddress,
       position: {
         latitude: position.lat,
-        longitude: position.lon
-      }
-    }))
+        longitude: position.lon,
+      },
+    }));
   }
 }
 
