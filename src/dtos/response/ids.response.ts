@@ -1,10 +1,5 @@
 import { IDTypeEnum } from '../request/ids.dto';
 
-export interface IDVerification {
-  isVerified: boolean;
-  lastUpdated: Date;
-}
-
 export interface SingleID {
   id: string;
   idType: IDTypeEnum;
@@ -12,7 +7,6 @@ export interface SingleID {
   user: string;
   address: NormalizedAddress;
   location: string;
-  verification: IDVerification;
   createdAt: Date;
   updatedAt: Date;
 }

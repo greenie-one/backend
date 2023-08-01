@@ -26,10 +26,6 @@ class IDsService {
       user: val.user.toString(),
       address: val.normalizedAddress,
       location: val.location.toString(),
-      verification: {
-        isVerified: val.verification?.is_verified,
-        lastUpdated: val.verification?.last_updated,
-      },
       createdAt: val.createdAt,
       updatedAt: val.updatedAt,
     }));

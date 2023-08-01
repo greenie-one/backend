@@ -7,7 +7,7 @@ import {
 } from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { ResidentialInfoModel } from '@/models/residentialInfo.model';
+import { ResidentialInfo, ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { locationService } from './location.service';
 
 class ResidentialInfoService {
@@ -41,11 +41,12 @@ class ResidentialInfoService {
 
     const address = `${residentialInfoData.address_line_1}, ${residentialInfoData.address_line_2}, ${residentialInfoData.landmark}, ${residentialInfoData.city}, ${residentialInfoData.state}, ${residentialInfoData.country}`;
     const location = await locationService.createLocation(userId, address);
-    const residentialInfo = await ResidentialInfoModel.create({
+    const data: ResidentialInfo = {
       ...residentialInfoData,
       user: userId,
       location: location.id,
-    });
+    };
+    const residentialInfo = await ResidentialInfoModel.create(data);
 
     return {
       id: residentialInfo._id.toString(),

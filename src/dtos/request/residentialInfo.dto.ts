@@ -30,8 +30,8 @@ export class CreateResidentialInfoDto {
   public country!: string;
 
   @IsISO8601()
-  @IsOptional()
-  public start_date?: Date;
+  @IsNotEmpty()
+  public start_date!: Date;
 
   @IsISO8601()
   @IsOptional()
@@ -39,7 +39,7 @@ export class CreateResidentialInfoDto {
 
   @IsString()
   @IsNotEmpty()
-  public addressType: string
+  public addressType!: string;
 }
 
 export class UpdateResidentialInfoDto {

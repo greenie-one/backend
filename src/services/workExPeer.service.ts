@@ -90,26 +90,22 @@ class WorkExPeerService {
     return {};
   }
 
-  public async verifyPeerContact(peerUUID: string, otp: string): Promise<WorkPeerVerifyResponse> {
+  public async verifyPeerContact(peerUUID: string, otp: string, otpType: OtpType): Promise<WorkPeerVerifyResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     const { email, phone } = peer;
-
-    peer.emailVerified = !!email;
-    peer.phoneVerified = !!phone;
-
-    const contact = peer.emailVerified ? email : phone;
-    const otpType = peer.emailVerified ? OtpType.EMAIL : OtpType.MOBILE
-
-    if (await otpService.verifyOTP(contact, otpType, otp)) {
-      await peer.save();
-      return {};
+    if (!peer.emailVerified && otpType === OtpType.EMAIL && (await otpService.verifyOTP(email, OtpType.EMAIL, otp))) {
+      peer.emailVerified = true;
+    } else if (!peer.phoneVerified && otpType === OtpType.MOBILE && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
+      peer.phoneVerified = true;
     } else {
       throw new HttpException(ErrorEnum.INVALID_OTP);
     }
+    await peer.save();
+    return {};
   }
 
   public async getUserWorkPeers(userId: string): Promise<GetUserWorkPeersResponse> {
@@ -176,14 +172,18 @@ class WorkExPeerService {
 
     const skillIds = peer.skills.map((skill) => skill.id);
     await Promise.all(
-      (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
+      (
+        await SkillModel.find({ _id: { $in: skillIds } })
+      ).map((skill) => {
         data.skills.push({ id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise });
       }),
     );
 
     const documentIds = peer.documents.map((document) => document.id);
     await Promise.all(
-      (await DocumentModel.find({ _id: { $in: documentIds } })).map(async (document) => {
+      (
+        await DocumentModel.find({ _id: { $in: documentIds } })
+      ).map(async (document) => {
         const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
         data.documents.push({
           id: document._id.toString(),

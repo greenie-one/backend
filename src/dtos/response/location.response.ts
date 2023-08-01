@@ -1,16 +1,22 @@
+import { NormalizedAddress } from "./ids.response";
+
 export interface GetLocationResponse {
   id: string;
-  longitude: Number;
-  latitude: Number;
+  longitude: number;
+  latitude: number;
   user: string;
 }
 
-export interface LocationResponse {
-  code: string,
-  longitude: Number,
-  latitude: Number
-}
+export type GetAutocompleteResponse = {
+  id: string
+  score: number
+  address: NormalizedAddress
+  addressString: string
+  position: {
+    longitude: number;
+    latitude: number;
+  }
+}[]
 
 export type CaptureUserLocationResponse = Record<string, never>
 export type CapturePeerLocationResponse = Record<string, never>
-

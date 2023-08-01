@@ -3,12 +3,12 @@ import { ResidentialInfo } from './residentialInfo.model';
 import { User } from './users.model';
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-@index({ user: 1, email: 1, ref: 1 }, { unique: true })
+@index({ ref: 1 }, { unique: true })
 export class ResidentialPeer {
   @prop({ required: true, ref: 'User', type: String })
   public user!: Ref<User, string>;
 
-  @prop({ required: true, ref: 'ResidentialInfo', type: String })
+  @prop({ required: true, ref: () => ResidentialInfo, type: String })
   public ref!: Ref<ResidentialInfo, string>;
 
   @prop({ required: true })

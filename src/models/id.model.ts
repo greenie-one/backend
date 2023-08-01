@@ -4,7 +4,6 @@ import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 import { Schema } from 'mongoose';
 import { Location } from './location.model';
 import { User } from './users.model';
-import { Verification } from './verified.model';
 
 export class ID {
   @prop({ required: true, enum: IDTypeEnum, type: String })
@@ -28,9 +27,6 @@ export class ID {
 
   @prop({ ref: () => Location, type: String })
   public location?: Ref<Location, string>;
-
-  @prop({ type: () => Verification })
-  public verification?: Verification;
 
   @prop({ type: Date, default: Date.now })
   public createdAt?: Date;
