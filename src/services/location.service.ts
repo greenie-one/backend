@@ -85,8 +85,8 @@ class LocationService {
     return { success: true, message: 'Location Captured' };
   }
 
-  public async captureUserLocation(userId: string, data: GetCoordinatesDto) {
-    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
+  public async captureUserLocation(userId: string, residentialId: string, data: GetCoordinatesDto) {
+    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId, _id: residentialId });
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
@@ -105,7 +105,7 @@ class LocationService {
   }
 
   async getAutoCompleteResults(term: string): Promise<GetAutocompleteResponse> {
-    const resp = await Geolocation.autocomplete(term)
+    const resp = await Geolocation.autocomplete(term);
     return resp.results.map(({ id, score, address, position }) => ({
       id: id,
       score: score,
@@ -117,14 +117,14 @@ class LocationService {
         country: address.country,
         street: address.streetNumber,
         pincode: address.postalCode,
-        type: 'permanent'
+        type: 'permanent',
       },
       addressString: address.freeformAddress,
       position: {
         latitude: position.lat,
-        longitude: position.lon
-      }
-    }))
+        longitude: position.lon,
+      },
+    }));
   }
 }
 

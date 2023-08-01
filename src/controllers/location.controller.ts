@@ -8,10 +8,14 @@ import { Body, Params, Query } from '@/utils/decorators/request';
 
 @Controller('/location')
 export default class LocationController {
-  @Post('/capture/me')
-  public async captureLocationSelf(@UserDetails() userDetails: TokenClaims, @Body() data: GetCoordinatesDto) {
+  @Post('/capture/me/:residentialId')
+  public async captureLocationSelf(
+    @UserDetails() userDetails: TokenClaims,
+    @Params('residentialId') residentialId: string,
+    @Body() data: GetCoordinatesDto,
+  ) {
     const userId = userDetails.sub;
-    return locationService.captureUserLocation(userId, data);
+    return locationService.captureUserLocation(userId, residentialId, data);
   }
 
   @Post('/capture/peer/:peerUUID')
@@ -21,6 +25,6 @@ export default class LocationController {
 
   @Get('/autocomplete')
   public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string) {
-    return locationService.getAutoCompleteResults(term)
+    return locationService.getAutoCompleteResults(term);
   }
 }
