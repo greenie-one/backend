@@ -2,13 +2,13 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { validateRoute } from '@/utils/validation';
 import { ClassConstructor, plainToClass } from 'class-transformer';
-import { ValidationError, isString, validateOrReject } from 'class-validator';
+import { ValidationError, isNumber, isNumberString, isString, validateOrReject } from 'class-validator';
 import { FastifyInstance, RouteOptions } from 'fastify';
 
 function predefinedValidation(name: string): typeof validateOrReject {
   if (name === 'String' || name === 'Number') {
     return async (val: unknown) => {
-      if (!isString(val))
+      if (name === 'String' ? !isString(val) : !isNumber(val) && !isNumberString(val))
         throw [
           {
             constraints: [`${name} is not a string`],
