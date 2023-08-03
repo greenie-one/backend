@@ -33,7 +33,7 @@ function flattenErrors(error: ValidationError[]) {
 }
 
 async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query', isOptional = false) {
-  if (isOptional && !value) return true
+  if (isOptional && (typeof value === 'undefined' || value === null)) return value
   if (!value) throw new HttpException(ErrorEnum.VALIDATION_ERROR, `${bodyOrQuery} must be defined`);
 
   try {
