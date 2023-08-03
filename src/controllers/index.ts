@@ -32,7 +32,8 @@ function flattenErrors(error: ValidationError[]) {
   return ret;
 }
 
-async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query') {
+async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query', isOptional = false) {
+  if (isOptional && !value) return true
   if (!value) throw new HttpException(ErrorEnum.VALIDATION_ERROR, `${bodyOrQuery} must be defined`);
 
   try {
@@ -82,7 +83,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
               throw new HttpException(ErrorEnum.VALIDATION_ERROR, `Query ${q.queryName} is missing`);
             }
 
-            args[q.index] = await validate(q.type, query, 'query');
+            args[q.index] = await validate(q.type, query, 'query', q.isOptional);
           }
 
           for (const h of hasHeaders) {
