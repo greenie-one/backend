@@ -14,9 +14,9 @@ export class Geolocation {
     });
   }
 
-  static async autocomplete(term: string): Promise<AutocompleteResponse> {
+  static async autocomplete(term: string, latitude: number, longitude: number): Promise<AutocompleteResponse> {
     return HttpClient.callApi({
-      url: `${env('REMOTE_BASE_URL')}/location/suggestion?address=${term}`,
+      url: `${env('REMOTE_BASE_URL')}/location/suggestion?address=${term}&latitude=${latitude}&longitude=${longitude}`,
       method: 'GET',
     });
   }

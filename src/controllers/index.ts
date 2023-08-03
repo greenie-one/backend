@@ -78,7 +78,7 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           for (const q of hasQuery) {
             const query = q.queryName ? req.query[q.queryName] : req.query;
-            if (!query) {
+            if (!q.isOptional && !query) {
               throw new HttpException(ErrorEnum.VALIDATION_ERROR, `Query ${q.queryName} is missing`);
             }
 

@@ -17,11 +17,11 @@ export function Reply() {
   };
 }
 
-export function Query(queryName?: string) {
+export function Query(queryName?: string, isOptional = false) {
   return function (target: object, property: string, index: number) {
     const existingQuery: QueryValidation[] = Reflect.getMetadata('fastify:method:query', target, property) ?? [];
     const data = Reflect.getMetadata('design:paramtypes', target, property);
-    existingQuery.push({ type: data[index], index, queryName });
+    existingQuery.push({ type: data[index], index, queryName, isOptional });
     Reflect.defineMetadata('fastify:method:query', existingQuery, target, property);
   };
 }
