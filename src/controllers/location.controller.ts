@@ -25,7 +25,7 @@ export default class LocationController {
   }
 
   @Get('/autocomplete')
-  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string): Promise<GetAutocompleteResponse> {
-    return locationService.getAutoCompleteResults(term);
+  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string, @Query('latitude', true) latitude: number, @Query('longitude', true) longitude: number): Promise<GetAutocompleteResponse> {
+    return locationService.getAutoCompleteResults(term, latitude, longitude);
   }
 }

@@ -2,13 +2,13 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { validateRoute } from '@/utils/validation';
 import { ClassConstructor, plainToClass } from 'class-transformer';
-import { ValidationError, isString, validateOrReject } from 'class-validator';
+import { ValidationError, isNumber, isNumberString, isString, validateOrReject } from 'class-validator';
 import { FastifyInstance, RouteOptions } from 'fastify';
 
 function predefinedValidation(name: string): typeof validateOrReject {
   if (name === 'String' || name === 'Number') {
     return async (val: unknown) => {
-      if (!isString(val))
+      if (name === 'String' ? !isString(val) : !isNumber(val) && !isNumberString(val))
         throw [
           {
             constraints: [`${name} is not a string`],
@@ -32,7 +32,8 @@ function flattenErrors(error: ValidationError[]) {
   return ret;
 }
 
-async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query') {
+async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query', isOptional = false) {
+  if (isOptional && (typeof value === 'undefined' || value === null)) return value
   if (!value) throw new HttpException(ErrorEnum.VALIDATION_ERROR, `${bodyOrQuery} must be defined`);
 
   try {
@@ -78,11 +79,11 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           for (const q of hasQuery) {
             const query = q.queryName ? req.query[q.queryName] : req.query;
-            if (!query) {
+            if (!q.isOptional && !query) {
               throw new HttpException(ErrorEnum.VALIDATION_ERROR, `Query ${q.queryName} is missing`);
             }
 
-            args[q.index] = await validate(q.type, query, 'query');
+            args[q.index] = await validate(q.type, query, 'query', q.isOptional);
           }
 
           for (const h of hasHeaders) {

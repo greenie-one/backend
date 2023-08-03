@@ -103,8 +103,8 @@ class LocationService {
     return {};
   }
 
-  async getAutoCompleteResults(term: string): Promise<GetAutocompleteResponse> {
-    const resp = await Geolocation.autocomplete(term)
+  async getAutoCompleteResults(term: string, latitude: number, location: number): Promise<GetAutocompleteResponse> {
+    const resp = await Geolocation.autocomplete(term, latitude, location)
     return resp.results.map(({ id, score, address, position, type }) => ({
       id: id,
       score: score,
