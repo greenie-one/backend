@@ -6,7 +6,7 @@ export interface DrivingLicenseVerifyResponse {
   response_code: string;
   response_message: string;
   metadata: Metadata;
-  result: Result;
+  result: DLResult;
   request_timestamp: string;
   response_timestamp: string;
 }
@@ -15,8 +15,8 @@ export interface Metadata {
   billable: string;
 }
 
-export interface Result {
-  user_address: UserAddress[];
+export interface DLResult {
+  user_address: DLUserAddress[];
   user_blood_group: string;
   dl_number: string;
   user_dob: string;
@@ -35,7 +35,7 @@ export interface Result {
   vehicle_category_details: VehicleCategoryDetail[];
 }
 
-export interface UserAddress {
+export interface DLUserAddress {
   addressLine1: string;
   completeAddress: string;
   country: string;
