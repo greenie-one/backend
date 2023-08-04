@@ -1,6 +1,3 @@
-import { AadharUserAddress, AadharVerifyResult } from '@/remote/dtos/aadhar.response';
-import { DLResult, DLUserAddress } from '@/remote/dtos/driving.response';
-import { PanResult, PanUserAddress } from '@/remote/dtos/pan.response';
 import { IDTypeEnum } from '../request/ids.dto';
 
 export class NormalizedAddress {
@@ -15,9 +12,14 @@ export class NormalizedAddress {
 }
 
 export interface IDResponse {
+  id: string;
   id_type: IDTypeEnum;
   id_number: string;
-  data: AadharVerifyResult | DLResult | PanResult;
-  address: AadharUserAddress | PanUserAddress | DLUserAddress;
-  normalizedAddress: NormalizedAddress;
+  user: string;
+  address: NormalizedAddress;
+  dob: string;
+  additional_data: object;
+  location: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
