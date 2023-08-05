@@ -7,6 +7,7 @@ export interface SingleID {
   user: string;
   address: NormalizedAddress;
   dob: string;
+  fullName: string
   createdAt: Date;
   updatedAt: Date;
 }
