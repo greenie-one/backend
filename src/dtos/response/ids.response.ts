@@ -18,6 +18,7 @@ export interface IDResponse {
   user: string;
   address: NormalizedAddress;
   dob: string;
+  fullName: string
   location: string;
   createdAt: Date;
   updatedAt: Date;
