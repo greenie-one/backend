@@ -27,6 +27,8 @@ class IDsService {
         user: id.user.toString(),
         address: id.normalizedAddress,
         dob: id.data.user_dob,
+        createdAt: id.createdAt,
+        updatedAt: id.updatedAt,
       } as IDResponse;
     });
   }
