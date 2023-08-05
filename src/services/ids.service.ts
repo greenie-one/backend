@@ -19,15 +19,15 @@ class IDsService {
     if (!id_document) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
-    return id_document.map((val) => ({
-      id: val._id.toString(),
-      idType: val.id_type,
-      idNumber: val.id_number,
-      user: val.user.toString(),
-      address: val.normalizedAddress,
-      location: val.location.toString(),
-      createdAt: val.createdAt,
-      updatedAt: val.updatedAt,
+    return id_document.map((id) => ({
+      id: id._id.toString(),
+      id_type: id.id_type,
+      id_number: id.id_number,
+      user: id.user.toString(),
+      address: id.normalizedAddress,
+      dob: id.data.user_dob,
+      createdAt: id.createdAt,
+      updatedAt: id.updatedAt,
     }));
   }
 
@@ -117,9 +117,9 @@ class IDsService {
                 country: result.user_address.country,
                 state: result.user_address.state,
                 pincode: result.address_zip,
-                type: 'permanent'
+                type: 'permanent',
               },
-            },
+            } as ID,
           ],
           {
             session,
@@ -174,7 +174,7 @@ class IDsService {
           country: result.user_address.country,
           state: result.user_address.state,
           pincode: result.user_address.zip,
-          type: 'permanent'
+          type: 'permanent',
         },
       } as ID);
 
@@ -221,7 +221,7 @@ class IDsService {
           country: user_address.country,
           state: user_address.state,
           pincode: user_address.pin,
-          type: user_address.type
+          type: user_address.type,
         },
       } as ID);
 

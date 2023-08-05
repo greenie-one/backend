@@ -15,6 +15,7 @@ export interface SingleResidentialInfo {
   start_date: Date;
   end_date: Date;
   addressType: string;
+  isVerified: boolean;
 }
 
 export type GetResidentialInfoResponse = SingleResidentialInfo[];

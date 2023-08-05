@@ -28,7 +28,8 @@ class ResidentialInfoService {
       country: residentialInfo.country,
       start_date: residentialInfo.start_date,
       end_date: residentialInfo.end_date,
-      addressType: residentialInfo.addressType
+      addressType: residentialInfo.addressType,
+      isVerified: residentialInfo.isVerified,
     }));
   }
 
@@ -59,7 +60,8 @@ class ResidentialInfoService {
       country: residentialInfo.country,
       start_date: residentialInfo.start_date,
       end_date: residentialInfo.end_date,
-      addressType: residentialInfo.addressType
+      addressType: residentialInfo.addressType,
+      isVerified: residentialInfo.isVerified,
     };
   }
 
@@ -105,17 +107,18 @@ class ResidentialInfoService {
     }
 
     return {
-      id: updatedResidentialInfo._id.toString(),
-      address_line_1: updatedResidentialInfo.address_line_1,
-      address_line_2: updatedResidentialInfo.address_line_2,
-      landmark: updatedResidentialInfo.landmark,
-      pincode: updatedResidentialInfo.pincode,
-      city: updatedResidentialInfo.city,
-      state: updatedResidentialInfo.state,
-      country: updatedResidentialInfo.country,
-      start_date: updatedResidentialInfo.start_date,
-      end_date: updatedResidentialInfo.end_date,
-      addressType: residentialInfo.addressType
+      id: residentialInfo._id.toString(),
+      address_line_1: residentialInfo.address_line_1,
+      address_line_2: residentialInfo.address_line_2,
+      landmark: residentialInfo.landmark,
+      pincode: residentialInfo.pincode,
+      city: residentialInfo.city,
+      state: residentialInfo.state,
+      country: residentialInfo.country,
+      start_date: residentialInfo.start_date,
+      end_date: residentialInfo.end_date,
+      addressType: residentialInfo.addressType,
+      isVerified: residentialInfo.isVerified,
     };
   }
 }

@@ -12,7 +12,7 @@ export interface GetResidentialPeerResponse {
     name: string;
     profilePic: string;
   };
-  residentialInfo: SingleResidentialInfo;
+  residentialInfo: Partial<SingleResidentialInfo>;
 }
 
 export type DeleteResidentialPeerResponse = Record<string, never>

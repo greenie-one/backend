@@ -6,7 +6,7 @@ export interface PanVerifyResponse {
   response_code: string;
   response_message: string;
   metadata: Metadata;
-  result: Result;
+  result: PanResult;
   request_timestamp: string;
   response_timestamp: string;
 }
@@ -15,12 +15,12 @@ export interface Metadata {
   billable: string;
 }
 
-export interface Result {
+export interface PanResult {
   pan_number: string;
   user_full_name: string;
   user_full_name_split: string[];
   masked_aadhaar: string;
-  user_address: UserAddress;
+  user_address: PanUserAddress;
   user_email: string;
   user_phone_number: string;
   user_gender: string;
@@ -29,7 +29,7 @@ export interface Result {
   pan_type: string;
 }
 
-export interface UserAddress {
+export interface PanUserAddress {
   line_1: string;
   line_2: string;
   street_name: string;
