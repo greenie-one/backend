@@ -26,6 +26,7 @@ class IDsService {
         id_number: id.id_number,
         user: id.user.toString(),
         address: id.normalizedAddress,
+        fullName: id.data?.user_full_name,
         dob: id.data.user_dob,
         createdAt: id.createdAt,
         updatedAt: id.updatedAt,
