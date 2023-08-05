@@ -4,9 +4,6 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel } from '@/models/id.model';
 import { redisClient } from '@/redisClient';
-import { AadharVerifyResult } from '@/remote/dtos/aadhar.response';
-import { DLResult } from '@/remote/dtos/driving.response';
-import { PanResult } from '@/remote/dtos/pan.response';
 import { AadhaarVerification } from '@/remote/verification/aadhar.remote';
 import { drivinLicenseVerification } from '@/remote/verification/drivingLicense.remote';
 import { PanVerification } from '@/remote/verification/pan.remote';
@@ -23,15 +20,6 @@ class IDsService {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
     return id_document.map((id) => {
-      const additional_data = {};
-      if (id.id_type === IDTypeEnum.AADHAR) {
-        additional_data['user_parent_name'] = (id.data as AadharVerifyResult).user_parent_name;
-        additional_data['address_landmark'] = (id.data as AadharVerifyResult).user_address.landmark;
-      } else if (id.id_type === IDTypeEnum.DRIVING_LICENSE) {
-        additional_data['father_or_husband'] = (id.data as DLResult).father_or_husband;
-      } else if (id.id_type === IDTypeEnum.PAN) {
-        additional_data['user_full_name_split'] = (id.data as PanResult).user_full_name_split.toString();
-      }
       return {
         id: id._id.toString(),
         id_type: id.id_type,
@@ -39,7 +27,6 @@ class IDsService {
         user: id.user.toString(),
         address: id.normalizedAddress,
         dob: id.data.user_dob,
-        additional_data,
       } as IDResponse;
     });
   }

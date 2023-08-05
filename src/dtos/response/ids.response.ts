@@ -18,7 +18,6 @@ export interface IDResponse {
   user: string;
   address: NormalizedAddress;
   dob: string;
-  additional_data: object;
   location: string;
   createdAt: Date;
   updatedAt: Date;
