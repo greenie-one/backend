@@ -1,4 +1,5 @@
 import { UpdateUserDto } from '@/dtos/request/users.dto';
+import { UpdateUserResponse } from '@/dtos/response/users.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { User, UserModel } from '@models/users.model';
@@ -24,14 +25,19 @@ class UserService {
     return user;
   }
 
-  public async updateUser(userId: string, updatedData: UpdateUserDto) {
+  public async updateUser(userId: string, updatedData: UpdateUserDto): Promise<UpdateUserResponse> {
     const updatedUser = await UserModel.findByIdAndUpdate(userId, { $set: updatedData }, { new: true });
 
     if (!updatedUser) {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     }
 
-    return { success: true, message: 'Updated Successfully' };
+    return {
+      id: updatedUser._id.toString(),
+      email: updatedUser.email,
+      mobileNumber: updatedUser.mobileNumber,
+      roles: updatedUser.roles,
+    };
   }
 }
 

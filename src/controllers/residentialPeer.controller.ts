@@ -1,7 +1,7 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
-import { VerifyOtpDTO } from '@/dtos/request/otp.dto';
 import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
-import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse } from '@/dtos/response/residentialPeer.response';
+import { VerifyOtpDTO } from '@/dtos/request/workExPeer.dto';
+import { CreateResidentialPeerResponse, DeleteResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse, SendPeerOtpResponse, VerifyPeerResponse } from '@/dtos/response/residentialPeer.response';
 import { residentialPeerService } from '@/services/residentialPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -12,12 +12,12 @@ import { FastifyReply } from 'fastify';
 @Controller('/peer/residential')
 export default class ResidentialPeerController {
   @Get('/:peerUUID/send-otp')
-  async peerSendOTP(@Params('peerUUID') peerUUID: string) {
+  async peerSendOTP(@Params('peerUUID') peerUUID: string): Promise<SendPeerOtpResponse> {
     return residentialPeerService.peerSendOTP(peerUUID);
   }
 
   @Post('/:peerUUID/verify-otp')
-  async verifyPeerConatct(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyOtpDTO) {
+  async verifyPeerConatct(@Params('peerUUID') peerUUID: string, @Body() otp_data: VerifyOtpDTO): Promise<VerifyPeerResponse> {
     return residentialPeerService.verifyPeerConatct(peerUUID, otp_data.otp, otp_data.otpType);
   }
 
@@ -40,7 +40,7 @@ export default class ResidentialPeerController {
   }
 
   @Delete('/:peerId')
-  async deleteResidentialPeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string) {
+  async deleteResidentialPeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string): Promise<DeleteResidentialPeerResponse> {
     return residentialPeerService.deletePeer(userDetails.sub, peerId);
   }
 }

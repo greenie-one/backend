@@ -1,7 +1,13 @@
 import { DocumentType } from '@/dtos/request/document.dto';
 import { IDTypeEnum } from '@/dtos/request/ids.dto';
 import { CreateProfileDto, UpdateProfileDto } from '@/dtos/request/profile.dto';
-import { AddProfileResponse, ProfileResponse } from '@/dtos/response/profile.response';
+import {
+  CreateProfileResponse,
+  GetProfileRankingResponse,
+  GetProfileResponse,
+  SearchProfilesResponse,
+  UpdateProfileResponse,
+} from '@/dtos/response/profile.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
@@ -10,47 +16,51 @@ import { getRandomGreenieId } from '@/utils/string';
 import { ClientSession } from 'mongoose';
 
 class ProfileService {
-  public async createProfile(userId: string, profileData: CreateProfileDto): Promise<AddProfileResponse> {
+  public async createProfile(userId: string, profileData: CreateProfileDto): Promise<CreateProfileResponse> {
     const findProfile = await ProfileModel.findOne({
       user: userId,
     });
 
     if (findProfile) throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
 
-    const profile = await ProfileModel.create({
-      firstName: profileData.firstName,
-      lastName: profileData.lastName,
-      user: userId,
-      profilePic: profileData.profilePic,
-      bio: profileData.bio,
-      descriptionTags: profileData.descriptionTags,
-    });
-    const res: AddProfileResponse = { success: true, id: profile._id.toString() };
-    return res;
+    const profile = await ProfileModel.create(profileData);
+
+    return {
+      id: profile._id.toString(),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      bio: profile.bio,
+      profilePic: profile.profilePic,
+      descriptionTags: profile.descriptionTags,
+      greenieId: profile.greenie_id,
+    };
   }
 
-  public async updateProfile(userId: string, updatedData: UpdateProfileDto) {
-    const profile = await ProfileModel.findOne({ user: userId });
-    if (!profile) {
-      throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
-    }
-
-    const updatedProfile = await ProfileModel.findByIdAndUpdate(profile._id, { $set: updatedData }, { new: true });
+  public async updateProfile(userId: string, updatedData: UpdateProfileDto): Promise<UpdateProfileResponse> {
+    const updatedProfile = await ProfileModel.findOneAndUpdate({ user: userId }, { $set: updatedData }, { new: true });
 
     if (!updatedProfile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    return { success: true, message: 'Updated Successfully' };
+    return {
+      id: updatedProfile._id.toString(),
+      firstName: updatedProfile.firstName,
+      lastName: updatedProfile.lastName,
+      bio: updatedProfile.bio,
+      profilePic: updatedProfile.profilePic,
+      descriptionTags: updatedProfile.descriptionTags,
+      greenieId: updatedProfile.greenie_id,
+    };
   }
 
-  public async getProfile(userId: string): Promise<ProfileResponse> {
+  public async getProfile(userId: string): Promise<GetProfileResponse> {
     const profile = await ProfileModel.findOne({ user: userId });
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
 
-    const res: ProfileResponse = {
+    return {
       id: profile._id.toString(),
       firstName: profile.firstName,
       lastName: profile.lastName,
@@ -59,10 +69,9 @@ class ProfileService {
       descriptionTags: profile.descriptionTags,
       greenieId: profile.greenie_id,
     };
-    return res;
   }
 
-  public async getPercentileRanking(userId: string) {
+  public async getPercentileRanking(userId: string): Promise<GetProfileRankingResponse> {
     const targetScore = (await ProfileModel.findOne({ user: userId }))?.score ?? 0;
     const pipelineStages = [
       {
@@ -106,35 +115,35 @@ class ProfileService {
     return { percentile: res?.percentage ?? 1, score: targetScore };
   }
 
-  public async searchById(id: string) {
+  public async searchById(id: string): Promise<SearchProfilesResponse> {
     const profiles = await ProfileModel.find({ greenie_id: id });
-    return profiles;
+    return profiles.map((profile) => ({
+      id: profile._id.toString(),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      profilePic: profile.profilePic,
+      bio: profile.bio,
+      descriptionTags: profile.descriptionTags,
+      greenieId: profile.greenie_id,
+    }));
   }
 
-  public async searchByUsername(firstName: string, lastName: string): Promise<ProfileResponse[]> {
+  public async searchByUsername(firstName: string, lastName: string): Promise<SearchProfilesResponse> {
     const regexFirstName = new RegExp(firstName, 'i');
     const regexLastName = new RegExp(lastName, 'i');
     const profiles = await ProfileModel.find({
       $and: [{ firstName: { $regex: regexFirstName } }, { lastName: { $regex: regexLastName } }],
     });
 
-    const res: ProfileResponse[] = [];
-
-    if (profiles) {
-      for (const profile of profiles) {
-        res.push({
-          id: profile._id.toString(),
-          firstName: profile.firstName,
-          lastName: profile.lastName,
-          profilePic: profile.profilePic,
-          bio: profile.bio,
-          descriptionTags: profile.descriptionTags,
-          greenieId: profile.greenie_id,
-        });
-      }
-    }
-
-    return res;
+    return profiles.map((profile) => ({
+      id: profile._id.toString(),
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      profilePic: profile.profilePic,
+      bio: profile.bio,
+      descriptionTags: profile.descriptionTags,
+      greenieId: profile.greenie_id,
+    }));
   }
 
   public async modScore(userId: string, documentType: DocumentType | IDTypeEnum, hasUploaded: boolean, session?: ClientSession) {

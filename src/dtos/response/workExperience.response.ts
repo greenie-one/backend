@@ -1,9 +1,8 @@
 import { CompanyTypeEnum } from '../request/workExperience.dto';
 
-export interface AddWorkExperienceResponse {
-  id: string;
-  success: boolean;
-}
+export type CreateWorkExperienceResponse = WorkExperienceResponse;
+export type UpdateWorkExperienceResponse = WorkExperienceResponse;
+export type DeleteWorkExperienceResponse = Record<string, never>;
 
 export interface WorkExperienceResponse {
   id: string;
@@ -17,12 +16,10 @@ export interface WorkExperienceResponse {
   workType: string;
   companyName: string;
   companyId: string;
-  dateOfJoining: string;
+  dateOfJoining: Date;
   linkedInUrl: string;
-  dateOfLeaving: string;
+  dateOfLeaving: Date;
   noOfVerifications: number;
 }
 
-export interface GetWorkExperienceResponse {
-  workExperiences: WorkExperienceResponse[];
-}
+export type GetWorkExperienceResponse = WorkExperienceResponse[];

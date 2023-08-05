@@ -1,5 +1,5 @@
 import { GPScompare, GetCoordinatesDto } from '@/dtos/request/location.dto';
-import { GetAutocompleteResponse, GetLocationResponse } from '@/dtos/response/location.response';
+import { CapturePeerLocationResponse, CaptureUserLocationResponse, GetAutocompleteResponse, GetLocationResponse } from '@/dtos/response/location.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Location, LocationModel } from '@/models/location.model';
@@ -13,7 +13,6 @@ class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
     try {
       const coordinates = await Geolocation.getLocation(address);
-      console.log(coordinates);
       if (!coordinates) {
         throw new HttpException(ErrorEnum.INVALID_COORDINATES);
       }
@@ -48,7 +47,7 @@ class LocationService {
 
       const deltaLong = gpsLog - ipLog;
       const deltaLat = gpsLat - ipLat;
-      const sinD = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(ipLat) * Math.cos(gpsLat) * Math.pow(Math.sin(deltaLong / 2), 2);
+      const sinD = Math.sin(deltaLat / 2) ** 2 + Math.cos(ipLat) * Math.cos(gpsLat) * Math.sin(deltaLong / 2) ** 2;
       const angluarDistance = 2 * Math.asin(Math.sqrt(sinD));
 
       const distance = angluarDistance * radius;
@@ -61,7 +60,7 @@ class LocationService {
     }
   }
 
-  public async capturePeerLocation(peerUUID: string, data: GetCoordinatesDto) {
+  public async capturePeerLocation(peerUUID: string, data: GetCoordinatesDto): Promise<CapturePeerLocationResponse> {
     const { peerId } = await residentialPeerService.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
@@ -82,10 +81,10 @@ class LocationService {
     residentialInfo.capturedLocation = location._id;
     residentialInfo.isVerified = true;
     residentialInfo.save();
-    return { success: true, message: 'Location Captured' };
+    return {};
   }
 
-  public async captureUserLocation(userId: string, residentialId: string, data: GetCoordinatesDto) {
+  public async captureUserLocation(userId: string, residentialId: string, data: GetCoordinatesDto): Promise<CaptureUserLocationResponse> {
     const residentialInfo = await ResidentialInfoModel.findOne({ user: userId, _id: residentialId });
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
@@ -101,7 +100,7 @@ class LocationService {
     residentialInfo.capturedLocation = location._id;
     residentialInfo.isVerified = true;
     residentialInfo.save();
-    return residentialInfo;
+    return {};
   }
 
   async getAutoCompleteResults(term: string, latitude: number, location: number): Promise<GetAutocompleteResponse> {

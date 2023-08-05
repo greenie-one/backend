@@ -2,7 +2,7 @@ import { sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type } from 'class-transformer';
 import { IsNotEmpty, IsString, Matches, ValidateIf } from 'class-validator';
 
-export class AddToWaitlistDto {
+export class CreateToWaitlistDto {
   @IsString()
   @IsNotEmpty()
   public email: string;

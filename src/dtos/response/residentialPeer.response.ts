@@ -1,4 +1,7 @@
-import { ResidentialInfoResponse } from './residentialInfo.response';
+import { SingleResidentialInfo } from './residentialInfo.response';
+
+export type SendPeerOtpResponse = Record<string, never>
+export type VerifyPeerResponse = Record<string, never>
 
 export interface GetResidentialPeerResponse {
   name: string;
@@ -9,8 +12,10 @@ export interface GetResidentialPeerResponse {
     name: string;
     profilePic: string;
   };
-  residentialInfo: Partial<ResidentialInfoResponse>;
+  residentialInfo: Partial<SingleResidentialInfo>;
 }
+
+export type DeleteResidentialPeerResponse = Record<string, never>
 
 export interface CreateResidentialPeerResponse {
   link: string;

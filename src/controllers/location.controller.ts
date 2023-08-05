@@ -1,5 +1,6 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { GetCoordinatesDto } from '@/dtos/request/location.dto';
+import { CapturePeerLocationResponse, CaptureUserLocationResponse, GetAutocompleteResponse } from '@/dtos/response/location.response';
 import { locationService } from '@/services/location.service';
 import { UserDetails } from '@/utils/decorators/auth';
 import { Controller } from '@/utils/decorators/controller';
@@ -13,18 +14,18 @@ export default class LocationController {
     @UserDetails() userDetails: TokenClaims,
     @Params('residentialId') residentialId: string,
     @Body() data: GetCoordinatesDto,
-  ) {
+  ): Promise<CaptureUserLocationResponse> {
     const userId = userDetails.sub;
     return locationService.captureUserLocation(userId, residentialId, data);
   }
 
   @Post('/capture/peer/:peerUUID')
-  public async captureLocationPeer(@Params('peerUUID') peerUUID: string, @Body() data: GetCoordinatesDto) {
+  public async captureLocationPeer(@Params('peerUUID') peerUUID: string, @Body() data: GetCoordinatesDto): Promise<CapturePeerLocationResponse> {
     return locationService.capturePeerLocation(peerUUID, data);
   }
 
   @Get('/autocomplete')
-  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string, @Query('latitude', true) latitude: number, @Query('longitude', true) longitude: number) {
+  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string, @Query('latitude', true) latitude: number, @Query('longitude', true) longitude: number): Promise<GetAutocompleteResponse> {
     return locationService.getAutoCompleteResults(term, latitude, longitude);
   }
 }

@@ -17,3 +17,6 @@ export type GetAutocompleteResponse = {
     latitude: number;
   }
 }[]
+
+export type CaptureUserLocationResponse = Record<string, never>
+export type CapturePeerLocationResponse = Record<string, never>

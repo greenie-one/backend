@@ -3,7 +3,7 @@ export interface AddResidentialInfoResponse {
   success: boolean;
 }
 
-export interface ResidentialInfoResponse {
+export interface SingleResidentialInfo {
   id: string;
   address_line_1: string;
   address_line_2: string;
@@ -18,6 +18,8 @@ export interface ResidentialInfoResponse {
   isVerified: boolean;
 }
 
-export interface GetResidentialInfoResponse {
-  residentialInfos: ResidentialInfoResponse[];
-}
+export type GetResidentialInfoResponse = SingleResidentialInfo[];
+export type CreateResidentialInfoResponse = SingleResidentialInfo;
+export type UpdateResidentialInfoResponse = SingleResidentialInfo;
+
+export type DeleteResidentialInfoResponse = Record<string, never>;

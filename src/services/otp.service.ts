@@ -1,4 +1,4 @@
-import { OtpType } from '@/dtos/request/otp.dto';
+import { OtpType } from '@/dtos/request/workExPeer.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { redisClient } from '@/redisClient';

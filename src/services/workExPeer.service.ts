@@ -1,10 +1,14 @@
-import { OtpType } from '@/dtos/request/otp.dto';
-import { CreateWorkPeerDto, UpdatePeerWorkVerificationDto, WorkVerificationBy } from '@/dtos/request/workExPeer.dto';
+import { CreateWorkPeerDto, OtpType, UpdatePeerWorkVerificationDto, WorkVerificationBy } from '@/dtos/request/workExPeer.dto';
 import {
   CreateWorkPeerResponse,
+  DeleteWorkPeerResponse,
   GetPeerInformationResponse,
   GetPeerWorkExDataResponse,
-  GetUserWorkPeerResponse,
+  GetUserWorkPeersResponse,
+  ResendPeerLinkResponse,
+  UpdateWorkPeerResponse,
+  WorkPeerSendOtpResponse,
+  WorkPeerVerifyResponse,
 } from '@/dtos/response/workExPeer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
@@ -55,7 +59,7 @@ class WorkExPeerService {
     await verification.sendPeerVerificationLinks(peer.email, peer.phone, peer.name, `${profile.firstName} ${profile.lastName}`, companyName, mobileLink, emailLink);
   }
 
-  public async resendLinksToPeers(userId: string, peerId: string) {
+  public async resendLinksToPeers(userId: string, peerId: string): Promise<ResendPeerLinkResponse> {
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
@@ -66,10 +70,10 @@ class WorkExPeerService {
     }
 
     await this.sendLinksToPeers(peerId, peer);
-    return { success: true, message: 'Link Sent' };
+    return {};
   }
 
-  public async peerSendOTP(peerUUID: string) {
+  public async peerSendOTP(peerUUID: string): Promise<WorkPeerSendOtpResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -82,9 +86,11 @@ class WorkExPeerService {
     } else {
       await otpService.sendOTP(phone, OtpType.MOBILE);
     }
+
+    return {};
   }
 
-  public async verifyPeerContact(peerUUID: string, otp: string, otpType: OtpType) {
+  public async verifyPeerContact(peerUUID: string, otp: string, otpType: OtpType): Promise<WorkPeerVerifyResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -99,29 +105,25 @@ class WorkExPeerService {
       throw new HttpException(ErrorEnum.INVALID_OTP);
     }
     await peer.save();
-    return { success: true, message: 'Contact Verified' };
+    return {};
   }
 
-  public async getUserWorkPeers(userId: string) {
+  public async getUserWorkPeers(userId: string): Promise<GetUserWorkPeersResponse> {
     const data = await WorkPeerModel.find({ user: userId });
-    const res: GetUserWorkPeerResponse[] = [];
-    for (const peer of data) {
-      res.push({
-        id: peer._id.toString(),
-        name: peer.name,
-        email: peer.email,
-        phone: peer.phone,
-        workExperience: peer.ref.toString(),
-        isVerificationCompleted: peer.isVerificationCompleted,
-        peerPost: peer.verificationBy,
-        createdAt: peer.createdAt.toISOString(),
-        updatedAt: peer.updatedAt.toISOString(),
-      });
-    }
-    return res;
+    return data.map((peer) => ({
+      id: peer._id.toString(),
+      name: peer.name,
+      email: peer.email,
+      phone: peer.phone,
+      workExperience: peer.ref.toString(),
+      isVerificationCompleted: peer.isVerificationCompleted,
+      peerPost: peer.verificationBy,
+      createdAt: peer.createdAt,
+      updatedAt: peer.updatedAt,
+    }));
   }
 
-  public async getPeerInformation(peerUUID: string, reply: FastifyReply) {
+  public async getPeerInformation(peerUUID: string, reply: FastifyReply): Promise<GetPeerInformationResponse> {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -188,11 +190,14 @@ class WorkExPeerService {
           type: document.type,
           name: document.name,
           privateUrl: `${document.privateUrl}?${sasToken}`,
+          user: document.user?.toString(),
+          createdAt: document.createdAt,
+          updatedAt: document.updatedAt
         });
       }),
     );
 
-    const res: GetPeerInformationResponse = {
+    return {
       id: peer._id.toString(),
       name: peer.name,
       email: peer.email,
@@ -201,10 +206,9 @@ class WorkExPeerService {
       phoneVerified: peer.phoneVerified,
       verificationBy: peer.verificationBy,
       data: data,
-      dateOfJoining: workExperience.dateOfJoining.toISOString(),
-      dateOfLeaving: workExperience.dateOfLeaving?.toISOString(),
+      dateOfJoining: workExperience.dateOfJoining,
+      dateOfLeaving: workExperience.dateOfLeaving,
     };
-    return res;
   }
 
   public async createWorkPeer(userId: string, peerData: CreateWorkPeerDto): Promise<CreateWorkPeerResponse> {
@@ -265,7 +269,7 @@ class WorkExPeerService {
     return { id: peer._id.toString(), name: peer.name } as CreateWorkPeerResponse;
   }
 
-  public async updatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
+  public async updatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto): Promise<UpdateWorkPeerResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
@@ -318,12 +322,12 @@ class WorkExPeerService {
     peer.isVerificationCompleted = true;
     peer.save();
 
-    await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } }, { new: true });
+    const updatedWorkPeer = await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } }, { new: true });
     await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
-    return { success: true, message: 'Updated Successfully' };
+    return { id: updatedWorkPeer?._id?.toString(), name: updatedWorkPeer.name };
   }
 
-  public async deletePeer(userId: string, peerid: string) {
+  public async deletePeer(userId: string, peerid: string): Promise<DeleteWorkPeerResponse> {
     const peer = await WorkPeerModel.findOne({ _id: peerid, user: userId });
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
@@ -332,7 +336,7 @@ class WorkExPeerService {
       throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
     }
     await WorkPeerModel.findByIdAndDelete(peerid);
-    return { success: true, message: 'Deleted Successfully' };
+    return {};
   }
 }
 

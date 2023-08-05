@@ -5,6 +5,7 @@ on:
     branches:
       - 'dev'
       - 'main'
+      - 'sg/dto_fix'
 
 jobs:
   release:
@@ -22,6 +23,7 @@ jobs:
           repository: greenie-one/global-dtos
           path: global-dtos
           ssh-key: ${{ secrets.SSH_DEPLOY_KEY }}
+          fetch-depth: 0
 
       - name: Copy files and push
         run: |
@@ -31,6 +33,8 @@ jobs:
           cd $GITHUB_WORKSPACE/global-dtos
 
           git config push.ff only
+          git config pull.ff only
+          
           git checkout ${GITHUB_REF##*/} 2>/dev/null || git checkout -b ${GITHUB_REF##*/}
           git pull origin ${GITHUB_REF##*/}
 

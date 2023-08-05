@@ -1,7 +1,7 @@
 import { env } from '@/config';
-import { OtpType } from '@/dtos/request/otp.dto';
 import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
-import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse } from '@/dtos/response/residentialPeer.response';
+import { OtpType } from '@/dtos/request/workExPeer.dto';
+import { CreateResidentialPeerResponse, DeleteResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse, SendPeerOtpResponse, VerifyPeerResponse } from '@/dtos/response/residentialPeer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
@@ -67,7 +67,7 @@ class ResidentialPeerService {
     return { success: true, message: 'Link Sent' };
   }
 
-  public async peerSendOTP(peerUUID: string) {
+  public async peerSendOTP(peerUUID: string): Promise<SendPeerOtpResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
@@ -80,9 +80,11 @@ class ResidentialPeerService {
     if (!peer.phoneVerified) {
       await otpService.sendOTP(phone, OtpType.MOBILE);
     }
+
+    return {}
   }
 
-  public async verifyPeerConatct(peerUUID: string, otp: string, otpType: OtpType) {
+  public async verifyPeerConatct(peerUUID: string, otp: string, otpType: OtpType): Promise<VerifyPeerResponse> {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
@@ -97,7 +99,7 @@ class ResidentialPeerService {
       throw new HttpException(ErrorEnum.INVALID_OTP);
     }
     await peer.save();
-    return { success: true, message: 'Contact Verified' };
+    return {};
   }
 
   public async getPeer(peerUUID: string, reply: FastifyReply): Promise<GetResidentialPeerResponse> {
@@ -189,7 +191,7 @@ class ResidentialPeerService {
     return { link: copyLink };
   }
 
-  public async deletePeer(userId: string, peerId: string) {
+  public async deletePeer(userId: string, peerId: string): Promise<DeleteResidentialPeerResponse> {
     const peer = await ResidentialPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
@@ -198,7 +200,7 @@ class ResidentialPeerService {
       throw new HttpException(ErrorEnum.INVALID_PEER_ID);
     }
     await peer.deleteOne();
-    return { success: true, message: 'Peer Deleted' };
+    return {};
   }
 }
 

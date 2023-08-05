@@ -1,38 +1,36 @@
 import { CreateSkillDto, UpdateSkillDto } from '@/dtos/request/skills.dto';
-import { AddSkillResponse, GetSkillsResponse, SkillResponse } from '@/dtos/response/skills.response';
+import { CreateSkillResponse, DeleteSkillResponse, GetSkillsResponse, SkillResponse, UpdateSkillResponse } from '@/dtos/response/skills.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { SkillModel, Skills } from '@/models/skills.model';
+import { SkillModel } from '@/models/skills.model';
 
 class SkillService {
-  public async createSkill(userId: string, skillData: CreateSkillDto): Promise<AddSkillResponse> {
+  public async createSkill(userId: string, skillData: CreateSkillDto): Promise<CreateSkillResponse> {
     const skill = await SkillModel.create({
       user: userId,
       ...skillData,
-    } as Skills);
-    const res: AddSkillResponse = { success: true, id: skill._id.toString() };
-    return res;
+    });
+
+    return {
+      id: skill._id.toString(),
+      expertise: skill.expertise,
+      skillName: skill.skillName,
+      workExperience: skill.workExperience?.toString(),
+    };
   }
 
   public async getSkills(userId: string): Promise<GetSkillsResponse> {
     const skills = await SkillModel.find({ user: userId }) ?? [];
 
-    const resp: GetSkillsResponse = {
-      skills: [],
-    };
-    for (const skill of skills) {
-      resp.skills.push({
-        id: skill._id.toString(),
-        skillName: skill.skillName,
-        workExperience: skill.workExperience?.toString() ?? null,
-        expertise: skill.expertise,
-      });
-    }
-
-    return resp;
+    return skills.map((skill) => ({
+      id: skill._id.toString(),
+      skillName: skill.skillName,
+      workExperience: skill.workExperience?.toString() ?? null,
+      expertise: skill.expertise,
+    }));
   }
 
-  public async deleteSkill(userId: string, skillId: string) {
+  public async deleteSkill(userId: string, skillId: string): Promise<DeleteSkillResponse> {
     const skill = await SkillModel.findById(skillId);
     if (!skill) {
       throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
@@ -43,10 +41,10 @@ class SkillService {
     }
 
     await skill.deleteOne();
-    return { success: true, message: 'skill deleted successfully' };
+    return {};
   }
 
-  public async updateSkill(userId: string, skillId: string, updatedData: UpdateSkillDto) {
+  public async updateSkill(userId: string, skillId: string, updatedData: UpdateSkillDto): Promise<UpdateSkillResponse> {
     const skill = await SkillModel.findById(skillId);
     if (!skill) {
       throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
@@ -62,7 +60,12 @@ class SkillService {
       throw new HttpException(ErrorEnum.SKILL_NOT_FOUND);
     }
 
-    return { success: true, message: 'Updated Successfully' };
+    return {
+      id: updatedSkill._id.toString(),
+      skillName: updatedSkill.skillName,
+      workExperience: updatedSkill.workExperience?.toString() ?? null,
+      expertise: updatedSkill.expertise,
+    };
   }
 
   public async getSkillById(userId: string, id: string): Promise<SkillResponse> {

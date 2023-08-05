@@ -1,5 +1,10 @@
 import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from '@/dtos/request/workExperience.dto';
-import { AddWorkExperienceResponse, GetWorkExperienceResponse, WorkExperienceResponse } from '@/dtos/response/workExperience.response';
+import {
+  CreateWorkExperienceResponse,
+  GetWorkExperienceResponse,
+  UpdateWorkExperienceResponse,
+  WorkExperienceResponse,
+} from '@/dtos/response/workExperience.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
@@ -8,7 +13,7 @@ import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 
 class WorkExperienceService {
-  public async createWorkExperience(userId: string, workExperienceData: CreateWorkExperienceDto): Promise<AddWorkExperienceResponse> {
+  public async createWorkExperience(userId: string, workExperienceData: CreateWorkExperienceDto): Promise<CreateWorkExperienceResponse> {
     if (workExperienceData.dateOfLeaving) {
       if (workExperienceData.dateOfJoining > workExperienceData.dateOfLeaving) {
         throw new HttpException(ErrorEnum.INVALID_DATE);
@@ -21,8 +26,24 @@ class WorkExperienceService {
       dateOfJoining: new Date(workExperienceData.dateOfJoining),
       dateOfLeaving: workExperienceData.dateOfLeaving ? new Date(workExperienceData.dateOfLeaving) : null,
     });
-    const res: AddWorkExperienceResponse = { success: true, id: workExperience._id.toString() };
-    return res;
+
+    return {
+      id: workExperience._id.toString(),
+      designation: workExperience.designation,
+      companyType: workExperience.companyType,
+      email: workExperience.email,
+      workMode: workExperience.workMode,
+      department: workExperience.department,
+      workType: workExperience.workType,
+      companyName: workExperience.companyName,
+      companyId: workExperience.companyId,
+      salary: workExperience.salary,
+      reason_for_leaving: workExperience.reason_for_leaving,
+      dateOfJoining: workExperience.dateOfJoining,
+      linkedInUrl: workExperience.linkedInUrl,
+      dateOfLeaving: workExperience.dateOfLeaving,
+      noOfVerifications: workExperience.noOfVerifications,
+    };
   }
 
   public async getWorkExperience(userId: string): Promise<GetWorkExperienceResponse> {
@@ -32,29 +53,23 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    const res: GetWorkExperienceResponse = {
-      workExperiences: [],
-    };
-    for (const workExp of workExperiences) {
-      res.workExperiences.push({
-        id: workExp._id.toString(),
-        designation: workExp.designation,
-        companyType: workExp.companyType,
-        email: workExp.email,
-        workMode: workExp.workMode,
-        department: workExp.department,
-        workType: workExp.workType,
-        companyName: workExp.companyName,
-        companyId: workExp.companyId,
-        salary: workExp.salary,
-        reason_for_leaving: workExp.reason_for_leaving,
-        dateOfJoining: workExp.dateOfJoining ? workExp.dateOfJoining.toString() : null,
-        linkedInUrl: workExp.linkedInUrl,
-        dateOfLeaving: workExp.dateOfLeaving ? workExp.dateOfLeaving.toString() : null,
-        noOfVerifications: workExp.noOfVerifications,
-      });
-    }
-    return res;
+    return workExperiences.map((workExp) => ({
+      id: workExp._id.toString(),
+      designation: workExp.designation,
+      companyType: workExp.companyType,
+      email: workExp.email,
+      workMode: workExp.workMode,
+      department: workExp.department,
+      workType: workExp.workType,
+      companyName: workExp.companyName,
+      companyId: workExp.companyId,
+      salary: workExp.salary,
+      reason_for_leaving: workExp.reason_for_leaving,
+      dateOfJoining: workExp.dateOfJoining,
+      linkedInUrl: workExp.linkedInUrl,
+      dateOfLeaving: workExp.dateOfLeaving,
+      noOfVerifications: workExp.noOfVerifications,
+    }));
   }
 
   public async deleteWorkExperience(userId: string, workExperienceId: string) {
@@ -71,10 +86,14 @@ class WorkExperienceService {
     await SkillModel.deleteMany({ user: userId, workExperience: workExperienceId });
     await DocumentModel.deleteMany({ user: userId, workExperience: workExperienceId });
     await workExperience.deleteOne();
-    return { success: true, message: 'Work experience deleted successfully' };
+    return {};
   }
 
-  public async updateWorkExperience(userId: string, workExperienceId: string, updatedData: UpdateWorkExperienceDto) {
+  public async updateWorkExperience(
+    userId: string,
+    workExperienceId: string,
+    updatedData: UpdateWorkExperienceDto,
+  ): Promise<UpdateWorkExperienceResponse> {
     const workExperience = await WorkExperienceModel.findById(workExperienceId);
     if (!workExperience) {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
@@ -95,7 +114,23 @@ class WorkExperienceService {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    return { success: true, message: 'Updated Successfully' };
+    return {
+      id: updatedWorkExperience._id.toString(),
+      designation: updatedWorkExperience.designation,
+      companyType: updatedWorkExperience.companyType,
+      email: updatedWorkExperience.email,
+      workMode: updatedWorkExperience.workMode,
+      department: updatedWorkExperience.department,
+      workType: updatedWorkExperience.workType,
+      companyName: updatedWorkExperience.companyName,
+      companyId: updatedWorkExperience.companyId,
+      salary: updatedWorkExperience.salary,
+      reason_for_leaving: updatedWorkExperience.reason_for_leaving,
+      dateOfJoining: updatedWorkExperience.dateOfJoining,
+      linkedInUrl: updatedWorkExperience.linkedInUrl,
+      dateOfLeaving: updatedWorkExperience.dateOfLeaving,
+      noOfVerifications: updatedWorkExperience.noOfVerifications,
+    };
   }
 
   public async getWorkExperienceById(userId: string, id: string): Promise<WorkExperienceResponse> {
@@ -121,9 +156,9 @@ class WorkExperienceService {
       salary: workExperience.salary,
       noOfVerifications: workExperience.noOfVerifications,
       reason_for_leaving: workExperience.reason_for_leaving,
-      dateOfJoining: workExperience.dateOfJoining.toString(),
+      dateOfJoining: workExperience.dateOfJoining,
       linkedInUrl: workExperience.linkedInUrl,
-      dateOfLeaving: workExperience.dateOfLeaving ? workExperience.dateOfLeaving.toString() : null,
+      dateOfLeaving: workExperience.dateOfLeaving,
     };
 
     return resp;

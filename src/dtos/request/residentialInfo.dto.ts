@@ -1,6 +1,6 @@
 import { IsISO8601, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class AddResidentialInfoDto {
+export class CreateResidentialInfoDto {
   @IsString()
   @IsNotEmpty()
   public address_line_1!: string;

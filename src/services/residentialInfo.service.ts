@@ -1,5 +1,10 @@
-import { AddResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
-import { AddResidentialInfoResponse, GetResidentialInfoResponse, ResidentialInfoResponse } from '@/dtos/response/residentialInfo.response';
+import { CreateResidentialInfoDto, UpdateResidentialInfoDto } from '@/dtos/request/residentialInfo.dto';
+import {
+  CreateResidentialInfoResponse,
+  DeleteResidentialInfoResponse,
+  GetResidentialInfoResponse,
+  UpdateResidentialInfoResponse,
+} from '@/dtos/response/residentialInfo.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ResidentialInfo, ResidentialInfoModel } from '@/models/residentialInfo.model';
@@ -12,30 +17,23 @@ class ResidentialInfoService {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    const res: ResidentialInfoResponse[] = [];
-    for (const residentialInfo of residentialInfos) {
-      res.push({
-        id: residentialInfo._id.toString(),
-        address_line_1: residentialInfo.address_line_1,
-        address_line_2: residentialInfo.address_line_2,
-        landmark: residentialInfo.landmark,
-        pincode: residentialInfo.pincode,
-        city: residentialInfo.city,
-        state: residentialInfo.state,
-        country: residentialInfo.country,
-        start_date: residentialInfo.start_date,
-        end_date: residentialInfo.end_date,
-        addressType: residentialInfo.addressType,
-        isVerified: residentialInfo.isVerified,
-      });
-    }
-
-    return {
-      residentialInfos: res,
-    };
+    return residentialInfos.map((residentialInfo) => ({
+      id: residentialInfo._id.toString(),
+      address_line_1: residentialInfo.address_line_1,
+      address_line_2: residentialInfo.address_line_2,
+      landmark: residentialInfo.landmark,
+      pincode: residentialInfo.pincode,
+      city: residentialInfo.city,
+      state: residentialInfo.state,
+      country: residentialInfo.country,
+      start_date: residentialInfo.start_date,
+      end_date: residentialInfo.end_date,
+      addressType: residentialInfo.addressType,
+      isVerified: residentialInfo.isVerified,
+    }));
   }
 
-  public async addResidentialInfo(userId: string, residentialInfoData: AddResidentialInfoDto): Promise<AddResidentialInfoResponse> {
+  public async createResidentialInfo(userId: string, residentialInfoData: CreateResidentialInfoDto): Promise<CreateResidentialInfoResponse> {
     if (residentialInfoData.end_date) {
       if (!(residentialInfoData.end_date > residentialInfoData.start_date)) {
         throw new HttpException(ErrorEnum.INVALID_DATE);
@@ -51,11 +49,23 @@ class ResidentialInfoService {
     };
     const residentialInfo = await ResidentialInfoModel.create(data);
 
-    const res: AddResidentialInfoResponse = { success: true, id: residentialInfo._id.toString() };
-    return res;
+    return {
+      id: residentialInfo._id.toString(),
+      address_line_1: residentialInfo.address_line_1,
+      address_line_2: residentialInfo.address_line_2,
+      landmark: residentialInfo.landmark,
+      pincode: residentialInfo.pincode,
+      city: residentialInfo.city,
+      state: residentialInfo.state,
+      country: residentialInfo.country,
+      start_date: residentialInfo.start_date,
+      end_date: residentialInfo.end_date,
+      addressType: residentialInfo.addressType,
+      isVerified: residentialInfo.isVerified,
+    };
   }
 
-  public async deleteResidentialInfo(userId: string, residentialInfoId: string) {
+  public async deleteResidentialInfo(userId: string, residentialInfoId: string): Promise<DeleteResidentialInfoResponse> {
     const residentialInfo = await ResidentialInfoModel.findById(residentialInfoId);
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
@@ -67,10 +77,14 @@ class ResidentialInfoService {
 
     await residentialInfo.deleteOne();
 
-    return { success: true, message: 'Residential Info deleted successfully' };
+    return {};
   }
 
-  public async updateResidentialInfo(userId: string, residentialInfoId: string, updatedData: UpdateResidentialInfoDto) {
+  public async updateResidentialInfo(
+    userId: string,
+    residentialInfoId: string,
+    updatedData: UpdateResidentialInfoDto,
+  ): Promise<UpdateResidentialInfoResponse> {
     if (updatedData.end_date) {
       if (updatedData.start_date > updatedData.end_date) {
         throw new HttpException(ErrorEnum.INVALID_DATE);
@@ -92,7 +106,20 @@ class ResidentialInfoService {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
 
-    return { success: true, message: 'Updated Successfully' };
+    return {
+      id: residentialInfo._id.toString(),
+      address_line_1: residentialInfo.address_line_1,
+      address_line_2: residentialInfo.address_line_2,
+      landmark: residentialInfo.landmark,
+      pincode: residentialInfo.pincode,
+      city: residentialInfo.city,
+      state: residentialInfo.state,
+      country: residentialInfo.country,
+      start_date: residentialInfo.start_date,
+      end_date: residentialInfo.end_date,
+      addressType: residentialInfo.addressType,
+      isVerified: residentialInfo.isVerified,
+    };
   }
 }
 

@@ -1,5 +1,5 @@
-import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
-import { IDResponse } from '@/dtos/response/ids.response';
+import { CreateIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
+import { GetIDsResponse } from '@/dtos/response/ids.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel } from '@/models/id.model';
@@ -14,24 +14,22 @@ const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 60 * 10; // mins;
 
 class IDsService {
-  public async getUserIDs(userId: string): Promise<IDResponse[]> {
+  public async getUserIDs(userId: string): Promise<GetIDsResponse> {
     const id_document = await IDModel.find({ user: userId });
     if (!id_document) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
-    return id_document.map((id) => {
-      return {
-        id: id._id.toString(),
-        id_type: id.id_type,
-        id_number: id.id_number,
-        user: id.user.toString(),
-        address: id.normalizedAddress,
-        fullName: id.data?.user_full_name,
-        dob: id.data.user_dob,
-        createdAt: id.createdAt,
-        updatedAt: id.updatedAt,
-      } as IDResponse;
-    });
+    return id_document.map((id) => ({
+      id: id._id.toString(),
+      id_type: id.id_type,
+      id_number: id.id_number,
+      user: id.user.toString(),
+      address: id.normalizedAddress,
+      fullName: id.data?.user_full_name,
+      dob: id.data.user_dob,
+      createdAt: id.createdAt,
+      updatedAt: id.updatedAt,
+    }));
   }
 
   public async otp_rate_limit_check(userId: string, id_type: IDTypeEnum) {
@@ -57,7 +55,7 @@ class IDsService {
     return `xxxx-xxxx-${str.slice(-numVisibleChars)}`;
   }
 
-  public async requestAadharOtp(userId: string, addIDDto: AddIDDto) {
+  public async requestAadharOtp(userId: string, addIDDto: CreateIDDto) {
     if (await this.userHasId(userId, IDTypeEnum.AADHAR)) {
       throw new HttpException(ErrorEnum.AADHAR_ALREADY_EXIST);
     }
@@ -139,7 +137,7 @@ class IDsService {
     }
   }
 
-  private async remoteVerifyPan(addIDDto: AddIDDto) {
+  private async remoteVerifyPan(addIDDto: CreateIDDto) {
     const { id_number } = addIDDto;
     const taskId = uuidv4();
 
@@ -152,7 +150,7 @@ class IDsService {
     }
   }
 
-  public async verifyPan(userId: string, addIDDto: AddIDDto) {
+  public async verifyPan(userId: string, addIDDto: CreateIDDto) {
     if (await this.userHasId(userId, IDTypeEnum.PAN)) {
       throw new HttpException(ErrorEnum.PAN_ALREADY_EXIST);
     }
@@ -188,7 +186,7 @@ class IDsService {
     }
   }
 
-  private async remoteVerifyDrivingLicense(addIDDto: AddIDDto) {
+  private async remoteVerifyDrivingLicense(addIDDto: CreateIDDto) {
     const { id_number, dob } = addIDDto;
     const taskId = uuidv4();
 
@@ -200,7 +198,7 @@ class IDsService {
     }
   }
 
-  public async verifyDrivingLicense(userId: string, addIDDto: AddIDDto) {
+  public async verifyDrivingLicense(userId: string, addIDDto: CreateIDDto) {
     if (await this.userHasId(userId, IDTypeEnum.PAN)) {
       throw new HttpException(ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST);
     }
