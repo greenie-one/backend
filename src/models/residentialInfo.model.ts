@@ -43,7 +43,7 @@ export class ResidentialInfo {
   public capturedLocation?: Ref<Location>;
 
   @prop({ type: Boolean, default: false })
-  public verified?: boolean;
+  public isVerified?: boolean;
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);

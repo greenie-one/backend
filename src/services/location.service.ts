@@ -71,7 +71,7 @@ class LocationService {
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
-    if (residentialInfo.verified) {
+    if (residentialInfo.isVerified) {
       throw new HttpException(ErrorEnum.LOCATION_ALREADY_CAPTURED);
     }
     const location = await LocationModel.create({
@@ -80,7 +80,7 @@ class LocationService {
       longitude: data.longitude,
     });
     residentialInfo.capturedLocation = location._id;
-    residentialInfo.verified = true;
+    residentialInfo.isVerified = true;
     residentialInfo.save();
     return { success: true, message: 'Location Captured' };
   }
@@ -90,7 +90,7 @@ class LocationService {
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
-    if (residentialInfo.verified) {
+    if (residentialInfo.isVerified) {
       throw new HttpException(ErrorEnum.LOCATION_ALREADY_CAPTURED);
     }
     const location = await LocationModel.create({
@@ -99,13 +99,13 @@ class LocationService {
       longitude: data.longitude,
     });
     residentialInfo.capturedLocation = location._id;
-    residentialInfo.verified = true;
+    residentialInfo.isVerified = true;
     residentialInfo.save();
     return residentialInfo;
   }
 
   async getAutoCompleteResults(term: string, latitude: number, location: number): Promise<GetAutocompleteResponse> {
-    const resp = await Geolocation.autocomplete(term, latitude, location)
+    const resp = await Geolocation.autocomplete(term, latitude, location);
     return resp.results.map(({ id, score, address, position, type }) => ({
       id: id,
       score: score,
