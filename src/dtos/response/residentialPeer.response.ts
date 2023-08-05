@@ -9,7 +9,7 @@ export interface GetResidentialPeerResponse {
     name: string;
     profilePic: string;
   };
-  residentialInfo: ResidentialInfoResponse;
+  residentialInfo: Partial<ResidentialInfoResponse>;
 }
 
 export interface CreateResidentialPeerResponse {

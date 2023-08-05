@@ -15,6 +15,7 @@ export interface ResidentialInfoResponse {
   start_date: Date;
   end_date: Date;
   addressType: string;
+  isVerified: boolean;
 }
 
 export interface GetResidentialInfoResponse {
