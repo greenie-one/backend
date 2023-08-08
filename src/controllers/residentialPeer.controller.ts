@@ -16,4 +16,5 @@ export default class WorkExPeerController {
     const status = await residentialPeerService.verifyPeerConatct(peerUUID, otp_data.otp);
     return { success: status, message: 'Verified' };
   }
+  
 }
