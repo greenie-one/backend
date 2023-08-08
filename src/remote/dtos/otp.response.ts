@@ -1,3 +1,3 @@
 export interface SendOtpResponse {
-  otp: string
+  otp: string;
 }
