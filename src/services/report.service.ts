@@ -34,7 +34,14 @@ class ReportService {
       res.push({
         designation: workExp.designation,
         companyName: workExp.companyName,
-        isVerified: workExPeer.isVerificationCompleted,
+        companyType:workExp.companyType,
+        companyId:workExp.companyId ,
+        linkedInUrl:workExp.linkedInUrl ,
+        workEmail:workExp.email ,
+        dateOfJoining :workExp.dateOfJoining ,
+        dateOfLeaving :workExp.dateOfLeaving ,
+        worktype:workExp.workType,
+        refree :workExPeer
       });
     }
     return res;
@@ -55,9 +62,13 @@ class ReportService {
         address_line_2: residentialInfo.address_line_2,
         landmark: residentialInfo.landmark,
         pincode: residentialInfo.pincode,
+        startDate :residentialInfo.start_date ,
+        endDate :residentialInfo.end_date ,
         city: residentialInfo.city,
+        country:residentialInfo.country,
         addressType: residentialInfo.addressType,
-        isVerified:residentPeer.isVerificationCompleted
+        isVerified:residentPeer.isVerificationCompleted,
+        verifiedBy :residentPeer.verificationBy,
       });
     }
 
