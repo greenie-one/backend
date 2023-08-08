@@ -2,27 +2,25 @@ import { env } from '@/config';
 import { DrivingLicenseVerifyResponse } from '../dtos/driving.response';
 import { HttpClient } from '../generic/httpClient';
 
+export type DrivingLicense = {
+  dlNumber: string;
+  dob: string;
+  taskId: string;
+};
+
 export class drivinLicenseVerification {
   static async verifyDrivingLicense(dlNumber: string, dob: string, taskId: string): Promise<DrivingLicenseVerifyResponse> {
     return HttpClient.callApi({
-      url: 'https://test.zoop.one/api/v1/in/identity/dl/advance',
+      url: `${env('REMOTE_BASE_URL')}/driving-license`,
       method: 'POST',
       headers: {
-        auth: 'false',
-        'app-id': env('ZOOP_ID'),
-        'api-key': env('ZOOP_KEY'),
         'Content-Type': 'application/json',
       },
       body: {
-        mode: 'sync',
-        data: {
-          customer_dl_number: dlNumber,
-          customer_dob: dob,
-          consent: 'Y',
-          consent_text: 'I hereby declare my consent agreement for fetching my information via ZOOP API',
-        },
-        task_id: taskId,
-      },
+        dlNumber,
+        dob,
+        taskId,
+      } as DrivingLicense,
     });
   }
 }
