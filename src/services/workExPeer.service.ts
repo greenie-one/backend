@@ -47,12 +47,20 @@ class WorkExPeerService {
 
     console.info(`Sending links to ${peer.name} with email ${peer.email} and phone ${peer.phone}`);
 
-    const companyName = (await WorkExperienceModel.findById(peer.ref).select('companyName'))?.companyName
+    const companyName = (await WorkExperienceModel.findById(peer.ref).select('companyName'))?.companyName;
     if (!companyName) {
-      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND)
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    await verification.sendPeerVerificationLinks(peer.email, peer.phone, peer.name, `${profile.firstName} ${profile.lastName}`, companyName, mobileLink, emailLink);
+    await verification.sendPeerVerificationLinks(
+      peer.email,
+      peer.phone,
+      peer.name,
+      `${profile.firstName} ${profile.lastName}`,
+      companyName,
+      mobileLink,
+      emailLink,
+    );
   }
 
   public async resendLinksToPeers(userId: string, peerId: string) {
@@ -139,6 +147,11 @@ class WorkExPeerService {
       await peer.save();
     }
 
+    return this.fetchPeerWorkExData(peerId, reply);
+  }
+
+  public async fetchPeerWorkExData(peerId: string, reply: FastifyReply) {
+    const peer = await WorkPeerModel.findById(peerId);
     if (!peer.emailVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
       console.error(err);
