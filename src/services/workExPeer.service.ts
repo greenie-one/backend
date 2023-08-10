@@ -147,11 +147,6 @@ class WorkExPeerService {
       await peer.save();
     }
 
-    return this.fetchPeerWorkExData(peerId, reply);
-  }
-
-  public async fetchPeerWorkExData(peerId: string, reply: FastifyReply) {
-    const peer = await WorkPeerModel.findById(peerId);
     if (!peer.emailVerified) {
       const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
       console.error(err);
