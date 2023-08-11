@@ -201,7 +201,7 @@ class IDsService {
   }
 
   public async verifyDrivingLicense(userId: string, addIDDto: AddIDDto) {
-    if (await this.userHasId(userId, IDTypeEnum.PAN)) {
+    if (await this.userHasId(userId, IDTypeEnum.DRIVING_LICENSE)) {
       throw new HttpException(ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST);
     }
 
