@@ -190,12 +190,9 @@ class ResidentialPeerService {
   }
 
   public async deletePeer(userId: string, peerId: string) {
-    const peer = await ResidentialPeerModel.findById(peerId);
+    const peer = await ResidentialPeerModel.findOne({ _id: peerId, user: userId });
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
-    }
-    if (peer.user.toString() !== userId) {
-      throw new HttpException(ErrorEnum.INVALID_PEER_ID);
     }
     await peer.deleteOne();
     return { success: true, message: 'Peer Deleted' };

@@ -79,6 +79,10 @@ class LocationService {
       latitude: data.latitude,
       longitude: data.longitude,
     });
+
+    peer.isVerificationCompleted = true;
+    peer.save();
+
     residentialInfo.capturedLocation = location._id;
     residentialInfo.isVerified = true;
     residentialInfo.save();
