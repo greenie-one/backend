@@ -11,6 +11,8 @@ export interface ProfileResponse {
   profilePic: string;
   descriptionTags: string[];
   greenieId: string;
+  phone?: string;
+  email?: string;
 }
 
 export interface SearchProfilesResponse {
