@@ -27,7 +27,7 @@ export class ID {
   public normalizedAddress!: NormalizedAddress;
 
   @prop({ ref: () => Location, type: String })
-  public location?: Ref<Location, string>;
+  public location?: Ref<Location, string>; 
 
   @prop({ type: () => Verification })
   public verification?: Verification;

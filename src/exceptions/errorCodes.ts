@@ -44,6 +44,7 @@ export enum ErrorEnum {
   AADHAR_ALREADY_EXIST,
   PAN_ALREADY_EXIST,
   DRIVING_LICENSE_ALREADY_EXIST,
+  IDENTITY_NOT_FOUND,
 
   // Peer
   SHARING_FAILED,
@@ -307,5 +308,10 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0057',
     message: 'Failed to validate ref: %s',
     status: 400,
+  },
+  [ErrorEnum.IDENTITY_NOT_FOUND]: {
+    code: 'GR0057',
+    message: 'Identity not found',
+    status: 404,
   },
 };

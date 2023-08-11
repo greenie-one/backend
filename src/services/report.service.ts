@@ -1,5 +1,6 @@
 import { ErrorEnum } from "@/exceptions/errorCodes";
 import { HttpException } from "@/exceptions/httpException";
+import { IDModel } from "@/models/id.model";
 import { ProfileModel } from "@/models/profile.model";
 import { ResidentialInfoModel } from "@/models/residentialInfo.model";
 import { ResidentialPeerModel } from "@/models/residentialPeer.model";
@@ -41,7 +42,14 @@ class ReportService {
         dateOfJoining :workExp.dateOfJoining ,
         dateOfLeaving :workExp.dateOfLeaving ,
         worktype:workExp.workType,
-        refree :workExPeer
+        peerName :workExPeer.name,
+        verificationBy:workExPeer.verificationBy,
+        selectedFields:workExPeer.selectedFields,
+        allQuestions:workExPeer.allQuestions,
+        otherQuestions:workExPeer.otherQuestions,
+        skills:workExPeer.skills,
+        documents:workExPeer.documents,
+        isVerified:workExPeer.isVerificationCompleted
       });
     }
     return res;
@@ -67,12 +75,36 @@ class ReportService {
         city: residentialInfo.city,
         country:residentialInfo.country,
         addressType: residentialInfo.addressType,
+        location:residentialInfo.location,
+        capturedLocation:residentialInfo.capturedLocation,
         isVerified:residentPeer.isVerificationCompleted,
         verifiedBy :residentPeer.verificationBy,
       });
     }
 
     return res ;
+  }
+
+  public async getIdDetails(userId:string){
+    const Id = await IDModel.find({ user: userId });
+
+    if (!Id) {
+      throw new HttpException(ErrorEnum.IDENTITY_NOT_FOUND);
+    }
+
+    const res= [] ;
+    for (const ids of Id) {
+      res.push({
+        idType:ids.id_type,
+        idNumber :ids.id_number,
+        data:ids.data,
+        address:ids.address,
+        normalizedAddress:ids.normalizedAddress,
+        location:ids.location,
+        verification:ids.verification
+      });
+    }
+    return res;
   }
 }
 
