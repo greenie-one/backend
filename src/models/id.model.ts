@@ -1,5 +1,4 @@
 import { IDTypeEnum } from '@/dtos/request/ids.dto';
-import { NormalizedAddress } from '@/dtos/response/ids.response';
 import { AadharUserAddress, AadharVerifyResult } from '@/remote/dtos/aadhar.response';
 import { DLResult, DLUserAddress } from '@/remote/dtos/driving.response';
 import { PanResult, PanUserAddress } from '@/remote/dtos/pan.response';
@@ -25,8 +24,8 @@ export class ID {
   @prop({ required: true, type: Schema.Types.Mixed })
   public address!: AadharUserAddress | PanUserAddress | DLUserAddress;
 
-  @prop({ required: true, type: () => NormalizedAddress })
-  public normalizedAddress!: NormalizedAddress;
+  @prop({ required: true })
+  public normalizedAddress!: object;
 
   @prop({ ref: () => Location, type: String })
   public location?: Ref<Location, string>;
