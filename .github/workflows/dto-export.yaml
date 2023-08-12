@@ -39,11 +39,4 @@ jobs:
 
           git add -A
           git diff-index --quiet HEAD -- || git commit -m "Types sync"
-
-          if git push --set-upstream origin ${GITHUB_REF##*/}; then
-            echo "Push successful."
-          else
-            echo "Push failed due to conflicts. Attempting force push..."
-            git push -f origin ${GITHUB_REF##*/}
-            echo "Force push complete."
-          fi
+          git push --set-upstream origin ${GITHUB_REF##*/}
