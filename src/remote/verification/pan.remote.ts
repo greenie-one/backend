@@ -10,7 +10,7 @@ export type Pan = {
 export class PanVerification {
   static async verifyPan(panNumber: string, taskId: string): Promise<PanVerifyResponse> {
     return HttpClient.callApi({
-      url: `${env('REMOTE_BASE_URL')}/pan`,
+      url: `${env('REMOTE_BASE_URL')}/zoop/pan`,
       method: 'POST',
       headers: {
         'app-id': env('ZOOP_ID'),
