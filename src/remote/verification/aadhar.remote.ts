@@ -30,7 +30,7 @@ export class AadhaarVerification {
 
   static async verifyOtp(requestId: string, otp: string, taskId: string): Promise<AadharVerifyResponse> {
     return HttpClient.callApi({
-      url: `${env('REMOTE_BASE_URL')}/aadhar/verify`,
+      url: `${env('REMOTE_BASE_URL')}/zoop/aadhar/verify`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

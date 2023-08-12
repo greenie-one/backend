@@ -11,7 +11,7 @@ export type DrivingLicense = {
 export class drivinLicenseVerification {
   static async verifyDrivingLicense(dlNumber: string, dob: string, taskId: string): Promise<DrivingLicenseVerifyResponse> {
     return HttpClient.callApi({
-      url: `${env('REMOTE_BASE_URL')}/driving-license`,
+      url: `${env('REMOTE_BASE_URL')}/zoop/driving-license`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
