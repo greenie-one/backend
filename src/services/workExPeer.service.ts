@@ -47,7 +47,20 @@ class WorkExPeerService {
 
     console.info(`Sending links to ${peer.name} with email ${peer.email} and phone ${peer.phone}`);
 
-    await verification.GetPeerVerification(peer.email, peer.phone, peer.name, `${profile.firstName} ${profile.lastName}`, mobileLink, emailLink);
+    const companyName = (await WorkExperienceModel.findById(peer.ref).select('companyName'))?.companyName;
+    if (!companyName) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    await verification.sendPeerVerificationLinks(
+      peer.email,
+      peer.phone,
+      peer.name,
+      `${profile.firstName} ${profile.lastName}`,
+      companyName,
+      mobileLink,
+      emailLink,
+    );
   }
 
   public async resendLinksToPeers(userId: string, peerId: string) {
@@ -55,45 +68,46 @@ class WorkExPeerService {
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
     if (peer.user.toString() !== userId) {
       throw new HttpException(ErrorEnum.INVALID_PEER_ID);
     }
+
     await this.sendLinksToPeers(peerId, peer);
     return { success: true, message: 'Link Sent' };
   }
 
-  public async peerSendOTP(peerUUID: string, otp_type: OtpType) {
+  public async peerSendOTP(peerUUID: string) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
     const { email, phone } = peer;
-    if (otp_type === 'EMAIL') {
-      await otpService.sendOTP(email, otp_type);
+    if (!peer.emailVerified) {
+      await otpService.sendOTP(email, OtpType.EMAIL);
     } else {
-      await otpService.sendOTP(phone, otp_type);
+      await otpService.sendOTP(phone, OtpType.MOBILE);
     }
   }
 
-  public async verifyPeerConatct(peerUUID: string, otp_type: OtpType, otp: string) {
+  public async verifyPeerContact(peerUUID: string, otp: string, otpType: OtpType) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     const { email, phone } = peer;
-    if (otp_type === 'EMAIL' && (await otpService.verifyOTP(email, otp_type, otp))) {
+    if (!peer.emailVerified && otpType === OtpType.EMAIL && (await otpService.verifyOTP(email, OtpType.EMAIL, otp))) {
       peer.emailVerified = true;
-      await peer.save();
-      return { success: true, message: 'Verified' };
-    } else if (otp_type === 'MOBILE' && (await otpService.verifyOTP(phone, otp_type, otp))) {
+    } else if (!peer.phoneVerified && otpType === OtpType.MOBILE && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
       peer.phoneVerified = true;
-      await peer.save();
-      return { success: true, message: 'Verified' };
     } else {
-      return { success: false, message: 'Invalid OTP' };
+      throw new HttpException(ErrorEnum.INVALID_OTP);
     }
+    await peer.save();
+    return { success: true, message: 'Contact Verified' };
   }
 
   public async getUserWorkPeers(userId: string) {
@@ -107,6 +121,7 @@ class WorkExPeerService {
         phone: peer.phone,
         workExperience: peer.ref.toString(),
         isVerificationCompleted: peer.isVerificationCompleted,
+        peerPost: peer.verificationBy,
         createdAt: peer.createdAt.toISOString(),
         updatedAt: peer.updatedAt.toISOString(),
       });
@@ -149,6 +164,9 @@ class WorkExPeerService {
     const data: GetPeerWorkExDataResponse = {
       name: `${profile.firstName} ${profile.lastName}`,
       profilePic: profile.profilePic,
+      companyName: workExperience.companyName,
+      peerPost: peer.verificationBy,
+      designation: workExperience.designation,
       skills: [],
       documents: [],
     };
@@ -157,21 +175,21 @@ class WorkExPeerService {
       data.selectedFields = {};
       copyDataFrom(peer.toObject().selectedFields, workExperience.toObject(), data.selectedFields);
     }
-    if (peer.verificationBy !== WorkVerificationBy.HR) {
-      data.peerPost = peer.verificationBy;
-      data.designation = workExperience.designation;
-      data.companyName = workExperience.companyName;
-    }
 
     const skillIds = peer.skills.map((skill) => skill.id);
-    Promise.all(
-      (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
+    await Promise.all(
+      (
+        await SkillModel.find({ _id: { $in: skillIds } })
+      ).map((skill) => {
         data.skills.push({ id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise });
       }),
     );
+
     const documentIds = peer.documents.map((document) => document.id);
-    Promise.all(
-      (await DocumentModel.find({ _id: { $in: documentIds } })).map(async (document) => {
+    await Promise.all(
+      (
+        await DocumentModel.find({ _id: { $in: documentIds } })
+      ).map(async (document) => {
         const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
         data.documents.push({
           id: document._id.toString(),
@@ -326,4 +344,4 @@ class WorkExPeerService {
   }
 }
 
-export const peerService = new WorkExPeerService();
+export const workPeerService = new WorkExPeerService();

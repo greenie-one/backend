@@ -1,8 +1,6 @@
+import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
-import { Verification } from './verified.model';
-import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
-@modelOptions({ schemaOptions: { collection: 'profiles', timestamps: true } })
 export class Profile {
   @prop({ type: String, required: true })
   public firstName!: string;
@@ -19,14 +17,11 @@ export class Profile {
   @prop({ type: String })
   public bio?: string;
 
-  @prop({ ref: 'User' })
+  @prop({ ref: () => User })
   public user!: Ref<User>;
 
   @prop({ type: Array<string>, default: [] })
   public descriptionTags!: string[];
-
-  @prop({ type: () => Verification })
-  public verification?: Verification;
 
   @prop({ type: Number, default: 0, index: true })
   public score: number;

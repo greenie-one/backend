@@ -14,6 +14,7 @@ export interface GetUserWorkPeerResponse {
   email: string;
   phone: string;
   workExperience: string;
+  peerPost: string;
   isVerificationCompleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -22,9 +23,9 @@ export interface GetUserWorkPeerResponse {
 export interface GetPeerWorkExDataResponse {
   name: string;
   profilePic: string;
-  companyName?: string;
-  peerPost?: string;
-  designation?: string;
+  companyName: string;
+  peerPost: string;
+  designation: string;
   selectedFields?: Partial<WorkExperienceResponse>;
   skills?: SkillResponse[];
   documents?: GetDocumentResponse[];

@@ -1,7 +1,7 @@
-import { User } from './users.model';
-import { WorkExperience } from './workExperience.model';
 import { DocumentType } from '@/dtos/request/document.dto';
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { User } from './users.model';
+import { WorkExperience } from './workExperience.model';
 
 export class Document {
   @prop({ required: true })
@@ -13,11 +13,11 @@ export class Document {
   @prop({ required: true })
   public privateUrl!: string;
 
-  @prop({ required: true, ref: User, type: String })
+  @prop({ required: true, ref: () => User, type: String })
   public user!: Ref<User, string>;
 
   @prop({
-    ref: 'WorkExperience',
+    ref: () => WorkExperience,
     type: String,
     required: function (this: Document) {
       return this.type === DocumentType.WORK;

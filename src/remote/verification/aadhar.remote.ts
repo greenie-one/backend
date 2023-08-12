@@ -1,47 +1,45 @@
-import { HttpClient } from '../generic/httpClient';
 import { env } from '@/config';
-import { AadharRequestOtpResponse, AadharVerifyOtpResponse } from '@/dtos/response/ids.response';
+import { AadharRequestOtpResponse, AadharVerifyResponse } from '../dtos/aadhar.response';
+import { HttpClient } from '../generic/httpClient';
+
+export type AadharOtp = {
+  aadharNumber: string;
+  taskId: string;
+};
+
+export type AadharVerify = {
+  requestId: string;
+  otp: string;
+  taskId: string;
+};
 
 export class AadhaarVerification {
   static async requestOtp(aadhaarNumber: string, taskId: string): Promise<AadharRequestOtpResponse> {
     return HttpClient.callApi({
-      url: 'https://test.zoop.one/in/identity/okyc/otp/request',
+      url: `${env('REMOTE_BASE_URL')}/aadhar/otp`,
       method: 'POST',
       headers: {
-        'app-id': env('ZOOP_ID'),
-        'api-key': env('ZOOP_KEY'),
-        'org-id': '60800ca35ed0c7001cad2605',
         'Content-Type': 'application/json',
       },
       body: {
-        data: {
-          customer_aadhaar_number: aadhaarNumber,
-          consent: 'Y',
-          consent_text: 'I hereby declare my consent agreement for fetching my information via ZOOP API',
-        },
-        task_id: taskId,
-      },
+        aadharNumber: aadhaarNumber,
+        taskId,
+      } as AadharOtp,
     });
   }
 
-  static async verifyOtp(requestId: string, otp: string, taskId: string): Promise<AadharVerifyOtpResponse> {
+  static async verifyOtp(requestId: string, otp: string, taskId: string): Promise<AadharVerifyResponse> {
     return HttpClient.callApi({
-      url: 'https://test.zoop.one/in/identity/okyc/otp/verify',
+      url: `${env('REMOTE_BASE_URL')}/aadhar/verify`,
       method: 'POST',
       headers: {
-        'app-id': env('ZOOP_ID'),
-        'api-key': env('ZOOP_KEY'),
         'Content-Type': 'application/json',
       },
       body: {
-        data: {
-          request_id: `${requestId}`,
-          otp: `${otp}`,
-          consent: 'Y',
-          consent_text: 'I hear by declare my consent agreement for fetching my information via ZOOP API',
-        },
-        task_id: `${taskId}`,
-      },
+        requestId,
+        otp,
+        taskId,
+      } as AadharVerify,
     });
   }
 }

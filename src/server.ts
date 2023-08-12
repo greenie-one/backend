@@ -1,3 +1,5 @@
+import '@/utils/mongoose';
+
 import { App } from '@/app';
 import { ValidateEnv } from '@utils/validateEnv';
 import DocumentController from './controllers/document.controller';
@@ -5,6 +7,7 @@ import IDsController from './controllers/ids.controller';
 import LocationController from './controllers/location.controller';
 import ProfileController from './controllers/profile.controller';
 import ResidentialInfoController from './controllers/residentialInfo.controller';
+import ResidentialPeerController from './controllers/residentialPeer.controller';
 import RootController from './controllers/root.controller';
 import SkillController from './controllers/skills.controller';
 import UserController from './controllers/user.controller';
@@ -36,6 +39,7 @@ const controllers = [
   UserController,
   LocationController,
   WorkExPeerController,
+  ResidentialPeerController,
 ];
 
 const app = new App(controllers);

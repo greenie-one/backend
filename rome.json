@@ -17,13 +17,17 @@
         "noPrototypeBuiltins": "warn"
       },
       "style": {
-        "useEnumInitializers": "off"
+        "useEnumInitializers": "off",
+        "useExponentiationOperator": "off"
       }
     }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "single"
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
     }
   }
 }

@@ -1,9 +1,19 @@
+import { NormalizedAddress } from "./ids.response";
+
 export interface GetLocationResponse {
   id: string;
-  coordinates: string;
+  longitude: number;
+  latitude: number;
   user: string;
 }
 
-export interface LocationResponse {
-  code?: string;
-}
+export type GetAutocompleteResponse = {
+  id: string
+  score: number
+  address: NormalizedAddress
+  addressString: string
+  position: {
+    longitude: number;
+    latitude: number;
+  }
+}[]

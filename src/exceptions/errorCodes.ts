@@ -57,6 +57,10 @@ export enum ErrorEnum {
   PEER_ALREADY_EXISTS,
   PEER_ALREADY_VERIFIED,
   INCOMPLETE_VERIFICATION,
+
+  // Database
+  DB_REF_VALIDATION_FAILED,
+  LOCATION_ALREADY_CAPTURED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -298,6 +302,16 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.INCOMPLETE_VERIFICATION]: {
     code: 'GR0056',
     message: 'Give all fields for verification - %s',
+    status: 400,
+  },
+  [ErrorEnum.DB_REF_VALIDATION_FAILED]: {
+    code: 'GR0057',
+    message: 'Failed to validate ref: %s',
+    status: 400,
+  },
+  [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
+    code: 'GR0058',
+    message: 'Location already captured',
     status: 400,
   },
 };

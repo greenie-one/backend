@@ -1,4 +1,4 @@
-type PostBody = string | string[] | number | boolean | { [key: string]: PostBody };
+type PostBody = string | string[] | number | boolean | PostBody[] | { [key: string]: PostBody };
 
 type HttpRequest = {
   url: string;

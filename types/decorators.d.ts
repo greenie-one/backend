@@ -15,6 +15,7 @@ type QueryValidation = {
   type: import('class-transformer').ClassConstructor<unknown>;
   index: number;
   queryName: string;
+  isOptional: boolean
 };
 
 type HeaderValidation = {

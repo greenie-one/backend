@@ -30,12 +30,16 @@ export class AddResidentialInfoDto {
   public country!: string;
 
   @IsISO8601()
-  @IsOptional()
-  public start_date?: Date;
+  @IsNotEmpty()
+  public start_date!: Date;
 
   @IsISO8601()
   @IsOptional()
   public end_date?: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  public addressType!: string;
 }
 
 export class UpdateResidentialInfoDto {

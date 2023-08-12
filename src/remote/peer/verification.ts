@@ -1,12 +1,13 @@
-import { HttpClient } from '../generic/httpClient';
 import { env } from '@/config';
+import { HttpClient } from '../generic/httpClient';
 
 export class verification {
-  static async GetPeerVerification(
+  static async sendPeerVerificationLinks(
     email: string,
     phone: string,
     verifierName: string,
     userName: string,
+    companyName: string,
     mobileVerificationLink: string,
     emailVerificationLink: string,
   ) {
@@ -19,6 +20,7 @@ export class verification {
         phone,
         verifierName,
         userName,
+        companyName,
         mobileVerificationLink,
         emailVerificationLink,
       },

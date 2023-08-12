@@ -1,6 +1,6 @@
-import { User } from './users.model';
-import { Verification } from './verified.model';
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { Location } from './location.model';
+import { User } from './users.model';
 
 export class ResidentialInfo {
   @prop({ required: true })
@@ -30,11 +30,20 @@ export class ResidentialInfo {
   @prop({ type: Date })
   public end_date?: Date;
 
-  @prop({ type: () => Verification })
-  public verification?: Verification;
-
-  @prop({ ref: 'User' })
+  @prop({ ref: () => User })
   public user!: Ref<User>;
+
+  @prop({ ref: () => Location })
+  public location!: Ref<Location, string>;
+
+  @prop({ required: true })
+  public addressType!: string;
+
+  @prop({ ref: () => Location })
+  public capturedLocation?: Ref<Location>;
+
+  @prop({ type: Boolean, default: false })
+  public isVerified?: boolean;
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);
