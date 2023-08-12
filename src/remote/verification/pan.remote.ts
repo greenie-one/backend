@@ -13,8 +13,6 @@ export class PanVerification {
       url: `${env('REMOTE_BASE_URL')}/zoop/pan`,
       method: 'POST',
       headers: {
-        'app-id': env('ZOOP_ID'),
-        'api-key': env('ZOOP_KEY'),
         'Content-Type': 'application/json',
       },
       body: {
