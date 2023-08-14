@@ -311,12 +311,12 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     status: 400,
   },
   [ErrorEnum.IDENTITY_NOT_FOUND]: {
-    code: 'GR0059',
+    code: 'GR0058',
     message: 'Identity not found',
     status: 404,
   } ,
   [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
-    code: 'GR0058',
+    code: 'GR0059',
     message: 'Location already captured',
     status: 400,
   },
