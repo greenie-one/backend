@@ -6,6 +6,7 @@ import DocumentController from './controllers/document.controller';
 import IDsController from './controllers/ids.controller';
 import LocationController from './controllers/location.controller';
 import ProfileController from './controllers/profile.controller';
+import ReportController from './controllers/report.controller';
 import ResidentialInfoController from './controllers/residentialInfo.controller';
 import ResidentialPeerController from './controllers/residentialPeer.controller';
 import RootController from './controllers/root.controller';
@@ -40,6 +41,7 @@ const controllers = [
   LocationController,
   WorkExPeerController,
   ResidentialPeerController,
+  ReportController
 ];
 
 const app = new App(controllers);

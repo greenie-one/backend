@@ -4,7 +4,7 @@ import { Post } from "@/utils/decorators/methods";
 import { Body } from "@/utils/decorators/request";
 
 @Controller('/report')
-export default class reportController {
+export default class ReportController {
   @Post('/')
   async createReport(@Body() data: string) {
     return reportService.getAllDetials(data);
