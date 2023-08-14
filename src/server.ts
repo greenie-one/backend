@@ -41,7 +41,7 @@ const controllers = [
   LocationController,
   WorkExPeerController,
   ResidentialPeerController,
-  ReportController
+  ReportController,
 ];
 
 const app = new App(controllers);
