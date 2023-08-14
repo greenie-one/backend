@@ -4,12 +4,13 @@ import { IDModel } from "@/models/id.model";
 import { ProfileModel } from "@/models/profile.model";
 import { ResidentialInfoModel } from "@/models/residentialInfo.model";
 import { ResidentialPeerModel } from "@/models/residentialPeer.model";
+import { UserModel } from "@/models/users.model";
 import { WorkPeerModel } from "@/models/workExPeer.model";
 import { WorkExperienceModel } from "@/models/workExperience.model";
 
 class ReportService {
-  public async getGreenieAccountDetails(userId:string) {
-    const profile = await ProfileModel.findOne({user:userId});
+  public async getGreenieAccountDetails(email:string) {
+    const profile = await ProfileModel.findOne({email:email});
     
     if(!profile)
       throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
@@ -21,8 +22,13 @@ class ReportService {
     return res ;
   }
 
-  public async getWorkExperienceDetails(userId:string) {
-    const workExperiences = await WorkExperienceModel.find({ user: userId });
+  public async getWorkExperienceDetails(email:string) {
+    const user =await UserModel.findOne({email:email}) ;
+    
+    if(!user)
+    throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+
+    const workExperiences = await WorkExperienceModel.find({ user: user._id });
 
     if (!workExperiences) {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
@@ -54,8 +60,13 @@ class ReportService {
     return res;
   }
   
-  public async getResidentialDetails(userId:string) {
-    const residentialInfos = await ResidentialInfoModel.find({ user: userId });
+  public async getResidentialDetails(email:string) {
+    const user =await UserModel.findOne({email:email}) ;
+    
+    if(!user)
+    throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+
+    const residentialInfos = await ResidentialInfoModel.find({ user: user._id });
     if (!residentialInfos) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
@@ -84,8 +95,13 @@ class ReportService {
     return res ;
   }
 
-  public async getIdDetails(userId:string){
-    const Id = await IDModel.find({ user: userId });
+  public async getIdDetails(email:string){
+    const user =await UserModel.findOne({email:email}) ;
+    
+    if(!user)
+    throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+
+    const Id = await IDModel.find({ user: user._id });
 
     if (!Id) {
       throw new HttpException(ErrorEnum.IDENTITY_NOT_FOUND);
@@ -103,6 +119,15 @@ class ReportService {
       });
     }
     return res;
+  }
+
+  public async getAllDetials(email:string){
+      return{
+        account_details: this.getGreenieAccountDetails(email),
+        workExperience_details :this.getWorkExperienceDetails(email),
+        Residential_details :this.getResidentialDetails(email) ,
+        id_details :this.getIdDetails(email) 
+      }
   }
 }
 
