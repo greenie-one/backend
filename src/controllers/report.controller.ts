@@ -6,7 +6,7 @@ import { Get } from '@/utils/decorators/methods';
 import { Query } from '@/utils/decorators/request';
 
 @Controller('/report')
-export default class reportController {
+export default class ReportController {
   @Get('')
   async createReport(@UserDetails() _: TokenClaims, @Query('email') email: string) {
     return reportService.getAllDetials(email);

@@ -119,10 +119,10 @@ class ReportService {
 
   public async getAllDetials(email: string) {
     return {
-      account_details: this.getGreenieAccountDetails(email),
-      workExperience_details: this.getWorkExperienceDetails(email),
-      Residential_details: this.getResidentialDetails(email),
-      id_details: this.getIdDetails(email),
+      accountDetails: this.getGreenieAccountDetails(email),
+      workExperienceDetails: this.getWorkExperienceDetails(email),
+      residentialDetails: this.getResidentialDetails(email),
+      idDetails: this.getIdDetails(email),
     };
   }
 }

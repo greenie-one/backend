@@ -10,8 +10,3 @@ const REDIS_DB = env('REDIS_DB');
 export const redisClient = createClient({
   url: `redis://${REDIS_USERNAME}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/${REDIS_DB}`,
 });
-
-const UTIL_REDIS_DB = 1;
-export const redisUtilClient = createClient({
-  url: `redis://${REDIS_USERNAME}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/${UTIL_REDIS_DB}`,
-});
