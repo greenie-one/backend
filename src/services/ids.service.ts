@@ -1,4 +1,5 @@
 import { AddIDDto, IDTypeEnum, VerifyIDDto } from '@/dtos/request/ids.dto';
+import { IDResponse } from '@/dtos/response/ids.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ID, IDModel } from '@/models/id.model';
@@ -13,12 +14,24 @@ const OTP_LIMIT = 5;
 const VALIDATION_LIMIT = 60 * 10; // mins;
 
 class IDsService {
-  public async getUserIDs(userId: string): Promise<ID[]> {
-    const id_document: ID[] = await IDModel.find({ user: userId });
+  public async getUserIDs(userId: string): Promise<IDResponse[]> {
+    const id_document = await IDModel.find({ user: userId });
     if (!id_document) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
-    return id_document;
+    return id_document.map((id) => {
+      return {
+        id: id._id.toString(),
+        id_type: id.id_type,
+        id_number: id.id_number,
+        user: id.user.toString(),
+        address: id.normalizedAddress,
+        fullName: id.data?.user_full_name,
+        dob: id.data.user_dob,
+        createdAt: id.createdAt,
+        updatedAt: id.updatedAt,
+      } as IDResponse;
+    });
   }
 
   public async otp_rate_limit_check(userId: string, id_type: IDTypeEnum) {
@@ -107,9 +120,9 @@ class IDsService {
                 country: result.user_address.country,
                 state: result.user_address.state,
                 pincode: result.address_zip,
-                type: 'permanent'
+                type: 'permanent',
               },
-            },
+            } as ID,
           ],
           {
             session,
@@ -164,7 +177,7 @@ class IDsService {
           country: result.user_address.country,
           state: result.user_address.state,
           pincode: result.user_address.zip,
-          type: 'permanent'
+          type: 'permanent',
         },
       } as ID);
 
@@ -188,7 +201,7 @@ class IDsService {
   }
 
   public async verifyDrivingLicense(userId: string, addIDDto: AddIDDto) {
-    if (await this.userHasId(userId, IDTypeEnum.PAN)) {
+    if (await this.userHasId(userId, IDTypeEnum.DRIVING_LICENSE)) {
       throw new HttpException(ErrorEnum.DRIVING_LICENSE_ALREADY_EXIST);
     }
 
@@ -211,7 +224,7 @@ class IDsService {
           country: user_address.country,
           state: user_address.state,
           pincode: user_address.pin,
-          type: user_address.type
+          type: user_address.type,
         },
       } as ID);
 

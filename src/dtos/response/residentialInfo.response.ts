@@ -12,9 +12,10 @@ export interface ResidentialInfoResponse {
   city: string;
   state: string;
   country: string;
-  start_date: string;
-  end_date: string;
-  addressType: string
+  start_date: Date;
+  end_date: Date;
+  addressType: string;
+  isVerified: boolean;
 }
 
 export interface GetResidentialInfoResponse {

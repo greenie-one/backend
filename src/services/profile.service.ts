@@ -5,6 +5,7 @@ import { AddProfileResponse, ProfileResponse } from '@/dtos/response/profile.res
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
+import { UserModel } from '@/models/users.model';
 import { documentWeights, scoreConstant } from '@/utils/documentWeight';
 import { getRandomGreenieId } from '@/utils/string';
 import { ClientSession } from 'mongoose';
@@ -49,6 +50,7 @@ class ProfileService {
     if (!profile) {
       throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
     }
+    const user = await UserModel.findById(userId);
 
     const res: ProfileResponse = {
       id: profile._id.toString(),
@@ -58,6 +60,8 @@ class ProfileService {
       bio: profile.bio,
       descriptionTags: profile.descriptionTags,
       greenieId: profile.greenie_id,
+      phone: user?.mobileNumber,
+      email: user?.email,
     };
     return res;
   }

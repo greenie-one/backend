@@ -16,7 +16,6 @@ class ReportService {
     
     const res ={
       greenieId:profile.greenie_id ,
-      greenieVerified:profile.verification
     }
 
     return res ;
@@ -101,7 +100,6 @@ class ReportService {
         address:ids.address,
         normalizedAddress:ids.normalizedAddress,
         location:ids.location,
-        verification:ids.verification
       });
     }
     return res;

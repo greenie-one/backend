@@ -5,18 +5,18 @@ export interface AadharVerifyResponse {
   success: boolean;
   response_code: string;
   response_message: string;
-  result: ResultVerify;
+  result: AadharVerifyResult;
   metadata: Metadata;
   request_timestamp: string;
   response_timestamp: string;
 }
 
-export interface ResultVerify {
+export interface AadharVerifyResult {
   user_full_name: string;
   user_aadhaar_number: string;
   user_dob: string;
   user_gender: string;
-  user_address: UserAddress;
+  user_address: AadharUserAddress;
   address_zip: string;
   user_profile_image: string;
   user_has_image: boolean;
@@ -28,7 +28,7 @@ export interface ResultVerify {
   reference_id: string;
 }
 
-export interface UserAddress {
+export interface AadharUserAddress {
   country: string;
   dist: string;
   state: string;

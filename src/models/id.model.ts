@@ -1,10 +1,11 @@
 import { IDTypeEnum } from '@/dtos/request/ids.dto';
-import { NormalizedAddress } from '@/dtos/response/ids.response';
+import { AadharUserAddress, AadharVerifyResult } from '@/remote/dtos/aadhar.response';
+import { DLResult, DLUserAddress } from '@/remote/dtos/driving.response';
+import { PanResult, PanUserAddress } from '@/remote/dtos/pan.response';
 import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
 import { Schema } from 'mongoose';
 import { Location } from './location.model';
 import { User } from './users.model';
-import { Verification } from './verified.model';
 
 export class ID {
   @prop({ required: true, enum: IDTypeEnum, type: String })
@@ -15,22 +16,19 @@ export class ID {
 
   //todo
   @prop({ required: true, type: Schema.Types.Mixed })
-  public data!: object;
+  public data!: AadharVerifyResult | DLResult | PanResult;
 
   @prop({ ref: () => User })
   public user!: Ref<User>;
 
   @prop({ required: true, type: Schema.Types.Mixed })
-  public address!: object;
+  public address!: AadharUserAddress | PanUserAddress | DLUserAddress;
 
-  @prop({ required: true, type: () => NormalizedAddress })
-  public normalizedAddress!: NormalizedAddress;
+  @prop({ required: true })
+  public normalizedAddress!: object;
 
   @prop({ ref: () => Location, type: String })
   public location?: Ref<Location, string>; 
-
-  @prop({ type: () => Verification })
-  public verification?: Verification;
 
   @prop({ type: Date, default: Date.now })
   public createdAt?: Date;

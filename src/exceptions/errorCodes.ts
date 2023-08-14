@@ -60,7 +60,8 @@ export enum ErrorEnum {
   INCOMPLETE_VERIFICATION,
 
   // Database
-  DB_REF_VALIDATION_FAILED
+  DB_REF_VALIDATION_FAILED,
+  LOCATION_ALREADY_CAPTURED,
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -310,8 +311,13 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     status: 400,
   },
   [ErrorEnum.IDENTITY_NOT_FOUND]: {
-    code: 'GR0057',
+    code: 'GR0059',
     message: 'Identity not found',
     status: 404,
+  } ,
+  [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
+    code: 'GR0058',
+    message: 'Location already captured',
+    status: 400,
   },
 };

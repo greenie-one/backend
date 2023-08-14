@@ -1,26 +1,28 @@
 import { GPScompare, GetCoordinatesDto } from '@/dtos/request/location.dto';
-import { GetLocationResponse } from '@/dtos/response/location.response';
+import { GetAutocompleteResponse, GetLocationResponse } from '@/dtos/response/location.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { LocationModel } from '@/models/location.model';
+import { Location, LocationModel } from '@/models/location.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { Geolocation } from '@/remote/location/location';
+import { createAddressString } from '@/utils/location';
 import { residentialPeerService } from './residentialPeer.service';
 
 class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
     try {
       const coordinates = await Geolocation.getLocation(address);
+      console.log(coordinates);
       if (!coordinates) {
         throw new HttpException(ErrorEnum.INVALID_COORDINATES);
       }
 
       const location = await LocationModel.create({
         user: userId,
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-      });
+        latitude: coordinates.lat,
+        longitude: coordinates.long,
+      } as Location);
 
       const res: GetLocationResponse = {
         id: location._id.toString(),
@@ -69,20 +71,31 @@ class LocationService {
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
+    if (residentialInfo.isVerified) {
+      throw new HttpException(ErrorEnum.LOCATION_ALREADY_CAPTURED);
+    }
     const location = await LocationModel.create({
       user: peer.user,
       latitude: data.latitude,
       longitude: data.longitude,
     });
+
+    peer.isVerificationCompleted = true;
+    peer.save();
+
     residentialInfo.capturedLocation = location._id;
+    residentialInfo.isVerified = true;
     residentialInfo.save();
     return { success: true, message: 'Location Captured' };
   }
 
-  public async captureUserLocation(userId: string, data: GetCoordinatesDto) {
-    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId });
+  public async captureUserLocation(userId: string, residentialId: string, data: GetCoordinatesDto) {
+    const residentialInfo = await ResidentialInfoModel.findOne({ user: userId, _id: residentialId });
     if (!residentialInfo) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
+    }
+    if (residentialInfo.isVerified) {
+      throw new HttpException(ErrorEnum.LOCATION_ALREADY_CAPTURED);
     }
     const location = await LocationModel.create({
       user: userId,
@@ -90,8 +103,32 @@ class LocationService {
       longitude: data.longitude,
     });
     residentialInfo.capturedLocation = location._id;
+    residentialInfo.isVerified = true;
     residentialInfo.save();
     return residentialInfo;
+  }
+
+  async getAutoCompleteResults(term: string, latitude: number, location: number): Promise<GetAutocompleteResponse> {
+    const resp = await Geolocation.autocomplete(term, latitude, location);
+    return resp.results.map(({ id, score, address, position, type }) => ({
+      id: id,
+      score: score,
+      address: {
+        address_line_1: type === 'Geography' ? '' : createAddressString(address.streetNumber, address.municipalitySubdivision),
+        address_line_2: createAddressString(address.streetName, address.municipality),
+        city: address.countrySecondarySubdivision,
+        state: address.countrySubdivision,
+        country: address.country,
+        street: address.streetNumber,
+        pincode: address.postalCode,
+        type: '',
+      },
+      addressString: address.freeformAddress,
+      position: {
+        latitude: position.lat,
+        longitude: position.lon,
+      },
+    }));
   }
 }
 

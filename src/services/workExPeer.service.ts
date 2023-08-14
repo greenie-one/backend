@@ -47,7 +47,20 @@ class WorkExPeerService {
 
     console.info(`Sending links to ${peer.name} with email ${peer.email} and phone ${peer.phone}`);
 
-    await verification.GetPeerVerification(peer.email, peer.phone, peer.name, `${profile.firstName} ${profile.lastName}`, mobileLink, emailLink);
+    const companyName = (await WorkExperienceModel.findById(peer.ref).select('companyName'))?.companyName;
+    if (!companyName) {
+      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
+    }
+
+    await verification.sendPeerVerificationLinks(
+      peer.email,
+      peer.phone,
+      peer.name,
+      `${profile.firstName} ${profile.lastName}`,
+      companyName,
+      mobileLink,
+      emailLink,
+    );
   }
 
   public async resendLinksToPeers(userId: string, peerId: string) {
@@ -79,24 +92,22 @@ class WorkExPeerService {
     }
   }
 
-  public async verifyPeerContact(peerUUID: string, otp: string) {
+  public async verifyPeerContact(peerUUID: string, otp: string, otpType: OtpType) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     const { email, phone } = peer;
-    if (!peer.emailVerified && (await otpService.verifyOTP(email, OtpType.EMAIL, otp))) {
+    if (!peer.emailVerified && otpType === OtpType.EMAIL && (await otpService.verifyOTP(email, OtpType.EMAIL, otp))) {
       peer.emailVerified = true;
-      await peer.save();
-      return { success: true, message: 'Verified' };
-    } else if (!peer.phoneVerified && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
+    } else if (!peer.phoneVerified && otpType === OtpType.MOBILE && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
       peer.phoneVerified = true;
-      await peer.save();
-      return { success: true, message: 'Verified' };
     } else {
-      return { success: false, message: 'Invalid OTP' };
+      throw new HttpException(ErrorEnum.INVALID_OTP);
     }
+    await peer.save();
+    return { success: true, message: 'Contact Verified' };
   }
 
   public async getUserWorkPeers(userId: string) {
@@ -167,14 +178,18 @@ class WorkExPeerService {
 
     const skillIds = peer.skills.map((skill) => skill.id);
     await Promise.all(
-      (await SkillModel.find({ _id: { $in: skillIds } })).map((skill) => {
+      (
+        await SkillModel.find({ _id: { $in: skillIds } })
+      ).map((skill) => {
         data.skills.push({ id: skill._id.toString(), skillName: skill.skillName, expertise: skill.expertise });
       }),
     );
 
     const documentIds = peer.documents.map((document) => document.id);
     await Promise.all(
-      (await DocumentModel.find({ _id: { $in: documentIds } })).map(async (document) => {
+      (
+        await DocumentModel.find({ _id: { $in: documentIds } })
+      ).map(async (document) => {
         const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
         data.documents.push({
           id: document._id.toString(),

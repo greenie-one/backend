@@ -3,8 +3,8 @@ name: Update types
 on:
   push:
     branches:
-      - 'dev'
-      - 'main'
+      - "dev"
+      - "main"
 
 jobs:
   release:
@@ -32,11 +32,9 @@ jobs:
 
           git config push.ff only
           git checkout ${GITHUB_REF##*/} 2>/dev/null || git checkout -b ${GITHUB_REF##*/}
-          git pull origin ${GITHUB_REF##*/}
 
           bash $GITHUB_WORKSPACE/backend/scripts/copy_dto.sh
 
           git add -A
           git diff-index --quiet HEAD -- || git commit -m "Types sync"
-          git push --set-upstream origin ${GITHUB_REF##*/}
-
+          git push -f --set-upstream origin ${GITHUB_REF##*/}
