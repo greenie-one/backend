@@ -45,15 +45,19 @@ class ReportService {
         dateOfJoining: workExp.dateOfJoining,
         dateOfLeaving: workExp.dateOfLeaving,
         worktype: workExp.workType,
-        peerName: workExPeer.name,
-        verificationBy: workExPeer.verificationBy,
-        selectedFields: workExPeer.selectedFields,
-        allQuestions: workExPeer.allQuestions,
-        otherQuestions: workExPeer.otherQuestions,
-        skills: workExPeer.skills,
-        documents: workExPeer.documents,
-        isVerified: workExPeer.isVerificationCompleted,
       });
+      if(workExPeer){
+        res.push({
+          peerName: workExPeer.name,
+          verificationBy: workExPeer.verificationBy,
+          selectedFields: workExPeer.selectedFields,
+          allQuestions: workExPeer.allQuestions,
+          otherQuestions: workExPeer.otherQuestions,
+          skills: workExPeer.skills,
+          documents: workExPeer.documents,
+          isVerified: workExPeer.isVerificationCompleted,
+        })
+      }
     }
     return res;
   }
@@ -84,9 +88,14 @@ class ReportService {
         addressType: residentialInfo.addressType,
         location: residentialInfo.location,
         capturedLocation: residentialInfo.capturedLocation,
-        isVerified: residentPeer.isVerificationCompleted,
-        verifiedBy: residentPeer.verificationBy,
+        
       });
+      if(residentPeer){
+        res.push({
+          isVerified: residentPeer.isVerificationCompleted,
+          verifiedBy: residentPeer.verificationBy,
+        })
+      }
     }
 
     return res;
@@ -117,11 +126,15 @@ class ReportService {
   }
 
   public async getAllDetials(email: string) {
+    const user = await UserModel.findOne({ email: email });
+
+    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    
     return {
-      accountDetails: this.getGreenieAccountDetails(email),
-      workExperienceDetails: this.getWorkExperienceDetails(email),
-      residentialDetails: this.getResidentialDetails(email),
-      idDetails: this.getIdDetails(email),
+      accountDetails: await this.getGreenieAccountDetails(email),
+      workExperienceDetails:await this.getWorkExperienceDetails(email),
+      ResidentialDetails: await this.getResidentialDetails(email),
+      idDetails:await this.getIdDetails(email),
     };
   }
 }
