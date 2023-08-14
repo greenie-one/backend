@@ -96,7 +96,6 @@ class ReportService {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-
     const Id = await IDModel.find({ user: user._id });
 
     if (!Id) {
