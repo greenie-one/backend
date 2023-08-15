@@ -62,6 +62,10 @@ export enum ErrorEnum {
   // Database
   DB_REF_VALIDATION_FAILED,
   LOCATION_ALREADY_CAPTURED,
+
+  DATA_NOT_ADDED,
+
+
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -318,6 +322,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
     code: 'GR0059',
     message: 'Location already captured',
+    status: 400,
+  },
+  [ErrorEnum.DATA_NOT_ADDED]: {
+    code: 'GR0059',
+    message: 'Data not added',
     status: 400,
   },
 };
