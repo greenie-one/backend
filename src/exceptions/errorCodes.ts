@@ -65,6 +65,9 @@ export enum ErrorEnum {
 
   DATA_NOT_ADDED,
 
+  //Feedback
+  FEEDBACK_ALREADY_ADDED,
+  FEEDBACK_ERROR,
 
 }
 
@@ -327,6 +330,16 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.DATA_NOT_ADDED]: {
     code: 'GR0059',
     message: 'Data not added',
+    status: 400,
+  },
+  [ErrorEnum.FEEDBACK_ALREADY_ADDED]: {
+    code: 'GR0060',
+    message: 'Feedback already added',
+    status: 400,
+  },
+  [ErrorEnum.FEEDBACK_ERROR]: {
+    code: 'GR0061',
+    message: 'Feedback error',
     status: 400,
   },
 };
