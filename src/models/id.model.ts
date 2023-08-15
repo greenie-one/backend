@@ -28,7 +28,7 @@ export class ID {
   public normalizedAddress!: object;
 
   @prop({ ref: () => Location, type: String })
-  public location?: Ref<Location, string>;
+  public location?: Ref<Location, string>; 
 
   @prop({ type: Date, default: Date.now })
   public createdAt?: Date;

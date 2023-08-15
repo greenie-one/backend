@@ -44,6 +44,7 @@ export enum ErrorEnum {
   AADHAR_ALREADY_EXIST,
   PAN_ALREADY_EXIST,
   DRIVING_LICENSE_ALREADY_EXIST,
+  IDENTITY_NOT_FOUND,
 
   // Peer
   SHARING_FAILED,
@@ -313,8 +314,13 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'Failed to validate ref: %s',
     status: 400,
   },
-  [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
+  [ErrorEnum.IDENTITY_NOT_FOUND]: {
     code: 'GR0058',
+    message: 'Identity not found',
+    status: 404,
+  } ,
+  [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
+    code: 'GR0059',
     message: 'Location already captured',
     status: 400,
   },
