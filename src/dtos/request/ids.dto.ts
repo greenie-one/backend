@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 
 export enum IDTypeEnum {
   AADHAR = 'AADHAR',
@@ -16,7 +16,8 @@ export class AddIDDto {
   public id_number?: string;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
+  @ValidateIf((o) => o.id_type === IDTypeEnum.DRIVING_LICENSE)
   public dob?: string;
 }
 

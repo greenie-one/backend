@@ -10,7 +10,8 @@ import { WorkExperienceModel } from '@/models/workExperience.model';
 
 class ReportService {
   public async getGreenieAccountDetails(email: string) {
-    const profile = await ProfileModel.findOne({ email: email });
+    const user = await UserModel.findOne({ email: email });
+    const profile = await ProfileModel.findOne({ user: user._id });
 
     if (!profile) throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
 
@@ -23,15 +24,12 @@ class ReportService {
 
   public async getWorkExperienceDetails(email: string) {
     const user = await UserModel.findOne({ email: email });
-
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-
     const workExperiences = await WorkExperienceModel.find({ user: user._id });
 
     if (!workExperiences) {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
-
     const res = [];
     for (const workExp of workExperiences) {
       const workExPeer = await WorkPeerModel.findOne({ ref: workExp._id });
@@ -46,7 +44,7 @@ class ReportService {
         dateOfLeaving: workExp.dateOfLeaving,
         worktype: workExp.workType,
       });
-      if(workExPeer){
+      if (workExPeer) {
         res.push({
           peerName: workExPeer.name,
           verificationBy: workExPeer.verificationBy,
@@ -56,7 +54,7 @@ class ReportService {
           skills: workExPeer.skills,
           documents: workExPeer.documents,
           isVerified: workExPeer.isVerificationCompleted,
-        })
+        });
       }
     }
     return res;
@@ -66,12 +64,10 @@ class ReportService {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-
     const residentialInfos = await ResidentialInfoModel.find({ user: user._id });
     if (!residentialInfos) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
-
     const res = [];
     for (const residentialInfo of residentialInfos) {
       const residentPeer = await ResidentialPeerModel.findOne({ ref: residentialInfo._id });
@@ -88,13 +84,13 @@ class ReportService {
         addressType: residentialInfo.addressType,
         location: residentialInfo.location,
         capturedLocation: residentialInfo.capturedLocation,
-        
       });
-      if(residentPeer){
+
+      if (residentPeer) {
         res.push({
           isVerified: residentPeer.isVerificationCompleted,
           verifiedBy: residentPeer.verificationBy,
-        })
+        });
       }
     }
 
@@ -129,12 +125,12 @@ class ReportService {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    
+
     return {
       accountDetails: await this.getGreenieAccountDetails(email),
-      workExperienceDetails:await this.getWorkExperienceDetails(email),
+      workExperienceDetails: await this.getWorkExperienceDetails(email),
       ResidentialDetails: await this.getResidentialDetails(email),
-      idDetails:await this.getIdDetails(email),
+      idDetails: await this.getIdDetails(email),
     };
   }
 }
