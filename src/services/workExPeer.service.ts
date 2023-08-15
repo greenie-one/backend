@@ -19,6 +19,7 @@ import { checkFields, copyDataFrom, createClassInstanceWithFields } from '@/util
 import { env } from '@config';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
+import { blobService } from './blobStorage.service';
 import { otpService } from './otp.service';
 
 class WorkExPeerService {
@@ -193,7 +194,7 @@ class WorkExPeerService {
           id: document._id.toString(),
           type: document.type,
           name: document.name,
-          privateUrl: document.privateUrl,
+          privateUrl: `${document.privateUrl}?token=${blobService.generateDownloadToken(document.privateUrl)}`,
         });
       }),
     );

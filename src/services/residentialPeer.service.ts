@@ -100,6 +100,19 @@ class ResidentialPeerService {
     return { success: true, message: 'Contact Verified' };
   }
 
+  private sendVerificationError(reply: FastifyReply, errorCode: ErrorEnum, peer: ResidentialPeer, username: String) {
+    const err = ErrorCodes[errorCode];
+    console.error(err);
+    reply.status(err.status).send({
+      ...err,
+      name: peer.name,
+      phone: peer.phone,
+      email: peer.email,
+      verificationBy: peer.verificationBy,
+      username,
+    });
+  }
+
   public async getPeer(peerUUID: string, reply: FastifyReply): Promise<GetResidentialPeerResponse> {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
@@ -115,18 +128,10 @@ class ResidentialPeerService {
     const profile = await ProfileModel.findOne({ user: peer.user });
     const username = `${profile.firstName} ${profile.lastName}`;
     if (!peer.emailVerified) {
-      const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
-      console.error(err);
-      reply
-        .status(err.status)
-        .send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email, username });
+      this.sendVerificationError(reply, ErrorEnum.PEER_EMAIL_NOT_VERIFIED, peer, username);
     }
     if (!peer.phoneVerified) {
-      const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
-      console.error(err);
-      reply
-        .status(err.status)
-        .send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email, username });
+      this.sendVerificationError(reply, ErrorEnum.PEER_PHONE_NOT_VERIFIED, peer, username);
     }
     if (peer.isVerificationCompleted) {
       throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);

@@ -31,6 +31,7 @@ module.exports = {
           from: '.yarn/unplugged/memory-pager*/**/node_modules/memory-pager/**',
           to: 'memory-pager',
         },
+        { from: path.resolve(__dirname, 'keys'), to: 'keys' }
       ],
     }),
   ],
