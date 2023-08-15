@@ -9,7 +9,7 @@ import { profileService } from './profile.service';
 class DocumentService {
   public async createDocument(userID: string, documentData: CreateDocumentDto): Promise<Document> {
     const fileName = documentData.privateUrl.split('/').pop();
-    if (blobService.doesBlobExist(userID, fileName)) {
+    if (await blobService.doesBlobExist(userID, fileName)) {
       throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
     }
 
@@ -36,7 +36,7 @@ class DocumentService {
 
     if (documentData.privateUrl) {
       const fileName = documentData.privateUrl.split('/').pop();
-      if (blobService.doesBlobExist(userID, fileName)) {
+      if (await blobService.doesBlobExist(userID, fileName)) {
         throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
       }
     }
