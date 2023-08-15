@@ -1,0 +1,19 @@
+import { addUserInfoDTO } from "@/dtos/request/googleSheets.dto";
+import { ErrorEnum } from '@/exceptions/errorCodes';
+import { HttpException } from '@/exceptions/httpException';
+import { sheets } from "@/remote/google/sheets/sheets";
+import { addUserInfoResponse } from "@/dtos/response/googleSheets.response";
+
+class GoogleSheetsService {
+  public async addData(hrEmail: string, data: addUserInfoDTO): Promise<addUserInfoResponse> {
+    try {
+      await sheets.addData(hrEmail, data.name, data.email, data.phone);
+      const res: addUserInfoResponse = { success: true };
+      return res;
+    } catch (error) {
+      throw new HttpException(ErrorEnum.DATA_NOT_ADDED);
+    }
+  }
+}
+
+export const googleSheetsService = new GoogleSheetsService();
