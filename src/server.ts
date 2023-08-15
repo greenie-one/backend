@@ -16,6 +16,7 @@ import WaitlistController from './controllers/waitlist.controller';
 import WorkExPeerController from './controllers/workExPeer.controller';
 import WorkExperienceController from './controllers/workExperience.controller';
 import GoogleSheetsController from './controllers/googleSheets.controller';
+import FeedbackController from './controllers/feedback.controller';
 
 process.on('uncaughtException', (e) => {
   console.error(e);
@@ -44,6 +45,7 @@ const controllers = [
   ResidentialPeerController,
   GoogleSheetsController,
   ReportController,
+  FeedbackController
 ];
 
 const app = new App(controllers);
