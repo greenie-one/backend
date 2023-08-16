@@ -1,53 +1,12 @@
-import { Skills } from '@/models/skills.model';
+import { AllQuestions, DocumentVerification, HRQuestions, SelectedFields, SkillsVerification } from '@/models/workExPeer.model';
 import { WorkExperience } from '@/models/workExperience.model';
 import { Ref } from '@typegoose/typegoose';
-import { Document } from 'mongoose';
-import { Rating, State, WorkVerificationBy } from '../request/workExPeer.dto';
+import { WorkVerificationBy } from '../request/workExPeer.dto';
 import { GetResidentialInfoResponse } from './residentialInfo.response';
 import { GetUserPeersResponse } from './residentialPeer.response';
 import { GetWorkExperienceResponse } from './workExperience.response';
 
-interface Status {
-  state: State;
-  dispute_type?: string | null;
-  dispute_reason?: string | null;
-}
-
-interface SelectedFields {
-  candidateId: Status;
-  department: Status;
-  dateOfJoining: Status;
-  dateOfLeaving: Status;
-  companyName: Status;
-  workType: Status;
-  workMode: Status;
-  companyId: Status;
-  salary: Status;
-}
-
-interface AllQuestions {
-  attitudeRating: Rating;
-  designation: Status;
-  peerPost: Status;
-  review: string;
-}
-
-interface HRQuestions {
-  exitProcedure: Status;
-  eligibleForRehire: Status;
-}
-
-interface SkillsVerification {
-  id: Ref<Skills, string>;
-  status?: Status;
-}
-
-interface DocumentVerification {
-  id: Ref<Document, string>;
-  status?: Status;
-}
-
-interface WorkPeerReportResponse {
+export interface WorkPeerReportResponse {
   ref: Ref<WorkExperience, string>;
   name: string;
   email: string;
@@ -65,8 +24,6 @@ interface WorkPeerReportResponse {
   isVerificationCompleted?: boolean;
 }
 
-
-
 // --------------------- Final DTOS ---------------------
 
 export interface WorkExpReportResponse {
@@ -74,10 +31,7 @@ export interface WorkExpReportResponse {
   peers: WorkPeerReportResponse[];
 }
 
-
-export interface ResidentialReportResponse{
-  residentialInfo:GetResidentialInfoResponse ;
-  residentialPeers:GetUserPeersResponse[] ;
+export interface ResidentialReportResponse {
+  residentialInfo: GetResidentialInfoResponse;
+  residentialPeers: GetUserPeersResponse[];
 }
-
-
