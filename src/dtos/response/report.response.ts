@@ -3,7 +3,9 @@ import { WorkExperience } from '@/models/workExperience.model';
 import { Ref } from '@typegoose/typegoose';
 import { Document } from 'mongoose';
 import { Rating, State, WorkVerificationBy } from '../request/workExPeer.dto';
-import { WorkExperienceResponse } from './workExperience.response';
+import { GetResidentialInfoResponse } from './residentialInfo.response';
+import { GetUserPeersResponse } from './residentialPeer.response';
+import { GetWorkExperienceResponse } from './workExperience.response';
 
 interface Status {
   state: State;
@@ -63,9 +65,19 @@ interface WorkPeerReportResponse {
   isVerificationCompleted?: boolean;
 }
 
+
+
 // --------------------- Final DTOS ---------------------
 
 export interface WorkExpReportResponse {
-  workExp: WorkExperienceResponse;
+  workExp: GetWorkExperienceResponse;
   peers: WorkPeerReportResponse[];
 }
+
+
+export interface ResidentialReportResponse{
+  residentialInfo:GetResidentialInfoResponse ;
+  residentialPeers:GetUserPeersResponse[] ;
+}
+
+
