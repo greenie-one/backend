@@ -9,6 +9,6 @@ import { Query } from '@/utils/decorators/request';
 export default class ReportController {
   @Get('')
   async createReport(@UserDetails() _: TokenClaims, @Query('email') email: string) {
-    return reportService.getAllDetials(email);
+    return reportService.getAllDetails(email);
   }
 }
