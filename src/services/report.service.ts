@@ -19,14 +19,13 @@ class ReportService {
     const user = await UserModel.findOne({ email: email });
     const profile = await ProfileModel.findOne({ user: user._id });
 
-    if (!profile) throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
-
     const res = {
-      firstName: profile.firstName,
-      lastName: profile.lastName,
+      firstName: profile ?profile.firstName:"",
+      lastName: profile? profile.lastName:"",
+      greenieId: profile? profile.greenie_id: "" ,
       email: user.email,
       mobileNumber: user.mobileNumber,
-      greenieId: profile.greenie_id,
+      
     };
 
     return res;
@@ -79,9 +78,10 @@ class ReportService {
   }
 
   public async getResidentialDetails(email: string) {
+    
     const user = await UserModel.findOne({ email: email });
-
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+
     const residentialInfos = await ResidentialInfoModel.find({ user: user._id });
     if (!residentialInfos) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
@@ -119,11 +119,7 @@ class ReportService {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    const id_documents = await IDModel.find({ user: user._id });
-
-    if (!id_documents || id_documents.length === 0) {
-      throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
-    }
+    
 
     const idReportResponse: IdReportResonse = {
       aadhar: null,
