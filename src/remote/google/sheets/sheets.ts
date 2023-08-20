@@ -1,7 +1,7 @@
+import { env } from '@/config';
 import { HttpClient } from '@/remote/generic/httpClient';
 import { GoogleAuth } from 'google-auth-library';
 import { keys } from '../../../../keys/googleapi/keys';
-import { env } from '@/config';
 
 async function getAccessToken() {
   const auth = new GoogleAuth({
@@ -15,11 +15,11 @@ async function getAccessToken() {
   return token;
 }
 export class sheets {
-  static async addData(hrEmail, userName, userEmail, userPhone) {
+  static async addData(hrEmail: string, userName: string, userEmail: string, userPhone: string, message: string) {
     const accessToken = await getAccessToken();
     const sheetID = env('google-spreadsheet-id');
 
-    const values = [[hrEmail, userName, userEmail, userPhone]];
+    const values = [[hrEmail, userName, userEmail, userPhone, message]];
 
     const response = HttpClient.callApi({
       url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/Sheet1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
