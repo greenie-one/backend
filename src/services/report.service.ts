@@ -1,17 +1,17 @@
+import { ResidentialReportResponse, WorkExpReportResponse, WorkPeerReportResponse } from '@/dtos/response/report.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { IDModel } from '@/models/id.model';
 import { ProfileModel } from '@/models/profile.model';
-import { ResidentialInfoModel } from '@/models/residentialInfo.model';
-import { ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { UserModel } from '@/models/users.model';
 import { WorkPeerModel } from '@/models/workExPeer.model';
-import { WorkExperienceModel } from '@/models/workExperience.model';
+import { idsService } from './ids.service';
+import { residentialInfoService } from './residentialInfo.service';
+import { residentialPeerService } from './residentialPeer.service';
+import { workExperienceService } from './workExperience.service';
 
 class ReportService {
-  public async getGreenieAccountDetails(email: string) {
-    const user = await UserModel.findOne({ email: email });
-    const profile = await ProfileModel.findOne({ user: user._id });
+  public async getGreenieAccountDetails(userId: string) {
+    const profile = await ProfileModel.findOne({ user: userId });
 
     if (!profile) throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
 
@@ -22,115 +22,60 @@ class ReportService {
     return res;
   }
 
-  public async getWorkExperienceDetails(email: string) {
-    const user = await UserModel.findOne({ email: email });
-    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    const workExperiences = await WorkExperienceModel.find({ user: user._id });
+  public async getWorkExperienceDetails(userId: string) {
+    const peerRes: WorkPeerReportResponse[] = [];
+    const workPeer = await WorkPeerModel.find({ user: userId });
 
-    if (!workExperiences) {
-      throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
-    }
-    const res = [];
-    for (const workExp of workExperiences) {
-      const workExPeer = await WorkPeerModel.findOne({ ref: workExp._id });
-      res.push({
-        designation: workExp.designation,
-        companyName: workExp.companyName,
-        companyType: workExp.companyType,
-        companyId: workExp.companyId,
-        linkedInUrl: workExp.linkedInUrl,
-        workEmail: workExp.email,
-        dateOfJoining: workExp.dateOfJoining,
-        dateOfLeaving: workExp.dateOfLeaving,
-        worktype: workExp.workType,
+    for (const peer of workPeer) {
+      peerRes.push({
+        ref: peer.ref,
+        name: peer.name,
+        email: peer.email,
+        phone: peer.phone,
+        emailVerified: peer.emailVerified,
+        phoneVerified: peer.phoneVerified,
+        verificationBy: peer.verificationBy,
+        selectedFields: peer.selectedFields,
+        allQuestions: peer.allQuestions,
+        otherQuestions: peer.otherQuestions,
+        skills: peer.skills,
+        documents: peer.documents,
+        createdAt: peer.createdAt,
+        updatedAt: peer.updatedAt,
+        isVerificationCompleted: peer.isVerificationCompleted,
       });
-      if (workExPeer) {
-        res.push({
-          peerName: workExPeer.name,
-          verificationBy: workExPeer.verificationBy,
-          selectedFields: workExPeer.selectedFields,
-          allQuestions: workExPeer.allQuestions,
-          otherQuestions: workExPeer.otherQuestions,
-          skills: workExPeer.skills,
-          documents: workExPeer.documents,
-          isVerified: workExPeer.isVerificationCompleted,
-        });
-      }
     }
+
+    const res: WorkExpReportResponse = {
+      workExp: await workExperienceService.getWorkExperience(userId),
+      peers: peerRes,
+    };
     return res;
   }
 
-  public async getResidentialDetails(email: string) {
-    const user = await UserModel.findOne({ email: email });
-
-    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    const residentialInfos = await ResidentialInfoModel.find({ user: user._id });
-    if (!residentialInfos) {
-      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
-    }
-    const res = [];
-    for (const residentialInfo of residentialInfos) {
-      const residentPeer = await ResidentialPeerModel.findOne({ ref: residentialInfo._id });
-      res.push({
-        id: residentialInfo._id.toString(),
-        address_line_1: residentialInfo.address_line_1,
-        address_line_2: residentialInfo.address_line_2,
-        landmark: residentialInfo.landmark,
-        pincode: residentialInfo.pincode,
-        startDate: residentialInfo.start_date,
-        endDate: residentialInfo.end_date,
-        city: residentialInfo.city,
-        country: residentialInfo.country,
-        addressType: residentialInfo.addressType,
-        location: residentialInfo.location,
-        capturedLocation: residentialInfo.capturedLocation,
-      });
-
-      if (residentPeer) {
-        res.push({
-          isVerified: residentPeer.isVerificationCompleted,
-          verifiedBy: residentPeer.verificationBy,
-        });
-      }
-    }
-
+  public async getResidentialDetails(userId: string) {
+    const res: ResidentialReportResponse = {
+      residentialInfo: await residentialInfoService.getUserResidentialInfo(userId),
+      residentialPeers: await residentialPeerService.getUserPeers(userId),
+    };
     return res;
   }
 
-  public async getIdDetails(email: string) {
-    const user = await UserModel.findOne({ email: email });
-
-    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    const Id = await IDModel.find({ user: user._id });
-
-    if (!Id) {
-      throw new HttpException(ErrorEnum.IDENTITY_NOT_FOUND);
-    }
-
-    const res = [];
-    for (const ids of Id) {
-      res.push({
-        idType: ids.id_type,
-        idNumber: ids.id_number,
-        data: ids.data,
-        address: ids.address,
-        normalizedAddress: ids.normalizedAddress,
-        location: ids.location,
-      });
-    }
+  public async getIdDetails(userId: string) {
+    const res = await idsService.getUserIDs(userId);
     return res;
   }
 
-  public async getAllDetials(email: string) {
+  public async getAllDetails(email: string) {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
 
     return {
-      accountDetails: await this.getGreenieAccountDetails(email),
-      workExperienceDetails: await this.getWorkExperienceDetails(email),
-      ResidentialDetails: await this.getResidentialDetails(email),
-      idDetails: await this.getIdDetails(email),
+      accountDetails: await this.getGreenieAccountDetails(user._id.toString()),
+      workExperienceDetails: await this.getWorkExperienceDetails(user._id.toString()),
+      ResidentialDetails: await this.getResidentialDetails(user._id.toString()),
+      idDetails: await this.getIdDetails(user._id.toString()),
     };
   }
 }

@@ -27,6 +27,8 @@ class ResidentialInfoService {
         end_date: residentialInfo.end_date,
         addressType: residentialInfo.addressType,
         isVerified: residentialInfo.isVerified,
+        // createdAt: residentialInfo.createdAt,
+        // updatedAt: residentialInfo.updatedAt,
       });
     }
 
