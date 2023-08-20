@@ -1,11 +1,14 @@
-import { ResidentialReportResponse, WorkExpReportResponse } from '@/dtos/response/report.response';
+import { IdReportResonse, ResidentialReportResponse, ResidentialResponse, WorkExpReportResponse } from '@/dtos/response/report.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
+import { DocumentModel } from '@/models/document.model';
+import { IDModel } from '@/models/id.model';
+import { LocationModel } from '@/models/location.model';
 import { ProfileModel } from '@/models/profile.model';
+import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { UserModel } from '@/models/users.model';
 import { WorkPeerModel } from '@/models/workExPeer.model';
 import { idsService } from './ids.service';
-import { residentialInfoService } from './residentialInfo.service';
 import { residentialPeerService } from './residentialPeer.service';
 import { workExperienceService } from './workExperience.service';
 
@@ -17,6 +20,10 @@ class ReportService {
     if (!profile) throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
 
     const res = {
+      firstName:profile.firstName,
+      lastName:profile.lastName ,
+      email:user.email,
+      mobileNumber:user.mobileNumber,
       greenieId: profile.greenie_id,
     };
 
@@ -29,6 +36,17 @@ class ReportService {
 
     const peerRes =[];
     const workPeer = await WorkPeerModel.find({user:user._id}) ;
+
+    const workExp =await WorkPeerModel.find({user:user._id}) ;
+    const docs=[];
+    for(const work of workExp){
+      const doc = await DocumentModel.find({workExperience:work._id})
+      if(doc){
+        docs.push({
+          data:doc
+        })
+      }
+    }
 
     for(const peer of workPeer){
       peerRes.push({
@@ -53,6 +71,7 @@ class ReportService {
     const res:WorkExpReportResponse={
       workExp:await workExperienceService.getWorkExperience(user._id) ,
       peers:peerRes,
+      documents:docs
     }
     return res;
   }
@@ -61,9 +80,33 @@ class ReportService {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    const residentialInfos = await ResidentialInfoModel.find({ user: user._id });
+    if (!residentialInfos) {
+      throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
+    }
+
+    const info: ResidentialResponse[] = [];
+    for (const residentialInfo of residentialInfos) {
+      info.push({
+        id: residentialInfo._id.toString(),
+        address_line_1: residentialInfo.address_line_1,
+        address_line_2: residentialInfo.address_line_2,
+        landmark: residentialInfo.landmark,
+        pincode: residentialInfo.pincode,
+        city: residentialInfo.city,
+        state: residentialInfo.state,
+        country: residentialInfo.country,
+        start_date: residentialInfo.start_date,
+        end_date: residentialInfo.end_date,
+        addressType: residentialInfo.addressType,
+        isVerified: residentialInfo.isVerified,
+        capturedLocation: residentialInfo.capturedLocation ?await LocationModel.findById(residentialInfo.capturedLocation):{} ,
+        location:residentialInfo.location?await LocationModel.findById(residentialInfo.location):{},
+      });
+    }
     
     const res:ResidentialReportResponse ={
-      residentialInfo :await residentialInfoService.getUserResidentialInfo(user._id),
+      residentialInfo :info,
       residentialPeers:await residentialPeerService.getUserPeers(user._id),
     }
 
@@ -74,9 +117,48 @@ class ReportService {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    
-    const res = await idsService.getUserIDs(user._id);
-    return res;
+    const id_documents = await IDModel.find({ user: user._id });
+
+  if (!id_documents || id_documents.length === 0) {
+    throw new HttpException(ErrorEnum.DOCUMENTS_NOT_FOUND);
+  }
+
+  const idReportResponse: IdReportResonse = {
+    aadhar: null,
+    pan: null,
+    dl: null,
+  };
+
+  const res = await idsService.getUserIDs(user._id);
+
+  res.forEach(async (id)=>{
+    if(id.id_type==='AADHAR'){
+      
+      idReportResponse.aadhar =id ;
+    }
+    else if(id.id_type==='PAN'){
+      const panData = await IDModel.findById(id.id);
+      idReportResponse.pan ={
+        ...id,
+        phoneNumber:panData.data?.user_phone_number,
+        aadharLinked:panData.data?.aadhaar_linked_status,
+      }
+    }
+    else if(id.id_type ==='DRIVING_LICENSE'){
+      const dlData = await IDModel.findById(id.id);
+      idReportResponse.dl ={
+        ...id,
+        bloodGroup:dlData.data?.user_blood_group,
+        dateOfIssue:dlData.data?.issued_date,
+        fatherName:dlData.data?.father_or_husband,
+        VehicleType:dlData.data?.vehicle_category_details,
+      }
+        
+    }
+  })
+
+  return idReportResponse;
+  
   }
 
   public async getAllDetails(email: string) {
