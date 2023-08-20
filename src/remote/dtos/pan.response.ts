@@ -15,7 +15,7 @@ export interface Metadata {
   billable: string;
 }
 
-export interface PanResult {
+export type PanResult = {
   pan_number: string;
   user_full_name: string;
   user_full_name_split: string[];
@@ -27,7 +27,7 @@ export interface PanResult {
   user_dob: string;
   aadhaar_linked_status: boolean;
   pan_type: string;
-}
+};
 
 export interface PanUserAddress {
   line_1: string;

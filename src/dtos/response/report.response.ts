@@ -66,51 +66,42 @@ interface WorkPeerReportResponse {
   isVerificationCompleted?: boolean;
 }
 
-export interface documentReportResponse{
-  data:[],
+export interface documentReportResponse {
+  data: [];
 }
 
-export interface ResidentialResponse extends ResidentialInfoResponse{
-  capturedLocation:object ,
-  location:object
+export interface ResidentialResponse extends ResidentialInfoResponse {
+  capturedLocation: object;
+  location: object;
 }
-
-
 
 // --------------------- Final DTOS ---------------------
 
 export interface WorkExpReportResponse {
   workExp: GetWorkExperienceResponse;
   peers: WorkPeerReportResponse[];
-  documents:documentReportResponse[];
+  documents: documentReportResponse[];
 }
 
-
-export interface ResidentialReportResponse{
-  residentialInfo:ResidentialResponse[] ;
-  residentialPeers:GetUserPeersResponse[] ;
+export interface ResidentialReportResponse {
+  residentialInfo: ResidentialResponse[];
+  residentialPeers: GetUserPeersResponse[];
 }
 
-export interface PanReportResponse extends IDResponse{
-  phoneNumber:string,
-  aadharLinked:boolean,
-}   
-
-export interface drivingLicenseReportResponse extends IDResponse{
-  dateOfIssue:string,
-  fatherName:string,
-  bloodGroup:string,
-  VehicleType:[
-    cov:string,
-  ],
+export interface PanReportResponse extends IDResponse {
+  phoneNumber: string;
+  aadharLinked: boolean;
 }
 
-export interface IdReportResonse{
-  aadhar:IDResponse,
-  pan:PanReportResponse
-  dl:drivingLicenseReportResponse
+export interface drivingLicenseReportResponse extends IDResponse {
+  dateOfIssue: string;
+  fatherName: string;
+  bloodGroup: string;
+  VehicleType: string[];
 }
 
-
-
-
+export interface IdReportResonse {
+  aadhar: IDResponse;
+  pan: PanReportResponse;
+  dl: drivingLicenseReportResponse;
+}
