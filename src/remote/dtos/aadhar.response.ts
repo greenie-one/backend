@@ -11,7 +11,7 @@ export interface AadharVerifyResponse {
   response_timestamp: string;
 }
 
-export interface AadharVerifyResult {
+export type AadharVerifyResult = {
   user_full_name: string;
   user_aadhaar_number: string;
   user_dob: string;
@@ -26,7 +26,7 @@ export interface AadharVerifyResult {
   aadhaar_share_code: string;
   user_mobile_verified: boolean;
   reference_id: string;
-}
+};
 
 export interface AadharUserAddress {
   country: string;

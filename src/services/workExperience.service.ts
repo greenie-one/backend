@@ -52,6 +52,8 @@ class WorkExperienceService {
         linkedInUrl: workExp.linkedInUrl,
         dateOfLeaving: workExp.dateOfLeaving ? workExp.dateOfLeaving.toString() : null,
         noOfVerifications: workExp.noOfVerifications,
+        createdAt: workExp.createdAt,
+        updatedAt: workExp.updatedAt,
       });
     }
     return res;
@@ -124,6 +126,8 @@ class WorkExperienceService {
       dateOfJoining: workExperience.dateOfJoining.toString(),
       linkedInUrl: workExperience.linkedInUrl,
       dateOfLeaving: workExperience.dateOfLeaving ? workExperience.dateOfLeaving.toString() : null,
+      createdAt: workExperience.createdAt,
+      updatedAt: workExperience.updatedAt,
     };
 
     return resp;
