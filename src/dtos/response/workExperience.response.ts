@@ -21,6 +21,9 @@ export interface WorkExperienceResponse {
   linkedInUrl: string;
   dateOfLeaving: string;
   noOfVerifications: number;
+  createdAt: Date;
+  updatedAt?: Date;
+
 }
 
 export interface GetWorkExperienceResponse {

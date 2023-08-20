@@ -15,7 +15,7 @@ export interface Metadata {
   billable: string;
 }
 
-export interface DLResult {
+export type DLResult = {
   user_address: DLUserAddress[];
   user_blood_group: string;
   dl_number: string;
@@ -33,7 +33,7 @@ export interface DLResult {
   user_full_name: string;
   user_image: string;
   vehicle_category_details: VehicleCategoryDetail[];
-}
+};
 
 export interface DLUserAddress {
   addressLine1: string;
