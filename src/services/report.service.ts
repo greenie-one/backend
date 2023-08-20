@@ -8,6 +8,7 @@ import { ProfileModel } from '@/models/profile.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { UserModel } from '@/models/users.model';
 import { WorkPeerModel } from '@/models/workExPeer.model';
+import { WorkExperienceModel } from '@/models/workExperience.model';
 import { DLResult } from '@/remote/dtos/driving.response';
 import { PanResult } from '@/remote/dtos/pan.response';
 import { idsService } from './ids.service';
@@ -15,30 +16,28 @@ import { residentialPeerService } from './residentialPeer.service';
 import { workExperienceService } from './workExperience.service';
 
 class ReportService {
-  public async getGreenieAccountDetails(email: string) {
-    const user = await UserModel.findOne({ email: email });
-    const profile = await ProfileModel.findOne({ user: user._id });
+  public async getGreenieAccountDetails(userId: string) {
+    const user = await UserModel.findById(userId);
+    const profile = await ProfileModel.findOne({ user: userId });
+
+    if (!profile) throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
 
     const res = {
-      firstName: profile ?profile.firstName:"",
-      lastName: profile? profile.lastName:"",
-      greenieId: profile? profile.greenie_id: "" ,
+      firstName: profile ? profile.firstName : '',
+      lastName: profile ? profile.lastName : '',
+      greenieId: profile ? profile.greenie_id : '',
       email: user.email,
       mobileNumber: user.mobileNumber,
-      
     };
 
     return res;
   }
 
-  public async getWorkExperienceDetails(email: string) {
-    const user = await UserModel.findOne({ email: email });
-    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-
+  public async getWorkExperienceDetails(userId: string) {
     const peerRes = [];
-    const workPeer = await WorkPeerModel.find({ user: user._id });
+    const workPeer = await WorkPeerModel.find({ user: userId });
 
-    const workExp = await WorkPeerModel.find({ user: user._id });
+    const workExp = await WorkExperienceModel.find({ user: userId });
     const docs = [];
     for (const work of workExp) {
       const doc = await DocumentModel.find({ workExperience: work._id });
@@ -70,19 +69,15 @@ class ReportService {
     }
 
     const res: WorkExpReportResponse = {
-      workExp: await workExperienceService.getWorkExperience(user._id),
+      workExp: await workExperienceService.getWorkExperience(userId),
       peers: peerRes,
       documents: docs,
     };
     return res;
   }
 
-  public async getResidentialDetails(email: string) {
-    
-    const user = await UserModel.findOne({ email: email });
-    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-
-    const residentialInfos = await ResidentialInfoModel.find({ user: user._id });
+  public async getResidentialDetails(userId: string) {
+    const residentialInfos = await ResidentialInfoModel.find({ user: userId });
     if (!residentialInfos) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
@@ -109,25 +104,20 @@ class ReportService {
 
     const res: ResidentialReportResponse = {
       residentialInfo: info,
-      residentialPeers: await residentialPeerService.getUserPeers(user._id),
+      residentialPeers: await residentialPeerService.getUserPeers(userId),
     };
 
     return res;
   }
 
-  public async getIdDetails(email: string) {
-    const user = await UserModel.findOne({ email: email });
-
-    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    
-
+  public async getIdDetails(userId: string) {
     const idReportResponse: IdReportResonse = {
       aadhar: null,
       pan: null,
       dl: null,
     };
 
-    const res = await idsService.getUserIDs(user._id);
+    const res = await idsService.getUserIDs(userId);
 
     res.forEach(async (id) => {
       if (id.id_type === 'AADHAR') {
@@ -156,7 +146,6 @@ class ReportService {
 
   public async getAllDetails(email: string) {
     const user = await UserModel.findOne({ email: email });
-
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
 
     return {
