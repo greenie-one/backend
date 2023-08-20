@@ -13,7 +13,7 @@ class ReportService {
     const user = await UserModel.findOne({ email: email });
     const profile = await ProfileModel.findOne({ user: user._id });
 
-    if (!profile) throw new HttpException(ErrorEnum.PROFILE_ALREADY_EXISTS);
+    if (!profile) throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
 
     const res = {
       greenieId: profile.greenie_id,
