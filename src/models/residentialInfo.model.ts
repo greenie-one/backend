@@ -1,7 +1,8 @@
-import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Location } from './location.model';
 import { User } from './users.model';
 
+@modelOptions({ schemaOptions: { timestamps: true } })
 export class ResidentialInfo {
   @prop({ required: true })
   public address_line_1!: string;
