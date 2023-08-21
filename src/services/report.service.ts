@@ -2,11 +2,12 @@ import { IDTypeEnum } from '@/dtos/request/ids.dto';
 import { IdReportResonse, ResidentialReportResponse, ResidentialResponse, WorkExpReportResponse } from '@/dtos/response/report.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { DocumentModel } from '@/models/document.model';
+import { Document, DocumentModel } from '@/models/document.model';
 import { IDModel } from '@/models/id.model';
 import { LocationModel } from '@/models/location.model';
 import { ProfileModel } from '@/models/profile.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
+import { SkillModel, Skills } from '@/models/skills.model';
 import { UserModel } from '@/models/users.model';
 import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -39,16 +40,14 @@ class ReportService {
     const workPeer = await WorkPeerModel.find({ user: userId });
 
     const workExp = await WorkExperienceModel.find({ user: userId });
-    console.log(JSON.stringify(workExp));
-    const docs = [];
+
+    const docs: Document[] = [];
+    const skills: Skills[] = [];
     for (const work of workExp) {
-      const doc = await DocumentModel.find({ workExperience: work._id.toString() });
-      console.log(doc);
-      if (doc) {
-        docs.push({
-          data: doc,
-        });
-      }
+      const doc_res: Document[] = await DocumentModel.find({ workExperience: work._id.toString() });
+      docs.push(...doc_res);
+      const skill_res: Skills[] = await SkillModel.find({ workExperience: work._id.toString() });
+      skills.push(...skill_res);
     }
 
     for (const peer of workPeer) {
@@ -75,6 +74,7 @@ class ReportService {
       workExp: await workExperienceService.getWorkExperience(userId),
       peers: peerRes,
       documents: docs,
+      skills: skills,
     };
     return res;
   }
