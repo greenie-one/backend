@@ -1,3 +1,4 @@
+import { IDTypeEnum } from '@/dtos/request/ids.dto';
 import { IdReportResonse, ResidentialReportResponse, ResidentialResponse, WorkExpReportResponse } from '@/dtos/response/report.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
@@ -119,17 +120,17 @@ class ReportService {
 
     const res = await idsService.getUserIDs(userId);
 
-    res.forEach(async (id) => {
-      if (id.id_type === 'AADHAR') {
+    for (const id of res) {
+      if (id.id_type === IDTypeEnum.AADHAR) {
         idReportResponse.aadhar = id;
-      } else if (id.id_type === 'PAN') {
+      } else if (id.id_type === IDTypeEnum.PAN) {
         const panData = (await IDModel.findById(id.id)).data as PanResult;
         idReportResponse.pan = {
           ...id,
           phoneNumber: panData.user_phone_number,
           aadharLinked: panData.aadhaar_linked_status,
         };
-      } else if (id.id_type === 'DRIVING_LICENSE') {
+      } else if (id.id_type === IDTypeEnum.DRIVING_LICENSE) {
         const dlData = (await IDModel.findById(id.id)).data as DLResult;
         idReportResponse.dl = {
           ...id,
@@ -139,8 +140,7 @@ class ReportService {
           VehicleType: dlData.vehicle_category_details.map((vehicle) => vehicle.cov),
         };
       }
-    });
-
+    }
     return idReportResponse;
   }
 
