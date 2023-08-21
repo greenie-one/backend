@@ -94,6 +94,7 @@ class WorkExPeerService {
 
   public async verifyPeerContact(peerUUID: string, otp: string, otpType: OtpType) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
+    console.log(peerId);
     const peer = await WorkPeerModel.findById(peerId);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
@@ -104,6 +105,11 @@ class WorkExPeerService {
     } else if (!peer.phoneVerified && otpType === OtpType.MOBILE && (await otpService.verifyOTP(phone, OtpType.MOBILE, otp))) {
       peer.phoneVerified = true;
     } else {
+      console.log(peer.emailVerified);
+      console.log(peer.phoneVerified);
+      console.log(otpType);
+      console.log(!peer.emailVerified && otpType === OtpType.EMAIL);
+      console.log(!peer.phoneVerified && otpType === OtpType.MOBILE);
       throw new HttpException(ErrorEnum.INVALID_OTP);
     }
     await peer.save();
@@ -166,7 +172,7 @@ class WorkExPeerService {
       this.sendVerificationError(reply, ErrorEnum.PEER_EMAIL_NOT_VERIFIED, peer, username);
     }
     if (!peer.phoneVerified) {
-      this.sendVerificationError(reply, ErrorEnum.PEER_EMAIL_NOT_VERIFIED, peer, username);
+      this.sendVerificationError(reply, ErrorEnum.PEER_PHONE_NOT_VERIFIED, peer, username);
     }
 
     const workExperience = await WorkExperienceModel.findById(peer.ref);
