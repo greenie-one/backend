@@ -43,4 +43,5 @@ export default class ResidentialPeerController {
   async deleteResidentialPeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string) {
     return residentialPeerService.deletePeer(userDetails.sub, peerId);
   }
+  
 }

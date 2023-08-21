@@ -9,7 +9,7 @@ import {
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { DocumentModel } from '@/models/document.model';
-import { Profile, ProfileModel } from '@/models/profile.model';
+import { ProfileModel } from '@/models/profile.model';
 import { SkillModel } from '@/models/skills.model';
 import { DocumentVerification, HRQuestions, SelectedFields, SkillsVerification, Status, WorkPeer, WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -19,7 +19,7 @@ import { checkFields, copyDataFrom, createClassInstanceWithFields } from '@/util
 import { env } from '@config';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
-import { SAStokenService } from './blobStorage.service';
+import { blobService } from './blobStorage.service';
 import { otpService } from './otp.service';
 
 class WorkExPeerService {
@@ -129,6 +129,19 @@ class WorkExPeerService {
     return res;
   }
 
+  private sendVerificationError(reply: FastifyReply, errorCode: ErrorEnum, peer: WorkPeer, username: String) {
+    const err = ErrorCodes[errorCode];
+    console.error(err);
+    reply.status(err.status).send({
+      ...err,
+      name: peer.name,
+      phone: peer.phone,
+      email: peer.email,
+      verificationBy: peer.verificationBy,
+      username,
+    });
+  }
+
   public async getPeerInformation(peerUUID: string, reply: FastifyReply) {
     const { peerId, type } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
@@ -147,22 +160,19 @@ class WorkExPeerService {
       await peer.save();
     }
 
+    const profile = await ProfileModel.findOne({ user: peer.user });
+    const username = `${profile.firstName} ${profile.lastName}`;
     if (!peer.emailVerified) {
-      const err = ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED];
-      console.error(err);
-      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_EMAIL_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
+      this.sendVerificationError(reply, ErrorEnum.PEER_EMAIL_NOT_VERIFIED, peer, username);
     }
     if (!peer.phoneVerified) {
-      const err = ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED];
-      console.error(err);
-      reply.status(err.status).send({ ...ErrorCodes[ErrorEnum.PEER_PHONE_NOT_VERIFIED], name: peer.name, phone: peer.phone, email: peer.email });
+      this.sendVerificationError(reply, ErrorEnum.PEER_EMAIL_NOT_VERIFIED, peer, username);
     }
 
     const workExperience = await WorkExperienceModel.findById(peer.ref);
-    const profile: Profile = await ProfileModel.findOne({ user: peer.user });
 
     const data: GetPeerWorkExDataResponse = {
-      name: `${profile.firstName} ${profile.lastName}`,
+      name: username,
       profilePic: profile.profilePic,
       companyName: workExperience.companyName,
       peerPost: peer.verificationBy,
@@ -190,12 +200,11 @@ class WorkExPeerService {
       (
         await DocumentModel.find({ _id: { $in: documentIds } })
       ).map(async (document) => {
-        const sasToken = await SAStokenService.getSASTokenUser(document.user.toString());
         data.documents.push({
           id: document._id.toString(),
           type: document.type,
           name: document.name,
-          privateUrl: `${document.privateUrl}?${sasToken}`,
+          privateUrl: `${document.privateUrl}?token=${blobService.generateDownloadToken(document.privateUrl)}`,
         });
       }),
     );

@@ -44,6 +44,7 @@ export enum ErrorEnum {
   AADHAR_ALREADY_EXIST,
   PAN_ALREADY_EXIST,
   DRIVING_LICENSE_ALREADY_EXIST,
+  IDENTITY_NOT_FOUND,
 
   // Peer
   SHARING_FAILED,
@@ -61,6 +62,13 @@ export enum ErrorEnum {
   // Database
   DB_REF_VALIDATION_FAILED,
   LOCATION_ALREADY_CAPTURED,
+
+  DATA_NOT_ADDED,
+
+  //Feedback
+  FEEDBACK_ALREADY_ADDED,
+  FEEDBACK_ERROR,
+
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -309,9 +317,29 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'Failed to validate ref: %s',
     status: 400,
   },
-  [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
+  [ErrorEnum.IDENTITY_NOT_FOUND]: {
     code: 'GR0058',
+    message: 'Identity not found',
+    status: 404,
+  } ,
+  [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
+    code: 'GR0059',
     message: 'Location already captured',
+    status: 400,
+  },
+  [ErrorEnum.DATA_NOT_ADDED]: {
+    code: 'GR0059',
+    message: 'Data not added',
+    status: 400,
+  },
+  [ErrorEnum.FEEDBACK_ALREADY_ADDED]: {
+    code: 'GR0060',
+    message: 'Feedback already added',
+    status: 400,
+  },
+  [ErrorEnum.FEEDBACK_ERROR]: {
+    code: 'GR0061',
+    message: 'Feedback error',
     status: 400,
   },
 };

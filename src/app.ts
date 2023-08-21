@@ -16,7 +16,7 @@ import hpp from 'hpp';
 import { connect, set } from 'mongoose';
 import { env } from './config';
 import { registerControllers } from './controllers';
-import { redisClient, redisUtilClient } from './redisClient';
+import { redisClient } from './redisClient';
 import { registerPropertiesCheck } from './utils/customChecks';
 
 export class App {
@@ -69,7 +69,6 @@ export class App {
 
   private async connectToRedis() {
     await redisClient.connect();
-    await redisUtilClient.connect();
   }
 
   private async initializeMiddlewares() {

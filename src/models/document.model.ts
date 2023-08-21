@@ -1,8 +1,9 @@
 import { DocumentType } from '@/dtos/request/document.dto';
-import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { Ref, getModelForClass, index, prop } from '@typegoose/typegoose';
 import { User } from './users.model';
 import { WorkExperience } from './workExperience.model';
 
+@index({ privateUrl: 1 }, { unique: true })
 export class Document {
   @prop({ required: true })
   public name!: string;
