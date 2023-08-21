@@ -48,12 +48,14 @@ export interface ResidentialReportResponse {
 }
 
 export interface PanReportResponse extends IDResponse {
+  pan_type: string;
   phoneNumber: string;
   aadharLinked: boolean;
 }
 
 export interface drivingLicenseReportResponse extends IDResponse {
   dateOfIssue: string;
+  dateOfExpiry: string;
   fatherName: string;
   bloodGroup: string;
   VehicleType: string[];

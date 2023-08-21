@@ -165,7 +165,7 @@ class IDsService {
     if (success && response_code === '100') {
       await IDModel.create({
         id_type: IDTypeEnum.PAN,
-        id_number: addIDDto.id_number,
+        id_number: result.pan_number,
         user: userId,
         data: result,
         address: result.user_address,
@@ -214,7 +214,7 @@ class IDsService {
       const user_address = result.user_address[0];
       await IDModel.create({
         id_type: IDTypeEnum.DRIVING_LICENSE,
-        id_number: addIDDto.id_number,
+        id_number: result.dl_number,
         user: userId,
         data: result,
         address: user_address,

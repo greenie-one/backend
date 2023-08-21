@@ -39,9 +39,11 @@ class ReportService {
     const workPeer = await WorkPeerModel.find({ user: userId });
 
     const workExp = await WorkExperienceModel.find({ user: userId });
+    console.log(JSON.stringify(workExp));
     const docs = [];
     for (const work of workExp) {
-      const doc = await DocumentModel.find({ workExperience: work._id });
+      const doc = await DocumentModel.find({ workExperience: work._id.toString() });
+      console.log(doc);
       if (doc) {
         docs.push({
           data: doc,
@@ -129,6 +131,7 @@ class ReportService {
           ...id,
           phoneNumber: panData.user_phone_number,
           aadharLinked: panData.aadhaar_linked_status,
+          pan_type: panData.pan_type,
         };
       } else if (id.id_type === IDTypeEnum.DRIVING_LICENSE) {
         const dlData = (await IDModel.findById(id.id)).data as DLResult;
@@ -136,6 +139,7 @@ class ReportService {
           ...id,
           bloodGroup: dlData.user_blood_group,
           dateOfIssue: dlData.issued_date,
+          dateOfExpiry: dlData.expiry_date,
           fatherName: dlData.father_or_husband,
           VehicleType: dlData.vehicle_category_details.map((vehicle) => vehicle.cov),
         };
