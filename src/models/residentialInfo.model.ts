@@ -42,6 +42,10 @@ export class ResidentialInfo {
   @prop({ ref: () => Location })
   public capturedLocation?: Ref<Location>;
 
+  public createdAt?: Date;
+
+  public updatedAt?: Date;
+
   @prop({ type: Boolean, default: false })
   public isVerified?: boolean;
 }

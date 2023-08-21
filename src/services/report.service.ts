@@ -102,6 +102,8 @@ class ReportService {
         isVerified: residentialInfo.isVerified,
         capturedLocation: residentialInfo.capturedLocation ? await LocationModel.findById(residentialInfo.capturedLocation) : {},
         location: residentialInfo.location ? await LocationModel.findById(residentialInfo.location) : {},
+        createdAt:  residentialInfo.createdAt,
+        updatedAt: residentialInfo.updatedAt,
       });
     }
 
