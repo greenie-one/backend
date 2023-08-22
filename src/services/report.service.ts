@@ -1,13 +1,11 @@
-import { IDTypeEnum } from '@/dtos/request/ids.dto';
 import { IdReportResonse, ResidentialReportResponse, ResidentialResponse, WorkExpReportResponse } from '@/dtos/response/report.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
-import { Document, DocumentModel } from '@/models/document.model';
+import { DocumentModel } from '@/models/document.model';
 import { IDModel } from '@/models/id.model';
 import { LocationModel } from '@/models/location.model';
 import { ProfileModel } from '@/models/profile.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
-import { SkillModel, Skills } from '@/models/skills.model';
 import { UserModel } from '@/models/users.model';
 import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
@@ -40,14 +38,14 @@ class ReportService {
     const workPeer = await WorkPeerModel.find({ user: userId });
 
     const workExp = await WorkExperienceModel.find({ user: userId });
-
-    const docs: Document[] = [];
-    const skills: Skills[] = [];
+    const docs = [];
     for (const work of workExp) {
-      const doc_res: Document[] = await DocumentModel.find({ workExperience: work._id.toString() });
-      docs.push(...doc_res);
-      const skill_res: Skills[] = await SkillModel.find({ workExperience: work._id.toString() });
-      skills.push(...skill_res);
+      const doc = await DocumentModel.find({ workExperience: work._id });
+      if (doc) {
+        docs.push({
+          data: doc,
+        });
+      }
     }
 
     for (const peer of workPeer) {
@@ -74,7 +72,6 @@ class ReportService {
       workExp: await workExperienceService.getWorkExperience(userId),
       peers: peerRes,
       documents: docs,
-      skills: skills,
     };
     return res;
   }
@@ -102,7 +99,7 @@ class ReportService {
         isVerified: residentialInfo.isVerified,
         capturedLocation: residentialInfo.capturedLocation ? await LocationModel.findById(residentialInfo.capturedLocation) : {},
         location: residentialInfo.location ? await LocationModel.findById(residentialInfo.location) : {},
-        createdAt:  residentialInfo.createdAt,
+        createdAt: residentialInfo.createdAt,
         updatedAt: residentialInfo.updatedAt,
       });
     }
@@ -124,29 +121,28 @@ class ReportService {
 
     const res = await idsService.getUserIDs(userId);
 
-    for (const id of res) {
-      if (id.id_type === IDTypeEnum.AADHAR) {
+    res.forEach(async (id) => {
+      if (id.id_type === 'AADHAR') {
         idReportResponse.aadhar = id;
-      } else if (id.id_type === IDTypeEnum.PAN) {
+      } else if (id.id_type === 'PAN') {
         const panData = (await IDModel.findById(id.id)).data as PanResult;
         idReportResponse.pan = {
           ...id,
           phoneNumber: panData.user_phone_number,
           aadharLinked: panData.aadhaar_linked_status,
-          pan_type: panData.pan_type,
         };
-      } else if (id.id_type === IDTypeEnum.DRIVING_LICENSE) {
+      } else if (id.id_type === 'DRIVING_LICENSE') {
         const dlData = (await IDModel.findById(id.id)).data as DLResult;
         idReportResponse.dl = {
           ...id,
           bloodGroup: dlData.user_blood_group,
           dateOfIssue: dlData.issued_date,
-          dateOfExpiry: dlData.expiry_date,
           fatherName: dlData.father_or_husband,
           VehicleType: dlData.vehicle_category_details.map((vehicle) => vehicle.cov),
         };
       }
-    }
+    });
+
     return idReportResponse;
   }
 
@@ -155,10 +151,10 @@ class ReportService {
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
 
     return {
-      accountDetails: await this.getGreenieAccountDetails(user._id.toString()),
-      workExperienceDetails: await this.getWorkExperienceDetails(user._id.toString()),
-      ResidentialDetails: await this.getResidentialDetails(user._id.toString()),
-      idDetails: await this.getIdDetails(user._id.toString()),
+      accountDetails: await this.getGreenieAccountDetails(email),
+      workExperienceDetails: await this.getWorkExperienceDetails(email),
+      ResidentialDetails: await this.getResidentialDetails(email),
+      idDetails: await this.getIdDetails(email),
     };
   }
 }

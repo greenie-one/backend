@@ -1,5 +1,3 @@
-import { Document } from '@/models/document.model';
-import { Skills } from '@/models/skills.model';
 import { AllQuestions, DocumentVerification, HRQuestions, SelectedFields, SkillsVerification } from '@/models/workExPeer.model';
 import { WorkExperience } from '@/models/workExperience.model';
 import { Ref } from '@typegoose/typegoose';
@@ -27,6 +25,10 @@ export interface WorkPeerReportResponse {
   isVerificationCompleted?: boolean;
 }
 
+export interface documentReportResponse {
+  data: [];
+}
+
 export interface ResidentialResponse extends ResidentialInfoResponse {
   capturedLocation: object;
   location: object;
@@ -37,8 +39,7 @@ export interface ResidentialResponse extends ResidentialInfoResponse {
 export interface WorkExpReportResponse {
   workExp: GetWorkExperienceResponse;
   peers: WorkPeerReportResponse[];
-  documents: Document[];
-  skills: Skills[];
+  documents: documentReportResponse[];
 }
 
 export interface ResidentialReportResponse {
@@ -47,14 +48,12 @@ export interface ResidentialReportResponse {
 }
 
 export interface PanReportResponse extends IDResponse {
-  pan_type: string;
   phoneNumber: string;
   aadharLinked: boolean;
 }
 
 export interface drivingLicenseReportResponse extends IDResponse {
   dateOfIssue: string;
-  dateOfExpiry: string;
   fatherName: string;
   bloodGroup: string;
   VehicleType: string[];
