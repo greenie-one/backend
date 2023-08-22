@@ -152,9 +152,7 @@ class ReportService {
 
   public async getAllDetails(email?: string, phone?: string) {
     if (!email && !phone) throw new HttpException(ErrorEnum.VALIDATION_ERROR, 'Query Param either email or phone is required');
-    const user = await UserModel.findOne({
-      $or: [{ email: email }, { mobileNumber: phone }],
-    });
+    const user = await UserModel.findOne({ email: email, mobileNumber: phone });
 
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
 
