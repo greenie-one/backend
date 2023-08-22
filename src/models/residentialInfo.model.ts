@@ -49,7 +49,6 @@ export class ResidentialInfo {
 
   @prop({ type: Boolean, default: false })
   public isVerified?: boolean;
-
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);
