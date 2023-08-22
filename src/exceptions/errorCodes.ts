@@ -4,6 +4,7 @@ export enum ErrorEnum {
 
   // Auth
   UNAUTHORIZED,
+  UNAUTHORIZED_ROLE,
   USER_NOT_FOUND,
   PROFILE_NOT_FOUND,
   PROFILE_ALREADY_EXISTS,
@@ -68,7 +69,6 @@ export enum ErrorEnum {
   //Feedback
   FEEDBACK_ALREADY_ADDED,
   FEEDBACK_ERROR,
-
 }
 
 export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
@@ -81,6 +81,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0001',
     message: 'Unauthorized',
     status: 401,
+  },
+  [ErrorEnum.UNAUTHORIZED_ROLE]: {
+    code: 'GR0002',
+    message: 'Unauthorized role',
+    status: 403,
   },
   // [ErrorEnum.USER_ALREADY_EXISTS]: {
   //   code: 'GR0003',
@@ -321,7 +326,7 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     code: 'GR0058',
     message: 'Identity not found',
     status: 404,
-  } ,
+  },
   [ErrorEnum.LOCATION_ALREADY_CAPTURED]: {
     code: 'GR0059',
     message: 'Location already captured',

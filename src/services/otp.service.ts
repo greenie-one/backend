@@ -9,7 +9,6 @@ class OTPService {
     try {
       const resp = await Otp.sendOtp({ contact, type });
       redisClient.setEx(`${contact}-${type.valueOf()}`, 60 * 5, resp.otp.toString());
-
     } catch (e) {
       console.error(e);
       throw new HttpException(ErrorEnum.SERVER_ERROR);

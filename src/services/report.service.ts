@@ -155,10 +155,10 @@ class ReportService {
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
     
     return {
-      accountDetails: await this.getGreenieAccountDetails(user._id),
-      workExperienceDetails: await this.getWorkExperienceDetails(user._id),
-      ResidentialDetails: await this.getResidentialDetails(user._id),
-      idDetails: await this.getIdDetails(user._id),
+      accountDetails: await this.getGreenieAccountDetails(user._id.toString()),
+      workExperienceDetails: await this.getWorkExperienceDetails(user._id.toString()),
+      ResidentialDetails: await this.getResidentialDetails(user._id.toString()),
+      idDetails: await this.getIdDetails(user._id.toString()),
     };
   }
 }

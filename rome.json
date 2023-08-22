@@ -18,7 +18,8 @@
       },
       "style": {
         "useEnumInitializers": "off",
-        "useExponentiationOperator": "off"
+        "useExponentiationOperator": "off",
+        "noParameterAssign": "off"
       }
     }
   },

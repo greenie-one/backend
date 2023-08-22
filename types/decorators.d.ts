@@ -15,7 +15,7 @@ type QueryValidation = {
   type: import('class-transformer').ClassConstructor<unknown>;
   index: number;
   queryName: string;
-  isOptional: boolean
+  isOptional: boolean;
 };
 
 type HeaderValidation = {
@@ -30,4 +30,5 @@ type ParamValidation = {
 
 type RequestValidation = {
   index: number;
+  roles: string[];
 };
