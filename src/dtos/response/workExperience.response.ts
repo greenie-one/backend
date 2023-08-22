@@ -22,7 +22,7 @@ export interface WorkExperienceResponse {
   dateOfLeaving: Date;
   noOfVerifications: number;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export interface GetWorkExperienceResponse {
