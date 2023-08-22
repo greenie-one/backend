@@ -99,6 +99,8 @@ class ReportService {
         isVerified: residentialInfo.isVerified,
         capturedLocation: residentialInfo.capturedLocation ? await LocationModel.findById(residentialInfo.capturedLocation) : {},
         location: residentialInfo.location ? await LocationModel.findById(residentialInfo.location) : {},
+        createdAt: residentialInfo.createdAt,
+        updatedAt: residentialInfo.updatedAt,
       });
     }
 
@@ -149,10 +151,10 @@ class ReportService {
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
 
     return {
-      accountDetails: await this.getGreenieAccountDetails(user._id.toString()),
-      workExperienceDetails: await this.getWorkExperienceDetails(user._id.toString()),
-      ResidentialDetails: await this.getResidentialDetails(user._id.toString()),
-      idDetails: await this.getIdDetails(user._id.toString()),
+      accountDetails: await this.getGreenieAccountDetails(email),
+      workExperienceDetails: await this.getWorkExperienceDetails(email),
+      ResidentialDetails: await this.getResidentialDetails(email),
+      idDetails: await this.getIdDetails(email),
     };
   }
 }

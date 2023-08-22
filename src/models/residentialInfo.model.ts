@@ -1,7 +1,8 @@
-import { Ref, getModelForClass, prop } from '@typegoose/typegoose';
+import { Ref, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Location } from './location.model';
 import { User } from './users.model';
 
+@modelOptions({ schemaOptions: { timestamps: true } })
 export class ResidentialInfo {
   @prop({ required: true })
   public address_line_1!: string;
@@ -42,8 +43,13 @@ export class ResidentialInfo {
   @prop({ ref: () => Location })
   public capturedLocation?: Ref<Location>;
 
+  public createdAt?: Date;
+
+  public updatedAt?: Date;
+
   @prop({ type: Boolean, default: false })
   public isVerified?: boolean;
+
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);

@@ -17,13 +17,12 @@ export interface WorkExperienceResponse {
   workType: string;
   companyName: string;
   companyId: string;
-  dateOfJoining: string;
+  dateOfJoining: Date;
   linkedInUrl: string;
-  dateOfLeaving: string;
+  dateOfLeaving: Date;
   noOfVerifications: number;
   createdAt: Date;
-  updatedAt?: Date;
-
+  updatedAt: Date;
 }
 
 export interface GetWorkExperienceResponse {
