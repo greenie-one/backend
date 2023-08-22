@@ -102,7 +102,7 @@ class ReportService {
         isVerified: residentialInfo.isVerified,
         capturedLocation: residentialInfo.capturedLocation ? await LocationModel.findById(residentialInfo.capturedLocation) : {},
         location: residentialInfo.location ? await LocationModel.findById(residentialInfo.location) : {},
-        createdAt:  residentialInfo.createdAt,
+        createdAt: residentialInfo.createdAt,
         updatedAt: residentialInfo.updatedAt,
       });
     }
@@ -150,14 +150,14 @@ class ReportService {
     return idReportResponse;
   }
 
-  public async getAllDetails(email: string, phone:string) {
+  public async getAllDetails(email?: string, phone?: string) {
+    if (!email && !phone) throw new HttpException(ErrorEnum.VALIDATION_ERROR, 'Query Param either email or phone is required');
     const user = await UserModel.findOne({
       $or: [{ email: email }, { mobileNumber: phone }],
-    });    
-    
-    if(!user)
-      throw new HttpException(ErrorEnum.USER_NOT_FOUND);
-    
+    });
+
+    if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+
     return {
       accountDetails: await this.getGreenieAccountDetails(user._id.toString()),
       workExperienceDetails: await this.getWorkExperienceDetails(user._id.toString()),
