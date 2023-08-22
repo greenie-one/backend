@@ -111,10 +111,6 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
             try {
               const tokenClaims = JSON.parse(req.headers['x-user-details'].toString());
               args[hasUserDetails.index] = tokenClaims;
-              const roles: string[] = tokenClaims.roles ?? [];
-              if (!hasUserDetails.roles.some((r) => roles.includes(r))) {
-                throw new HttpException(ErrorEnum.UNAUTHORIZED);
-              }
             } catch (error) {
               if (error instanceof SyntaxError) {
                 throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error.message);
