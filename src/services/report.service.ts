@@ -147,10 +147,13 @@ class ReportService {
   }
 
   public async getAllDetails(email: string, phone:string) {
-    const user =await UserModel.findOne({email:email, mobileNumber:phone}) ;
-
+    const user = await UserModel.findOne({
+      $or: [{ email: email }, { mobileNumber: phone }],
+    });    
+    
     if(!user)
       throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    
     return {
       accountDetails: await this.getGreenieAccountDetails(user._id),
       workExperienceDetails: await this.getWorkExperienceDetails(user._id),
