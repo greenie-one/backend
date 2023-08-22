@@ -116,7 +116,10 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
                 throw new HttpException(ErrorEnum.UNAUTHORIZED);
               }
             } catch (error) {
-              throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error);
+              if (error instanceof SyntaxError) {
+                throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error.message);
+              }
+              throw error;
             }
           }
 
