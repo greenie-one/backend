@@ -33,7 +33,7 @@ function flattenErrors(error: ValidationError[]) {
 }
 
 async function validate(type: ClassConstructor<unknown>, value: unknown, bodyOrQuery: 'body' | 'query', isOptional = false) {
-  if (isOptional && (typeof value === 'undefined' || value === null)) return value
+  if (isOptional && (typeof value === 'undefined' || value === null)) return value;
   if (!value) throw new HttpException(ErrorEnum.VALIDATION_ERROR, `${bodyOrQuery} must be defined`);
 
   try {
@@ -109,9 +109,13 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           if (hasUserDetails) {
             try {
-              args[hasUserDetails.index] = JSON.parse(req.headers['x-user-details'].toString());
+              const tokenClaims = JSON.parse(req.headers['x-user-details'].toString());
+              args[hasUserDetails.index] = tokenClaims;
             } catch (error) {
-              throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error);
+              if (error instanceof SyntaxError) {
+                throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error.message);
+              }
+              throw error;
             }
           }
 
