@@ -8,6 +8,7 @@ import { ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { Geolocation } from '@/remote/location/location';
 import { createAddressString } from '@/utils/location';
 import { residentialPeerService } from './residentialPeer.service';
+import { placeResponse } from '@/remote/dtos/autocomplete.response';
 
 class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
@@ -108,28 +109,16 @@ class LocationService {
     return residentialInfo;
   }
 
-  async getAutoCompleteResults(term: string, latitude: number, location: number): Promise<GetAutocompleteResponse> {
-    const resp = await Geolocation.autocomplete(term, latitude, location);
-    return resp.results.map(({ id, score, address, position, type }) => ({
-      id: id,
-      score: score,
-      address: {
-        address_line_1: type === 'Geography' ? '' : createAddressString(address.streetNumber, address.municipalitySubdivision),
-        address_line_2: createAddressString(address.streetName, address.municipality),
-        city: address.countrySecondarySubdivision,
-        state: address.countrySubdivision,
-        country: address.country,
-        street: address.streetNumber,
-        pincode: address.postalCode,
-        type: '',
-      },
-      addressString: address.freeformAddress,
-      position: {
-        latitude: position.lat,
-        longitude: position.lon,
-      },
-    }));
+  public async getAutoCompleteResults(partialAdress: string): Promise<GetAutocompleteResponse> {
+    const resp = await Geolocation.autocomplete(partialAdress);
+    return resp;
   }
+
+  public async getPlaceDetails(placeId: string): Promise<placeResponse> {
+    const resp = await Geolocation.getPlaceDetails(placeId);
+    return resp;
+  }
+
 }
 
 export const radius = 6371;

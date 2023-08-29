@@ -8,12 +8,6 @@ export interface GetLocationResponse {
 }
 
 export type GetAutocompleteResponse = {
-  id: string
-  score: number
-  address: NormalizedAddress
-  addressString: string
-  position: {
-    longitude: number;
-    latitude: number;
-  }
+  address: string
+  placeId: string
 }[]

@@ -24,7 +24,12 @@ export default class LocationController {
   }
 
   @Get('/autocomplete')
-  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') term: string, @Query('latitude', true) latitude: number, @Query('longitude', true) longitude: number) {
-    return locationService.getAutoCompleteResults(term, latitude, longitude);
+  public async autoCompleteLocation(@UserDetails() _: TokenClaims, @Query('address') partialAddress: string) {
+    return locationService.getAutoCompleteResults(partialAddress);
+  }
+
+  @Get('/place')
+  public async  getPlaceDeatils(@UserDetails() _:TokenClaims, @Query('placeId') placeId: string){
+    return locationService.getPlaceDetails(placeId);
   }
 }
