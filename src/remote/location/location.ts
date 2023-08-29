@@ -1,5 +1,5 @@
 import { env } from '@/config';
-import { AutocompleteResponse, placeResponse } from '../dtos/autocomplete.response';
+import { AutocompleteResponse, PlaceResponse } from '../dtos/autocomplete.response';
 import { LocationResponse } from '../dtos/geolocation.response';
 import { HttpClient } from '../generic/httpClient';
 
@@ -22,7 +22,7 @@ export class Geolocation {
     });
   }
 
-  static async getPlaceDetails(placeId: string): Promise<placeResponse>{
+  static async getPlaceDetails(placeId: string): Promise<PlaceResponse>{
     const url = `${env('REMOTE_BASE_URL')}/location/place?placeId=${placeId}`
     return HttpClient.callApi({
       url,

@@ -8,7 +8,7 @@ import { ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { Geolocation } from '@/remote/location/location';
 import { createAddressString } from '@/utils/location';
 import { residentialPeerService } from './residentialPeer.service';
-import { placeResponse } from '@/remote/dtos/autocomplete.response';
+import { PlaceResponse } from '@/remote/dtos/autocomplete.response';
 
 class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
@@ -114,7 +114,7 @@ class LocationService {
     return resp;
   }
 
-  public async getPlaceDetails(placeId: string): Promise<placeResponse> {
+  public async getPlaceDetails(placeId: string): Promise<PlaceResponse> {
     const resp = await Geolocation.getPlaceDetails(placeId);
     return resp;
   }

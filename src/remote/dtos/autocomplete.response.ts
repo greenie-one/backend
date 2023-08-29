@@ -3,7 +3,7 @@ export type AutocompleteResponse = {
   placeId: string
 }
 
-export type placeResponse = {
+export type PlaceResponse = {
   extendedAddress: string,
   locality: string,
   placeId: string,
