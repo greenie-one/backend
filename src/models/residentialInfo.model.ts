@@ -34,21 +34,24 @@ export class ResidentialInfo {
   @prop({ ref: () => User })
   public user!: Ref<User>;
 
-  @prop({ ref: () => Location })
-  public location!: Ref<Location, string>;
-
   @prop({ required: true })
   public addressType!: string;
 
   @prop({ ref: () => Location })
+  public location!: Ref<Location, string>;
+
+  @prop({ ref: () => Location })
   public capturedLocation?: Ref<Location>;
+
+  @prop({ required: false })
+  public formattedAddress?: string;
+
+  @prop({ type: Boolean, default: false })
+  public isVerified?: boolean;
 
   public createdAt?: Date;
 
   public updatedAt?: Date;
-
-  @prop({ type: Boolean, default: false })
-  public isVerified?: boolean;
 }
 
 export const ResidentialInfoModel = getModelForClass(ResidentialInfo);

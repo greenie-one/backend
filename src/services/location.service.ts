@@ -12,18 +12,18 @@ import { residentialPeerService } from './residentialPeer.service';
 export const RADIUS = 6371;
 
 class LocationService {
-  public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
+  public async createLocationFromAddress(userId: string, address: string): Promise<GetLocationResponse> {
     try {
-      const coordinates = await Geolocation.getLocation(address);
-      console.log(coordinates);
-      if (!coordinates) {
+      const placeDetails = await Geolocation.getLocation(address);
+      console.log(placeDetails);
+      if (!placeDetails) {
         throw new HttpException(ErrorEnum.INVALID_COORDINATES);
       }
 
       const location = await LocationModel.create({
         user: userId,
-        latitude: coordinates.lat,
-        longitude: coordinates.long,
+        latitude: placeDetails.lat,
+        longitude: placeDetails.long,
       } as Location);
 
       const res: GetLocationResponse = {
@@ -31,6 +31,7 @@ class LocationService {
         longitude: location.longitude,
         latitude: location.latitude,
         user: location.user.toString(),
+        formattedAddress: placeDetails.formattedAddress,
       };
       return res;
     } catch (e) {

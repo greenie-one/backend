@@ -4,6 +4,7 @@ export interface GetLocationResponse {
   id: string;
   longitude: number;
   latitude: number;
+  formattedAddress: string;
   user: string;
 }
 
