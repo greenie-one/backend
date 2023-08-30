@@ -5,23 +5,25 @@ import { HttpException } from '@/exceptions/httpException';
 import { Location, LocationModel } from '@/models/location.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeerModel } from '@/models/residentialPeer.model';
+import { PlaceResponse } from '@/remote/dtos/autocomplete.response';
 import { Geolocation } from '@/remote/location/location';
-import { createAddressString } from '@/utils/location';
 import { residentialPeerService } from './residentialPeer.service';
 
+export const RADIUS = 6371;
+
 class LocationService {
-  public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
+  public async createLocationFromAddress(userId: string, address: string): Promise<GetLocationResponse> {
     try {
-      const coordinates = await Geolocation.getLocation(address);
-      console.log(coordinates);
-      if (!coordinates) {
+      const placeDetails = await Geolocation.getLocation(address);
+      console.log(placeDetails);
+      if (!placeDetails) {
         throw new HttpException(ErrorEnum.INVALID_COORDINATES);
       }
 
       const location = await LocationModel.create({
         user: userId,
-        latitude: coordinates.lat,
-        longitude: coordinates.long,
+        latitude: placeDetails.lat,
+        longitude: placeDetails.long,
       } as Location);
 
       const res: GetLocationResponse = {
@@ -29,6 +31,7 @@ class LocationService {
         longitude: location.longitude,
         latitude: location.latitude,
         user: location.user.toString(),
+        formattedAddress: placeDetails.formattedAddress,
       };
       return res;
     } catch (e) {
@@ -51,7 +54,7 @@ class LocationService {
       const sinD = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(ipLat) * Math.cos(gpsLat) * Math.pow(Math.sin(deltaLong / 2), 2);
       const angluarDistance = 2 * Math.asin(Math.sqrt(sinD));
 
-      const distance = angluarDistance * radius;
+      const distance = angluarDistance * RADIUS;
 
       const response = distance < 30 ? true : false;
 
@@ -108,30 +111,19 @@ class LocationService {
     return residentialInfo;
   }
 
-  async getAutoCompleteResults(term: string, latitude: number, location: number): Promise<GetAutocompleteResponse> {
-    const resp = await Geolocation.autocomplete(term, latitude, location);
-    return resp.results.map(({ id, score, address, position, type }) => ({
-      id: id,
-      score: score,
-      address: {
-        address_line_1: type === 'Geography' ? '' : createAddressString(address.streetNumber, address.municipalitySubdivision),
-        address_line_2: createAddressString(address.streetName, address.municipality),
-        city: address.countrySecondarySubdivision,
-        state: address.countrySubdivision,
-        country: address.country,
-        street: address.streetNumber,
-        pincode: address.postalCode,
-        type: '',
-      },
-      addressString: address.freeformAddress,
-      position: {
-        latitude: position.lat,
-        longitude: position.lon,
-      },
-    }));
+  public async getAutoCompleteResults(partialAdress: string): Promise<GetAutocompleteResponse> {
+    const resp = await Geolocation.autocomplete(partialAdress);
+    return resp;
+  }
+
+  public async getPlaceDetails(placeId: string): Promise<PlaceResponse> {
+    try {
+      const resp = await Geolocation.getPlaceDetails(placeId);
+      return resp;
+    } catch (e) {
+      throw new HttpException(ErrorEnum.PLACE_DETAILS_ERROR);
+    }
   }
 }
-
-export const radius = 6371;
 
 export const locationService = new LocationService();

@@ -30,6 +30,7 @@ export enum ErrorEnum {
   DOCUMENT_EXPIRED,
   DOCUMENT_ALREADY_UPLOADED,
   INVALID_COORDINATES,
+  PLACE_DETAILS_ERROR,
   PEER_NOT_FOUND,
 
   //identity verification
@@ -65,7 +66,6 @@ export enum ErrorEnum {
   LOCATION_ALREADY_CAPTURED,
 
   DATA_NOT_ADDED,
-
   //Feedback
   FEEDBACK_ALREADY_ADDED,
   FEEDBACK_ERROR,
@@ -345,6 +345,11 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
   [ErrorEnum.FEEDBACK_ERROR]: {
     code: 'GR0061',
     message: 'Feedback error',
+    status: 400,
+  },
+  [ErrorEnum.PLACE_DETAILS_ERROR]: {
+    code: 'GR0062',
+    message: 'Place details error',
     status: 400,
   },
 };

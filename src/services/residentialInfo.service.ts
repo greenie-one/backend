@@ -45,10 +45,11 @@ class ResidentialInfoService {
     }
 
     const address = `${residentialInfoData.address_line_1}, ${residentialInfoData.address_line_2}, ${residentialInfoData.landmark}, ${residentialInfoData.city}, ${residentialInfoData.state}, ${residentialInfoData.country}`;
-    const location = await locationService.createLocation(userId, address);
+    const location = await locationService.createLocationFromAddress(userId, address);
     const data: ResidentialInfo = {
       ...residentialInfoData,
       user: userId,
+      formattedAddress: location.formattedAddress,
       location: location.id,
     };
     const residentialInfo = await ResidentialInfoModel.create(data);
