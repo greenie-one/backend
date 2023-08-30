@@ -29,7 +29,7 @@ export default class LocationController {
   }
 
   @Get('/place')
-  public async  getPlaceDeatils(@UserDetails() _:TokenClaims, @Query('placeId') placeId: string){
+  public async getPlaceDeatils(@UserDetails() _: TokenClaims, @Query('placeId') placeId: string) {
     return locationService.getPlaceDetails(placeId);
   }
 }

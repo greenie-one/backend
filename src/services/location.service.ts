@@ -5,10 +5,11 @@ import { HttpException } from '@/exceptions/httpException';
 import { Location, LocationModel } from '@/models/location.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeerModel } from '@/models/residentialPeer.model';
-import { Geolocation } from '@/remote/location/location';
-import { createAddressString } from '@/utils/location';
-import { residentialPeerService } from './residentialPeer.service';
 import { PlaceResponse } from '@/remote/dtos/autocomplete.response';
+import { Geolocation } from '@/remote/location/location';
+import { residentialPeerService } from './residentialPeer.service';
+
+export const RADIUS = 6371;
 
 class LocationService {
   public async createLocation(userId: string, address: string): Promise<GetLocationResponse> {
@@ -52,7 +53,7 @@ class LocationService {
       const sinD = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(ipLat) * Math.cos(gpsLat) * Math.pow(Math.sin(deltaLong / 2), 2);
       const angluarDistance = 2 * Math.asin(Math.sqrt(sinD));
 
-      const distance = angluarDistance * radius;
+      const distance = angluarDistance * RADIUS;
 
       const response = distance < 30 ? true : false;
 
@@ -115,12 +116,13 @@ class LocationService {
   }
 
   public async getPlaceDetails(placeId: string): Promise<PlaceResponse> {
-    const resp = await Geolocation.getPlaceDetails(placeId);
-    return resp;
+    try {
+      const resp = await Geolocation.getPlaceDetails(placeId);
+      return resp;
+    } catch (e) {
+      throw new HttpException(ErrorEnum.PLACE_DETAILS_ERROR);
+    }
   }
-
 }
-
-export const radius = 6371;
 
 export const locationService = new LocationService();

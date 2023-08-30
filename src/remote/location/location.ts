@@ -1,16 +1,12 @@
 import { env } from '@/config';
 import { AutocompleteResponse, PlaceResponse } from '../dtos/autocomplete.response';
-import { LocationResponse } from '../dtos/geolocation.response';
 import { HttpClient } from '../generic/httpClient';
 
 export class Geolocation {
-  static async getLocation(address: string): Promise<LocationResponse> {
+  static async getLocation(address: string): Promise<PlaceResponse> {
     return HttpClient.callApi({
-      url: `${env('REMOTE_BASE_URL')}/location/geolocation`,
-      method: 'POST',
-      body: {
-        address,
-      },
+      url: `${env('REMOTE_BASE_URL')}/location/place?address=${address}`,
+      method: 'GET',
     });
   }
 
@@ -22,7 +18,7 @@ export class Geolocation {
     });
   }
 
-  static async getPlaceDetails(placeId: string): Promise<PlaceResponse>{
+  static async getPlaceDetails(placeId: string): Promise<PlaceResponse> {
     const url = `${env('REMOTE_BASE_URL')}/location/place?placeId=${placeId}`
     return HttpClient.callApi({
       url,
