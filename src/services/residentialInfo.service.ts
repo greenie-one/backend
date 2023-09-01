@@ -4,10 +4,11 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ResidentialInfo, ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { locationService } from './location.service';
+import { Location } from '@/models/location.model';
 
 class ResidentialInfoService {
   public async getUserResidentialInfo(userId: string): Promise<GetResidentialInfoResponse> {
-    const residentialInfos = await ResidentialInfoModel.find({ user: userId });
+    const residentialInfos = await ResidentialInfoModel.find({ user: userId }).populate("location");
     if (!residentialInfos) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
@@ -26,6 +27,7 @@ class ResidentialInfoService {
         start_date: residentialInfo.start_date,
         end_date: residentialInfo.end_date,
         addressType: residentialInfo.addressType,
+        location: residentialInfo.location as object,
         isVerified: residentialInfo.isVerified,
         createdAt: residentialInfo.createdAt,
         updatedAt: residentialInfo.updatedAt,
@@ -45,10 +47,11 @@ class ResidentialInfoService {
     }
 
     const address = `${residentialInfoData.address_line_1}, ${residentialInfoData.address_line_2}, ${residentialInfoData.landmark}, ${residentialInfoData.city}, ${residentialInfoData.state}, ${residentialInfoData.country}`;
-    const location = await locationService.createLocation(userId, address);
+    const location = await locationService.createLocationFromAddress(userId, address);
     const data: ResidentialInfo = {
       ...residentialInfoData,
       user: userId,
+      formattedAddress: location.formattedAddress,
       location: location.id,
     };
     const residentialInfo = await ResidentialInfoModel.create(data);
