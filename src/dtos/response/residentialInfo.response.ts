@@ -14,6 +14,7 @@ export interface ResidentialInfoResponse {
   country: string;
   start_date: Date;
   end_date: Date;
+  location: object;
   addressType: string;
   isVerified: boolean;
   createdAt:Date,

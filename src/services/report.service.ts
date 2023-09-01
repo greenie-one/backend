@@ -80,7 +80,7 @@ class ReportService {
   }
 
   public async getResidentialDetails(userId: string) {
-    const residentialInfos = await ResidentialInfoModel.find({ user: userId });
+    const residentialInfos = await ResidentialInfoModel.find({ user: userId }).populate("capturedLocation").populate("location");
     if (!residentialInfos) {
       throw new HttpException(ErrorEnum.RESIDENTIAL_INFO_NOT_FOUND);
     }
@@ -100,8 +100,8 @@ class ReportService {
         end_date: residentialInfo.end_date,
         addressType: residentialInfo.addressType,
         isVerified: residentialInfo.isVerified,
-        capturedLocation: residentialInfo.capturedLocation ? await LocationModel.findById(residentialInfo.capturedLocation) : {},
-        location: residentialInfo.location ? await LocationModel.findById(residentialInfo.location) : {},
+        capturedLocation: residentialInfo.capturedLocation as object,
+        location: residentialInfo.location as object,
         createdAt: residentialInfo.createdAt,
         updatedAt: residentialInfo.updatedAt,
       });
