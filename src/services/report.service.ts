@@ -4,7 +4,6 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel } from '@/models/document.model';
 import { IDModel } from '@/models/id.model';
-import { LocationModel } from '@/models/location.model';
 import { ProfileModel } from '@/models/profile.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { SkillModel, Skills } from '@/models/skills.model';
@@ -25,11 +24,12 @@ class ReportService {
     if (!profile) throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
 
     const res = {
-      firstName: profile ? profile.firstName : '',
-      lastName: profile ? profile.lastName : '',
-      greenieId: profile ? profile.greenie_id : '',
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      greenieId: profile.greenie_id,
       email: user.email,
       mobileNumber: user.mobileNumber,
+      profilePic: profile.profilePic,
     };
 
     return res;
