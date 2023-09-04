@@ -1,3 +1,4 @@
+import { TokenClaims } from '@/dtos/request/auth.dto';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { validateRoute } from '@/utils/validation';
@@ -109,7 +110,12 @@ export function registerControllers(fastify: FastifyInstance, controllers: Contr
 
           if (hasUserDetails) {
             try {
-              args[hasUserDetails.index] = JSON.parse(req.headers['x-user-details'].toString());
+              const claims: TokenClaims = JSON.parse(req.headers['x-user-details'].toString());
+              args[hasUserDetails.index] = claims;
+              const roles = hasUserDetails.roles;
+              if (roles && roles.length > 0 && !roles.some((role) => claims.roles.includes(role))) {
+                throw new HttpException(ErrorEnum.UNAUTHORIZED_ROLE);
+              }
             } catch (error) {
               if (error instanceof SyntaxError) {
                 throw new HttpException(ErrorEnum.USER_DETAILS_NOT_FOUND, error.message);
