@@ -12,6 +12,7 @@ import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { DLResult } from '@/remote/dtos/driving.response';
 import { PanResult } from '@/remote/dtos/pan.response';
+import { blobService } from './blobStorage.service';
 import { idsService } from './ids.service';
 import { residentialPeerService } from './residentialPeer.service';
 import { workExperienceService } from './workExperience.service';
@@ -38,17 +39,22 @@ class ReportService {
   public async getWorkExperienceDetails(userId: string) {
     const peerRes = [];
     const workPeer = await WorkPeerModel.find({ user: userId });
-
     const workExp = await WorkExperienceModel.find({ user: userId });
 
     const docs: Document[] = [];
     const skills: Skills[] = [];
+
     for (const work of workExp) {
       const doc_res: Document[] = await DocumentModel.find({ workExperience: work._id.toString() });
       docs.push(...doc_res);
       const skill_res: Skills[] = await SkillModel.find({ workExperience: work._id.toString() });
       skills.push(...skill_res);
     }
+
+    docs.map(async (document) => {
+      document
+        .privateUrl = `${document.privateUrl}?token=${blobService.generateDownloadToken(document.privateUrl)}`;
+    });
 
     for (const peer of workPeer) {
       peerRes.push({
