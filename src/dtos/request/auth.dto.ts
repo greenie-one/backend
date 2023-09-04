@@ -1,39 +1,10 @@
-import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
-
-export enum UserRoles {
-  DEFAULT = 'default',
-  INTERNAL = 'internal',
-}
-
-export class TokenClaims {
-  @IsEmail()
-  @IsOptional()
-  email: string;
-
-  @IsUUID(4)
-  session_id: string;
-
-  @IsString()
-  @IsOptional()
-  firstName: string;
-
-  @IsString()
-  @IsOptional()
-  lastName: string;
-
-  @IsEnum(UserRoles, { each: true })
-  roles: UserRoles[];
-
-  @IsOptional()
-  iat?: number;
-
-  @IsOptional()
-  iss?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  is_refresh?: boolean;
-
-  @IsString()
+export type TokenClaims = {
+  email: string | null;
   sub: string;
-}
+  iss: string;
+  session_id: string;
+  roles: string[];
+  iat: number;
+  is_refresh: boolean | null;
+  exp: number;
+};
