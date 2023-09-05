@@ -26,6 +26,11 @@ export default class ResidentialPeerController {
     return residentialPeerService.getPeer(peerUUID, reply);
   }
 
+  @Get('/:id/resend')
+  async resendLinkToPeers(@UserDetails() userDetails: TokenClaims, @Params('id') peerId: string) {
+    return residentialPeerService.resendLinksToPeers(userDetails.sub, peerId);
+  }
+
   @Get('/me')
   async getUserPeers(@UserDetails() userDetails: TokenClaims): Promise<GetUserPeersResponse[]> {
     return residentialPeerService.getUserPeers(userDetails.sub);
@@ -43,5 +48,5 @@ export default class ResidentialPeerController {
   async deleteResidentialPeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string) {
     return residentialPeerService.deletePeer(userDetails.sub, peerId);
   }
-  
+
 }
