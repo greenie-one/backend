@@ -1,4 +1,3 @@
-import { UserRoles } from '@/dtos/request/auth.dto';
 import { getModelForClass, prop } from '@typegoose/typegoose';
 
 export class User {
@@ -13,8 +12,8 @@ export class User {
   @prop({ type: String, required: false })
   public password?: string;
 
-  @prop({ type: String, enum: UserRoles, required: true, default: [UserRoles.DEFAULT] })
-  public roles!: UserRoles[];
+  @prop({ type: String })
+  public roles!: string[];
 }
 
 export const UserModel = getModelForClass(User);

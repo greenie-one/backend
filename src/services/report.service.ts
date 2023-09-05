@@ -4,7 +4,6 @@ import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel } from '@/models/document.model';
 import { IDModel } from '@/models/id.model';
-import { LocationModel } from '@/models/location.model';
 import { ProfileModel } from '@/models/profile.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { SkillModel, Skills } from '@/models/skills.model';
@@ -13,6 +12,7 @@ import { WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { DLResult } from '@/remote/dtos/driving.response';
 import { PanResult } from '@/remote/dtos/pan.response';
+import { blobService } from './blobStorage.service';
 import { idsService } from './ids.service';
 import { residentialPeerService } from './residentialPeer.service';
 import { workExperienceService } from './workExperience.service';
@@ -25,11 +25,12 @@ class ReportService {
     if (!profile) throw new HttpException(ErrorEnum.PROFILE_NOT_FOUND);
 
     const res = {
-      firstName: profile ? profile.firstName : '',
-      lastName: profile ? profile.lastName : '',
-      greenieId: profile ? profile.greenie_id : '',
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      greenieId: profile.greenie_id,
       email: user.email,
       mobileNumber: user.mobileNumber,
+      profilePic: profile.profilePic,
     };
 
     return res;
@@ -38,17 +39,22 @@ class ReportService {
   public async getWorkExperienceDetails(userId: string) {
     const peerRes = [];
     const workPeer = await WorkPeerModel.find({ user: userId });
-
     const workExp = await WorkExperienceModel.find({ user: userId });
 
     const docs: Document[] = [];
     const skills: Skills[] = [];
+
     for (const work of workExp) {
       const doc_res: Document[] = await DocumentModel.find({ workExperience: work._id.toString() });
       docs.push(...doc_res);
       const skill_res: Skills[] = await SkillModel.find({ workExperience: work._id.toString() });
       skills.push(...skill_res);
     }
+
+    docs.map(async (document) => {
+      document
+        .privateUrl = `${document.privateUrl}?token=${blobService.generateDownloadToken(document.privateUrl)}`;
+    });
 
     for (const peer of workPeer) {
       peerRes.push({
