@@ -26,9 +26,9 @@ export default class ResidentialPeerController {
     return residentialPeerService.getPeer(peerUUID, reply);
   }
 
-  @Get('/:peerUUID/resend')
-  async resendLinkToPeers(@UserDetails() userDetails: TokenClaims, @Params('peerUUID') peerUUID: string){
-    return residentialPeerService.resendLinksToPeers(userDetails.sub, peerUUID);
+  @Get('/:peerId/resend')
+  async resendLinkToPeers(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string){
+    return residentialPeerService.resendLinksToPeers(userDetails.sub, peerId);
   }
 
   @Get('/me')
