@@ -9,7 +9,7 @@ import { Body } from '@/utils/decorators/request';
 @Controller('/googleSheets')
 export default class GoogleSheetsController {
   @Post('/addData')
-  async addData(@UserDetails() userDetails: TokenClaims, @Body() data: addUserInfoDTO) {
-    return googleSheetsService.addData(userDetails.email ,data);
+  async addData(@UserDetails(["hr"]) userDetails: TokenClaims, @Body() data: addUserInfoDTO) {
+    return googleSheetsService.addData(userDetails.email, data);
   }
 }
