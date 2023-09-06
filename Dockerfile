@@ -1,4 +1,4 @@
-FROM node:18.17-alpine3.17 as build
+FROM node:alpine3.17 as build
 
 # Copy Dir
 COPY . ./app
@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Install Node Package
 ENV APP_ENV 'production'
-RUN yarn install
+RUN yarn install --immutable
 RUN yarn build
 
 FROM node:alpine3.17
