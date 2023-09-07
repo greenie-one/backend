@@ -17,6 +17,7 @@ import WorkExPeerController from './controllers/workExPeer.controller';
 import WorkExperienceController from './controllers/workExperience.controller';
 import GoogleSheetsController from './controllers/googleSheets.controller';
 import FeedbackController from './controllers/feedback.controller';
+import shortUrlController from './controllers/shortUrl.controller';
 
 process.on('uncaughtException', (e) => {
   console.error(e);
@@ -45,7 +46,8 @@ const controllers = [
   ResidentialPeerController,
   GoogleSheetsController,
   ReportController,
-  FeedbackController
+  FeedbackController,
+  shortUrlController,
 ];
 
 const app = new App(controllers);
