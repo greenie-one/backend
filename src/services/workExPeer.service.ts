@@ -20,6 +20,7 @@ import { checkFields, copyDataFrom, createClassInstanceWithFields } from '@/util
 import { env } from '@config';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
+import { State } from '../dtos/request/workExPeer.dto';
 import { blobService } from './blobStorage.service';
 import { otpService } from './otp.service';
 
@@ -261,6 +262,9 @@ class WorkExPeerService {
 
     const workExperience = await WorkExperienceModel.findById(peerData.ref);
 
+    const isWorking = workExperience.dateOfLeaving ? true : false;
+
+
     let obj: SelectedFields;
     try {
       checkFields(peerData.selectedFields, workExperience.toObject());
@@ -272,7 +276,7 @@ class WorkExPeerService {
     // Type specific fields
     let otherQuestions: HRQuestions;
     if (peerData.verificationBy === WorkVerificationBy.HR) {
-      otherQuestions = HRQuestions.defaultFields();
+      otherQuestions = HRQuestions.defaultFields(isWorking);
       obj.salary = Status.defaultStatus();
     }
 
@@ -283,6 +287,7 @@ class WorkExPeerService {
       skills: skillsArr,
       documents: documentsArr,
       user: userId,
+      isReal: Status.defaultStatus()
     };
     const peer = await WorkPeerModel.create(peerDataObj);
     await this.sendLinksToPeers(peer._id.toString(), peer);
@@ -292,9 +297,19 @@ class WorkExPeerService {
   public async updatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
+    
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
+    if (updatedData.isReal.state === State.REJECTED) {
+      peer.isReal = updatedData.isReal;
+      peer.isVerificationCompleted = true;
+      peer.save();
+
+      return { success: true, message: 'Updated Successfully' };
+    }
+    
     if (!peer.emailVerified) {
       throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
     } else if (!peer.phoneVerified) {

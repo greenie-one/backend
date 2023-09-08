@@ -12,7 +12,7 @@ import {
   ValidateNested,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  validate,
+  validate
 } from 'class-validator';
 
 export enum WorkVerificationBy {
@@ -105,6 +105,8 @@ export class SelectedFieldsDTO {
 
 export class AllQuestionsDTO {
   // From Work Ex Mandatory Questions
+
+
   @IsEnum(Rating)
   @IsNotEmpty()
   public attitudeRating!:
@@ -230,8 +232,13 @@ export class UpdatePeerWorkVerificationDto {
   public selectedFields?: SelectedFieldsDTO;
 
   @ValidateNested()
-  @Type(() => AllQuestionsDTO)
+  @Type(() => StatusField)
   @IsNotEmpty()
+  public isReal!: StatusField;
+
+  @ValidateNested()
+  @Type(() => AllQuestionsDTO)
+  @IsOptional()
   public allQuestions!: AllQuestionsDTO;
 
   @Validate(IsValidNestedQuestion)
@@ -242,11 +249,13 @@ export class UpdatePeerWorkVerificationDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateSkillsVerification)
   @IsNotEmpty()
+  @IsOptional()
   public skills!: UpdateSkillsVerification[];
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateDocumentsVerification)
   @IsNotEmpty()
+  @IsOptional()
   public documents!: UpdateDocumentsVerification[];
 }
