@@ -26,6 +26,11 @@ export default class ResidentialPeerController {
     return residentialPeerService.getPeer(peerUUID, reply);
   }
 
+  @Get('/:id/resend')
+  async resendLinkToPeers(@UserDetails() userDetails: TokenClaims, @Params('id') peerId: string) {
+    return residentialPeerService.resendLinksToPeers(userDetails.sub, peerId);
+  }
+
   @Get('/me')
   async getUserPeers(@UserDetails() userDetails: TokenClaims): Promise<GetUserPeersResponse[]> {
     return residentialPeerService.getUserPeers(userDetails.sub);
@@ -44,8 +49,4 @@ export default class ResidentialPeerController {
     return residentialPeerService.deletePeer(userDetails.sub, peerId);
   }
 
-  @Post('/isReal/:peerUUID')
-  async isReal(@Params('peerUUID') peerUUID: string, @Body() data: IdentityValidationDTO) {
-    return residentialPeerService.verifyIdentity(data, peerUUID);
-  }
 }
