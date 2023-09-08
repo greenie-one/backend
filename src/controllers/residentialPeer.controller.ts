@@ -1,6 +1,6 @@
 import { TokenClaims } from '@/dtos/request/auth.dto';
 import { VerifyOtpDTO } from '@/dtos/request/otp.dto';
-import { CreateResidentialPeerDto, IdentityValidationDTO } from '@/dtos/request/residentialPeer.dto';
+import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
 import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse } from '@/dtos/response/residentialPeer.response';
 import { residentialPeerService } from '@/services/residentialPeer.service';
 import { UserDetails } from '@/utils/decorators/auth';
@@ -48,5 +48,4 @@ export default class ResidentialPeerController {
   async deleteResidentialPeer(@UserDetails() userDetails: TokenClaims, @Params('peerId') peerId: string) {
     return residentialPeerService.deletePeer(userDetails.sub, peerId);
   }
-
 }
