@@ -297,9 +297,19 @@ class WorkExPeerService {
   public async updatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
+    
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
+    if (updatedData.isReal.state === State.REJECTED) {
+      peer.isReal = updatedData.isReal;
+      peer.isVerificationCompleted = true;
+      peer.save();
+
+      return { success: true, message: 'Updated Successfully' };
+    }
+    
     if (!peer.emailVerified) {
       throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
     } else if (!peer.phoneVerified) {
@@ -307,13 +317,6 @@ class WorkExPeerService {
     }
     if (peer.isVerificationCompleted) {
       throw new HttpException(ErrorEnum.PEER_ALREADY_VERIFIED);
-    }
-    if (updatedData.isReal.state === State.REJECTED) {
-      peer.isReal = updatedData.isReal;
-      peer.isVerificationCompleted = true;
-      peer.save();
-
-      return { success: true, message: 'Updated Successfully' };
     }
 
     if (peer.verificationBy === WorkVerificationBy.HR && !peer.otherQuestions) {
