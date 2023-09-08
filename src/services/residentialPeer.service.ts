@@ -12,6 +12,7 @@ import { verification } from '@/remote/peer/verification';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
 import { otpService } from './otp.service';
+import { UrlShortener } from '@/remote/urlService/urlShortener';
 
 class ResidentialPeerService {
   public async peerUUIDtoPeerId(uuid: string) {
@@ -28,10 +29,10 @@ class ResidentialPeerService {
     const base_url = `${env('FRONTEND_URL')}/location/verify`;
 
     const mobileUUID = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
-    const mobileLink = `${base_url}/${mobileUUID}`;
+    const mobileLink = (await UrlShortener.shortenUrl(`${base_url}/${mobileUUID}`)).shortenUrl;
 
     const emailUUID = await customAlphabet('0123476789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
-    const emailLink = `${base_url}/${emailUUID}`;
+    const emailLink = (await UrlShortener.shortenUrl(`${base_url}/${emailUUID}`)).shortenUrl;
 
     await redisClient.setEx(mobileUUID, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'mobile' }));
     await redisClient.setEx(emailUUID, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'email' }));
