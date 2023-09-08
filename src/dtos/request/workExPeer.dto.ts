@@ -2,7 +2,6 @@ import { IsObjectId, sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type, plainToInstance } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -13,7 +12,7 @@ import {
   ValidateNested,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  validate,
+  validate
 } from 'class-validator';
 
 export enum WorkVerificationBy {
@@ -232,8 +231,10 @@ export class UpdatePeerWorkVerificationDto {
   @IsOptional()
   public selectedFields?: SelectedFieldsDTO;
 
+  @ValidateNested()
   @Type(() => StatusField)
-  public isReal: StatusField;
+  @IsNotEmpty()
+  public isReal!: StatusField;
 
   @ValidateNested()
   @Type(() => AllQuestionsDTO)
