@@ -14,7 +14,6 @@ import { UrlShortener } from '@/remote/urlService/urlShortener';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
 import { otpService } from './otp.service';
-import { UrlShortener } from '@/remote/urlService/urlShortener';
 
 class ResidentialPeerService {
   public async peerUUIDtoPeerId(uuid: string) {
