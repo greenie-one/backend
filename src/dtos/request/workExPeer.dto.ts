@@ -2,6 +2,7 @@ import { IsObjectId, sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type, plainToInstance } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -105,6 +106,8 @@ export class SelectedFieldsDTO {
 
 export class AllQuestionsDTO {
   // From Work Ex Mandatory Questions
+
+
   @IsEnum(Rating)
   @IsNotEmpty()
   public attitudeRating!:
@@ -229,9 +232,12 @@ export class UpdatePeerWorkVerificationDto {
   @IsOptional()
   public selectedFields?: SelectedFieldsDTO;
 
+  @Type(() => StatusField)
+  public isReal: StatusField;
+
   @ValidateNested()
   @Type(() => AllQuestionsDTO)
-  @IsNotEmpty()
+  @IsOptional()
   public allQuestions!: AllQuestionsDTO;
 
   @Validate(IsValidNestedQuestion)
@@ -242,11 +248,13 @@ export class UpdatePeerWorkVerificationDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateSkillsVerification)
   @IsNotEmpty()
+  @IsOptional()
   public skills!: UpdateSkillsVerification[];
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateDocumentsVerification)
   @IsNotEmpty()
+  @IsOptional()
   public documents!: UpdateDocumentsVerification[];
 }

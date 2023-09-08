@@ -1,18 +1,19 @@
 import { env } from '@/config';
 import { OtpType } from '@/dtos/request/otp.dto';
-import { CreateResidentialPeerDto } from '@/dtos/request/residentialPeer.dto';
+import { CreateResidentialPeerDto, IdentityValidationDTO } from '@/dtos/request/residentialPeer.dto';
 import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse } from '@/dtos/response/residentialPeer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { ProfileModel } from '@/models/profile.model';
 import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeer, ResidentialPeerModel } from '@/models/residentialPeer.model';
+import { Status } from '@/models/workExPeer.model';
 import { redisClient } from '@/redisClient';
 import { verification } from '@/remote/peer/verification';
+import { UrlShortener } from '@/remote/urlService/urlShortener';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
 import { otpService } from './otp.service';
-import { UrlShortener } from '@/remote/urlService/urlShortener';
 
 class ResidentialPeerService {
   public async peerUUIDtoPeerId(uuid: string) {
@@ -188,11 +189,23 @@ class ResidentialPeerService {
     const data: ResidentialPeer = {
       ...peer,
       user: userId,
+      isReal: Status.defaultStatus(),
     };
     const peerModel = await ResidentialPeerModel.create(data);
     await this.sendLinksToPeers(peerModel._id.toString(), peerModel);
     const copyLink = await this.getCopyLink(peerModel._id.toString());
     return { link: copyLink };
+  }
+
+  public async verifyIdentity(data: IdentityValidationDTO, peerUUID: string) {
+    const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
+    const peer = await ResidentialPeerModel.findById(peerId);
+    if (!peer) {
+      throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
+    }
+    peer.isReal = data.isReal;
+    await peer.save();
+    return { success: true, message: 'Peer verified' };
   }
 
   public async deletePeer(userId: string, peerId: string) {
