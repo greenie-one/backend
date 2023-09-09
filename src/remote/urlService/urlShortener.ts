@@ -5,7 +5,7 @@ import { ShortenUrlResponse } from '../dtos/shortenUrl.response';
 export class UrlShortener {
   static async shortenUrl(url: string): Promise<ShortenUrlResponse> {
     return HttpClient.callApi({
-      url: `${env('REMOTE_BASE_URL')}/url/shorten`,
+      url: `${env('REMOTE_BASE_URL')}/urlShortener/shorten`,
       method: 'POST',
       body: { url },
     });
