@@ -1,10 +1,9 @@
 import { IsObjectId, sanitizeMobileNumber } from '@/utils/validation';
 import { Transform, Type } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsString, Validate } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, Validate, ValidateNested } from 'class-validator';
 import { StatusField } from './workExPeer.dto';
 
 export class CreateResidentialPeerDto {
-  
   @IsString()
   @IsNotEmpty()
   public name!: string;
@@ -30,6 +29,8 @@ export class CreateResidentialPeerDto {
 }
 
 export class IdentityValidationDTO{
+  @ValidateNested()
   @Type(() => StatusField)
-  public isReal: StatusField;
+  @IsNotEmpty()
+  public isReal!: StatusField;
 }
