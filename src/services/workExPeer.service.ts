@@ -354,6 +354,7 @@ class WorkExPeerService {
       console.error(error);
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
+    peer.isReal = updatedData.isReal;
     peer.allQuestions = updatedData.allQuestions;
     peer.otherQuestions = updatedData.otherQuestions;
     peer.isVerificationCompleted = true;
