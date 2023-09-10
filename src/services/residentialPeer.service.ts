@@ -174,6 +174,7 @@ class ResidentialPeerService {
         email: peer.email,
         phone: peer.phone,
         verificationBy: peer.verificationBy,
+        isReal: peer.isReal,
         isVerificationCompleted: peer.isVerificationCompleted,
         createdAt: peer.createdAt,
         updatedAt: peer.updatedAt,
@@ -200,11 +201,16 @@ class ResidentialPeerService {
   public async verifyIdentity(data: IdentityValidationDTO, peerUUID: string) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
+    const residentialInfo = await ResidentialInfoModel.findById(peer.ref);
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     peer.isReal = data.isReal;
+    peer.isVerificationCompleted = true;
     await peer.save();
+
+    residentialInfo.isVerified = true;
+    await residentialInfo.save();
     return { success: true, message: 'Peer verified' };
   }
 

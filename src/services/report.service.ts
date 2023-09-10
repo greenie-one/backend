@@ -66,6 +66,7 @@ class ReportService {
         phoneVerified: peer.phoneVerified,
         verificationBy: peer.verificationBy,
         selectedFields: peer.selectedFields,
+        isReal: peer.isReal,
         allQuestions: peer.allQuestions,
         otherQuestions: peer.otherQuestions,
         skills: peer.skills,
