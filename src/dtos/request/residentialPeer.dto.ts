@@ -4,7 +4,6 @@ import { IsEmail, IsNotEmpty, IsString, Validate, ValidateNested } from 'class-v
 import { StatusField } from './workExPeer.dto';
 
 export class CreateResidentialPeerDto {
-
   @IsString()
   @IsNotEmpty()
   public name!: string;
@@ -29,7 +28,7 @@ export class CreateResidentialPeerDto {
   public verificationBy!: string;
 }
 
-export class IdentityValidationDTO {
+export class IdentityValidationDTO{
   @ValidateNested()
   @Type(() => StatusField)
   @IsNotEmpty()
