@@ -98,7 +98,7 @@ export class AllQuestions {
     defaultFields.peerPost = Status.defaultStatus();
     defaultFields.attitudeRating = Rating.NOT_GIVEN;
     defaultFields.designation = Status.defaultStatus();
-    defaultFields.review = 'No Review';
+    defaultFields.review = 'No Remarks';
     return defaultFields;
   }
 }

@@ -297,7 +297,7 @@ class WorkExPeerService {
   public async updatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
-    
+
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
@@ -307,9 +307,11 @@ class WorkExPeerService {
       peer.isVerificationCompleted = true;
       peer.save();
 
+      await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } }, { new: true });
+      await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
       return { success: true, message: 'Updated Successfully' };
     }
-    
+
     if (!peer.emailVerified) {
       throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
     } else if (!peer.phoneVerified) {
@@ -352,6 +354,7 @@ class WorkExPeerService {
       console.error(error);
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
+    peer.isReal = updatedData.isReal;
     peer.allQuestions = updatedData.allQuestions;
     peer.otherQuestions = updatedData.otherQuestions;
     peer.isVerificationCompleted = true;

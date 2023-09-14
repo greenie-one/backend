@@ -7,7 +7,7 @@ import { Query } from '@/utils/decorators/request';
 export default class ReportController {
   // ADD "@UserDetails(["hr", "admin"]) _: TokenClaims" if role based auth is required
   @Get('')
-  async createReport(@Query('email', true) email?: string, @Query('phone', true) phone?: string) {
-    return reportService.getAllDetails(email, phone);
+  async createReport(@Query('email', true) email?: string, @Query('phone', true) phone?: string, @Query('grnID', true) grnID?: string) {
+    return reportService.getAllDetails(email, phone, grnID);
   }
 }
