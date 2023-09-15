@@ -1,3 +1,4 @@
+import { Status } from '@/models/workExPeer.model';
 import { WorkVerificationBy } from '../request/workExPeer.dto';
 import { GetDocumentResponse } from './document.response';
 import { SkillResponse } from './skills.response';
@@ -16,6 +17,7 @@ export interface GetUserWorkPeerResponse {
   workExperience: string;
   peerPost: string;
   isVerificationCompleted: boolean;
+  isReal: Status;
   createdAt: string;
   updatedAt: string;
 }

@@ -157,32 +157,6 @@ class ReportService {
     return idReportResponse;
   }
 
-  public async getVerificationStatus(peers : WorkPeerReportResponse[]){
-    let hasPending = false;
-    let hasAccepted = false;
-    let hasRejected = false;
-  
-    for (const peer of peers) {
-      if (peer.isReal.state === 'PENDING') {
-        hasPending = true;
-      } else if (peer.isReal.state === 'ACCEPTED') {
-        hasAccepted = true;
-      } else if (peer.isReal.state === 'REJECTED') {
-        hasRejected = true;
-      }
-    }
-  
-    if (hasPending) {
-      return 'PENDING';
-    } else if (hasAccepted) {
-      return 'NOT VERIFIED';
-    } else if (hasRejected) {
-      return 'PARTIALLY VERIFIED';
-    } else {
-      return 'UNKNOWN';
-    }
-  }
-
   public async getAllDetails(email?: string, phone?: string, grnID?: string) {
     if (!email && !phone && !grnID) throw new HttpException(ErrorEnum.VALIDATION_ERROR, 'Query Param either email, phone or GreenieID is required');
     
@@ -203,14 +177,12 @@ class ReportService {
     const workExperienceDetails = await this.getWorkExperienceDetails(userID);
     const ResidentialDetails = await this.getResidentialDetails(userID);
     const idDetails =  await this.getIdDetails(userID);
-    const workExpverificationStatus = await this.getVerificationStatus(workExperienceDetails.peers)
 
     return {
       accountDetails : accountDetails,
       workExperienceDetails : workExperienceDetails,
       ResidentialDetails : ResidentialDetails,
-      idDetails : idDetails,
-      workExpverificationStatus : workExpverificationStatus
+      idDetails : idDetails
     };
   }
 }
