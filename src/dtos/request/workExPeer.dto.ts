@@ -135,13 +135,19 @@ export class HRQuestionsDTO {
   // From Work Ex HR Questions
   @ValidateNested()
   @Type(() => StatusField)
-  @IsNotEmpty()
-  public exitProcedure!: StatusField;
+  @IsOptional()
+  public exitProcedure?: StatusField;
 
   @ValidateNested()
   @Type(() => StatusField)
-  @IsNotEmpty()
-  public eligibleForRehire!: StatusField;
+  @IsOptional()
+  public eligibleForRehire?: StatusField;
+
+
+  @ValidateNested()
+  @Type(() => StatusField)
+  @IsOptional()
+  public onNotice?: StatusField;
 }
 
 export class CreateWorkPeerDto {
