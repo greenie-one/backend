@@ -1,5 +1,5 @@
 import { IDTypeEnum } from '@/dtos/request/ids.dto';
-import { IdReportResonse, ResidentialReportResponse, ResidentialResponse, WorkExpReportResponse } from '@/dtos/response/report.response';
+import { IdReportResonse, ResidentialReportResponse, ResidentialResponse, WorkExpReportResponse, WorkPeerReportResponse } from '@/dtos/response/report.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel } from '@/models/document.model';
@@ -173,12 +173,16 @@ class ReportService {
       userID = profile.user.toString();
       
     }
+    const accountDetails = await this.getGreenieAccountDetails(userID);
+    const workExperienceDetails = await this.getWorkExperienceDetails(userID);
+    const ResidentialDetails = await this.getResidentialDetails(userID);
+    const idDetails =  await this.getIdDetails(userID);
 
     return {
-      accountDetails: await this.getGreenieAccountDetails(userID),
-      workExperienceDetails: await this.getWorkExperienceDetails(userID),
-      ResidentialDetails: await this.getResidentialDetails(userID),
-      idDetails: await this.getIdDetails(userID),
+      accountDetails : accountDetails,
+      workExperienceDetails : workExperienceDetails,
+      ResidentialDetails : ResidentialDetails,
+      idDetails : idDetails
     };
   }
 }

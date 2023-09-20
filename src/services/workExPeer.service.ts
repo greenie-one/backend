@@ -129,6 +129,7 @@ class WorkExPeerService {
         phone: peer.phone,
         workExperience: peer.ref.toString(),
         isVerificationCompleted: peer.isVerificationCompleted,
+        isReal: peer.isReal,
         peerPost: peer.verificationBy,
         createdAt: peer.createdAt.toISOString(),
         updatedAt: peer.updatedAt.toISOString(),
