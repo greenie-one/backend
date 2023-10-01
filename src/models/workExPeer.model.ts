@@ -80,6 +80,7 @@ export class SelectedFields {
 
 @modelOptions({ schemaOptions: { _id: false } })
 export class AllQuestions {
+
   @prop({ type: String, enum: Rating })
   public attitudeRating!: Rating;
 
@@ -97,7 +98,7 @@ export class AllQuestions {
     defaultFields.peerPost = Status.defaultStatus();
     defaultFields.attitudeRating = Rating.NOT_GIVEN;
     defaultFields.designation = Status.defaultStatus();
-    defaultFields.review = 'No Review';
+    defaultFields.review = 'No Remarks';
     return defaultFields;
   }
 }
@@ -105,15 +106,24 @@ export class AllQuestions {
 @modelOptions({ schemaOptions: { _id: false } })
 export class HRQuestions {
   @prop()
-  public exitProcedure!: Status;
+  public exitProcedure?: Status;
 
   @prop()
-  public eligibleForRehire!: Status;
+  public onNotice?: Status;
 
-  static defaultFields() {
+  @prop()
+  public eligibleForRehire?: Status;
+
+  static defaultFields(isWorking: boolean) {
     const defaultHRQuestionFields = new HRQuestions();
-    defaultHRQuestionFields.exitProcedure = Status.defaultStatus();
+    if (isWorking) {
+      defaultHRQuestionFields.exitProcedure = Status.defaultStatus();
+    }
+    else {
+      defaultHRQuestionFields.onNotice = Status.defaultStatus();
+    }
     defaultHRQuestionFields.eligibleForRehire = Status.defaultStatus();
+
     return defaultHRQuestionFields;
   }
 }
@@ -164,6 +174,9 @@ export class WorkPeer {
 
   @prop({ required: true })
   public phone!: string;
+
+  @prop()
+  public isReal: Status;
 
   @prop({ type: Boolean, default: false })
   public emailVerified?: boolean;

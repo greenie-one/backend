@@ -1,10 +1,14 @@
 import { Ref, getModelForClass, index, modelOptions, prop } from '@typegoose/typegoose';
 import { ResidentialInfo } from './residentialInfo.model';
 import { User } from './users.model';
+import { Status } from './workExPeer.model';
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 @index({ ref: 1 }, { unique: true })
 export class ResidentialPeer {
+  @prop()
+  public isReal: Status
+
   @prop({ required: true, ref: 'User', type: String })
   public user!: Ref<User, string>;
 

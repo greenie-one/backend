@@ -60,6 +60,8 @@ export enum ErrorEnum {
   PEER_ALREADY_EXISTS,
   PEER_ALREADY_VERIFIED,
   INCOMPLETE_VERIFICATION,
+  URL_NOT_FOUND,
+
 
   // Database
   DB_REF_VALIDATION_FAILED,
@@ -352,4 +354,9 @@ export const ErrorCodes: Record<ErrorEnum, ErrorCodes> = {
     message: 'Place details error',
     status: 400,
   },
+  [ErrorEnum.URL_NOT_FOUND]: {
+    code: 'GR0063',
+    message: 'URL not found',
+    status: 404,
+  }
 };

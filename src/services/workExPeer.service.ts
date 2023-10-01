@@ -15,10 +15,12 @@ import { DocumentVerification, HRQuestions, SelectedFields, SkillsVerification, 
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisClient } from '@/redisClient';
 import { verification } from '@/remote/peer/verification';
+import { UrlShortener } from '@/remote/urlService/urlShortener';
 import { checkFields, copyDataFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
+import { State } from '../dtos/request/workExPeer.dto';
 import { blobService } from './blobStorage.service';
 import { otpService } from './otp.service';
 
@@ -37,10 +39,10 @@ class WorkExPeerService {
     const base_url = `${env('FRONTEND_URL')}/verification/${peer.verificationBy}`;
 
     const mobileUUID = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
-    const mobileLink = `${base_url}/${mobileUUID}`;
+    const mobileLink = (await UrlShortener.shortenUrl(`${base_url}/${mobileUUID}`)).shortenUrl;
 
     const emailUUID = await customAlphabet('0123476789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 7)();
-    const emailLink = `${base_url}/${emailUUID}`;
+    const emailLink = (await UrlShortener.shortenUrl(`${base_url}/${emailUUID}`)).shortenUrl;
 
     await redisClient.setEx(mobileUUID, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'mobile' }));
     await redisClient.setEx(emailUUID, 60 * 60 * 72, JSON.stringify({ peerId: peerId, type: 'email' }));
@@ -127,6 +129,7 @@ class WorkExPeerService {
         phone: peer.phone,
         workExperience: peer.ref.toString(),
         isVerificationCompleted: peer.isVerificationCompleted,
+        isReal: peer.isReal,
         peerPost: peer.verificationBy,
         createdAt: peer.createdAt.toISOString(),
         updatedAt: peer.updatedAt.toISOString(),
@@ -260,6 +263,9 @@ class WorkExPeerService {
 
     const workExperience = await WorkExperienceModel.findById(peerData.ref);
 
+    const isWorking = workExperience.dateOfLeaving ? true : false;
+
+
     let obj: SelectedFields;
     try {
       checkFields(peerData.selectedFields, workExperience.toObject());
@@ -271,7 +277,7 @@ class WorkExPeerService {
     // Type specific fields
     let otherQuestions: HRQuestions;
     if (peerData.verificationBy === WorkVerificationBy.HR) {
-      otherQuestions = HRQuestions.defaultFields();
+      otherQuestions = HRQuestions.defaultFields(isWorking);
       obj.salary = Status.defaultStatus();
     }
 
@@ -282,6 +288,7 @@ class WorkExPeerService {
       skills: skillsArr,
       documents: documentsArr,
       user: userId,
+      isReal: Status.defaultStatus()
     };
     const peer = await WorkPeerModel.create(peerDataObj);
     await this.sendLinksToPeers(peer._id.toString(), peer);
@@ -291,9 +298,21 @@ class WorkExPeerService {
   public async updatePeerWorkVerification(peerUUID: string, updatedData: UpdatePeerWorkVerificationDto) {
     const { peerId } = await this.peerUUIDtoPeerId(peerUUID);
     const peer = await WorkPeerModel.findById(peerId);
+
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
+
+    if (updatedData.isReal.state === State.REJECTED) {
+      peer.isReal = updatedData.isReal;
+      peer.isVerificationCompleted = true;
+      peer.save();
+
+      await WorkPeerModel.findByIdAndUpdate(peerId, { $set: { isVerificationCompleted: true } }, { new: true });
+      await WorkExperienceModel.findByIdAndUpdate(peer.ref, { $inc: { noOfVerifications: 1 } });
+      return { success: true, message: 'Updated Successfully' };
+    }
+
     if (!peer.emailVerified) {
       throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
     } else if (!peer.phoneVerified) {
@@ -336,6 +355,7 @@ class WorkExPeerService {
       console.error(error);
       throw new HttpException(ErrorEnum.INVALID_VERIFICATION_FIELDS, error.message);
     }
+    peer.isReal = updatedData.isReal;
     peer.allQuestions = updatedData.allQuestions;
     peer.otherQuestions = updatedData.otherQuestions;
     peer.isVerificationCompleted = true;

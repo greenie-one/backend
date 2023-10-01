@@ -1,5 +1,5 @@
 import { IDTypeEnum } from '@/dtos/request/ids.dto';
-import { IdReportResonse, ResidentialReportResponse, ResidentialResponse, WorkExpReportResponse } from '@/dtos/response/report.response';
+import { IdReportResonse, ResidentialReportResponse, ResidentialResponse, WorkExpReportResponse, WorkPeerReportResponse } from '@/dtos/response/report.response';
 import { ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
 import { Document, DocumentModel } from '@/models/document.model';
@@ -66,6 +66,7 @@ class ReportService {
         phoneVerified: peer.phoneVerified,
         verificationBy: peer.verificationBy,
         selectedFields: peer.selectedFields,
+        isReal: peer.isReal,
         allQuestions: peer.allQuestions,
         otherQuestions: peer.otherQuestions,
         skills: peer.skills,
@@ -156,17 +157,32 @@ class ReportService {
     return idReportResponse;
   }
 
-  public async getAllDetails(email?: string, phone?: string) {
-    if (!email && !phone) throw new HttpException(ErrorEnum.VALIDATION_ERROR, 'Query Param either email or phone is required');
-    const user = await UserModel.findOne({ email: email, mobileNumber: phone });
+  public async getAllDetails(email?: string, phone?: string, grnID?: string) {
+    if (!email && !phone && !grnID) throw new HttpException(ErrorEnum.VALIDATION_ERROR, 'Query Param either email, phone or GreenieID is required');
+    
+    let userID = null;
 
+    if(email || phone){
+    const user = await UserModel.findOne({ email: email, mobileNumber: phone });
     if (!user) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+    userID = user._id.toString();
+    }
+    if(grnID){
+      const profile = await ProfileModel.findOne({greenie_id: grnID});
+      if(!profile) throw new HttpException(ErrorEnum.USER_NOT_FOUND);
+      userID = profile.user.toString();
+      
+    }
+    const accountDetails = await this.getGreenieAccountDetails(userID);
+    const workExperienceDetails = await this.getWorkExperienceDetails(userID);
+    const ResidentialDetails = await this.getResidentialDetails(userID);
+    const idDetails =  await this.getIdDetails(userID);
 
     return {
-      accountDetails: await this.getGreenieAccountDetails(user._id.toString()),
-      workExperienceDetails: await this.getWorkExperienceDetails(user._id.toString()),
-      ResidentialDetails: await this.getResidentialDetails(user._id.toString()),
-      idDetails: await this.getIdDetails(user._id.toString()),
+      accountDetails : accountDetails,
+      workExperienceDetails : workExperienceDetails,
+      ResidentialDetails : ResidentialDetails,
+      idDetails : idDetails
     };
   }
 }

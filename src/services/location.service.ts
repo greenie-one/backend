@@ -67,6 +67,7 @@ class LocationService {
   public async capturePeerLocation(peerUUID: string, data: GetCoordinatesDto) {
     const { peerId } = await residentialPeerService.peerUUIDtoPeerId(peerUUID);
     const peer = await ResidentialPeerModel.findById(peerId);
+
     if (!peer) {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
