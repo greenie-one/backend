@@ -9,7 +9,7 @@ import { ResidentialInfoModel } from '@/models/residentialInfo.model';
 import { ResidentialPeer, ResidentialPeerModel } from '@/models/residentialPeer.model';
 import { Status } from '@/models/workExPeer.model';
 import { redisClient } from '@/redisClient';
-import { verification } from '@/remote/peer/verification';
+import { LocationVerfication } from '@/remote/peer/verification';
 import { UrlShortener } from '@/remote/urlService/urlShortener';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
@@ -40,12 +40,11 @@ class ResidentialPeerService {
 
     console.info(`Sending links to ${peer.name} with email ${peer.email} and phone ${peer.phone}`);
 
-    await verification.sendPeerVerificationLinks(
+    await LocationVerfication.sendPeerVerificationLinks(
       peer.email,
       peer.phone,
       peer.name,
       `${profile.firstName} ${profile.lastName}`,
-      'his residence',
       mobileLink,
       emailLink,
     );
