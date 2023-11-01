@@ -1,6 +1,6 @@
 import { Document } from '@/models/document.model';
 import { Skills } from '@/models/skills.model';
-import { AllQuestions, DocumentVerification, HRQuestions, SelectedFields, SkillsVerification } from '@/models/workExPeer.model';
+import { AllQuestions, DocumentVerification, HRQuestions, SelectedFields, SkillsVerification, Status } from '@/models/workExPeer.model';
 import { WorkExperience } from '@/models/workExperience.model';
 import { Ref } from '@typegoose/typegoose';
 import { WorkVerificationBy } from '../request/workExPeer.dto';
@@ -18,6 +18,7 @@ export interface WorkPeerReportResponse {
   phoneVerified?: boolean;
   verificationBy: WorkVerificationBy;
   selectedFields?: SelectedFields;
+  isReal: Status
   allQuestions?: AllQuestions;
   otherQuestions: HRQuestions;
   skills: SkillsVerification[];

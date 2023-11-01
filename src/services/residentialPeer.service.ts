@@ -14,6 +14,7 @@ import { UrlShortener } from '@/remote/urlService/urlShortener';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
 import { otpService } from './otp.service';
+import { State } from '@/dtos/request/workExPeer.dto';
 
 class ResidentialPeerService {
   public async peerUUIDtoPeerId(uuid: string) {
@@ -205,10 +206,14 @@ class ResidentialPeerService {
       throw new HttpException(ErrorEnum.PEER_NOT_FOUND);
     }
     peer.isReal = data.isReal;
+
+    if(data.isReal.state === State.REJECTED){
     peer.isVerificationCompleted = true;
+    residentialInfo.isVerified = true;
+    }
+    
     await peer.save();
 
-    residentialInfo.isVerified = true;
     await residentialInfo.save();
     return { success: true, message: 'Peer verified' };
   }
