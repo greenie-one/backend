@@ -14,7 +14,7 @@ import { SkillModel } from '@/models/skills.model';
 import { DocumentVerification, HRQuestions, SelectedFields, SkillsVerification, Status, WorkPeer, WorkPeerModel } from '@/models/workExPeer.model';
 import { WorkExperienceModel } from '@/models/workExperience.model';
 import { redisClient } from '@/redisClient';
-import { verification } from '@/remote/peer/verification';
+import { WorkVerification } from '@/remote/peer/verification';
 import { UrlShortener } from '@/remote/urlService/urlShortener';
 import { checkFields, copyDataFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
@@ -54,7 +54,7 @@ class WorkExPeerService {
       throw new HttpException(ErrorEnum.WORKEXPERIENCE_NOT_FOUND);
     }
 
-    await verification.sendPeerVerificationLinks(
+    await WorkVerification.sendPeerVerificationLinks(
       peer.email,
       peer.phone,
       peer.name,
