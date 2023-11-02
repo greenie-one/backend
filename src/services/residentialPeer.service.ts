@@ -1,6 +1,7 @@
 import { env } from '@/config';
 import { OtpType } from '@/dtos/request/otp.dto';
 import { CreateResidentialPeerDto, IdentityValidationDTO } from '@/dtos/request/residentialPeer.dto';
+import { State } from '@/dtos/request/workExPeer.dto';
 import { CreateResidentialPeerResponse, GetResidentialPeerResponse, GetUserPeersResponse } from '@/dtos/response/residentialPeer.response';
 import { ErrorCodes, ErrorEnum } from '@/exceptions/errorCodes';
 import { HttpException } from '@/exceptions/httpException';
@@ -11,10 +12,10 @@ import { Status } from '@/models/workExPeer.model';
 import { redisClient } from '@/redisClient';
 import { LocationVerfication } from '@/remote/peer/verification';
 import { UrlShortener } from '@/remote/urlService/urlShortener';
+import { DocumentType } from '@typegoose/typegoose';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
 import { otpService } from './otp.service';
-import { State } from '@/dtos/request/workExPeer.dto';
 
 class ResidentialPeerService {
   public async peerUUIDtoPeerId(uuid: string) {
@@ -48,7 +49,16 @@ class ResidentialPeerService {
       `${profile.firstName} ${profile.lastName}`,
       mobileLink,
       emailLink,
-    );
+    ).catch((err) => {
+      console.error(err)
+      if (err.code === 'RM007') {
+        throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
+      }
+      if (err.code === 'RM008') {
+        throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
+      }
+      throw new HttpException(ErrorEnum.SERVER_ERROR, err.message);
+    });
   }
 
   public async getCopyLink(peerId: string) {
@@ -192,8 +202,14 @@ class ResidentialPeerService {
       user: userId,
       isReal: Status.defaultStatus(),
     };
-    const peerModel = await ResidentialPeerModel.create(data);
-    await this.sendLinksToPeers(peerModel._id.toString(), peerModel);
+
+    let peerModel: DocumentType<ResidentialPeer>;
+    ResidentialPeerModel.db.transaction(async (session) => {
+      const peers = await ResidentialPeerModel.create(data, { session });
+      peerModel = peers[0];
+      await this.sendLinksToPeers(peerModel._id.toString(), peerModel);
+    });
+
     const copyLink = await this.getCopyLink(peerModel._id.toString());
     return { link: copyLink };
   }
@@ -207,11 +223,11 @@ class ResidentialPeerService {
     }
     peer.isReal = data.isReal;
 
-    if(data.isReal.state === State.REJECTED){
-    peer.isVerificationCompleted = true;
-    residentialInfo.isVerified = true;
+    if (data.isReal.state === State.REJECTED) {
+      peer.isVerificationCompleted = true;
+      residentialInfo.isVerified = true;
     }
-    
+
     await peer.save();
 
     await residentialInfo.save();

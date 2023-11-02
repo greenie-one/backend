@@ -18,6 +18,7 @@ import { WorkVerification } from '@/remote/peer/verification';
 import { UrlShortener } from '@/remote/urlService/urlShortener';
 import { checkFields, copyDataFrom, createClassInstanceWithFields } from '@/utils/classes';
 import { env } from '@config';
+import { DocumentType } from '@typegoose/typegoose';
 import { FastifyReply } from 'fastify';
 import { customAlphabet } from 'nanoid/async';
 import { State } from '../dtos/request/workExPeer.dto';
@@ -62,7 +63,16 @@ class WorkExPeerService {
       companyName,
       mobileLink,
       emailLink,
-    );
+    ).catch((err) => {
+      console.error(err)
+      if (err.code === 'RM007') {
+        throw new HttpException(ErrorEnum.PEER_EMAIL_NOT_VERIFIED);
+      }
+      if (err.code === 'RM008') {
+        throw new HttpException(ErrorEnum.PEER_PHONE_NOT_VERIFIED);
+      }
+      throw new HttpException(ErrorEnum.SERVER_ERROR, err.message);
+    });;
   }
 
   public async resendLinksToPeers(userId: string, peerId: string) {
@@ -262,9 +272,7 @@ class WorkExPeerService {
     }
 
     const workExperience = await WorkExperienceModel.findById(peerData.ref);
-
     const isWorking = workExperience.dateOfLeaving ? true : false;
-
 
     let obj: SelectedFields;
     try {
@@ -290,8 +298,13 @@ class WorkExPeerService {
       user: userId,
       isReal: Status.defaultStatus()
     };
-    const peer = await WorkPeerModel.create(peerDataObj);
-    await this.sendLinksToPeers(peer._id.toString(), peer);
+
+    let peer: DocumentType<WorkPeer>;
+    WorkPeerModel.db.transaction(async (session) => {
+      const peers = await WorkPeerModel.create(peerDataObj, { session });
+      peer = peers[0];
+      await this.sendLinksToPeers(peer._id.toString(), peer);
+    });
     return { id: peer._id.toString(), name: peer.name } as CreateWorkPeerResponse;
   }
 

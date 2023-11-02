@@ -38,12 +38,16 @@ export class HttpClient {
       }
     } else {
       const errResp = await resp.text();
-      console.error('Got error for', url, ':', errResp);
-      throw errResp;
+      console.error('Got error response', errResp);
+      try {
+        const jsonErrResp = JSON.parse(errResp);
+        throw jsonErrResp;
+      } catch (jsonErr) {
+        throw errResp;
+      }
     }
 
     console.info('Got response', response);
-
     return response;
   }
 }
